@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace CrossPlatform.Gestures
 {
-    public enum HandUsedE
+    public enum HandUsedType
     {
         NULL,
         LEFT,
@@ -13,29 +13,29 @@ namespace CrossPlatform.Gestures
     
     { 
         [HideInInspector]
-        public HandUsedE HandUsed = HandUsedE.NULL;
+        public HandUsedType HandUsed = HandUsedType.NULL;
         
         public string Name;
         private Vector3[] _leftPoints;
         private Vector3[] _rightPoints;
         public Vector3[] LeftPoints
         {
-            get => GetHandPoints(HandUsedE.LEFT, _leftPoints);
-            set => SetHandPoints(HandUsedE.LEFT, value);
+            get => GetHandPoints(HandUsedType.LEFT, _leftPoints);
+            set => SetHandPoints(HandUsedType.LEFT, value);
         }
         public Vector3[] RightPoints
         {
-            get => GetHandPoints(HandUsedE.RIGHT, _leftPoints);
-            set => SetHandPoints(HandUsedE.RIGHT, value);
+            get => GetHandPoints(HandUsedType.RIGHT, _leftPoints);
+            set => SetHandPoints(HandUsedType.RIGHT, value);
         }
-        private Vector3[] GetHandPoints(HandUsedE handUsed, Vector3[] points)
+        private Vector3[] GetHandPoints(HandUsedType handUsed, Vector3[] points)
         {
-            if (HandUsed == handUsed || HandUsed == HandUsedE.LEFTNRIGHT)
+            if (HandUsed == handUsed || HandUsed == HandUsedType.LEFTNRIGHT)
                 return points;
             
             return null;
         }
-        private void SetHandPoints(HandUsedE handUsed, Vector3[] points)
+        private void SetHandPoints(HandUsedType handUsed, Vector3[] points)
         {
             if (points == null)
             {
@@ -48,37 +48,37 @@ namespace CrossPlatform.Gestures
                 _leftPoints = points;
             }
         }
-        private void AddToEnum(HandUsedE hand)
+        private void AddToEnum(HandUsedType hand)
         {
-            if (hand == HandUsedE.LEFT)
-                HandUsed = (HandUsed == HandUsedE.LEFTNRIGHT || HandUsed == HandUsedE.RIGHT)
-                    ? HandUsedE.LEFTNRIGHT
-                    : HandUsedE.LEFT;
+            if (hand == HandUsedType.LEFT)
+                HandUsed = (HandUsed == HandUsedType.LEFTNRIGHT || HandUsed == HandUsedType.RIGHT)
+                    ? HandUsedType.LEFTNRIGHT
+                    : HandUsedType.LEFT;
             else
-                HandUsed = (HandUsed == HandUsedE.LEFTNRIGHT || HandUsed == HandUsedE.LEFT)
-                    ? HandUsedE.LEFTNRIGHT
-                    : HandUsedE.RIGHT;
+                HandUsed = (HandUsed == HandUsedType.LEFTNRIGHT || HandUsed == HandUsedType.LEFT)
+                    ? HandUsedType.LEFTNRIGHT
+                    : HandUsedType.RIGHT;
         }
-        private void RemoveFrEnum(HandUsedE hand)
+        private void RemoveFrEnum(HandUsedType hand)
         {
-            if (hand == HandUsedE.LEFTNRIGHT)
+            if (hand == HandUsedType.LEFTNRIGHT)
             {
-                HandUsed = HandUsedE.NULL;
+                HandUsed = HandUsedType.NULL;
                 return;
             }
 
-            if (HandUsed == HandUsedE.LEFTNRIGHT)
+            if (HandUsed == HandUsedType.LEFTNRIGHT)
             {
-                if (hand == HandUsedE.LEFT)
-                    HandUsed = HandUsedE.RIGHT;
+                if (hand == HandUsedType.LEFT)
+                    HandUsed = HandUsedType.RIGHT;
                 else
-                    HandUsed = HandUsedE.LEFT;
+                    HandUsed = HandUsedType.LEFT;
                 return;
             }
 
             if (HandUsed == hand)
             {
-                HandUsed = HandUsedE.NULL;
+                HandUsed = HandUsedType.NULL;
             }
         }
     }

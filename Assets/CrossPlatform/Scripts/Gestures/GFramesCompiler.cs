@@ -15,19 +15,22 @@ using FrameAtlas = System.Collections.Generic.Dictionary<string,
 
 namespace CrossPlatform.Gestures
 {
+    public enum RuntimeXRInteractor
+    {
+        OpenXR,
+        HendaiSolaris
+    }
     public class GFramesCompiler
     {
-        private readonly RuntimePlatform _debugPlatform = RuntimePlatform.Android;
+        private RuntimeXRInteractor _xrInteractor;
         private readonly string _jsonPath = "Assets/CrossPlatform/Scripts/Gestures/GFramesLibrary.json";
         private List<GestureFrame> _framesLibrary = new();
 
         private FrameAtlas _framesDict = new();
 
-        private string _platformName;
-
-        public void Initialize()
+        public void Initialize(RuntimeXRInteractor interactor)
         {
-            _platformName = Application.platform.ToString();
+            _xrInteractor = interactor;
             Read();
 
         }
@@ -49,8 +52,7 @@ namespace CrossPlatform.Gestures
                 };
                 foreach (KeyValuePair<string, HandAtlas> jsonPlatform in jsonFrame.Value)
                 {
-                    if (jsonPlatform.Key == _platformName ||
-                        jsonPlatform.Key == _debugPlatform.ToString())
+                    if (jsonPlatform.Key == _xrInteractor.ToString())
                     {
                         foreach (KeyValuePair<string, string[]> handP in jsonPlatform.Value)
                         {
@@ -89,26 +91,27 @@ namespace CrossPlatform.Gestures
             if (!_framesDict.ContainsKey(name))
             {
                 PlatformAtlas platform = new();
-                platform.Add(_platformName, pointsOnPlatform);
+                platform.Add(_xrInteractor.ToString(), pointsOnPlatform);
                 _framesDict.Add(name, platform);
             }
             else
             {
                 bool f = false;
-                foreach (var platformInFrame in _framesDict)
+                foreach (var platformInFrame in _framesDict[name])
                 {
 
-                    if (platformInFrame.Key == _platformName)
+                    if (platformInFrame.Key == _xrInteractor.ToString())
                     {
+                        
                         f = true;
-                        _framesDict[name][_platformName] = pointsOnPlatform;
+                        _framesDict[name][_xrInteractor.ToString()] = pointsOnPlatform;
                         break;
                     }
                 }
 
                 if (!f)
                 {
-                    _framesDict[name].Add(_platformName, pointsOnPlatform);
+                    _framesDict[name].Add(_xrInteractor.ToString(), pointsOnPlatform);
                 }
 
             }

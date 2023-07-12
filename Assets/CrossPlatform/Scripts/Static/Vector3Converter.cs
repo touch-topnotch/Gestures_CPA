@@ -6,8 +6,10 @@ using UnityEngine;
 namespace CrossPlatform.Static
 {
 
+    
     public class Vector3Converter : JsonConverter<Vector3>
     {
+        public static int quality = 4;
         public static Vector3[] convertToVector3(string[] value)
         {
             if (value == null || value.Length == 0)
@@ -17,7 +19,10 @@ namespace CrossPlatform.Static
             Vector3[] jArr = new Vector3[value.Length];
             for (int i = 0; i < value.Length; i++)
             {
-                jArr[i] = JsonUtility.FromJson<Vector3>(value[i]);
+                var words = value[i].Split(", ");
+                jArr[i].x = float.Parse(words[0]);
+                jArr[i].y = float.Parse(words[1]);
+                jArr[i].z = float.Parse(words[2]);
             }
 
             return jArr;
@@ -32,12 +37,13 @@ namespace CrossPlatform.Static
             string[] jArr = new string[value.Length];
             for (int i = 0; i < value.Length; i++)
             {
-                jArr[i] = JsonUtility.ToJson(value[i]);
+                jArr[i] = Round(value[i].x) + ", " + Round(value[i].y) + ", " + Round(value[i].z);
             }
 
             return jArr;
         }
-    
+
+        private static string Round(float value) => string.Format("{0:N"+$"{quality}"+"}", value);
 
         public override void WriteJson(JsonWriter writer, Vector3 value, JsonSerializer serializer)
         {
