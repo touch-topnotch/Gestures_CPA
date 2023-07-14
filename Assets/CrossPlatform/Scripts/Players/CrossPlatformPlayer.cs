@@ -11,9 +11,9 @@ namespace CrossPlatform.PlayerLogic
         public XRInputModalityManager inputManager;
         public HandSkeleton leftHand;
         public HandSkeleton rightHand;
-        public PointsHandGenerator pointsHandGen;
         public override void Initialize()
         { 
+            base.Initialize();
             InitializeHands();
         }
         public override Vector3[] GetLeftHandPoints() => leftHand.GetBones();
@@ -31,7 +31,6 @@ namespace CrossPlatform.PlayerLogic
             inputManager.trackedHandModeStarted.AddListener(HandEnabled);
             inputManager.trackedHandModeStarted.AddListener(leftHand.HandEnabled);
             inputManager.trackedHandModeStarted.AddListener(rightHand.HandEnabled);
-            inputManager.trackedHandModeStarted.AddListener(pointsHandGen.Initialize);
             
             inputManager.trackedHandModeEnded.AddListener(HandDisabled);
             inputManager.trackedHandModeEnded.AddListener(leftHand.HandDisabled);

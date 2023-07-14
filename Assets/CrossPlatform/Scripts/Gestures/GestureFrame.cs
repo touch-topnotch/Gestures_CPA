@@ -14,19 +14,32 @@ namespace CrossPlatform.Gestures
     { 
         [HideInInspector]
         public HandUsedType HandUsed = HandUsedType.NULL;
-        
-        public string Name;
+
+        private string _name;
+        public string BaseName { get; private set; }
+
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                _name = value;
+                BaseName = value.Split('_')[0];
+            }
+        }
+
+     
         private Vector3[] _leftPoints;
         private Vector3[] _rightPoints;
         public Vector3[] LeftPoints
         {
             get => GetHandPoints(HandUsedType.LEFT, _leftPoints);
-            set => SetHandPoints(HandUsedType.LEFT, value);
+            set => _leftPoints = SetHandPoints(HandUsedType.LEFT, value);
         }
         public Vector3[] RightPoints
         {
-            get => GetHandPoints(HandUsedType.RIGHT, _leftPoints);
-            set => SetHandPoints(HandUsedType.RIGHT, value);
+            get => GetHandPoints(HandUsedType.RIGHT, _rightPoints);
+            set => _rightPoints = SetHandPoints(HandUsedType.RIGHT, value);
         }
         private Vector3[] GetHandPoints(HandUsedType handUsed, Vector3[] points)
         {
@@ -35,18 +48,18 @@ namespace CrossPlatform.Gestures
             
             return null;
         }
-        private void SetHandPoints(HandUsedType handUsed, Vector3[] points)
+        private Vector3[] SetHandPoints(HandUsedType handUsed, Vector3[] points)
         {
             if (points == null)
             {
                 RemoveFrEnum(handUsed);
-                _leftPoints = null;
             }
             else
             {
                 AddToEnum(handUsed);
-                _leftPoints = points;
             }
+
+            return points;
         }
         private void AddToEnum(HandUsedType hand)
         {

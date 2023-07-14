@@ -46,9 +46,7 @@ namespace CrossPlatform.Static
         private static string Round(float value) => string.Format("{0:N"+$"{quality}"+"}", value);
 
         public override void WriteJson(JsonWriter writer, Vector3 value, JsonSerializer serializer)
-        {
-            
-            Debug.LogWarning("ITS MY SCRIPT");
+        { ;
             writer.WriteStartObject();
             writer.WritePropertyName("x");
             writer.WriteValue(value.x);

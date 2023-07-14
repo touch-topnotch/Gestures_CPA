@@ -17,7 +17,6 @@ public class AutoSave
             if (!EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isPlaying) return;
         
             // Save the scene and the assets.
-            Debug.Log("Auto-saving all open scenes... " + state);
             EditorSceneManager.SaveOpenScenes();
             AssetDatabase.SaveAssets();
         };
