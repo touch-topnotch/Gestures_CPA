@@ -25,16 +25,17 @@ public class AutoSave
         nextSaveTime = DateTime.Now.AddMinutes(0.5f);
         EditorApplication.update += Update;
     }
-
     private static void Update()
     {
         if (nextSaveTime > DateTime.Now || Application.isPlaying) return;
-        
         nextSaveTime = nextSaveTime.AddMinutes(3);
-        
-        Debug.Log("AutoSave Scenes: "+DateTime.Now.ToShortTimeString());
-        EditorSceneManager.SaveOpenScenes();
-        AssetDatabase.SaveAssets();
+        if (EditorSceneManager.GetActiveScene().isDirty)
+        {
+            Debug.Log("AutoSave Scenes: " + DateTime.Now.ToShortTimeString());
+
+            EditorSceneManager.SaveOpenScenes();
+            AssetDatabase.SaveAssets();
+        }
     }
 }
 #endif
