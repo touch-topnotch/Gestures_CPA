@@ -7,13 +7,12 @@ namespace Scripts.Installers
 {
     public class GRecognitionInstaller: MonoInstaller
     {
-        [SerializeField] private GameObject recognizerPrefab;
+        [SerializeField] private Recognizer recognizer;
         private GestureCombiner _combiner;
-        private Recognizer _recognizer;
+        
         public override void InstallBindings()
         {
-            _recognizer = Spawner.SpawnPrefab(recognizerPrefab, Container).GetComponent<Recognizer>();
-            Container.Bind<Recognizer>().FromInstance(_recognizer).AsSingle();
+            Container.Bind<Recognizer>().FromInstance(recognizer).AsSingle();
             Container.Bind<GestureCombiner>().FromNew().AsSingle();
         }
     }

@@ -25,8 +25,6 @@ namespace Scripts.Hands
             //создает вспомогательные руки. Позиции рук берутся от первого двуручного или специального жеста(для удобства визуализации)
             LeftSkeleton = new HandSkeleton(DebugHandVisualizer.ActiveHands[0].GetBonesTransforms());
             RightSkeleton = new HandSkeleton(DebugHandVisualizer.ActiveHands[1].GetBonesTransforms());
-            LeftSkeleton.HandEnabled();
-            RightSkeleton.HandEnabled();
             _onUpdate.AddListener(UpdateLinesPosition);
             
         }

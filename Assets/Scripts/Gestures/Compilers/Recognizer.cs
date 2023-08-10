@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Scripts.Events;
 using Scripts.Hands;
 using Scripts.PlayerLogic;
+using Scripts.Static;
 using UnityEngine;
 using Zenject;
 
@@ -10,7 +11,8 @@ namespace Scripts.Gestures
     public class Recognizer: MonoBehaviour
     {
         [Range(0, 1)] public float handPoseOffset = 0.01f;
-        [Range(0, 1)] public float quality = 0.1f;
+        [Range(0, 0.2f)] public float quality = 0.1f;
+        public int qualityDecreaser = 10;
         private UpdateEvent _onUpdate;
         private Player _player;
         
@@ -40,7 +42,9 @@ namespace Scripts.Gestures
         }
         private void FindStartOfDynamicGesture()
         {
-            var frameId = RecognizeFrame();
+            LogPossibleFrames();
+            DrawПриблизетльныйGesture();
+            var frameId = RecognizeFrame(quality, handPoseOffset);
             if (frameId != -1)
             {     
                 _curGesture = frameId;
@@ -49,10 +53,17 @@ namespace Scripts.Gestures
                 RecognizeInOneGesture();
             }
         }
+
+        private void DrawПриблизетльныйGesture()
+        {
+            var приблизительныйFrameId = RecognizeFrameПриблизительно();
+            if(приблизительныйFrameId != -1)
+                _player.supHandCreator.OverrideHands(_possibleFrames[приблизительныйFrameId].Hands);
+        }
         private void GoByOneGesture()
         {
-            
-            var frameId = RecognizeFrame();
+            DrawПриблизетльныйGesture();
+            var frameId = RecognizeFrame(quality, handPoseOffset);
             if (frameId != -1)
             {
                 _possibleGestures[_curGesture].FrameRecognized();
@@ -71,26 +82,32 @@ namespace Scripts.Gestures
             _possibleFrames.Add(_possibleGestures[_curGesture].GetGestureFrame());
             _onUpdate.AddListener(GoByOneGesture);
         }
-        private int RecognizeFrame()
+        private int RecognizeFrame(in float gQuality, in float gHandOffset)
         {
-            print("Try to detect " + _possibleFrames[0].name);
             for(int i = 0; i < _possibleFrames.Count; i++)
             {
-                if (RecognizeHand(_possibleFrames[i].Hands.LeftPoints, _player.playerHands.LeftSkeleton.GetTransforms(), _player.transform)
-                    && RecognizeHand(_possibleFrames[i].Hands.RightPoints, _player.playerHands.RightSkeleton.GetTransforms(),_player.transform))
+                if (!_player.playerHands.IsRecognized)
+                {
+                    return -1;
+                }
+             
+                if (RecognizeHand(_possibleFrames[i].Hands.LeftPoints, _player.playerHands.LeftSkeleton.GetTransforms(), _player.transform, gQuality, gHandOffset)
+                    && RecognizeHand(_possibleFrames[i].Hands.RightPoints, _player.playerHands.RightSkeleton.GetTransforms(),_player.transform, quality, gHandOffset))
                 {
                     return i;
                 }
             }
             return -1;
         }
-        private bool RecognizeHand(in Vector3[] gesturePoints, in Transform[] handSkeleton, in Transform playerTransform)
+
+        private int RecognizeFrameПриблизительно() => RecognizeFrame(quality * qualityDecreaser, handPoseOffset * qualityDecreaser);
+        private bool RecognizeHand(in Vector3[] gesturePoints, in Transform[] handSkeleton, in Transform playerTransform, in float gQuality, in float gHandOffset)
         {
             if (gesturePoints == null)
             {
                 return true;
             }
-            if (OptimizedDistance(gesturePoints[0], handSkeleton[0].localPosition) > handPoseOffset)
+            if (OptimizedDistance(gesturePoints[0], handSkeleton[0].localPosition) > gHandOffset)
             {
                 return false;
             }
@@ -101,12 +118,27 @@ namespace Scripts.Gestures
                 Vector3 curPosition = playerTransform.InverseTransformPoint(handSkeleton[i].position);
                 float distance = OptimizedDistance( gesturePoints[i], curPosition);
                 
-                if (distance > quality)
+                if (distance > gQuality)
                 {
                     return false;
                 }
             }
             return true;
+        }
+
+        public void HideHands()
+        {
+            _player.supHandCreator.HideHands();
+        }
+
+        private void LogPossibleFrames()
+        {
+            string log = "Try to detect: ";
+            foreach (var frame in _possibleFrames)
+            {
+                log += frame.name + ", ";
+            }
+            Debug.Log(log);
         }
         private float OptimizedDistance(in Vector3 a, in Vector3 b) =>
             (a.x - b.x) * (a.x - b.x) + (a.y - b.y)* (a.y - b.y) + (a.z - b.z) * (a.z - b.z);

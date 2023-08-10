@@ -11,7 +11,7 @@ namespace Scripts.Movements
     public abstract class Movement : MonoBehaviour
     {
         [SerializeField] protected Transform ParentAnchor;
-        protected Rigidbody ParentRigidbody;
+        protected CharacterController parentMoveController;
 
         public UpdateEvent OnUpdate;
         
@@ -21,7 +21,7 @@ namespace Scripts.Movements
         [Inject]
         protected void Construct(UpdateEvent onUpdate)
         {
-            Spawner.TryGetComponent(ParentAnchor,out ParentRigidbody);
+            Spawner.TryGetComponent(ParentAnchor,out parentMoveController);
             OnUpdate = onUpdate;
             if(_isStartedInConstruct)
                 StartMove();

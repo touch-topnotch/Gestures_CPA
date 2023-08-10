@@ -56,13 +56,15 @@ namespace Scripts.PlayerLogic
             _library = library;
         }
         public virtual void Initialize(){
-            Debug.Log($"{xrInteractor} has initialized");
+           
+            
             supHandCreator = GetComponent<SupportHandCreator>();
             currentGameState = GameState.Menu;
-            playerHands.Initialize();
             
+            playerHands.Initialize();
             _library.InitializeAllAssets(playerHands);
-            movement.StartMove();
+            
+            Debug.Log($"{xrInteractor} has initialized");
         }
     }
 

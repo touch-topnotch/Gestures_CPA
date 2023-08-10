@@ -17,9 +17,9 @@ namespace Scripts.Gestures.GGUI
         public override void Construct(UserHands hands)
         {
             _water0Effect = LoadAsset(Resources.Load("Effects/Water/TestWaterParticle"),
-                hands.LeftSkeleton.GetTransforms()[0], new Vector3(0, 0, 0));
+                hands.RightSkeleton.GetTransforms()[3], new Vector3(0, 0, 0));
             _water1Effect = LoadAsset(Resources.Load("Effects/Water/TestWaterRedParticle Variant"),
-                hands.LeftSkeleton.GetTransforms()[0], new Vector3(0, 0, 0));
+                hands.RightSkeleton.GetTransforms()[3], new Vector3(0, 0, 0));
             Debug.Log("Water assets added!");
         }
 

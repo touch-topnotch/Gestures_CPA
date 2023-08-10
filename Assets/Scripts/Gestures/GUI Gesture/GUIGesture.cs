@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Scripts.Hands;
+using Scripts.Static;
 using UnityEngine;
 using Zenject;
 
@@ -18,10 +19,10 @@ namespace Scripts.Gestures.GGUI
         {
             PlayerHands = hands;
         }
-
+        
         protected GameObject LoadAsset(in Object asset,Transform parent)
         {
-            var prefab = GameObject.Instantiate(asset as GameObject, parent);
+            var prefab = Spawner.SpawnPrefab(asset as GameObject,parent, true);
             prefab.SetActive(false);
             return prefab;
         }
@@ -29,7 +30,7 @@ namespace Scripts.Gestures.GGUI
         {
             var transform = parent;
             transform.position += offset;
-            var prefab = GameObject.Instantiate(asset as GameObject, transform);
+            var prefab = Spawner.SpawnPrefab(asset as GameObject, transform, true);
             prefab.SetActive(false);
             return prefab;
         }
@@ -38,7 +39,7 @@ namespace Scripts.Gestures.GGUI
             var transform = parent;
             transform.position += offset;
             transform.rotation = Quaternion.Euler(rotation.x, rotation.y, rotation.z);
-            var prefab = GameObject.Instantiate(asset as GameObject, transform);
+            var prefab = Spawner.SpawnPrefab(asset as GameObject, transform, true);
             prefab.SetActive(false);
             return prefab;
         }

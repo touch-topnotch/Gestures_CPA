@@ -39,6 +39,10 @@ namespace Scripts.Gestures
         public void GestureRecognized(DynamicGesture gesture)
         {
             Debug.Log($"Dynamic gesture {gesture.Name} recognized");
+            gesture.AllFramesDetected();
+            _recognizer.HideHands();
+            
+            TestRecognitionFunction();
         }
 
         private void CreateCombination(GameState state)

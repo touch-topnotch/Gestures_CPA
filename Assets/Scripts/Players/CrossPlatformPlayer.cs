@@ -17,11 +17,8 @@ namespace Scripts.PlayerLogic
      
         private void InitializeHands()
         {
-            inputManager.trackedHandModeStarted.AddListener(HandEnabled);
-            inputManager.trackedHandModeEnded.AddListener(HandDisabled);
+            inputManager.trackedHandModeStarted.AddListener(playerHands.HandEnabled);
+            inputManager.trackedHandModeEnded.AddListener(playerHands.HandDisabled);
         }
-        
-        private void HandEnabled(){}
-        private void HandDisabled(){}
     }
 }

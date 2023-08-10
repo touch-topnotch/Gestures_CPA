@@ -1,4 +1,5 @@
 using System;
+using Scripts.Gestures;
 using UnityEngine;
 
 namespace Scripts.Hands
@@ -7,10 +8,16 @@ namespace Scripts.Hands
     {
         public HandSkeleton LeftSkeleton;
         public HandSkeleton RightSkeleton;
+        public bool IsRecognized { get; private set; }
+
 
         public virtual void Initialize()
         {
             
         }
+
+        public void HandEnabled() => IsRecognized = true;
+
+        public void HandDisabled() => IsRecognized = false;
     }
 }

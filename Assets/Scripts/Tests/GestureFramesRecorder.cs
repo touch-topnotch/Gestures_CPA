@@ -16,9 +16,8 @@ namespace Scripts.Tests
         public Button newGestureButton;
         public Button continueRecording;
         public TMP_Text gestureName;
-        [Inject] private Player _player;
-        
-        [Inject] private GesturesLibrary _library;
+        private Player _player;
+        private GesturesLibrary _library;
         
         private string _currentName = "";
         public string Name
@@ -34,8 +33,10 @@ namespace Scripts.Tests
 
         private HandsStruct _handsPoints = new();
         
-        public GestureFramesRecorder ()
+        public void Construct (GesturesLibrary library, Player player)
         {
+            _player = player;
+            _library = library;
             leftToggle.onValueChanged.AddListener(RecordLeft);
             rightToggle.onValueChanged.AddListener(RecordRight);
             nameInput.onEndEdit.AddListener(RecordName);
