@@ -1,3 +1,4 @@
+using Scripts.Events;
 using Scripts.Hands;
 using UnityEngine;
 using Zenject;

@@ -7,6 +7,8 @@ using Zenject;
 
 public class FightSceneController : MonoBehaviour
 {
+    public bool MoveOnAwake = false;
+    
     private Player _player;
     private GestureCombiner _gestureCombiner;
     
@@ -17,6 +19,10 @@ public class FightSceneController : MonoBehaviour
         _gestureCombiner = gestureCombiner;
         _gestureCombiner.AddRecognitionButton("Start Recognition - Button");
         _gestureCombiner.TestRecognitionFunction();
+        if (MoveOnAwake)
+        {
+            _player.movement.StartMove();
+        }
     }
 
 }
