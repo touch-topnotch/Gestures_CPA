@@ -16,7 +16,6 @@ namespace Scripts.Hands
         public void SetPosition(in Vector3 position, in Vector3 parentPosition)
         {
             transform.position = position + parentPosition;
-            l.rl(parentPosition.ToString() +"parent");
             UpdateLine();
         }
        

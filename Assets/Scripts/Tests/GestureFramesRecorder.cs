@@ -1,5 +1,6 @@
 using Scripts.PlayerLogic;
 using Scripts.Gestures;
+using Scripts.Static;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -32,8 +33,8 @@ namespace Scripts.Tests
         }
 
         private HandsStruct _handsPoints = new();
-        
-        public void Construct (GesturesLibrary library, Player player)
+        [Inject]
+        private void Construct (GesturesLibrary library, Player player)
         {
             _player = player;
             _library = library;
@@ -74,6 +75,7 @@ namespace Scripts.Tests
             SendToCompiler();
             ReloadToggles();
             AddIndexToName();
+            l.rl("fruhufheouh");
         }
         private void SendToCompiler()
         {

@@ -15,12 +15,6 @@ public class FightSceneController : MonoBehaviour
     {
         _player = player;
         _gestureCombiner = gestureCombiner;
-    }
-
-    private void Start()
-    {
-        _player.currentGameState = GameState.Fight;
-
         _gestureCombiner.AddRecognitionButton("Start Recognition - Button");
         _gestureCombiner.TestRecognitionFunction();
     }

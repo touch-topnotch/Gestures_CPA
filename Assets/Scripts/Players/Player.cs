@@ -63,7 +63,6 @@ namespace Scripts.PlayerLogic
             
             playerHands.Initialize();
             _library.InitializeAllAssets(playerHands);
-            
             Debug.Log($"{xrInteractor} has initialized");
         }
     }

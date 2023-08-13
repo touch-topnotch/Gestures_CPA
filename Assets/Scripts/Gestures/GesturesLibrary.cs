@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Scripts.Hands;
 using Scripts.PlayerLogic;
+using Scripts.Static;
 using UnityEngine;
 using Zenject;
 
@@ -54,6 +55,7 @@ namespace Scripts.Gestures
                 {
                     if (dynamicGesture.Name == frame.baseName)
                     {
+                        l.rl("Add " + frame.name + " to " + dynamicGesture.Name);
                         dynamicGesture.AddFrame(frame);
                         return;
                     }
@@ -69,7 +71,7 @@ namespace Scripts.Gestures
         private void AddDGesturesToLibrary(GestureFrame frame)
         {
             DynamicGestures.Add(GestureFactory.SetDynamicGesture(frame.baseName));
-            DynamicGestures[0].AddFrame(frame);
+            DynamicGestures[^1].AddFrame(frame);
         }
         public DynamicGesture GetDynamicGesture(string name)
         {
