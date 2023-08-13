@@ -37,23 +37,24 @@ namespace Scripts.Hands
             _lineRenderer.SetPosition(1, Parent.position);
         }
 
-        public void SetPositionSmooth(Vector3 position)
+        public void SetPositionSmooth(Vector3 position, ref UpdateEvent onUpdate)
         {
             target = position;
+            _onUpdate = onUpdate;
+            _onUpdate.AddListener(UpdatePosition);
         }
 
 
-        public void UpdatePosition(out bool isMoving)
+        public void UpdatePosition()
         {
             if (transform.position == target)
             {
-                isMoving = false;
+                _onUpdate.RemoveListener(UpdatePosition);
                 return;
             }
 
             transform.position = Vector3.Lerp(transform.position, target, speed * Time.deltaTime);
             UpdateLine();
-            isMoving = true;
         }
     }
 }

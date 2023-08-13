@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Scripts.Events;
+using UnityEngine;
 
 namespace Scripts.Hands
 {
@@ -6,14 +7,17 @@ namespace Scripts.Hands
     {
         [SerializeField]
         protected BoneJoint[] joints;
-        
 
-        public virtual void Initialize()
+        private UpdateEvent _onUpdate;
+
+        public virtual void Initialize(ref UpdateEvent onUpdate)
         { 
             for(int i = 0; i < joints.Length; i++)
             {
                 joints[i].Initialize();
             }
+
+            _onUpdate = onUpdate;
         }
         public void ChangePosition(Vector3[] points, Transform parent = null)
         {
@@ -35,7 +39,7 @@ namespace Scripts.Hands
             }
             for (int i = 0; i < points.Length; i++)
             { 
-                joints[i].SetPositionSmooth(points[i]);
+                joints[i].SetPositionSmooth(points[i], ref _onUpdate);
             }
         }
 

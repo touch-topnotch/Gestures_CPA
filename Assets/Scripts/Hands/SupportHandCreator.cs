@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection.Emit;
 using Scripts.Events;
 using Scripts.Gestures;
 using Scripts.PlayerLogic;
@@ -20,7 +21,13 @@ namespace Scripts.Hands
         [HideInInspector]
         public List<SupportHandVisualizer> ActiveHands = new List<SupportHandVisualizer>();
 
-        
+        private UpdateEvent _onUpdate;
+
+        [Inject]
+        private void Construct(UpdateEvent onUpdate)
+        {
+            _onUpdate = onUpdate;
+        }
 
         public void CreateNewStack(Vector3[] points)
         {
@@ -119,7 +126,7 @@ namespace Scripts.Hands
             var newHand = GameObject.Instantiate(SupHandPrefab, parent);
             newHand.gameObject.name = newHand.gameObject.name.Replace("(Clone)", $"_{ActiveHands.Count}");
             SupportHandVisualizer hand = newHand.GetComponent<SupportHandVisualizer>();
-            hand.Initialize();
+            hand.Initialize(ref _onUpdate);
             hand.ChangePosition(points, parent);
             hand.Show();
             
