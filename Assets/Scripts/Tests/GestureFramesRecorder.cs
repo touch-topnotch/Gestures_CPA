@@ -61,7 +61,7 @@ namespace Scripts.Tests
 
         public virtual void NewGestureGroup()
         {
-            _player.supHandCreator.CreateNewStack(_handsPoints);
+            _player.ownUser.handsVisualiser.CreateNewStack(_handsPoints);
             
             SendToCompiler();
             ReloadToggles();
@@ -69,7 +69,7 @@ namespace Scripts.Tests
         }
         public void ContinueRecording()
         {
-            _player.supHandCreator.AddToStack(_handsPoints);
+            _player.ownUser.handsVisualiser.AddToStack(_handsPoints);
             if (Name.Split('_').Length == 1)
                 Name += "_0";
             SendToCompiler();

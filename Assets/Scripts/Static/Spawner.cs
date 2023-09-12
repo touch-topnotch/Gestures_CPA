@@ -18,9 +18,7 @@ namespace Scripts.Static
         public static GameObject SpawnPrefab(GameObject prefab, Transform parent = null,
             bool hasParent = false)
         {
-            var instPrefab = Instantiate(prefab, parent);
-            if (!hasParent)
-                instPrefab.transform.SetParent(null);
+            var instPrefab = Instantiate(prefab, parent, !hasParent);
             return instPrefab;
         }
         

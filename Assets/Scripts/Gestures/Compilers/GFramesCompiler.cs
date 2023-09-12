@@ -4,8 +4,8 @@ using UnityEngine;
 using Scripts.Static;
 using Scripts.Network;
 using Scripts.PlayerLogic;
-using Unity.VisualScripting.FullSerializer;
 using Zenject;
+
 using HandAtlas =  System.Collections.Generic.Dictionary<string, string[]>;
 
 using PlatformAtlas = System.Collections.Generic.Dictionary<string,
@@ -24,7 +24,7 @@ namespace Scripts.Gestures
         private RuntimeXRInteractor _xrInteractor;
         private GesturesLibrary _library;
         
-        private readonly string _jsonPath = "Assets/Scripts/Gestures/GFramesLibrary.json";
+        private readonly string _jsonPath = "/Users/dmitry057/Projects/UnityProjects/Gestures_CPA/Assets/Resources/Database/GFramesLibrary.json";
         
         private FrameAtlas _framesDict = new();
         public GFramesCompiler(GesturesLibrary library)

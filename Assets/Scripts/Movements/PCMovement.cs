@@ -4,19 +4,41 @@ using Zenject;
 
 namespace Scripts.Movements
 {
-    public class PCMovement: XRMovement
+    public class PCMovement: Movement
     {
+        public float playerSpeed = 2f;
+        public float mouseSensitivity = 2f;
+        public float jumpHeight = 3f; 
+        private bool isMoving = false;
+        private bool isSprinting =false;
+        private float yRot;
         
         protected override void UpdateVelocity()
         {
-            var x = Input.GetAxis("Horizontal");
-            var z = Input.GetAxis("Vertical");
-            var y = -Input.GetAxis("Debug Horizontal");
-            var input = new Vector3(x, y, z);
-            headAnchor.position += input * 0.005f;
-            if (input == Vector3.zero)
-                headAnchor.position = Vector3.Lerp(headAnchor.position, pivot.position, 3f * Time.deltaTime);
-            base.UpdateVelocity();
+            yRot += Input.GetAxis("Mouse X") * mouseSensitivity;
+            ParentAnchor.localEulerAngles = new Vector3(transform.localEulerAngles.x, yRot, transform.localEulerAngles.z);
+ 
+            isMoving = false;
+            Vector3 velocity = new Vector3();
+            if (Input.GetAxisRaw("Horizontal") > 0.5f || Input.GetAxisRaw("Horizontal") < -0.5f)
+            {
+                //transform.Translate(Vector3.right * Input.GetAxis("Horizontal") * playerSpeed);
+                velocity += transform.right * Input.GetAxisRaw("Horizontal") * playerSpeed;
+                isMoving = true;
+            }
+            if (Input.GetAxisRaw("Vertical") > 0.5f || Input.GetAxisRaw("Vertical") < -0.5f)
+            {
+                //transform.Translate(Vector3.forward * Input.GetAxis("Vertical") * playerSpeed);
+                velocity += transform.forward * Input.GetAxisRaw("Vertical") * playerSpeed;
+                isMoving = true;
+            }
+ 
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                velocity += Vector3.up * jumpHeight;
+            }
+
+            parentMoveController.Move(velocity);
         }
     }
 }
