@@ -19,6 +19,7 @@ namespace DedicatedServers.LobbyServer
             Network.OnServerStarted += () => { Debug.Log("Lobby server started!"); };
            
             Network.OnClientConnectedCallback += ClientConnected;
+            Network.OnClientDisconnectCallback += ClientDisconnected;
             Network.StartServer();
         }
 
@@ -29,11 +30,22 @@ namespace DedicatedServers.LobbyServer
             _usersSpawner.SpawnPlayer(client.PlayerObject, spawnPoints);
             AddUserToList(Network.ConnectedClients[clientId].PlayerObject);
         }
+        private void ClientDisconnected(ulong clientId)
+        {
+            var client = Network.ConnectedClients[clientId];
+            l.rl(client.PlayerObject.name + " disconnected!");
+            RemoveUserFromList(client.PlayerObject.GetComponent<NetworkUser>());
+        }
         
         private void AddUserToList(NetworkObject user)
         {
             NetworkUser netUser = user.GetComponent<NetworkUser>();
             users.Add(netUser);
+        }
+
+        private void RemoveUserFromList(NetworkUser user)
+        {
+            users.Remove(user);
         }
      
     }

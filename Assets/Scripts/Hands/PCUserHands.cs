@@ -1,3 +1,4 @@
+using System;
 using Scripts.Events;
 using Scripts.Gestures;
 using UnityEngine;
@@ -21,10 +22,10 @@ namespace Scripts.Hands
             _library = library;
             _onUpdate = onUpdate;
             
-            DebugHandVisualizer.CreateNewStack(new HandsStruct(){LeftPoints = new Vector3[26], RightPoints = new Vector3[26]});
+            DebugHandVisualizer.CreateNewStack(new HandsStruct(){LeftBones = new BonesData(new Transform[26],HandType.left), RightBones = new BonesData(new Transform[26],HandType.right)});
             //создает вспомогательные руки. Позиции рук берутся от первого двуручного или специального жеста(для удобства визуализации)
-            LeftSkeleton = new HandSkeleton(DebugHandVisualizer.ActiveHands[0].GetBonesTransforms());
-            RightSkeleton = new HandSkeleton(DebugHandVisualizer.ActiveHands[1].GetBonesTransforms());
+            leftHand.points = DebugHandVisualizer.ActiveHands[0].GetTransforms();
+            rightHand.points = DebugHandVisualizer.ActiveHands[1].GetTransforms();
             _onUpdate.AddListener(UpdateLinesPosition);
             
         }
@@ -46,11 +47,11 @@ namespace Scripts.Hands
                 lastName = _targetGestureName;
                 ChangeHandPose();
             }
-            if (transform.position != lastPos)
-            {
-                DebugHandVisualizer.RefreshLinesPosition();
-            }
-
+            // if (transform.position != lastPos)
+            // {
+            //     DebugHandVisualizer.RefreshLinesPosition();
+            // }
+        
             lastPos = transform.position;
             lastName = _targetGestureName;
         }

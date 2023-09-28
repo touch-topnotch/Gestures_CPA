@@ -3,8 +3,9 @@ using UnityEngine;
 
 namespace Scripts.Hands
 {
-    public class SupportHandVisualizer : MonoBehaviour
+    public class SupportHandVisualizer : MonoBehaviour, IHandVisualiser
     {
+        
         [SerializeField]
         protected BoneJoint[] joints;
 
@@ -19,27 +20,28 @@ namespace Scripts.Hands
 
             _onUpdate = onUpdate;
         }
-        public void ChangePosition(Vector3[] points, Transform parent = null)
+        public void ChangePosition(BonesData data, Transform parent = null)
         {
-            if (points == null)
+            if (data.Positions == null)
                 return;
-            for(int i = 0; i < points.Length; i++)
+            for(int i = 0; i < data.Positions.Length; i++)
             {
-                joints[i].SetPosition(points[i] , parent ? parent.position : Vector3.zero);
+                joints[i].SetPosition(data.Positions[i] , parent ? parent.position : Vector3.zero);
             }
         }
 
-      
 
-        public void ChangePositionSmooth(Vector3[] points)
+
+        public void ChangePositionSmooth(BonesData data)
         {
-            if (points == null)
+            if (data == null)
             {
                 return;
             }
-            for (int i = 0; i < points.Length; i++)
-            { 
-                joints[i].SetPositionSmooth(points[i], ref _onUpdate);
+
+            for (int i = 0; i < data.Positions.Length; i++)
+            {
+                joints[i].SetPositionSmooth(data.Positions[i], data.Rotations[i], ref _onUpdate);
             }
         }
 
@@ -51,7 +53,7 @@ namespace Scripts.Hands
             }
         }
 
-        public Transform[] GetBonesTransforms()
+        public Transform[] GetTransforms()
         {
             Transform[] transforms = new Transform[26];
             for (int i = 0; i < joints.Length; i++)
@@ -62,6 +64,12 @@ namespace Scripts.Hands
             return transforms;
         }
 
+
+        public void ChangePosition()
+        {
+            throw new System.NotImplementedException();
+        }
+        
 
         public virtual void Show()
         {

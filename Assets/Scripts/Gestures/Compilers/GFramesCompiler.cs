@@ -6,14 +6,15 @@ using Scripts.Network;
 using Scripts.PlayerLogic;
 using Zenject;
 
-using HandAtlas =  System.Collections.Generic.Dictionary<string, string[]>;
+using TransfAtlas = System.Collections.Generic.Dictionary<string, string[]>;
+using HandAtlas = System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<string, string[]>>;
 
 using PlatformAtlas = System.Collections.Generic.Dictionary<string,
-    System.Collections.Generic.Dictionary<string, string[]>>;
+    System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<string, string[]>>>;
 
 using FrameAtlas = System.Collections.Generic.Dictionary<string,
-    System.Collections.Generic.Dictionary<string, 
-        System.Collections.Generic.Dictionary<string, string[]>>>;
+    System.Collections.Generic.Dictionary<string,
+        System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<string, string[]>>>>;
 
 namespace Scripts.Gestures
 {
@@ -50,19 +51,27 @@ namespace Scripts.Gestures
                 {
                     if (jsonPlatform.Key == _xrInteractor.ToString())
                     {
-                        foreach (KeyValuePair<string, string[]> handP in jsonPlatform.Value)
+                        foreach (KeyValuePair<string, TransfAtlas> handP in jsonPlatform.Value)
                         {
-                            
-                            var convertedPoints =  Vector3Converter.convertToVector3(handP.Value);
                             if (handP.Key == "left")
                             {
-
-                                frame.Hands.LeftPoints = convertedPoints;
-
+                                foreach (KeyValuePair<string, string[]> transf in handP.Value)
+                                {
+                                    if(transf.Key == "pos")
+                                        frame.Hands.LeftBones.Positions = Vector3Converter.convertToVector3(transf.Value);
+                                    if(transf.Key == "rot")
+                                        frame.Hands.LeftBones.Rotations = Vector3Converter.convertToQuaternion(transf.Value);
+                                }
                             }
-                            else if (handP.Key == "right")
+                            else  if (handP.Key == "right")
                             {
-                                frame.Hands.RightPoints = convertedPoints;
+                                foreach (KeyValuePair<string, string[]> transf in handP.Value)
+                                {
+                                    if(transf.Key == "pos")
+                                        frame.Hands.RightBones.Positions = Vector3Converter.convertToVector3(transf.Value);
+                                    if(transf.Key == "rot")
+                                        frame.Hands.RightBones.Rotations = Vector3Converter.convertToQuaternion(transf.Value);
+                                }
                             }
 
                             
@@ -80,12 +89,31 @@ namespace Scripts.Gestures
 
             HandAtlas pointsOnPlatform = new HandAtlas();
 
-            if (hands.LeftPoints != null)
-                pointsOnPlatform.Add("left", Vector3Converter.convertToString(hands.LeftPoints));
-
-            if (hands.RightPoints != null)
-                pointsOnPlatform.Add("right", Vector3Converter.convertToString(hands.RightPoints));
             
+            if (hands.LeftBones != null)
+            {
+                TransfAtlas transfAtlas = new TransfAtlas()
+                {
+                    {"pos", Vector3Converter.convertToString(hands.LeftBones.Positions)},
+                    {"rot", Vector3Converter.convertToString(hands.LeftBones.Rotations)},
+                };
+                pointsOnPlatform.Add("left", 
+                    transfAtlas
+                );
+            }
+               
+
+            if (hands.RightBones != null)
+            {
+                TransfAtlas transfAtlas = new TransfAtlas()
+                {
+                    {"pos", Vector3Converter.convertToString(hands.RightBones.Positions)},
+                    {"rot", Vector3Converter.convertToString(hands.RightBones.Rotations)},
+                };
+                pointsOnPlatform.Add("right", 
+                    transfAtlas
+                );
+            }
             Read();
 
             if (!_framesDict.ContainsKey(name))

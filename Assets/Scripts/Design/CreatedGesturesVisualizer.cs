@@ -39,13 +39,13 @@ namespace Scripts.Design
         }
         private IEnumerator DynamicAnimation(DynamicGesture dGesture, Toggle toggle)
         {
-            creator.CreateNewStack(dGesture.Frames[0].Hands.LeftPoints);
-            creator.AddToStack(dGesture.Frames[0].Hands.RightPoints);
+            creator.CreateNewStack(dGesture.Frames[0].Hands.LeftBones);
+            creator.AddToStack(dGesture.Frames[0].Hands.RightBones);
             int i = 0;
             while (i < dGesture.Frames.Count)
             {
-                creator.MoveHand(dGesture.Frames[i].Hands.LeftPoints, 0);
-                creator.MoveHand(dGesture.Frames[i].Hands.RightPoints, 1);
+                creator.MoveHand(dGesture.Frames[i].Hands.LeftBones, 0);
+                creator.MoveHand(dGesture.Frames[i].Hands.RightBones, 1);
                 i += 1;
                 print("try to move");
                 yield return _waitGesture;

@@ -1,17 +1,14 @@
-using System;
-using System.Runtime.InteropServices;
 using Scripts.Events;
 using Scripts.PlayerLogic;
 using Scripts.Static;
 using UnityEngine;
 using Zenject;
-using Random = UnityEngine.Random;
 
 namespace Scripts.Movements
 {
     public abstract class Movement : MonoBehaviour
     {
-        [SerializeField] protected Transform ParentAnchor;
+        [SerializeField] protected BodyAnchors anchors;
         [SerializeField] protected bool moveOnAwake;
         protected CharacterController parentMoveController;
 
@@ -22,7 +19,7 @@ namespace Scripts.Movements
         [Inject]
         protected virtual void Construct(UpdateEvent onUpdate)
         {
-            Spawner.TryGetComponent(ParentAnchor,out parentMoveController);
+            parentMoveController = anchors.Body.GetComponent<CharacterController>();
             _onUpdate = onUpdate;
             if(moveOnAwake)
                 StartMove();

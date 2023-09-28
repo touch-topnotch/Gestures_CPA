@@ -1,3 +1,5 @@
+using System;
+using Scripts.Databases;
 using Scripts.Hands;
 using Scripts.Network;
 using Scripts.Static;
@@ -6,21 +8,20 @@ using UnityEngine;
 
 namespace Scripts.PlayerLogic
 {
+    
     [RequireComponent(typeof(NetworkObject))]
     public class NetworkUser : NetworkBehaviour
     {
-        public SupportHandCreator handsVisualiser;
-        public Parenter parenter;
-        [SerializeField] private ClientTransform headAnchor;
-        
-        [HideInInspector] public NetworkObject networkObject;
-        
-        protected virtual void Awake()
-        {
-            networkObject = GetComponent<NetworkObject>();
-
-        }
-  
-      
+        public UserData userData = new UserData() { id = 319, name = "debugger", bonesData = new float [26, 2] };
+        public BodyParts bodyParts;
+        public NetworkObject networkObject;
+    }
+    [Serializable]
+    public struct BodyParts
+    {
+        public Parenter Head;
+        public Parenter LeftHand;
+        public Parenter RightHand;
+        public Parenter Body;
     }
 }

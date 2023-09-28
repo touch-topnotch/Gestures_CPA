@@ -9,8 +9,8 @@ namespace Scripts.Gestures
 {
     public class GesturesLibrary
     {
-        public List<GestureFrame> GestureFrames { get; private set; } = new List<GestureFrame>();
-        public List<DynamicGesture> DynamicGestures { get; private set; } = new List<DynamicGesture>();
+        public List<GestureFrame> GestureFrames { get;} = new ();
+        public List<DynamicGesture> DynamicGestures { get;} = new ();
 
         private GFramesCompiler _framesCompiler;
         

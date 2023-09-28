@@ -16,7 +16,7 @@ namespace Scripts.Movements
         protected override void UpdateVelocity()
         {
             yRot += Input.GetAxis("Mouse X") * mouseSensitivity;
-            ParentAnchor.localEulerAngles = new Vector3(transform.localEulerAngles.x, yRot, transform.localEulerAngles.z);
+            anchors.Body.localEulerAngles = new Vector3(transform.localEulerAngles.x, yRot, transform.localEulerAngles.z);
  
             isMoving = false;
             Vector3 velocity = new Vector3();

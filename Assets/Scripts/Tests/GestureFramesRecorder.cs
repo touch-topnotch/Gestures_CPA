@@ -1,5 +1,6 @@
 using Scripts.PlayerLogic;
 using Scripts.Gestures;
+using Scripts.Hands;
 using Scripts.Static;
 using TMPro;
 using UnityEngine;
@@ -47,8 +48,8 @@ namespace Scripts.Tests
 
         private void ReloadToggles()
         {
-            _handsPoints.LeftPoints = null;
-            _handsPoints.RightPoints = null;
+            _handsPoints.LeftBones = null;
+            _handsPoints.RightBones = null;
             leftToggle.isOn = false;
             rightToggle.isOn = false;
         }
@@ -61,7 +62,7 @@ namespace Scripts.Tests
 
         public virtual void NewGestureGroup()
         {
-            _player.ownUser.handsVisualiser.CreateNewStack(_handsPoints);
+          //  _player.ownUser.bodyParts.Hands.CreateNewStack(_handsPoints); //fix
             
             SendToCompiler();
             ReloadToggles();
@@ -69,7 +70,7 @@ namespace Scripts.Tests
         }
         public void ContinueRecording()
         {
-            _player.ownUser.handsVisualiser.AddToStack(_handsPoints);
+          //  _player.ownUser.bodyParts.Hands.AddToStack(_handsPoints);  //fix
             if (Name.Split('_').Length == 1)
                 Name += "_0";
             SendToCompiler();
@@ -103,8 +104,8 @@ namespace Scripts.Tests
             Name = string.Join("_", words);
         }
 
-        public virtual void RecordLeft(bool isOn) =>_handsPoints.LeftPoints = isOn ? _player.playerHands.LeftSkeleton.GetPositions(): null;
-        public virtual void RecordRight(bool isOn) => _handsPoints.RightPoints = isOn ? _player.playerHands.RightSkeleton.GetPositions() : null;
+        public virtual void RecordLeft(bool isOn) =>_handsPoints.LeftBones = isOn ? new BonesData(_player.bodyAnchors.Hands.leftHand.points, HandType.left): null;
+        public virtual void RecordRight(bool isOn) => _handsPoints.RightBones = isOn ? new BonesData(_player.bodyAnchors.Hands.rightHand.points, HandType.right) : null;
 
     }
 }
