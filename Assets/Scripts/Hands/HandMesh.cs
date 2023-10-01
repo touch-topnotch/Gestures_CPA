@@ -15,10 +15,44 @@ namespace Scripts.Hands
         public Material material;
         public Transform[] points;
         public HandType handType = HandType.left;
+        [SerializeField] private Material _defaultMaterial;
 
         private void OnValidate()
         {
             rootObject = this.gameObject;
         }
+
+        private void Start()
+        {
+            if(_defaultMaterial != null)
+                ResetMaterial();
+        }
+
+        public void ResetMaterial()
+        {
+            material.SetColor("_MainColor", _defaultMaterial.GetColor("_MainColor"));
+            material.SetColor("_EdgeColor", _defaultMaterial.GetColor("_EdgeColor"));
+            material.SetFloat("_EdgeHighlightPower", _defaultMaterial.GetFloat("_EdgeHighlightPower"));
+            material.SetColor("_ThumbColor", _defaultMaterial.GetColor("_ThumbColor"));
+            material.SetColor("_FingerColor_1", _defaultMaterial.GetColor("_FingerColor_1"));
+            material.SetColor("_FingerColor_2", _defaultMaterial.GetColor("_FingerColor_2"));
+            material.SetColor("_FingerColor_3", _defaultMaterial.GetColor("_FingerColor_3"));
+            material.SetColor("_FingerColor_4", _defaultMaterial.GetColor("_FingerColor_4"));
+            material.SetVector("_FadeCenter", _defaultMaterial.GetVector("_FadeCenter"));
+            material.SetVector("_FadeScale", _defaultMaterial.GetVector("_FadeScale"));
+            material.SetFloat("_FadeStart", _defaultMaterial.GetFloat("_FadeStart"));
+            material.SetFloat("_NoiseScale", _defaultMaterial.GetFloat("_NoiseScale"));
+            material.SetFloat("_NoiseStrength", _defaultMaterial.GetFloat("_NoiseStrength"));
+
+        }
+        public void SetFingersColor(in Color color)
+        {
+            material.SetColor("_ThumbColor", color);
+            material.SetColor("_FingerColor_1", color);
+            material.SetColor("_FingerColor_2", color);
+            material.SetColor("_FingerColor_3", color);
+            material.SetColor("_FingerColor_4", color);
+        }
+        
     }
 }

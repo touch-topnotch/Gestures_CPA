@@ -61,16 +61,15 @@ namespace Scripts.Tests
         }
 
         public virtual void NewGestureGroup()
-        {
-          //  _player.ownUser.bodyParts.Hands.CreateNewStack(_handsPoints); //fix
-            
+        { 
+            //_player.ownUser.bodyParts.Hands.CreateNewStack(_handsPoints); //fix
             SendToCompiler();
             ReloadToggles();
             Name = "";
         }
         public void ContinueRecording()
         {
-          //  _player.ownUser.bodyParts.Hands.AddToStack(_handsPoints);  //fix
+            //_player.ownUser.bodyParts.Hands.AddToStack(_handsPoints);  //fix
             if (Name.Split('_').Length == 1)
                 Name += "_0";
             SendToCompiler();

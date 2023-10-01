@@ -19,5 +19,11 @@ namespace Scripts.Hands
         public void HandEnabled() => IsRecognized = true;
 
         public void HandDisabled() => IsRecognized = false;
+
+        public void SetSameColor(string name, Color color)
+        {
+            leftHand.material.SetColor(name, color);
+            rightHand.material.SetColor(name, color);
+        }
     }
 }
