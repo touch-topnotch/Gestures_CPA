@@ -9,7 +9,7 @@ namespace Scripts.PlayerLogic
     {
         public Transform Body;
         public Transform Head;
-        public AnchorHand Left;
-        public AnchorHand Right;
+        public HandMesh Left;
+        public HandMesh Right;
     }
 }

@@ -30,9 +30,10 @@ namespace Scripts.PlayerLogic
         
         [Header("Rigs")]
         
-        [SerializeField] private VRRig _pcRig;
-        [SerializeField] private VRRig _xrRig;
-        private VRRig _curRig;
+        [SerializeField] private PlayerRig _pcRig;
+
+        [SerializeField] private PlayerRig _xrRig;
+        private PlayerRig _curRig;
 
         [Header("Anchors")] 
         
@@ -60,7 +61,7 @@ namespace Scripts.PlayerLogic
             }
         }
         public BodyAnchors Anchors => _anchors;
-        private VRRig CurRig
+        private PlayerRig CurRig
         {
             get=>_curRig;
             set
@@ -90,7 +91,7 @@ namespace Scripts.PlayerLogic
                     return _localAvatar;
             }
         }
-        private VRRig GetRig()
+        private PlayerRig GetRig()
         {
             switch (_runtimeRig)
             {
