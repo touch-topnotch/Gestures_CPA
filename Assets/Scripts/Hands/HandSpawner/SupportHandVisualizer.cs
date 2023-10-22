@@ -27,7 +27,7 @@ namespace Scripts.Hands
             joints[0].SetPosition(data.RootPos, parent ? parent.position : Vector3.zero);
             for(int i = 0; i < data.Rotations.Length; i++)
             {
-                joints[i].SetPosition(data.Positions[i] , parent ? parent.position : Vector3.zero);
+            //    joints[i].SetPosition(data.Positions[i] , parent ? parent.position : Vector3.zero); //FIX
             }
         }
 
@@ -40,10 +40,10 @@ namespace Scripts.Hands
                 return;
             }
 
-            for (int i = 0; i < data.Positions.Length; i++)
-            {
-                joints[i].SetPositionSmooth(data.Positions[i], data.Rotations[i], ref _onUpdate);
-            }
+            // for (int i = 0; i < data.Positions.Length; i++) //FIX (CHANGE POSITIONS ON ROTATIONS
+            // {
+            //     joints[i].SetPositionSmooth(data.Positions[i], data.Rotations[i], ref _onUpdate);
+            // }
         }
 
         public void RefreshLines()

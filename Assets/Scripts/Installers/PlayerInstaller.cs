@@ -1,12 +1,6 @@
-using Scripts.Gestures;
-using Scripts.Hands;
 using Scripts.PlayerLogic;
 using Scripts.Static;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.UI;
-using UnityEngine.XR.Management;
 using Zenject;
 
 namespace Scripts.Installers
@@ -24,11 +18,8 @@ namespace Scripts.Installers
             SetPlayerByPlatform();
             _xrPlayer = SpawnPlayer(Container); // ???
             Container.Bind<Player>().FromInstance(_xrPlayer).AsSingle().NonLazy();
-            Container.Bind<RuntimeXRInteractor>().FromInstance(_xrPlayer.xrInteractor).AsSingle();
-            Container.Bind<OnGameStateChanged>().FromInstance(_xrPlayer.gameStateChanged).AsSingle();
-            Container.Bind<UserHands>().FromInstance(_xrPlayer.bodyAnchors.Hands).AsSingle();
             DontDestroyOnLoad(_xrPlayer.gameObject);
-            _xrPlayer.Initialize();
+            //_xrPlayer.Initialize();
         }
 
         private Player SpawnPlayer(in DiContainer container)
@@ -38,14 +29,15 @@ namespace Scripts.Installers
 
         private void SetPlayerByPlatform()
         {
-            if (XRGeneralSettings.Instance?.Manager?.activeLoader)
-            {
-                _playerPrefab = Resources.Load("Players/XR Player") as GameObject;
-            }
-            else
-            {
-                _playerPrefab = Resources.Load("Players/PC Player") as GameObject;
-            }
+            _playerPrefab = Resources.Load("Players/Player") as GameObject;
+            // if (XRGeneralSettings.Instance?.Manager?.activeLoader)
+            // {
+            //     
+            // }
+            // else
+            // {
+            //     _playerPrefab = Resources.Load("Players/PC Player") as GameObject;
+            // }
         }
     }
 }

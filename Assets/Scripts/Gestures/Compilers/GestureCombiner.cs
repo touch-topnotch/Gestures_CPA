@@ -45,12 +45,12 @@ namespace Scripts.Gestures
             TestRecognitionFunction();
         }
 
-        private void CreateCombination(GameState state)
+        private void CreateCombination()
         {
-            if (state != GameState.Fight)
-            {
-                return;
-            }
+            // if (state != GameState.Fight)
+            // {
+            //     return;
+            // }
 
             GestureGraphManager.InitializeGestureGraph(_library.DynamicGestures);
 

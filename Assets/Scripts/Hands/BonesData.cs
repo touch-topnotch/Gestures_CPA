@@ -7,8 +7,13 @@ namespace Scripts.Hands
     {
         public Vector3 RootPos;
 
-        private Quaternion[] _rotations;
+        public Quaternion[] Rotations;
         private HandType _type;
+
+        public BonesData(HandType type)
+        {
+            _type = type;
+        }
         public BonesData(in Transform[] points, in HandType type)
         {
             RootPos = points[0].position;
@@ -18,10 +23,5 @@ namespace Scripts.Hands
 
         public HandType Type() => _type;
         
-        public Quaternion[] Rotations
-        {
-            get => _rotations;
-            set => _rotations = value;
-        }
     }
 }

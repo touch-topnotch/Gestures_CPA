@@ -10,13 +10,13 @@ namespace Scripts.Gestures.GGUI
 
     public abstract class GUIGesture
     {
-        protected UserHands PlayerHands;
+        protected AvatarHands PlayerHands;
         protected abstract void ShowEffects(int frameId, GestureFrame gFrame);
         protected GUIGesture(ref FrameDetected onFrameDetected)
         {
             onFrameDetected += ShowEffects;
         }
-        public virtual void Construct(UserHands hands)
+        public virtual void Construct(AvatarHands hands)
         {
             PlayerHands = hands;
         }

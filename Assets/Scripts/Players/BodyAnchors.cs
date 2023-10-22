@@ -9,6 +9,7 @@ namespace Scripts.PlayerLogic
     {
         public Transform Body;
         public Transform Head;
-        public UserHands Hands;
+        public AnchorHand Left;
+        public AnchorHand Right;
     }
 }
