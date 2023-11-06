@@ -103,8 +103,8 @@ namespace Scripts.Tests
             Name = string.Join("_", words);
         }
 
-        public virtual void RecordLeft(bool isOn) =>_handsPoints.LeftBones = isOn ? new BonesData(_player.Anchors.Left.points, HandType.left): null;
-        public virtual void RecordRight(bool isOn) => _handsPoints.RightBones = isOn ? new BonesData(_player.Anchors.Right.points, HandType.right) : null;
+        public virtual void RecordLeft(bool isOn) =>_handsPoints.LeftBones = isOn ? new BonesData(_player.CurAvatar.hands.leftHand.points, HandType.left): null;
+        public virtual void RecordRight(bool isOn) => _handsPoints.RightBones = isOn ? new BonesData(_player.CurAvatar.hands.rightHand.points, HandType.right) : null;
 
     }
 }

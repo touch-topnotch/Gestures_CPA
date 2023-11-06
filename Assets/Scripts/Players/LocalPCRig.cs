@@ -7,19 +7,9 @@ namespace Scripts.PlayerLogic
 {
     public class LocalPCRig: PlayerRig
     {
-        protected BonesData _left = new BonesData(HandType.left);
-        protected BonesData _right = new BonesData(HandType.right);
-
-        private void Start()
+        public void ChangePosOfHand()
         {
-            // Set Random Rotations to _left.Rotations
-            // Set Random Rotations to _right.Rotations
-            
-            _left.RootPos = new Vector3(0, 0, 0);
-            _left.Rotations = new Quaternion[26];
-            _right.RootPos = new Vector3(0, 0, 0);
-            _right.Rotations = new Quaternion[26];
+            leftHand.points[0].rotation = new Quaternion(0, leftHand.points[0].rotation.y +0.1f, 0, 0);
         }
-        
     }
 }

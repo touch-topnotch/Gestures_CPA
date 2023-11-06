@@ -12,7 +12,8 @@ namespace Scripts.Movements
         private bool isMoving = false;
         private bool isSprinting =false;
         private float yRot;
-        
+        private float vSpeed = 0;
+       
         protected override void UpdateVelocity()
         {
             yRot += Input.GetAxis("Mouse X") * mouseSensitivity;
@@ -32,12 +33,20 @@ namespace Scripts.Movements
                 velocity += transform.forward * Input.GetAxisRaw("Vertical") * playerSpeed;
                 isMoving = true;
             }
- 
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                velocity += Vector3.up * jumpHeight;
-            }
 
+            if (parentMoveController.isGrounded)
+            {
+                vSpeed = 0;
+                if (Input.GetKeyDown(KeyCode.Space))
+                {      
+                    vSpeed = jumpHeight;
+                }
+            }
+            
+        
+            // apply gravity acceleration to vertical speed:
+            vSpeed -= gravity * Time.deltaTime;
+            velocity += Vector3.up * vSpeed;
             parentMoveController.Move(velocity);
         }
     }

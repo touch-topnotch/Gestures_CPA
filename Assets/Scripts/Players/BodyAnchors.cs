@@ -1,5 +1,6 @@
 using System;
 using Scripts.Hands;
+using Scripts.Network;
 using UnityEngine;
 
 namespace Scripts.PlayerLogic
@@ -9,7 +10,5 @@ namespace Scripts.PlayerLogic
     {
         public Transform Body;
         public Transform Head;
-        public HandMesh Left;
-        public HandMesh Right;
     }
 }

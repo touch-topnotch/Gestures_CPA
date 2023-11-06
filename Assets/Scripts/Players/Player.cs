@@ -1,15 +1,17 @@
+using Scripts.Events;
+using Scripts.Hands;
 using Unity.Netcode;
 using UnityEngine;
 
 namespace Scripts.PlayerLogic
 {
-    public enum RuntimeRig
+    public enum RigType
     {
         PCRig,
         XRRig,
         NoRig,
     }
-    public enum RuntimeAvatar
+    public enum AvatarType
     {
         LocalAvatar,
         EnemyAvatar
@@ -19,8 +21,8 @@ namespace Scripts.PlayerLogic
     {
         [Header("Runtime Settings")]
         
-        [SerializeField] private RuntimeRig _runtimeRig;
-        [SerializeField] private RuntimeAvatar _runtimeAvatar;
+        [SerializeField] private RigType _rigType;
+        [SerializeField] private AvatarType _avatarType;
         
         [Header("Avatars")]
         
@@ -31,31 +33,32 @@ namespace Scripts.PlayerLogic
         [Header("Rigs")]
         
         [SerializeField] private PlayerRig _pcRig;
-
         [SerializeField] private PlayerRig _xrRig;
         private PlayerRig _curRig;
 
         [Header("Anchors")] 
         
         [SerializeField] private BodyAnchors _anchors;
-        
-        public RuntimeRig RuntimeRig
+
+       // private UpdateEvent _onUpdate;
+       private bool _isSynchronized;
+        public RigType RigType
         {
-            get => _runtimeRig;
+            get => _rigType;
             set
             {
-                _runtimeRig = value;
+                _rigType = value;
                 CurRig = GetRig();
                 ActivateRig();
             }
 
         }
-        public RuntimeAvatar RuntimeAvatar
+        public AvatarType AvatarType
         {
-            get => _runtimeAvatar;
+            get => _avatarType;
             set
             {
-                _runtimeAvatar = value;
+                _avatarType = value;
                 CurAvatar = GetAvatar();
                 ActivateAvatar();
             }
@@ -81,11 +84,11 @@ namespace Scripts.PlayerLogic
         }
         private Avatar GetAvatar()
         {
-            switch (_runtimeAvatar)
+            switch (_avatarType)
             {
-                case RuntimeAvatar.LocalAvatar:
+                case AvatarType.LocalAvatar:
                     return _localAvatar;
-                case RuntimeAvatar.EnemyAvatar:
+                case AvatarType.EnemyAvatar:
                     return _enemyAvatar;
                 default:
                     return _localAvatar;
@@ -93,13 +96,13 @@ namespace Scripts.PlayerLogic
         }
         private PlayerRig GetRig()
         {
-            switch (_runtimeRig)
+            switch (_rigType)
             {
-                case RuntimeRig.XRRig:
+                case RigType.XRRig:
                     return _xrRig;
-                case RuntimeRig.PCRig:
+                case RigType.PCRig:
                     return _pcRig;
-                case RuntimeRig.NoRig:
+                case RigType.NoRig:
                     return null;
                 default:
                     return _pcRig;
@@ -116,7 +119,8 @@ namespace Scripts.PlayerLogic
         {
             _pcRig.gameObject.SetActive(false);
             _xrRig.gameObject.SetActive(false);
-            CurRig.gameObject.SetActive(true);
+            if(_rigType != RigType.NoRig)
+                CurRig.gameObject.SetActive(true);
         }
         
         
@@ -124,30 +128,87 @@ namespace Scripts.PlayerLogic
         {
             CurRig = GetRig();
             CurAvatar = GetAvatar();
-            _anchors.Body = this.transform;
-        } 
-        
+            ActivateAvatar();
+        }
+        public void Construct(UpdateEvent onUpdate)
+        {
+         //   _onUpdate = onUpdate;
+            if (IsOwner && IsClient)
+            {
+                _pcRig.movement.Construct(ref onUpdate);
+                _xrRig.movement.Construct(ref onUpdate);
+            }
+        }
+
         public override void OnNetworkSpawn()
         {
             Debug.Log("NETWORK SPAWN");
+            transform.name = $"Player {OwnerClientId}";
             if (IsClient && !IsOwner)
             {
-                RuntimeRig = RuntimeRig.NoRig;
-                RuntimeAvatar = RuntimeAvatar.EnemyAvatar;
+                RigType = RigType.NoRig;
+                AvatarType = AvatarType.EnemyAvatar;
             }
 
             if (IsClient && IsOwner)
             {
-                RuntimeRig = RuntimeRig.PCRig;
-                RuntimeAvatar = RuntimeAvatar.LocalAvatar;
+                
+                RigType = RigType.PCRig;
+                AvatarType = AvatarType.LocalAvatar;
             }
 
             if (IsServer)
             {
-                RuntimeRig = RuntimeRig.NoRig;
-                RuntimeAvatar = RuntimeAvatar.LocalAvatar;
+                RigType = RigType.NoRig;
+                AvatarType = AvatarType.LocalAvatar;
             }
+        }
+
+        
+        private void Start()
+        {
+
+            if (_rigType != RigType.NoRig)
+            {
+                _curRig.movement.StartMove();
+            }
+        
+            StartWatch();
+        }
+        
+        public void StartWatch()
+        {
+            _isSynchronized = true;
+            // _onUpdate?.AddListener(UpdateTransforms);
+        }
+        public void StopWatch()
+        {
+            _isSynchronized = false;
+            // _onUpdate?.RemoveListener(UpdateTransforms);
+        }
+
+        private void Update()
+        {
+            if (_isSynchronized)
+            {
+                UpdateTransforms();
+            }
+        }
+
+        private void UpdateTransforms()
+        {
+            if (_rigType != RigType.NoRig)
+            {
+                _anchors.Head.position = CurRig.GetHead().position;
+                _anchors.Head.rotation = CurRig.GetHead().rotation;
+                _anchors.Body.position = CurRig.GetBody().position;
+                _anchors.Body.rotation = CurRig.GetBody().rotation;
+            }
+            
+            CurAvatar.head.position = _anchors.Head.position;
+            CurAvatar.head.rotation = _anchors.Head.rotation;
+            CurAvatar.body.position = _anchors.Body.position;
+            CurAvatar.body.rotation = _anchors.Body.rotation;
         }
     }
 }
- 
