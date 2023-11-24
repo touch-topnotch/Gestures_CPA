@@ -18,7 +18,7 @@ namespace Scripts.Tests
         public Button newGestureButton;
         public Button continueRecording;
         public TMP_Text gestureName;
-        private Player _player;
+        public PlayerRig rig;
         private GesturesLibrary _library;
         
         private string _currentName = "";
@@ -34,10 +34,9 @@ namespace Scripts.Tests
         }
 
         private HandsStruct _handsPoints = new();
-        [Inject]
-        private void Construct (GesturesLibrary library, Player player)
+
+        private void Construct (GesturesLibrary library)
         {
-            _player = player;
             _library = library;
             leftToggle.onValueChanged.AddListener(RecordLeft);
             rightToggle.onValueChanged.AddListener(RecordRight);
@@ -62,7 +61,7 @@ namespace Scripts.Tests
 
         public virtual void NewGestureGroup()
         { 
-            //_player.ownUser.bodyParts.Hands.CreateNewStack(_handsPoints); //fix
+            //_player.ownUser.bodyParts.Hands.CreateNewStack(_handsPoints); //fix. I think it is visualization
             SendToCompiler();
             ReloadToggles();
             Name = "";
@@ -75,7 +74,6 @@ namespace Scripts.Tests
             SendToCompiler();
             ReloadToggles();
             AddIndexToName();
-            l.rl("fruhufheouh");
         }
         private void SendToCompiler()
         {
@@ -103,8 +101,8 @@ namespace Scripts.Tests
             Name = string.Join("_", words);
         }
 
-        public virtual void RecordLeft(bool isOn) =>_handsPoints.LeftBones = isOn ? new BonesData(_player.CurAvatar.hands.leftHand.points, HandType.left): null;
-        public virtual void RecordRight(bool isOn) => _handsPoints.RightBones = isOn ? new BonesData(_player.CurAvatar.hands.rightHand.points, HandType.right) : null;
+        public virtual void RecordLeft(bool isOn) =>_handsPoints.LeftBones = isOn ? new BonesData(rig.hands.leftHand.points, HandType.left): null;
+        public virtual void RecordRight(bool isOn) => _handsPoints.RightBones = isOn ? new BonesData(rig.hands.rightHand.points, HandType.right) : null;
 
     }
 }

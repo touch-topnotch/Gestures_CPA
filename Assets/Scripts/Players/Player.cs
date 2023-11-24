@@ -23,6 +23,7 @@ namespace Scripts.PlayerLogic
         
         [SerializeField] private RigType _rigType;
         [SerializeField] private AvatarType _avatarType;
+        [SerializeField] private bool _playOffline;
         
         [Header("Avatars")]
         
@@ -135,11 +136,11 @@ namespace Scripts.PlayerLogic
          //   _onUpdate = onUpdate;
             if (IsOwner && IsClient)
             {
-                _pcRig.movement.Construct(ref onUpdate);
-                _xrRig.movement.Construct(ref onUpdate);
+                _pcRig.movement.Construct(onUpdate);
+                _xrRig.movement.Construct(onUpdate);
             }
         }
-
+        
         public override void OnNetworkSpawn()
         {
             Debug.Log("NETWORK SPAWN");
@@ -152,7 +153,6 @@ namespace Scripts.PlayerLogic
 
             if (IsClient && IsOwner)
             {
-                
                 RigType = RigType.PCRig;
                 AvatarType = AvatarType.LocalAvatar;
             }

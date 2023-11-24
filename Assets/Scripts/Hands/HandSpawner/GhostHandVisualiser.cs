@@ -53,8 +53,8 @@ namespace Scripts.Hands
         {
             if (parent != null)
             {
-                rootObject.transform.position = parent.position;
-                rootObject.transform.rotation = parent.rotation;
+                transform.position = parent.position;
+                transform.rotation = parent.rotation;
             }
 
             points = SetTransform(points, data);
@@ -71,19 +71,19 @@ namespace Scripts.Hands
 
         public void Show()
         {
-            rootObject.SetActive(true);
+            gameObject.SetActive(true);
         }
 
         public void Hide()
         {
-            rootObject.SetActive(false);
+            gameObject.SetActive(false);
         }
 
         private Transform[] SetTransform(Transform[] transf, in BonesData data)
         {
-            transf[0].position = data.RootPos;
+            transf[0].position = data.rootPos;
             
-            var rot = data.Rotations;
+            var rot = data.rotations;
             for (int i = 0; i < transf.Length; i++)
             {
                 transf[i].rotation = rot[i];

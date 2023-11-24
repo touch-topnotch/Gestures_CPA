@@ -11,16 +11,11 @@ namespace Scripts.Hands
     }
     public class HandMesh : MonoBehaviour
     {
-        public GameObject rootObject;
         public Material material;
         public Transform[] points;
         public HandType handType = HandType.left;
         [SerializeField] private Material _defaultMaterial;
-
-        private void OnValidate()
-        {
-            rootObject = this.gameObject;
-        }
+        
 
         private void Start()
         {
@@ -53,7 +48,7 @@ namespace Scripts.Hands
             material.SetColor("_FingerColor_3", color);
             material.SetColor("_FingerColor_4", color);
         }
-
+        
         public void SetRotations(in Vector3[] rotations)
         {
             if (rotations == null)
@@ -65,6 +60,28 @@ namespace Scripts.Hands
                 points[i].rotation = Quaternion.Euler(rotations[i]);
             }
         }
+        public void SetRotations(in Quaternion[] rotations)
+        {
+            if (rotations == null)
+            {
+                return;
+            }
+            for (int i = 0; i < points.Length; i++)
+            {
+                points[i].rotation = rotations[i];
+            }
+        }
+
+        public void SetRootPosition(in Vector3 position)
+        {
+            points[0].position = position;
+        }
+
+        public void SetBonesData(in BonesData data)
+        {
+            SetRootPosition(data.rootPos);
+            SetRotations(data.rotations);
+        }   
 
         public Vector3[] GetRotations()
         {

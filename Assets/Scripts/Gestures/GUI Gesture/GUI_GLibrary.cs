@@ -1,7 +1,6 @@
 using Scripts.Events;
 using Scripts.Hands;
 using UnityEngine;
-using Zenject;
 
 namespace Scripts.Gestures.GGUI
 {
@@ -13,7 +12,7 @@ namespace Scripts.Gestures.GGUI
         public DG_Water(ref FrameDetected onFrameDetected) : base(ref onFrameDetected)
         {
         }
-        public override void Construct(AvatarHands hands)
+        public override void Construct(PlayerHands hands)
         {
             _water0Effect = LoadAsset(Resources.Load("Effects/Water/TestWaterParticle"),
                 hands.leftHand.points[3], new Vector3(0, 0, 0));

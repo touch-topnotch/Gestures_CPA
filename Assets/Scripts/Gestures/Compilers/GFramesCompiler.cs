@@ -18,8 +18,8 @@ namespace Scripts.Gestures
         private GesturesLibrary _library;
 
         private readonly string
-            _jsonPath = //"/Users/dmitry057/Projects/UnityProjects/Gestures_CPA/Assets/Resources/Database/GFramesLibrary.json";
-                "C:/Unity Projects/Gestures_CPA/Assets/Resources/Database/GFramesLibrary.json";
+            _jsonPath = "/Users/dmitry057/Projects/UnityProjects/Gestures_CPA/Assets/Resources/Database/GFramesLibrary.json";
+                //"C:/Unity Projects/Gestures_CPA/Assets/Resources/Database/GFramesLibrary.json";
         private FrameAtlas _framesDict = new();
         public GFramesCompiler(GesturesLibrary library)
         {
@@ -40,10 +40,10 @@ namespace Scripts.Gestures
                 {
                     name = jsonFrame.Key
                 };
-                frame.Hands.LeftBones.Rotations = Vector3Converter.convertToQuaternion(jsonFrame.Value.left_rots);
-                frame.Hands.RightBones.Rotations = Vector3Converter.convertToQuaternion(jsonFrame.Value.right_rots);
-                frame.Hands.LeftBones.RootPos = Vector3Converter.convertToVector3(jsonFrame.Value.left_pos);
-                frame.Hands.RightBones.RootPos = Vector3Converter.convertToVector3(jsonFrame.Value.right_pos);
+                frame.Hands.LeftBones.rotations = Vector3Converter.convertToQuaternion(jsonFrame.Value.left_rots);
+                frame.Hands.RightBones.rotations = Vector3Converter.convertToQuaternion(jsonFrame.Value.right_rots);
+                frame.Hands.LeftBones.rootPos = Vector3Converter.convertToVector3(jsonFrame.Value.left_pos);
+                frame.Hands.RightBones.rootPos = Vector3Converter.convertToVector3(jsonFrame.Value.right_pos);
                 
                 _library.SetGestureFrame(frame);
             }
@@ -59,15 +59,15 @@ namespace Scripts.Gestures
 
             if (hands.LeftBones != null)
             {
-                frameStruct.left_rots = Vector3Converter.convertToString(hands.LeftBones.Rotations);
-                frameStruct.right_pos = hands.LeftBones.RootPos.ToString();
+                frameStruct.left_rots = Vector3Converter.convertToString(hands.LeftBones.rotations);
+                frameStruct.right_pos = hands.LeftBones.rootPos.ToString();
             }
 
 
             if (hands.RightBones != null)
             {
-                frameStruct.right_rots = Vector3Converter.convertToString(hands.RightBones.Rotations);
-                frameStruct.right_pos = hands.RightBones.RootPos.ToString();
+                frameStruct.right_rots = Vector3Converter.convertToString(hands.RightBones.rotations);
+                frameStruct.right_pos = hands.RightBones.rootPos.ToString();
             }
                
             Read();
