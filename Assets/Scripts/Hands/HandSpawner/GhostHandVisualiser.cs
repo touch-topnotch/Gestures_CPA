@@ -84,6 +84,10 @@ namespace Scripts.Hands
             transf[0].position = data.rootPos;
             
             var rot = data.rotations;
+            if (rot == null)
+            {
+                return transf;
+            }
             for (int i = 0; i < transf.Length; i++)
             {
                 transf[i].rotation = rot[i];

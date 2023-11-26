@@ -8,7 +8,7 @@ namespace Scripts.Hands
         public Vector3 rootPos;
 
         public Quaternion[] rotations;
-        private HandType _type;
+        private readonly HandType _type;
 
         public BonesData(HandType type)
         {

@@ -28,7 +28,10 @@ namespace Scripts.Tests
             get => _currentName;
             set
             {
-                _currentName = value; 
+                if (value.Split('_').Length == 1)
+                    _currentName = value + "_0";
+                else
+                    _currentName = value; 
                 gestureName.text = _currentName;
                 LockButtons();
             }
@@ -69,7 +72,6 @@ namespace Scripts.Tests
         }
         public void ContinueRecording()
         {
-            SupportHdCreator.AddToStack(_recordedHandStruct);
             if (Name.Split('_').Length == 1)
                 Name += "_0";
             SendToCompiler();
@@ -103,8 +105,30 @@ namespace Scripts.Tests
             Name = string.Join("_", words);
         }
 
-        public virtual void RecordLeft(bool isOn) =>_recordedHandStruct.LeftBones = isOn ? new BonesData(rig.hands.leftHand.points, HandType.left): null;
-        public virtual void RecordRight(bool isOn) => _recordedHandStruct.RightBones = isOn ? new BonesData(rig.hands.rightHand.points, HandType.right) : null;
+        public virtual void RecordLeft(bool isOn)
+        {
+            _recordedHandStruct.LeftBones = isOn ? new BonesData(rig.hands.leftHand.points, HandType.left) : null;
+            if (isOn)
+            {
+                SupportHdCreator.AddToStack(_recordedHandStruct);
+            }
+            else
+            {
+                // remove last Left Hand.
+            }
+        }
 
+        public virtual void RecordRight(bool isOn)
+        {
+            _recordedHandStruct.RightBones = isOn ? new BonesData(rig.hands.rightHand.points, HandType.right) : null;
+            if (isOn)
+            {
+                SupportHdCreator.AddToStack(_recordedHandStruct);
+            }
+            else
+            {
+                // remove last Right Hand.
+            }
+        }
     }
 }
