@@ -1,4 +1,6 @@
+using JetBrains.Annotations;
 using Scripts.Hands;
+using UnityEngine;
 
 namespace Scripts.Gestures
 {
@@ -12,30 +14,37 @@ namespace Scripts.Gestures
 
     public class HandsStruct
     {
-        public HandUsedType HandUsed = HandUsedType.NULL;
+        public HandUsedType HandUsed { get; private set; } = HandUsedType.NULL;
         
         private BonesData _left;
         private BonesData _right;
+
+        public HandsStruct(
+            Transform[] leftPoints = null,
+            Transform[] rightPoints = null
+        )
+        {
+            LeftBones = new BonesData(leftPoints, HandType.left);
+            RightBones = new BonesData(rightPoints, HandType.right);
+        }
         public BonesData LeftBones
         {
-            
-            
-            get => GetHandPoints(HandUsedType.LEFT, _left);
-            set => _left = SetHandPoints(HandUsedType.LEFT, value);
+            get => GetHandPoints(_left, HandUsedType.LEFT);
+            set => _left = SetHandPoints(value, HandUsedType.LEFT);
         }
         public BonesData RightBones
         {
             
-            get => GetHandPoints(HandUsedType.RIGHT, _right);
-            set => _right = SetHandPoints(HandUsedType.RIGHT, value);
+            get => GetHandPoints(_right, HandUsedType.RIGHT);
+            set => _right = SetHandPoints(value, HandUsedType.RIGHT);
         }
-        private BonesData GetHandPoints(HandUsedType handUsed, BonesData data)
+        private BonesData GetHandPoints(BonesData data, HandUsedType handUsed)
         {
             if (HandUsed == HandUsedType.NULL)
                 return null;
             return data;
         }
-        private BonesData SetHandPoints(HandUsedType handUsed, BonesData points)
+        private BonesData SetHandPoints(BonesData points, HandUsedType handUsed)
         {
             if (points == null)
             {

@@ -36,7 +36,7 @@ namespace Design
 
         private void Update()
         {
-            UpdateMesh(Vector3Converter.TransfToPos(points), Triangles);
+            UpdateMesh(VectorConverter.TransfToPos(points), Triangles);
         }
     }
 }

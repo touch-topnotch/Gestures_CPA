@@ -19,6 +19,7 @@ namespace Scripts.Tests
         public Button continueRecording;
         public TMP_Text gestureName;
         public PlayerRig rig;
+        public SupportHandCreator SupportHdCreator;
         private GesturesLibrary _library;
         
         private string _currentName = "";
@@ -33,7 +34,7 @@ namespace Scripts.Tests
             }
         }
 
-        private HandsStruct _handsPoints = new();
+        private HandsStruct _recordedHandStruct= new();
         [Inject]
         private void Construct (GesturesLibrary library)
         {
@@ -47,8 +48,8 @@ namespace Scripts.Tests
 
         private void ReloadToggles()
         {
-            _handsPoints.LeftBones = null;
-            _handsPoints.RightBones = null;
+            _recordedHandStruct.LeftBones = null;
+            _recordedHandStruct.RightBones = null;
             leftToggle.isOn = false;
             rightToggle.isOn = false;
         }
@@ -61,14 +62,14 @@ namespace Scripts.Tests
 
         public virtual void NewGestureGroup()
         { 
-            //_player.ownUser.bodyParts.Hands.CreateNewStack(_handsPoints); //fix. I think it is visualization
+            SupportHdCreator.CreateNewStack(_recordedHandStruct);
             SendToCompiler();
             ReloadToggles();
             Name = "";
         }
         public void ContinueRecording()
         {
-            //_player.ownUser.bodyParts.Hands.AddToStack(_handsPoints);  //fix
+            SupportHdCreator.AddToStack(_recordedHandStruct);
             if (Name.Split('_').Length == 1)
                 Name += "_0";
             SendToCompiler();
@@ -77,8 +78,8 @@ namespace Scripts.Tests
         }
         private void SendToCompiler()
         {
-            l.rl(_handsPoints.ToString());
-            _library.Record(_handsPoints, _currentName);
+            l.rl(_recordedHandStruct.LeftBones.rootPos.ToString());
+            _library.Record(_recordedHandStruct, _currentName);
         }
         
         public virtual void RecordName(string name)
@@ -102,8 +103,8 @@ namespace Scripts.Tests
             Name = string.Join("_", words);
         }
 
-        public virtual void RecordLeft(bool isOn) =>_handsPoints.LeftBones = isOn ? new BonesData(rig.hands.leftHand.points, HandType.left): null;
-        public virtual void RecordRight(bool isOn) => _handsPoints.RightBones = isOn ? new BonesData(rig.hands.rightHand.points, HandType.right) : null;
+        public virtual void RecordLeft(bool isOn) =>_recordedHandStruct.LeftBones = isOn ? new BonesData(rig.hands.leftHand.points, HandType.left): null;
+        public virtual void RecordRight(bool isOn) => _recordedHandStruct.RightBones = isOn ? new BonesData(rig.hands.rightHand.points, HandType.right) : null;
 
     }
 }

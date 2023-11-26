@@ -17,8 +17,8 @@ namespace Scripts.Hands
         public GameObject LeftHand;
         public GameObject RightHand;
         public GameObject Bones;
+        public Transform Parent;
 
-        public Transform parent;
         private int _hiddenHands = 0;
 
         [HideInInspector]
@@ -54,7 +54,7 @@ namespace Scripts.Hands
                 SpawnNew(data);
                 return;
             }
-            ActiveHands[^_hiddenHands].ChangePosition(data, parent);
+            ActiveHands[^_hiddenHands].ChangePosition(data, Parent);
             ActiveHands[^_hiddenHands].Show();
             _hiddenHands--;
             l.rl("override prev");
@@ -73,7 +73,7 @@ namespace Scripts.Hands
                 AddToStack(data);
                 return;
             }
-            ActiveHands[index].ChangePosition(data, parent);
+            ActiveHands[index].ChangePosition(data, Parent);
         }
 
         public void OverrideHands(HandsStruct hands)
@@ -129,7 +129,7 @@ namespace Scripts.Hands
             IHandVisualiser hand = null;
             if (type == VisualizationType.Bones)
             {
-                var newHand = GameObject.Instantiate(Bones, parent);
+                var newHand = GameObject.Instantiate(Bones, Parent);
                 newHand.gameObject.name = newHand.gameObject.name.Replace("(Clone)", $"_{ActiveHands.Count}");
                 hand = newHand.GetComponent<SupportHandVisualizer>();
             }
@@ -137,13 +137,13 @@ namespace Scripts.Hands
             {
                 if (points.Type() == HandType.left)
                 {
-                    var newHand = GameObject.Instantiate(LeftHand, parent);
+                    var newHand = GameObject.Instantiate(LeftHand, Parent);
                     newHand.gameObject.name = newHand.gameObject.name.Replace("(Clone)", $"_{ActiveHands.Count}");
                     hand = newHand.GetComponent<GhostHandVisualiser>();
                 }
                 else
                 {
-                    var newHand = GameObject.Instantiate(RightHand, parent);
+                    var newHand = GameObject.Instantiate(RightHand, Parent);
                     newHand.gameObject.name = newHand.gameObject.name.Replace("(Clone)", $"_{ActiveHands.Count}");
                     hand = newHand.GetComponent<GhostHandVisualiser>();
                 }
@@ -151,7 +151,7 @@ namespace Scripts.Hands
             }
           
             hand.Initialize(ref _onUpdate);
-            hand.ChangePosition(points, parent);
+            hand.ChangePosition(points, Parent);
             hand.Show();
             
             ActiveHands.Add(hand);

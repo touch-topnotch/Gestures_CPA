@@ -1,4 +1,6 @@
 using System;
+using Scripts.Events;
+using Scripts.Gestures;
 using UnityEngine;
 using UnityEngine.XR.Hands;
 
@@ -15,8 +17,6 @@ namespace Scripts.Hands
         public Transform[] points;
         public HandType handType = HandType.left;
         [SerializeField] private Material _defaultMaterial;
-        
-
         private void Start()
         {
             if(_defaultMaterial != null)
@@ -81,7 +81,9 @@ namespace Scripts.Hands
         {
             SetRootPosition(data.rootPos);
             SetRotations(data.rotations);
-        }   
+        }
+      
+      
 
         public Vector3[] GetRotations()
         {

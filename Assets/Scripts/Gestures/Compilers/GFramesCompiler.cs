@@ -18,8 +18,8 @@ namespace Scripts.Gestures
         private GesturesLibrary _library;
 
         private readonly string
-            //_jsonPath = "/Users/dmitry057/Projects/UnityProjects/Gestures_CPA/Assets/Resources/Database/GFramesLibrary.json";
-            _jsonPath = "C:/Unity Projects/Gestures_CPA/Assets/Resources/Database/GFramesLibrary.json";
+            _jsonPath = "/Users/dmitry057/Projects/UnityProjects/Gestures_CPA/Assets/Resources/Database/GFramesLibrary.json";
+            //_jsonPath = "C:/Unity Projects/Gestures_CPA/Assets/Resources/Database/GFramesLibrary.json";
         private FrameAtlas _framesDict = new();
         public GFramesCompiler(GesturesLibrary library)
         {
@@ -40,10 +40,10 @@ namespace Scripts.Gestures
                 {
                     name = jsonFrame.Key
                 };
-                frame.Hands.LeftBones.rotations = Vector3Converter.convertToQuaternion(jsonFrame.Value.left_rots);
-                frame.Hands.RightBones.rotations = Vector3Converter.convertToQuaternion(jsonFrame.Value.right_rots);
-                frame.Hands.LeftBones.rootPos = Vector3Converter.convertToVector3(jsonFrame.Value.left_pos);
-                frame.Hands.RightBones.rootPos = Vector3Converter.convertToVector3(jsonFrame.Value.right_pos);
+                frame.Hands.LeftBones.rotations = VectorConverter.ToQuaternion(jsonFrame.Value.left_rots);
+                frame.Hands.RightBones.rotations = VectorConverter.ToQuaternion(jsonFrame.Value.right_rots);
+                frame.Hands.LeftBones.rootPos = VectorConverter.ToVector3(jsonFrame.Value.left_pos);
+                frame.Hands.RightBones.rootPos = VectorConverter.ToVector3(jsonFrame.Value.right_pos);
                 
                 _library.SetGestureFrame(frame);
             }
@@ -59,19 +59,19 @@ namespace Scripts.Gestures
 
             if (hands.LeftBones != null)
             {
-                frameStruct.left_rots = Vector3Converter.convertToString(hands.LeftBones.rotations);
-                frameStruct.right_pos = hands.LeftBones.rootPos.ToString();
+                frameStruct.left_rots = VectorConverter.ToString(hands.LeftBones.rotations);
+                frameStruct.left_pos = VectorConverter.ToString(hands.LeftBones.rootPos);
             }
 
 
             if (hands.RightBones != null)
             {
-                frameStruct.right_rots = Vector3Converter.convertToString(hands.RightBones.rotations);
-                frameStruct.right_pos = hands.RightBones.rootPos.ToString();
+                frameStruct.right_rots = VectorConverter.ToString(hands.RightBones.rotations);
+                frameStruct.right_pos =  VectorConverter.ToString(hands.RightBones.rootPos);
             }
                
             Read();
-
+            _framesDict.Add(name, frameStruct);
             var jsonString = JsonConvert.SerializeObject(_framesDict, Formatting.Indented);
             Debug.Log(jsonString + " written");
             DataChanel.Send(_jsonPath, jsonString);
