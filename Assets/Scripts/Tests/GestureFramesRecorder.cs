@@ -110,7 +110,7 @@ namespace Scripts.Tests
             _recordedHandStruct.LeftBones = isOn ? new BonesData(rig.hands.leftHand.points, HandType.left) : null;
             if (isOn)
             {
-                SupportHdCreator.AddToStack(_recordedHandStruct);
+                SupportHdCreator.AddToStack(_recordedHandStruct.LeftBones);
             }
             else
             {
@@ -123,7 +123,7 @@ namespace Scripts.Tests
             _recordedHandStruct.RightBones = isOn ? new BonesData(rig.hands.rightHand.points, HandType.right) : null;
             if (isOn)
             {
-                SupportHdCreator.AddToStack(_recordedHandStruct);
+                SupportHdCreator.AddToStack(_recordedHandStruct.RightBones);
             }
             else
             {

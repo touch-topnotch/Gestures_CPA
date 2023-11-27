@@ -4,13 +4,19 @@ using UnityEngine;
 
 namespace Scripts.Hands
 {
-    
-    public class PlayerHands : MonoBehaviour
+
+    public struct FingerPair
+    {
+        public Transform leftFinger;
+        public Transform rightFinger;
+    }
+
+public class PlayerHands : MonoBehaviour
     {
         public HandMesh leftHand;
         public HandMesh rightHand;
         public HandsStruct handsStruct { get; private set;}
-
+      
         public bool IsRecognized { get; private set; }
         public void HandEnabled() => IsRecognized = true;
 
@@ -23,11 +29,11 @@ namespace Scripts.Hands
                 handsStruct = new HandsStruct(leftHand.points, rightHand.points);
             }
         }
-
-        public void SetSameColor(string shader_name, Color color)
+        
+        public void SetSameColor(string param, Color color)
         {
-            leftHand.material.SetColor(shader_name, color);
-            rightHand.material.SetColor(shader_name, color);
+            leftHand.material.SetColor(param, color);
+            rightHand.material.SetColor(param, color);
         }
 
         public void RecoverLeftHand(in HandAnchor anchor)

@@ -17,6 +17,9 @@ namespace Scripts.Hands
         public Transform[] points;
         public HandType handType = HandType.left;
         [SerializeField] private Material _defaultMaterial;
+        public Color selectedFingerColor;
+        public Color selectedEdgeColor;
+            
         private void Start()
         {
             if(_defaultMaterial != null)
@@ -47,6 +50,13 @@ namespace Scripts.Hands
             material.SetColor("_FingerColor_2", color);
             material.SetColor("_FingerColor_3", color);
             material.SetColor("_FingerColor_4", color);
+        }
+
+        public void SetSelectedStyle()
+        {
+            ResetMaterial();
+            material.SetColor("_EdgeColor", selectedEdgeColor);
+            material.SetColor("_FingerColor_1", selectedFingerColor);
         }
         
         public void SetRotations(in Vector3[] rotations)
