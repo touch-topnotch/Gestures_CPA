@@ -28,10 +28,7 @@ namespace Scripts.Tests
             get => _currentName;
             set
             {
-                if (value.Split('_').Length == 1)
-                    _currentName = value + "_0";
-                else
-                    _currentName = value; 
+                _currentName = value; 
                 gestureName.text = _currentName;
                 LockButtons();
             }
@@ -47,6 +44,9 @@ namespace Scripts.Tests
             nameInput.onEndEdit.AddListener(RecordName);
             newGestureButton.onClick.AddListener(NewGestureGroup);
             continueRecording.onClick.AddListener(ContinueRecording);
+
+            Name = Calculations.RandomString(6);
+
         }
 
         private void ReloadToggles()
@@ -59,8 +59,11 @@ namespace Scripts.Tests
 
         private void LockButtons()
         {
-            newGestureButton.interactable = _currentName != "";
-            continueRecording.interactable = _currentName != "";
+            bool interactable = _currentName != "";
+            leftToggle.interactable = interactable;
+            rightToggle.interactable = interactable;
+            newGestureButton.interactable = interactable;
+            continueRecording.interactable = interactable;
         }
 
         public virtual void NewGestureGroup()
@@ -111,6 +114,7 @@ namespace Scripts.Tests
             if (isOn)
             {
                 SupportHdCreator.AddToStack(_recordedHandStruct.LeftBones);
+                Debug.Log("Left Ghost Hand Spawned");
             }
             else
             {

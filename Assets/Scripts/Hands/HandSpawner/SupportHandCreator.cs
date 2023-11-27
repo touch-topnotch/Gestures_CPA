@@ -117,7 +117,7 @@ namespace Scripts.Hands
             if(ActiveHands.Count == 0)
                 return;
             
-            foreach (SupportHandVisualizer hand in ActiveHands)
+            foreach (IHandVisualiser hand in ActiveHands)
             {
                 hand.Hide();
             }
