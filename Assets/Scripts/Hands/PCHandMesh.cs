@@ -32,7 +32,7 @@ namespace Scripts.Hands
                 return;
             }
             
-            points[0].position = Vector3.Lerp(points[0].position, target.rootPos, speed*Time.deltaTime);
+            points[0].localPosition = Vector3.Lerp(points[0].localPosition, target.rootPos, speed*Time.deltaTime);
             for(int i = 0; i < points.Length; i++)
             {
                 points[i].rotation = Quaternion.Lerp(points[i].rotation, target.rotations[i], speed*Time.deltaTime);
