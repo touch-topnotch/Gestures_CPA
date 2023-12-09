@@ -19,13 +19,18 @@ namespace Scripts.Hands
         
         public void SetBonesSmooth(in BonesData data)
         {
+
             target = data;
             if (!isMoved)
                 _onUpdate.AddListener(MoveHand);
         }
 
         private void MoveHand()
-        {  
+        {  if (target == null || target.rotations == null)
+            {
+                StopMoveHand();
+                return;
+            }
             if(Vector3.Distance(points[0].position, target.rootPos) < 0.01f)
             {
                 StopMoveHand();

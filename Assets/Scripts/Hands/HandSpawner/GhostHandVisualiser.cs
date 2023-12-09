@@ -53,8 +53,8 @@ namespace Scripts.Hands
         {
             if (parent != null)
             {
-                transform.position = parent.position;
-                transform.rotation = parent.rotation;
+                transform.localPosition = parent.position;
+                transform.localRotation = parent.rotation;
             }
 
             points = SetTransform(points, data);
@@ -81,7 +81,7 @@ namespace Scripts.Hands
 
         private Transform[] SetTransform(Transform[] transf, in BonesData data)
         {
-            transf[0].position = data.rootPos;
+            transf[0].localPosition = data.rootPos;
             
             var rot = data.rotations;
             if (rot == null)
@@ -90,22 +90,21 @@ namespace Scripts.Hands
             }
             for (int i = 0; i < transf.Length; i++)
             {
-                transf[i].rotation = rot[i];
+                transf[i].localRotation = rot[i];
             }
             return transf;
         }
 
         private void LerpPoints()
         {
-            if (Vector3.Distance(points[0].position, _target[0].position) < 0.01)
+            if (Vector3.Distance(points[0].localPosition, _target[0].localPosition) < 0.01)
             {
                 _onUpdate.RemoveListener(LerpPoints);
             }
 
             for (int i = 0; i < points.Length; i++)
             {
-                points[i].position = Vector3.Lerp(points[i].position, _target[0].position, _speed);
-                points[i].rotation = Quaternion.Lerp(points[i].rotation, _target[0].rotation, _speed);
+                points[i].localRotation = Quaternion.Lerp(points[i].localRotation, _target[i].rotation, _speed);
             }
         }
     }

@@ -23,7 +23,6 @@ namespace Scripts.PlayerLogic
         
         [SerializeField] private RigType _rigType;
         [SerializeField] private AvatarType _avatarType;
-        [SerializeField] private bool _playOffline;
         
         [Header("Avatars")]
         

@@ -83,7 +83,7 @@ namespace Scripts.Tests
         }
         private void SendToCompiler()
         {
-            l.rl(_recordedHandStruct.LeftBones.rootPos.ToString());
+           
             _library.Record(_recordedHandStruct, _currentName);
         }
         

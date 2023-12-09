@@ -18,8 +18,8 @@ namespace Scripts.Gestures
         private GesturesLibrary _library;
 
         private readonly string
-            _jsonPath = "/Users/dmitry057/Projects/UnityProjects/Gestures_CPA/Assets/Resources/Database/GFramesLibrary.json";
-            //_jsonPath = "C:/Unity Projects/Gestures_CPA/Assets/Resources/Database/GFramesLibrary.json";
+            //_jsonPath = "/Users/dmitry057/Projects/UnityProjects/Gestures_CPA/Assets/Resources/Database/GFramesLibrary.json";
+            _jsonPath = "C:/Unity Projects/Gestures_CPA/Assets/Resources/Database/GFramesLibrary.json";
         private FrameAtlas _framesDict = new();
         public GFramesCompiler(GesturesLibrary library)
         {
@@ -71,9 +71,22 @@ namespace Scripts.Gestures
             }
                
             Read();
-            _framesDict.Add(name, frameStruct);
+
+            if (_framesDict.ContainsKey(name))
+            {
+                _framesDict[name] = frameStruct;
+                Debug.Log($"{name} overrided");
+                
+            }
+
+            else
+            {
+                _framesDict.Add(name, frameStruct);
+                Debug.Log($"{name} added");
+            }
+
             var jsonString = JsonConvert.SerializeObject(_framesDict, Formatting.Indented);
-            Debug.Log(jsonString + " written");
+           
             DataChanel.Send(_jsonPath, jsonString);
         }
     }

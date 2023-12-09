@@ -19,7 +19,7 @@ namespace Scripts.Hands
             _type = type;
             if (points == null)
                 return;
-            rootPos = points[0].position;
+            rootPos = points[0].localPosition;
             rotations = VectorConverter.ToQuaternion(points);
             
         }
