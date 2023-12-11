@@ -10,18 +10,12 @@ namespace Scripts.Gestures
             DynamicGesture gesture = new DynamicGesture(name);
             switch(name)
             {
-                case "Water":
-                    gesture.Graphics = new DG_Water(ref gesture.OnFrameDetected);
-                    break;
-                case "Fire":
-                    
-                case "Earth":
-                    gesture.Graphics = new DG_Earth(ref gesture.OnFrameDetected);
+                case "Katana":
+                    gesture.graphics = new DG_Katana();
                     break;
                 default:
-                    Debug.LogWarning("Couldn't find GUI Gesture for gesture: " + name);
+                    Debug.LogWarning("Couldn't find GUI class or its implementation for gesture: " + name + ". If it exists, please override Gesture Factory");
                     break;
-                    
             }
             return gesture;
         }

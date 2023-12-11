@@ -5,28 +5,28 @@ using UnityEngine;
 namespace Scripts.Hands
 {
 
-    public struct FingerPair
-    {
-        public Transform leftFinger;
-        public Transform rightFinger;
-    }
-
-public class PlayerHands : MonoBehaviour
+    public class PlayerHands : MonoBehaviour
     {
         public HandMesh leftHand;
         public HandMesh rightHand;
-        public HandsStruct handsStruct { get; private set;}
+        public bool haveCreator;
+        public SupportHandCreator handCreator;
+       // public HandsStruct handsStruct { get; private set;}
       
         public bool IsRecognized { get; private set; }
         public void HandEnabled() => IsRecognized = true;
-
         public void HandDisabled() => IsRecognized = false;
 
         private void OnValidate()
         {
-            if (leftHand && rightHand)
+            // if (leftHand && rightHand)
+            // {
+            //     handsStruct = new HandsStruct(leftHand.points, rightHand.points);
+            // }
+
+            if (haveCreator && handCreator == null &&GetComponent<SupportHandCreator>())
             {
-                handsStruct = new HandsStruct(leftHand.points, rightHand.points);
+                handCreator = GetComponent<SupportHandCreator>();
             }
         }
         

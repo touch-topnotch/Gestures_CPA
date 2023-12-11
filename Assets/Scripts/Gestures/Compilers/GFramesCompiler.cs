@@ -17,9 +17,7 @@ namespace Scripts.Gestures
         [Inject]
         private GesturesLibrary _library;
 
-        private readonly string
-            //_jsonPath = "/Users/dmitry057/Projects/UnityProjects/Gestures_CPA/Assets/Resources/Database/GFramesLibrary.json";
-            _jsonPath = "C:/Unity Projects/Gestures_CPA/Assets/Resources/Database/GFramesLibrary.json";
+        private readonly string _jsonPath = Application.dataPath + "/Resources/Database/GFramesLibrary.json";
         private FrameAtlas _framesDict = new();
         public GFramesCompiler(GesturesLibrary library)
         {

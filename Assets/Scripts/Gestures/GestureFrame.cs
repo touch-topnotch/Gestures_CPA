@@ -59,14 +59,15 @@ namespace Scripts.Gestures
         }
         private void AddToEnum(HandUsedType hand)
         {
-            if (hand == HandUsedType.LEFT)
-                HandUsed = (HandUsed == HandUsedType.LEFTNRIGHT || HandUsed == HandUsedType.RIGHT)
+            HandUsed = hand switch
+            {
+                HandUsedType.LEFT => HandUsed is HandUsedType.LEFTNRIGHT or HandUsedType.RIGHT
                     ? HandUsedType.LEFTNRIGHT
-                    : HandUsedType.LEFT;
-            else
-                HandUsed = (HandUsed == HandUsedType.LEFTNRIGHT || HandUsed == HandUsedType.LEFT)
+                    : HandUsedType.LEFT,
+                _ => HandUsed is HandUsedType.LEFTNRIGHT or HandUsedType.LEFT
                     ? HandUsedType.LEFTNRIGHT
-                    : HandUsedType.RIGHT;
+                    : HandUsedType.RIGHT
+            };
         }
         private void RemoveFrEnum(HandUsedType hand)
         {
@@ -78,10 +79,7 @@ namespace Scripts.Gestures
 
             if (HandUsed == HandUsedType.LEFTNRIGHT)
             {
-                if (hand == HandUsedType.LEFT)
-                    HandUsed = HandUsedType.RIGHT;
-                else
-                    HandUsed = HandUsedType.LEFT;
+                HandUsed = hand == HandUsedType.LEFT ? HandUsedType.RIGHT : HandUsedType.LEFT;
                 return;
             }
 

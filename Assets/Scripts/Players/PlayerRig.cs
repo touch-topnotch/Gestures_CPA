@@ -30,7 +30,17 @@ namespace Scripts.PlayerLogic
         
         public Transform GetHead() => head;
         public Transform GetBody() => body;
-        
+
+        [Inject]
+        private void Construct(GesturesLibrary library)
+        {
+            if (!transform.gameObject.activeSelf)
+                return;
+            foreach (var gesture in library.DynamicGestures)
+            {
+                gesture.AddGraphics(hands);
+            }
+        }
         protected virtual void Start()
         {
             playerStateChangedEvent = new PlayerStateChangedEvent();

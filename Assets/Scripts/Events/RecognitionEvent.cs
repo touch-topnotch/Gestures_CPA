@@ -8,5 +8,6 @@ namespace Scripts.Events
 
     }
 
-    public delegate void FrameDetected(int frameId, GestureFrame frame);
+    public class FrameDetected : UnityEvent<int, GestureFrame>{}
+//frameId, GestureFrame frame);
 }

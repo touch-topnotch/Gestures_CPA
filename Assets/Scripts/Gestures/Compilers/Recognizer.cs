@@ -13,17 +13,20 @@ namespace Scripts.Gestures
     public class Recognizer: MonoBehaviour
     {
         [Range(0, 1)] public float positionQuality = 0.01f;
-        [Range(0, 0.2f)] public float rotationQuality = 0.1f;
+        [Range(0, 1f)] public float rotationQuality = 0.1f;
         public int qualityDecreaser = 10;
-        private UpdateEvent _onUpdate;
+       
         [SerializeField]
         private PlayerRig _rig;
         
         private RecognitionEvent _onRecognized;
+        private UpdateEvent _onUpdate;
+        
         private List<GestureFrame> _possibleFrames;
         private List<DynamicGesture> _possibleGestures;
         
         private int _curGesture;
+        private bool wasDrawnПриблизительно = false;
         [Inject]
         private void Construct(UpdateEvent onUpdate)
         {
@@ -46,22 +49,37 @@ namespace Scripts.Gestures
         {
             LogPossibleFrames();
             DrawПриблизетльныйGesture();
+            
             var frameId = RecognizeFrame(rotationQuality, positionQuality);
             if (frameId != -1)
             {     
                 _curGesture = frameId;
+     
                 _possibleGestures[_curGesture].FrameRecognized();
+                
                 _onUpdate.RemoveListener(FindStartOfDynamicGesture);
+                HideHands();
                 RecognizeInOneGesture();
+                
             }
         }
 
         private void DrawПриблизетльныйGesture()
         {
+            if (wasDrawnПриблизительно)
+                return;
+            
             var приблизительныйFrameId = RecognizeFrameПриблизительно();
             if (приблизительныйFrameId != -1)
             {
-              //  _player.ownUser.bodyParts.Hands.OverrideHands(_possibleFrames[приблизительныйFrameId].Hands); // fix
+                _rig.hands.handCreator.OverrideHands(_possibleFrames[приблизительныйFrameId].Hands);
+
+                foreach (var hand in _rig.hands.handCreator.activeHands)
+                {
+                    (hand as HandMesh)?.ChangeColorPinPong(HandShaderProps.EdgeColor, new Color(1,1,1,0.1f), new Color(1,1,1,0.5f), 2);
+                }
+
+                wasDrawnПриблизительно = true;
                 l.rl("рисую приблизительный " + _possibleFrames[приблизительныйFrameId].name);
             }
         }
@@ -71,13 +89,16 @@ namespace Scripts.Gestures
             var frameId = RecognizeFrame(rotationQuality, positionQuality);
             if (frameId != -1)
             {
+                HideHands();
                 _possibleGestures[_curGesture].FrameRecognized();
+                
                 if (_possibleGestures[_curGesture].GetGestureFrame() != null)
                 {
                     _possibleFrames = new List<GestureFrame> { _possibleGestures[_curGesture].GetGestureFrame() };
                     return;
                 }
                 _onUpdate.RemoveListener(GoByOneGesture);
+                
                 _onRecognized.Invoke(_possibleGestures[_curGesture]);
             }
         }
@@ -92,10 +113,8 @@ namespace Scripts.Gestures
             for(int i = 0; i < _possibleFrames.Count; i++)
             {
                 if (!_rig.hands.IsRecognized)
-                {
-                    // Debug.Log("Hands not recognized");
                     return -1;
-                }
+                
                 if (RecognizeHand(_possibleFrames[i].Hands.LeftBones, _rig.hands.leftHand.points,  rotQuality, posQuality)
                     && RecognizeHand(_possibleFrames[i].Hands.RightBones, _rig.hands.rightHand.points, rotQuality, posQuality))
                  {
@@ -109,17 +128,12 @@ namespace Scripts.Gestures
         private bool RecognizeHand(in BonesData bonesData, in Transform[] handSkeleton, in float rotQuality, in float posQuality)
         {
             if (bonesData.rotations?.Length != handSkeleton.Length)
-            { 
                 return true;
-            }
 
-           
+
             if (OptimizedDistance(bonesData.rootPos, handSkeleton[0].localPosition) > posQuality)
-            {
                 return false;
-            }
             
-            Debug.Log("pos norm");
             for (int i = 0; i < bonesData.rotations.Length; i++)
             {
 
@@ -127,16 +141,19 @@ namespace Scripts.Gestures
               
                 if (distance > rotQuality)
                 {
-                    Debug.Log($"{handSkeleton[i].localRotation.eulerAngles} - hand, {bonesData.rotations[i].eulerAngles} - bd, {i} - id");
+                    //Debug.Log($"{handSkeleton[i].localRotation.eulerAngles} - hand, {bonesData.rotations[i].eulerAngles} - bd, {i} - id");
                     return false;
                 }
             }
             return true;
         }
-
+        
         public void HideHands()
         {
-           // _player.ownUser.bodyParts.LeftHand.  //fix
+            Debug.Log("Hide Hands");
+            if(_rig.hands.haveCreator)
+                _rig.hands.handCreator.HideHands();
+            wasDrawnПриблизительно = false;
         }
 
         private void LogPossibleFrames()
@@ -150,8 +167,12 @@ namespace Scripts.Gestures
         }
         public static float OptimizedDistance(in Vector3 a, in Vector3 b) =>
             (a.x - b.x) * (a.x - b.x) + (a.y - b.y)* (a.y - b.y) + (a.z - b.z) * (a.z - b.z);
-
+        public static float OptimizedDistance(in Vector4 a, in Vector4 b) =>
+            (a.x - b.x) * (a.x - b.x) + (a.y - b.y)* (a.y - b.y) + (a.z - b.z) * (a.z - b.z) + (a.w - b.w) * (a.w - b.w);
         public static float OptimizedDistance(in Quaternion a, in Quaternion b) =>
             OptimizedDistance(a.eulerAngles, b.eulerAngles);
+
+        public static float OptimizedDistance(in Color a, in Color b) =>
+            OptimizedDistance(new Vector4(a.r, a.g, a.b, a.a), new Vector4(b.r, b.g, b.b, b.a));
     }
 }

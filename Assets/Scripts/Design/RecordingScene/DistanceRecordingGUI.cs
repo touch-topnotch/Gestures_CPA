@@ -80,16 +80,16 @@ namespace Design
                 yield return wait1;
             }
             _player.CurAvatar.hands.SetSameColor("_EdgeColor",  Color.red);
-            _player.CurAvatar.hands.leftHand.SetFingersColor(Color.red);
-            _player.CurAvatar.hands.rightHand.SetFingersColor(Color.red);
+            _player.CurAvatar.hands.leftHand.SetFingersColor(Color.red, false);
+            _player.CurAvatar.hands.rightHand.SetFingersColor(Color.red, false);
             testUserData.bonesData = BonesDistancesRecorder.RecordDistances(_player.CurAvatar.hands.leftHand.points,
                 _player.CurAvatar.hands.rightHand.points);
             UserAdmin.Override(testUserData);
             timerText.text = "RECORDING";
             yield return wait1;
             yield return wait1;
-            _player.CurAvatar.hands.leftHand.SetFingersColor(Color.clear);
-            _player.CurAvatar.hands.rightHand.SetFingersColor(Color.clear);
+            _player.CurAvatar.hands.leftHand.SetFingersColor(Color.clear, false);
+            _player.CurAvatar.hands.rightHand.SetFingersColor(Color.clear, false);
             _player.CurAvatar.hands.SetSameColor("_EdgeColor",  Color.green);
             timerText.text = "COMPLETE!";
             yield return wait1;

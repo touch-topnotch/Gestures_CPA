@@ -8,6 +8,7 @@ namespace Scripts.Hands
         public Vector3 rootPos;
 
         public Quaternion[] rotations;
+        public bool Exists() => rotations == null || rotations.Length == 0;
         private readonly HandType _type;
 
         public BonesData(HandType type)

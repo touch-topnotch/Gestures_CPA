@@ -1,5 +1,8 @@
-﻿using Scripts.Events;
+﻿using System.Threading;
+using System.Timers;
+using Scripts.Events;
 using UnityEngine;
+using Timer = Scripts.Static.Timer;
 
 namespace Scripts.Hands
 {
@@ -8,12 +11,11 @@ namespace Scripts.Hands
         [SerializeField]
         [Range(0, 1)]
         float _speed;
-        private UpdateEvent _onUpdate;
         private Transform[] _target;
 
-        public void Initialize(ref UpdateEvent onUpdate)
+        public void Initialize(ref UpdateEvent _onUpdate)
         {
-            _onUpdate = onUpdate;
+            Construct(_onUpdate);
         }
 
         // public void TimedHand(HandUsedType handType, Transform[] bones, float time = 1f)
@@ -53,7 +55,7 @@ namespace Scripts.Hands
         {
             if (parent != null)
             {
-                transform.localPosition = parent.position;
+                //transform.localPosition = parent.position;
                 transform.localRotation = parent.rotation;
             }
 
@@ -63,7 +65,7 @@ namespace Scripts.Hands
         public void ChangePositionSmooth(BonesData data, Transform parent = null)
         {
             _target = SetTransform(_target, data);
-            _onUpdate.AddListener(LerpPoints);
+            onUpdate.AddListener(LerpPoints);
         }
 
         public Transform[] GetTransforms() => points;
@@ -71,12 +73,20 @@ namespace Scripts.Hands
 
         public void Show()
         {
+            StopPinPongAll();
             gameObject.SetActive(true);
+            ResetMaterial();
         }
 
         public void Hide()
         {
-            gameObject.SetActive(false);
+            StopPinPongAll();
+            SetColorSmooth(HandShaderProps.EdgeColor, Color.clear);
+            SetFingersColor(Color.clear, true);
+            var timer = new Timer(0.4f, () =>
+            {
+                gameObject.SetActive(false);
+            },onUpdate);
         }
 
         private Transform[] SetTransform(Transform[] transf, in BonesData data)
@@ -99,7 +109,7 @@ namespace Scripts.Hands
         {
             if (Vector3.Distance(points[0].localPosition, _target[0].localPosition) < 0.01)
             {
-                _onUpdate.RemoveListener(LerpPoints);
+                onUpdate.RemoveListener(LerpPoints);
             }
 
             for (int i = 0; i < points.Length; i++)
