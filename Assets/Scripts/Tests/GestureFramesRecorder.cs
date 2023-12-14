@@ -18,8 +18,8 @@ namespace Scripts.Tests
         public Button newGestureButton;
         public Button continueRecording;
         public TMP_Text gestureName;
-        public PlayerRig rig;
-        public SupportHandCreator SupportHdCreator;
+        private Rig _rig;
+        private SupportHandCreator _supportHdCreator;
         private GesturesLibrary _library;
         
         private string _currentName = "";
@@ -36,9 +36,12 @@ namespace Scripts.Tests
 
         private HandsStruct _recordedHandStruct= new();
         [Inject]
-        private void Construct (GesturesLibrary library)
+        private void Construct (GesturesLibrary library, Rig rig)
         {
             _library = library;
+            _rig = rig;
+            _supportHdCreator = _rig.hands.handCreator;
+            
             leftToggle.onValueChanged.AddListener(RecordLeft);
             rightToggle.onValueChanged.AddListener(RecordRight);
             nameInput.onEndEdit.AddListener(RecordName);
@@ -68,7 +71,7 @@ namespace Scripts.Tests
 
         public virtual void NewGestureGroup()
         { 
-            SupportHdCreator.CreateNewStack(_recordedHandStruct);
+            _supportHdCreator.CreateNewStack(_recordedHandStruct);
             SendToCompiler();
             ReloadToggles();
             Name = "";
@@ -110,10 +113,10 @@ namespace Scripts.Tests
 
         public virtual void RecordLeft(bool isOn)
         {
-            _recordedHandStruct.LeftBones = isOn ? new BonesData(rig.hands.leftHand.points, HandType.left) : null;
+            _recordedHandStruct.LeftBones = isOn ? new BonesData(_rig.hands.leftHand.points, HandType.left) : null;
             if (isOn)
             {
-                SupportHdCreator.AddToStack(_recordedHandStruct.LeftBones);
+                _supportHdCreator.AddToStack(_recordedHandStruct.LeftBones);
                 Debug.Log("Left Ghost Hand Spawned");
             }
             else
@@ -124,10 +127,10 @@ namespace Scripts.Tests
 
         public virtual void RecordRight(bool isOn)
         {
-            _recordedHandStruct.RightBones = isOn ? new BonesData(rig.hands.rightHand.points, HandType.right) : null;
+            _recordedHandStruct.RightBones = isOn ? new BonesData(_rig.hands.rightHand.points, HandType.right) : null;
             if (isOn)
             {
-                SupportHdCreator.AddToStack(_recordedHandStruct.RightBones);
+                _supportHdCreator.AddToStack(_recordedHandStruct.RightBones);
             }
             else
             {

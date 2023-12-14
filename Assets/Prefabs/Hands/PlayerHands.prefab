@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2134128960902916278}
   - component: {fileID: 6242100545866474090}
+  - component: {fileID: 1335718237236055051}
   m_Layer: 0
   m_Name: PlayerHands
   m_TagString: Untagged
@@ -32,7 +33,7 @@ Transform:
   - {fileID: 6828829026396354236}
   - {fileID: 6885737513856040743}
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6242100545866474090
 MonoBehaviour:
@@ -48,6 +49,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftHand: {fileID: 3606007362969843908}
   rightHand: {fileID: 8252357815959352178}
+  handCreator: {fileID: 1335718237236055051}
+--- !u!114 &1335718237236055051
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1915710736118543190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c5e58f73e04458e87fab9b4c00b37e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 0
+  LeftHand: {fileID: 2340536852447091744, guid: 91e14f9b191a14856880ce3e40760264,
+    type: 3}
+  RightHand: {fileID: 6834515167605928210, guid: fcd2864247bb04f7eb3d6d26f1978e93,
+    type: 3}
+  Bones: {fileID: 783963858647521541, guid: 51a732783261da841af89ffe43e0bf50, type: 3}
+  Parent: {fileID: 2134128960902916278}
 --- !u!1001 &2781608544470148539
 PrefabInstance:
   m_ObjectHideFlags: 0

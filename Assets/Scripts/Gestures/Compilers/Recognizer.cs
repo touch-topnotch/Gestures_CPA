@@ -16,8 +16,8 @@ namespace Scripts.Gestures
         [Range(0, 1f)] public float rotationQuality = 0.1f;
         public int qualityDecreaser = 10;
        
-        [SerializeField]
-        private PlayerRig _rig;
+        
+        private Rig _rig;
         
         private RecognitionEvent _onRecognized;
         private UpdateEvent _onUpdate;
@@ -28,8 +28,9 @@ namespace Scripts.Gestures
         private int _curGesture;
         private bool wasDrawnПриблизительно = false;
         [Inject]
-        private void Construct(UpdateEvent onUpdate)
+        private void Construct(UpdateEvent onUpdate, Rig rig)
         {
+            _rig = rig;
             _onUpdate = onUpdate;
         }
         
@@ -151,8 +152,7 @@ namespace Scripts.Gestures
         public void HideHands()
         {
             Debug.Log("Hide Hands");
-            if(_rig.hands.haveCreator)
-                _rig.hands.handCreator.HideHands();
+             _rig.hands.handCreator.HideHands();
             wasDrawnПриблизительно = false;
         }
 

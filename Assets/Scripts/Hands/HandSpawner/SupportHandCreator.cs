@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Scripts.Events;
 using Scripts.Gestures;
 using Scripts.Static;
@@ -16,11 +17,17 @@ namespace Scripts.Hands
         public GameObject Bones;
         public Transform Parent;
         
-        [HideInInspector]
         public List<IHandVisualiser> activeHands = new List<IHandVisualiser>();
-        [HideInInspector]
         public List<IHandVisualiser> hiddenHands = new List<IHandVisualiser>();
         private UpdateEvent _onUpdate;
+
+        private void OnValidate()
+        {
+            if (Parent == null)
+            {
+                Parent = transform;
+            }
+        }
 
         [Inject]
         private void Construct(UpdateEvent onUpdate)

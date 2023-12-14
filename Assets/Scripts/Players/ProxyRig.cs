@@ -1,6 +1,6 @@
 namespace Scripts.PlayerLogic
 {
-    public class ProxyRig: PlayerRig
+    public class ProxyRig: Rig
     {
         
     }
