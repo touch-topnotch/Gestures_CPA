@@ -40,7 +40,7 @@ namespace Scripts.Tests
         {
             _library = library;
             _rig = rig;
-            _supportHdCreator = _rig.hands.handCreator;
+            _supportHdCreator = _rig.GetHands.handCreator;
             
             leftToggle.onValueChanged.AddListener(RecordLeft);
             rightToggle.onValueChanged.AddListener(RecordRight);
@@ -113,7 +113,7 @@ namespace Scripts.Tests
 
         public virtual void RecordLeft(bool isOn)
         {
-            _recordedHandStruct.LeftBones = isOn ? new BonesData(_rig.hands.leftHand.points, HandType.left) : null;
+            _recordedHandStruct.LeftBones = isOn ? new BonesData(_rig.GetHands.leftHand.points, HandType.left) : null;
             if (isOn)
             {
                 _supportHdCreator.AddToStack(_recordedHandStruct.LeftBones);
@@ -127,7 +127,7 @@ namespace Scripts.Tests
 
         public virtual void RecordRight(bool isOn)
         {
-            _recordedHandStruct.RightBones = isOn ? new BonesData(_rig.hands.rightHand.points, HandType.right) : null;
+            _recordedHandStruct.RightBones = isOn ? new BonesData(_rig.GetHands.rightHand.points, HandType.right) : null;
             if (isOn)
             {
                 _supportHdCreator.AddToStack(_recordedHandStruct.RightBones);

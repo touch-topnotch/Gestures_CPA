@@ -39,7 +39,7 @@ namespace Scripts.Gestures
         {
             if (_currentGesture >= Frames.Count)
             {
-               // AllFramesDetected();
+                // AllFramesDetected();
                 return;
             }
 
@@ -61,6 +61,8 @@ namespace Scripts.Gestures
 
         public void AddGraphics(PlayerHands hands)
         {
+            if (graphics == null)
+                return;
             graphics.Construct(hands);
             onFrameDetected.AddListener(graphics.ShowEffects);
         }

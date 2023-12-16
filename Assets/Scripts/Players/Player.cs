@@ -135,8 +135,8 @@ namespace Scripts.PlayerLogic
          //   _onUpdate = onUpdate;
             if (IsOwner && IsClient)
             {
-                _pcRig.movement.Construct(onUpdate);
-                _xrRig.movement.Construct(onUpdate);
+                _pcRig.GetMovement.Construct(onUpdate);
+                _xrRig.GetMovement.Construct(onUpdate);
             }
         }
         
@@ -169,7 +169,7 @@ namespace Scripts.PlayerLogic
 
             if (_rigType != RigType.NoRig)
             {
-                _curRig.movement.StartMove();
+                _curRig.GetMovement.StartMove();
             }
         
             StartWatch();
@@ -198,10 +198,10 @@ namespace Scripts.PlayerLogic
         {
             if (_rigType != RigType.NoRig)
             {
-                _anchors.Head.position = CurRig.GetHead().position;
-                _anchors.Head.rotation = CurRig.GetHead().rotation;
-                _anchors.Body.position = CurRig.GetBody().position;
-                _anchors.Body.rotation = CurRig.GetBody().rotation;
+                _anchors.Head.position = CurRig.GetHead.position;
+                _anchors.Head.rotation = CurRig.GetHead.rotation;
+                _anchors.Body.position = CurRig.GetBody.position;
+                _anchors.Body.rotation = CurRig.GetBody.rotation;
             }
             
             CurAvatar.head.position = _anchors.Head.position;
