@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -17,10 +18,7 @@ namespace Scripts.Static
             if (value == null)
                 return new Vector3();
             var words = value.Split(", ");
-            Vector3 vec = new Vector3();
-            vec.x = float.Parse(words[0]);
-            vec.y = float.Parse(words[1]);
-            vec.z = float.Parse(words[2]);
+            Vector3 vec = ParseVec3(words[0], words[1], words[2]);
             return vec;
         }
         public static Vector3[] ToVector3(string[] value)
@@ -33,9 +31,7 @@ namespace Scripts.Static
             for (int i = 0; i < value.Length; i++)
             {
                 var words = value[i].Split(", ");
-                jArr[i].x = float.Parse(words[0]);
-                jArr[i].y = float.Parse(words[1]);
-                jArr[i].z = float.Parse(words[2]);
+                jArr[i] = ParseVec3(words[0], words[1], words[2]);
             }
 
             return jArr;
@@ -51,10 +47,7 @@ namespace Scripts.Static
             for (int i = 0; i < value.Length; i++)
             {
                 var words = value[i].Split(", ");
-                var vec = new Vector3();
-                vec.x = float.Parse(words[0]);
-                vec.y = float.Parse(words[1]);
-                vec.z = float.Parse(words[2]);
+                var vec = ParseVec3(words[0], words[1], words[2]);
                 jArr[i] = Quaternion.Euler(vec);
             }
 
@@ -154,7 +147,16 @@ namespace Scripts.Static
             return positions;
         }
 
+        public static Vector3 ParseVec3(string x, string y, string z)
+        {
+            var vec = new Vector3();
+            vec.x = float.Parse(x, CultureInfo.InvariantCulture);
+            vec.y = float.Parse(y, CultureInfo.InvariantCulture);
+            vec.z = float.Parse(z, CultureInfo.InvariantCulture);
+            return vec;
+        }
 
+       
         public static void LogVec3(Vector3 vec)
         {
             Debug.Log(string.Format("{0:N2}", vec.x) +", "+ string.Format("{0:N2}", vec.y)+", " + string.Format("{0:N2}", vec.z));
