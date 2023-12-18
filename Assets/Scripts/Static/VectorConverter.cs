@@ -196,35 +196,6 @@ namespace Scripts.Static
                 rounded = 36;
             return (char)(Math.Clamp(rounded, 36, 65536));
         }
-        
-        public static Quaternion[] OldCodeToQuat(string[] vec)
-        {
-            if(vec == null || vec.Length == 0)
-                return null;
-            
-            var jArr = new Quaternion[vec.Length];
-            // String example: 
-            for(int i = 0; i < vec.Length; i++)
-            {
-                jArr[i] = Quaternion.Euler(OldCodeToVec(vec[i]));
-            }
-            return jArr;
-        }
 
-        public static Vector3 OldCodeToVec(string vec)
-        {
-            // "0.0000, 0.0000, 0.0000" to vector;
-            if (vec == null)
-                return Vector3.zero;
-            
-            var s = vec.Split(", ");
-            return new Vector3(
-                float.Parse(s[0],
-                    CultureInfo.InvariantCulture.NumberFormat),
-                float.Parse(s[1],
-                    CultureInfo.InvariantCulture.NumberFormat), 
-                float.Parse(s[2],
-                    CultureInfo.InvariantCulture.NumberFormat));
-        }
     }
 }
