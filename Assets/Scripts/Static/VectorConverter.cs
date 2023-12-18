@@ -11,50 +11,46 @@ namespace Scripts.Static
     
     public class VectorConverter : JsonConverter<Vector3>
     {
-        public static int quality = 4;
-        public static Vector3 ToVector3(string value)
+        private const float unicodeOverDeg = 181.9444444444f;
+        private const float degOverUnicode = 0.005496183206f;
+        
+       
+        public static Vector3[] CodeToVector3RotArray(string value)
         {
-
-            if (value == null)
-                return new Vector3();
-            var words = value.Split(", ");
-            Vector3 vec = ParseVec3(words[0], words[1], words[2]);
-            return vec;
-        }
-        public static Vector3[] ToVector3(string[] value)
-        {
-            if (value == null || value.Length == 0)
+            if (string.IsNullOrEmpty(value))
             {
                 return null;
             }
-            Vector3[] jArr = new Vector3[value.Length];
-            for (int i = 0; i < value.Length; i++)
+
+            int length = value.Length / 3;
+            Vector3[] jArr = new Vector3[length];
+            for (int i = 0; i < length; i++)
             {
-                var words = value[i].Split(", ");
-                jArr[i] = ParseVec3(words[0], words[1], words[2]);
+         
+                jArr[i] = CodeToVec3Rot(value[i*3], value[i*3+1], value[i*3+2]);
             }
 
             return jArr;
         }
-
-        public static Quaternion[] ToQuaternion(string[] value)
+        public static Quaternion[] CodeToQuaternionArray(string value)
         {
-            if (value == null || value.Length == 0)
+            if (string.IsNullOrEmpty(value))
             {
                 return null;
             }
-            Quaternion[] jArr = new Quaternion[value.Length];
-            for (int i = 0; i < value.Length; i++)
-            {
-                var words = value[i].Split(", ");
-                var vec = ParseVec3(words[0], words[1], words[2]);
-                jArr[i] = Quaternion.Euler(vec);
+            
+            var vec3s = CodeToVector3RotArray(value);
+            var quaternions = new Quaternion[vec3s.Length];
+            for (int i = 0; i < vec3s.Length; i++)
+            {   
+                
+                quaternions[i] = Quaternion.Euler(vec3s[i]);
             }
 
-            return jArr;
+            return quaternions;
         }
 
-        public static Quaternion[] ToQuaternion(in Transform[] points)
+        public static Quaternion[] TransfArrayToQuaternionArray(in Transform[] points)
         {
             if( points == null || points.Length == 0)
             {
@@ -68,44 +64,41 @@ namespace Scripts.Static
 
             return jArr;
         }
-
-        public static string ToString(Vector3 value)
-        {
-            return Round(value.x) + ", " + Round(value.y) + ", " + Round(value.z);
-        }
-        public static string[] ToString(Vector3[] value)
+        
+        public static string Vec3RotArrayToCode(Vector3[] value)
         {
             
             if (value == null || value.Length == 0)
             {
                 return null;
             }
-            string[] jArr = new string[value.Length];
+            string s = "";
             for (int i = 0; i < value.Length; i++)
             {
-                jArr[i] = ToString(value[i]);
+                s += VecToCodeRot(value[i]);
             }
 
-            return jArr;
+            return s;
         }
-        public static string[] ToString(Quaternion[] value)
+        public static string QuaternionArrayToCode(Quaternion[] value)
         {
             
             if (value == null || value.Length == 0)
             {
                 return null;
             }
-            string[] jArr = new string[value.Length];
+
+            string s = "";
             for (int i = 0; i < value.Length; i++)
             {
-                jArr[i] = ToString(value[i].eulerAngles);
+                s += VecToCodeRot(value[i].eulerAngles);
             }
 
-            return jArr;
+            return s;
         }
 
         
-        private static string Round(float value) => string.Format("{0:N"+$"{quality}"+"}", value);
+       // private static string Round(float value) => string.Format("{0:N"+$"{quality}"+"}", value);
 
         public override void WriteJson(JsonWriter writer, Vector3 value, JsonSerializer serializer)
         { ;
@@ -147,18 +140,91 @@ namespace Scripts.Static
             return positions;
         }
 
-        public static Vector3 ParseVec3(string x, string y, string z)
+        public static Vector3 CodeToVec3Rot(string s) => CodeToVec3Rot(s[0], s[1], s[2]);
+        public static Vector3 CodeToVec3Rot(char x, char y, char z) // 36, 65536
         {
             var vec = new Vector3();
-            vec.x = float.Parse(x, CultureInfo.InvariantCulture);
-            vec.y = float.Parse(y, CultureInfo.InvariantCulture);
-            vec.z = float.Parse(z, CultureInfo.InvariantCulture);
+            
+            vec.x = (x-36) * degOverUnicode;
+            vec.y = (y-36) * degOverUnicode;
+            vec.z = (z-36) * degOverUnicode;
+            return vec;
+        }
+        public static Vector3 CodeToVec3Pos(string s) => CodeToVec3Pos(s[0], s[1], s[2]);
+        public static Vector3 CodeToVec3Pos(char x, char y, char z)
+        {
+            var vec = new Vector3();
+            vec.x = (x - 32750) / 10000f;
+            vec.y = (y - 32750) / 10000f;
+            vec.z = (z - 32750) / 10000f;
             return vec;
         }
 
-        public static void LogVec3(Vector3 vec)
+        public static string VecToCodeRot(Vector3 vec)
         {
-            Debug.Log(string.Format("{0:N2}", vec.x) +", "+ string.Format("{0:N2}", vec.y)+", " + string.Format("{0:N2}", vec.z));
+            var s = "";
+            s += FloatToChar(vec.x);
+            s += FloatToChar(vec.y);
+            s += FloatToChar(vec.z);
+            return s;
+        }
+        public static string VecToCodePos(Vector3 vec)
+        {
+            var s = "";
+            s += UnsignedFloatToChar(vec.x);
+            s += UnsignedFloatToChar(vec.y);
+            s += UnsignedFloatToChar(vec.z);
+            return s;
+        }
+
+        private static char FloatToChar(float f)
+        {
+            f *= unicodeOverDeg;
+            f += 36;
+            return (char)((int)f);
+        }
+        
+        private static char UnsignedFloatToChar(float f) // range [-3.2750, 3.2750] - optimal way for save v3 position
+        {
+            if (f < -3.2750 || f > 3.2750)
+            {
+                Debug.LogError("UnsignedFloatToChar: float out of range [-3.2750, 3.2750]");
+            }
+
+            var rounded = Math.Round(f, 4) * 10000 + 32750;
+            if (rounded is >= 0 and < 36)
+                rounded = 36;
+            return (char)(Math.Clamp(rounded, 36, 65536));
+        }
+        
+        public static Quaternion[] OldCodeToQuat(string[] vec)
+        {
+            if(vec == null || vec.Length == 0)
+                return null;
+            
+            var jArr = new Quaternion[vec.Length];
+            // String example: 
+            for(int i = 0; i < vec.Length; i++)
+            {
+                jArr[i] = Quaternion.Euler(OldCodeToVec(vec[i]));
+            }
+            return jArr;
+        }
+
+        public static Vector3 OldCodeToVec(string vec)
+        {
+            // "0.0000, 0.0000, 0.0000" to vector;
+            if (vec == null)
+                return Vector3.zero;
+            
+            var s = vec.Split(", ");
+            return new Vector3(
+                float.Parse(s[0],
+                    CultureInfo.InvariantCulture.NumberFormat),
+                float.Parse(s[1],
+                    CultureInfo.InvariantCulture.NumberFormat), 
+                float.Parse(s[2],
+                    CultureInfo.InvariantCulture.NumberFormat));
         }
     }
 }

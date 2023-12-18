@@ -21,7 +21,7 @@ namespace Scripts.Hands
             if (points == null)
                 return;
             rootPos = points[0].localPosition;
-            rotations = VectorConverter.ToQuaternion(points);
+            rotations = VectorConverter.TransfArrayToQuaternionArray(points);
             
         }
 

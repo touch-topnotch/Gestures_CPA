@@ -20,6 +20,8 @@ namespace Scripts.Gestures
             ReadFrames();
             Debug.Log("Library has initialized:\nDynamic gestures count: " + DynamicGestures.Count + "\nGesture frames count: " + GestureFrames.Count);
         }
+
+       
         public void ReadFrames()
         {
             _framesCompiler.Read();
@@ -45,9 +47,17 @@ namespace Scripts.Gestures
                 bool f = false;
                 foreach (DynamicGesture dynamicGesture in DynamicGestures)
                 {
+                    
                     if (dynamicGesture.Name == frame.baseName)
                     {
-                        l.rl("Add " + frame.name + " to " + dynamicGesture.Name);
+                        var rots = "";
+                        for (int k = 0; k < 26; k++)
+                        {
+                            rots += " " + frame.Hands.LeftBones?.rotations?[k];
+                            rots += " " + frame.Hands.RightBones?.rotations?[k];
+                        }
+
+                        l.rl("Add " + frame.name + " to " + dynamicGesture.Name + rots);
                         dynamicGesture.AddFrame(frame);
                         return;
                     }
