@@ -156,7 +156,6 @@ namespace Scripts.Static
             return vec;
         }
 
-       
         public static void LogVec3(Vector3 vec)
         {
             Debug.Log(string.Format("{0:N2}", vec.x) +", "+ string.Format("{0:N2}", vec.y)+", " + string.Format("{0:N2}", vec.z));

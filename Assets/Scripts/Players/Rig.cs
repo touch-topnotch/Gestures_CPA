@@ -45,8 +45,7 @@ namespace Scripts.PlayerLogic
       
             foreach (var gesture in library.DynamicGestures)
             {
-                print(gesture);
-                gesture.AddGraphics(hands);
+                gesture.AddGraphicsToRigHands(hands);
             }
         }
         protected virtual void Start()

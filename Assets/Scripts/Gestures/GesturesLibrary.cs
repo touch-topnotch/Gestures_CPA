@@ -62,7 +62,8 @@ namespace Scripts.Gestures
 
         private void AddDGesturesToLibrary(GestureFrame frame)
         {
-            DynamicGestures.Add(GestureFactory.SetDynamicGesture(frame.baseName));
+      
+            DynamicGestures.Add(     new DynamicGesture(frame.baseName));
             DynamicGestures[^1].AddFrame(frame);
         }
         public DynamicGesture GetDynamicGesture(string name)
