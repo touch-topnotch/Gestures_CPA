@@ -35,13 +35,16 @@ namespace Scripts.Gestures.GGUI
     public class DG_Katana : GUIGesture
     {
         private Transform _katana;
+        private DissolveSlider _dissolveSlider;
 
         protected override void Construct()
         {
             _katana = LoadAsset(Resources.Load("Effects/Melee/Katana/KatanaPrefab"),
-                hands.rightHand.points[3], new Vector3(0, 0, 0)).transform;
+                hands.rightHand.points[0], new Vector3(-0.0391f,-0.034f,0.0696f)).transform;
+            _dissolveSlider = _katana.gameObject.GetComponent<DissolveSlider>();
+            
             _katana.gameObject.SetActive(true);
-            //_katana.localPosition  = new Vector3(-0.04f,-0.032f,-0.025f);
+            _katana.localPosition  = new Vector3(-0.0391f,-0.034f,0.0696f);
             _katana.eulerAngles = new Vector3(0, -90, 0);
             Debug.Log("Katana assets added!");
         }
@@ -56,9 +59,18 @@ namespace Scripts.Gestures.GGUI
                 case 1:
                     hands.rightHand.SetFingersColor(Color.cyan, true);
                     _katana.gameObject.SetActive(true);
+                    _dissolveSlider.UpdateDisolveValue(0.8f);
                     break;
                 case 2:
-                
+      
+                    break;
+                case 3:
+                    _dissolveSlider.UpdateDisolveValue(0.7f);
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    _dissolveSlider.UpdateDisolveValue(0f);
                     break;
             }
         }
