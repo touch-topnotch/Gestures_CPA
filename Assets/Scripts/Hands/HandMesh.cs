@@ -45,6 +45,7 @@ namespace Scripts.Hands
 
         public void ResetMaterial()
         {
+            
             material.SetColor(HandShaderProps.MainColor, _defaultMaterial.GetColor(HandShaderProps.MainColor));
             material.SetColor(HandShaderProps.EdgeColor, _defaultMaterial.GetColor(HandShaderProps.EdgeColor));
             material.SetFloat(HandShaderProps.EdgeHighlightPower, _defaultMaterial.GetFloat(HandShaderProps.EdgeHighlightPower));
@@ -58,6 +59,7 @@ namespace Scripts.Hands
             material.SetFloat(HandShaderProps.FadeStart, _defaultMaterial.GetFloat(HandShaderProps.FadeStart));
             material.SetFloat(HandShaderProps.NoiseScale, _defaultMaterial.GetFloat(HandShaderProps.NoiseScale));
             material.SetFloat(HandShaderProps.NoiseStrength, _defaultMaterial.GetFloat(HandShaderProps.NoiseStrength));
+            
         }
 
         public void SetFingersColor(in Color color, in bool isSmooth = false)
