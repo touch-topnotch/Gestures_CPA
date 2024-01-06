@@ -8,7 +8,6 @@ namespace Scripts.Installers
     public class EventInstaller: MonoInstaller
     {
         public UpdateEvent OnFrameUpdated = new UpdateEvent();
-
         public override void InstallBindings()
         {
             Container.Bind<UpdateEvent>().FromInstance(OnFrameUpdated).AsSingle().NonLazy();
@@ -16,7 +15,6 @@ namespace Scripts.Installers
         }
         private void Update()
         {
-            
             OnFrameUpdated?.Invoke();
         }
     }

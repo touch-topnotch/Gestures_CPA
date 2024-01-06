@@ -90,7 +90,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 56186ccf27ad7864681108ed88349071,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 2125743363057422272}
+      addedObject: {fileID: 7223884571983676117}
   m_SourcePrefab: {fileID: 100100000, guid: 56186ccf27ad7864681108ed88349071, type: 3}
 --- !u!4 &206051772134153024 stripped
 Transform:
@@ -212,7 +212,7 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 5915612819736661059}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2125743363057422272
+--- !u!114 &7223884571983676117
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -221,10 +221,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 6834515167605928210}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8aa608b0be70471b87f00d2485de8d2a, type: 3}
+  m_Script: {fileID: 11500000, guid: 9870c5d971d94c758632feaa1f7de5ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  material: {fileID: 2100000, guid: 05b72819eb78bf34db07d4a07a3f2a80, type: 2}
+  _handMaterialType: 1
+  _handType: 1
   points:
   - {fileID: 6333295184795449720}
   - {fileID: 4858860606524923928}
@@ -252,10 +253,10 @@ MonoBehaviour:
   - {fileID: 8105237678319585367}
   - {fileID: 8388024825944538493}
   - {fileID: 5530183303678761787}
+  material: {fileID: 2100000, guid: 05b72819eb78bf34db07d4a07a3f2a80, type: 2}
   _defaultMaterial: {fileID: 2100000, guid: 7fa0219fb7a69c6488dfd080f82940b4, type: 2}
   selectedFingerColor: {r: 0, g: 0, b: 0, a: 0}
   selectedEdgeColor: {r: 0, g: 0, b: 0, a: 0}
-  _speed: 0.3
 --- !u!4 &7183568902862002071 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -5644888990184678444, guid: 56186ccf27ad7864681108ed88349071,

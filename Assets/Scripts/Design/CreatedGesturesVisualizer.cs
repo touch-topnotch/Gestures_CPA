@@ -12,7 +12,7 @@ namespace Scripts.Design
       
 
         public ScrollRect scrollRect;
-        public SupportHandCreator creator;
+        public SupportHandVisualiser creator;
         public GameObject togglePrefab;
         public float waitTime;
 

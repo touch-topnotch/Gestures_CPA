@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEngine;
 
 
-[CustomEditor(typeof(SupportHandCreator))]
+[CustomEditor(typeof(SupportHandVisualiser))]
 public class CustomEnumFieldsEditor : Editor
 {
     SerializedProperty type;

@@ -7,14 +7,21 @@ using UnityEngine;
 namespace Scripts.Gestures
 {
 
-    
+    public enum GestureType
+    {
+        CONTROL,
+        ABILITY,
+        HIT,
+        ULTIMATE,
+    }
     public class DynamicGesture
     {
     
         public readonly string Name;
         public readonly FrameDetected onFrameDetected = new();
         public List<GestureFrame> Frames = new();
-        public GUIGesture graphics;
+        private GUIGesture graphics;
+        private GestureType _gestureType;
         private int _currentGesture = 0;
         public DynamicGesture(string name)
         {
@@ -29,9 +36,20 @@ namespace Scripts.Gestures
         
         public GestureFrame GetGestureFrame() => _currentGesture < Frames.Count ? Frames[_currentGesture] : null;
         
+        public GestureFrame GetNextFrameOf(GestureFrame frame)
+        {
+            if (frame == null)
+                return Frames[0];
+            
+            var index = Frames.IndexOf(frame);
+            if (index == -1)
+                return null;
+            
+            return index + 1 < Frames.Count ? Frames[index + 1] : null;
+        }
         public void FrameRecognized()
         {
-            Debug.Log($"{GetGestureFrame().name} recognized!");
+            Debug.Log($"Frame {GetGestureFrame().name} recognized!");
             onFrameDetected?.Invoke(_currentGesture, GetGestureFrame());
             NextFrame();
         }
@@ -47,7 +65,7 @@ namespace Scripts.Gestures
             _currentGesture += 1;
         }
 
-        public void AllFramesDetected() => _currentGesture = 0;
+        public void AllFramesDetected()=> _currentGesture = 0;
 
         public void LogFrames()
         {

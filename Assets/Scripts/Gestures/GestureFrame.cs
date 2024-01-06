@@ -1,60 +1,53 @@
 using JetBrains.Annotations;
 using Scripts.Hands;
 using UnityEngine;
+using UnityEngine.XR;
 
 namespace Scripts.Gestures
 {
     public enum HandUsedType
     {
-        NULL,
         LEFT,
         RIGHT,
-        LEFTNRIGHT
+        LEFTNRIGHT,
+        NULL
     }
 
     public class HandsStruct
     {
-        public HandUsedType HandUsed { get; private set; } = HandUsedType.NULL;
-        
-        private BonesData _left;
-        private BonesData _right;
+        public HandUsedType HandUsed { get; private set; }
 
+        private BonesData _left = new BonesData(HandType.left);
+        private BonesData _right = new BonesData(HandType.right);
+        public HandsStruct()
+        {
+            HandUsed = HandUsedType.NULL;
+        }
+        
         public HandsStruct(
-            Transform[] leftPoints = null,
-            Transform[] rightPoints = null
+            BonesData left,
+            BonesData right
         )
         {
-            LeftBones = new BonesData(leftPoints, HandType.left);
-            RightBones = new BonesData(rightPoints, HandType.right);
+            LeftBones = left;
+            RightBones = right;
         }
         public BonesData LeftBones
         {
-            get => GetHandPoints(_left, HandUsedType.LEFT);
+            get => _left;
             set => _left = SetHandPoints(value, HandUsedType.LEFT);
         }
         public BonesData RightBones
         {
-            
-            get => GetHandPoints(_right, HandUsedType.RIGHT);
+            get => _right;
             set => _right = SetHandPoints(value, HandUsedType.RIGHT);
-        }
-        private BonesData GetHandPoints(BonesData data, HandUsedType handUsed)
-        {
-            if (HandUsed == HandUsedType.NULL)
-                return null;
-            return data;
         }
         private BonesData SetHandPoints(BonesData points, HandUsedType handUsed)
         {
-            if (points == null)
-            {
-                RemoveFrEnum(handUsed);
-            }
-            else
-            {
+            if (points.Exists())
                 AddToEnum(handUsed);
-            }
-
+            else 
+                RemoveFrEnum(handUsed);
             return points;
         }
         private void AddToEnum(HandUsedType hand)
@@ -71,6 +64,7 @@ namespace Scripts.Gestures
         }
         private void RemoveFrEnum(HandUsedType hand)
         {
+            
             if (hand == HandUsedType.LEFTNRIGHT)
             {
                 HandUsed = HandUsedType.NULL;
@@ -91,6 +85,11 @@ namespace Scripts.Gestures
     }
     public class GestureFrame
     {
+        public GestureFrame(string name, HandsStruct handsStruct)
+        {  
+            Hands = handsStruct;
+            this.name = name;
+        }
         private string _name;
         public string baseName { get; private set; }
 
@@ -104,7 +103,7 @@ namespace Scripts.Gestures
             }
         }
 
-        public HandsStruct Hands = new();
+        public HandsStruct Hands;
     }
 }
 

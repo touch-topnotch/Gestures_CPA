@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Scripts.Databases;
+using Scripts.Hands;
 using UnityEngine;
 using Scripts.Static;
 using Scripts.Network;
@@ -35,15 +36,20 @@ namespace Scripts.Gestures
 
             foreach (KeyValuePair<string, DBFrameStruct> jsonFrame in reddenFrames)
             {
-                GestureFrame frame = new GestureFrame
-                {
-                    name = jsonFrame.Key
-                };
-                frame.Hands.LeftBones.rotations = VectorConverter.CodeToQuaternionArray(jsonFrame.Value.left_rots);
-                frame.Hands.RightBones.rotations = VectorConverter.CodeToQuaternionArray(jsonFrame.Value.right_rots);
-                frame.Hands.LeftBones.rootPos = VectorConverter.CodeToVec3Pos(jsonFrame.Value.left_pos);
-                frame.Hands.RightBones.rootPos = VectorConverter.CodeToVec3Pos(jsonFrame.Value.right_pos);
-                
+                GestureFrame frame = new GestureFrame(
+                    jsonFrame.Key,
+                    new HandsStruct(
+                        new BonesData(
+                            type: HandType.left,
+                            rotations: VectorConverter.CodeToQuaternionArray(jsonFrame.Value.left_rots),
+                            rootPos: VectorConverter.CodeToVec3Pos(jsonFrame.Value.left_pos)
+                        ),
+                        new BonesData(
+                            type: HandType.right,
+                            rotations: VectorConverter.CodeToQuaternionArray(jsonFrame.Value.right_rots),
+                            rootPos: VectorConverter.CodeToVec3Pos(jsonFrame.Value.right_pos)
+                        )
+                    ));
                 _library.SetGestureFrame(frame);
             }
 
