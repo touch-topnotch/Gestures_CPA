@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Unity.XR.CoreUtils;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.XR.Hands;
 
@@ -23,7 +24,8 @@ namespace Scripts.Hands
         [SerializeField]
         XROrigin m_Origin;
 
-        [SerializeField] private PlayerHands m_PlayerHands;
+        [SerializeField] 
+        private PlayerHands m_PlayerHands;
         
         public bool drawMeshes
         {
@@ -61,6 +63,11 @@ namespace Scripts.Hands
         VelocityType m_VelocityType;
         VelocityType m_PreviousVelocityType;
 
+        [SerializeField]
+        UnityEvent m_OnEnabled;
+        [SerializeField] 
+        UnityEvent m_OnDisabled;
+
         XRHandSubsystem m_Subsystem;
         HandGameObjects m_LeftHandGameObjects;
         HandGameObjects m_RightHandGameObjects;
@@ -73,6 +80,7 @@ namespace Scripts.Hands
             if (m_UseOptimizedControls)
                 InputSystem.settings.SetInternalFeatureFlag("USE_OPTIMIZED_CONTROLS", true);
 #endif // ENABLE_INPUT_SYSTEM
+           
         }
 
         protected void OnEnable()
@@ -158,7 +166,14 @@ namespace Scripts.Hands
         {
             if (handGameObjects == null)
                 return;
-
+            if (isTracked)
+            {
+                m_OnEnabled?.Invoke();
+            }
+            else
+            {
+                m_OnDisabled?.Invoke();
+            }
             handGameObjects.ToggleDrawMesh(m_DrawMeshes && isTracked);
             handGameObjects.ToggleDebugDrawJoints(m_DebugDrawJoints && isTracked);
             handGameObjects.SetVelocityType(isTracked ? m_VelocityType : VelocityType.None);

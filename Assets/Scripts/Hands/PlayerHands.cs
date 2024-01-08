@@ -13,8 +13,8 @@ namespace Scripts.Hands
         
         public SupportHandVisualiser handVisualiser;
         public bool IsRecognized { get; private set; }
-        public void HandEnabled() => IsRecognized = true;
-        public void HandDisabled() => IsRecognized = false;
+        public void OnEnabled() => IsRecognized = true;
+        public void OnDisabled() => IsRecognized = false;
         
         private void OnValidate()
         {

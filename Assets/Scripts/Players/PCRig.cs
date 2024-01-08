@@ -41,7 +41,7 @@ namespace Scripts.PlayerLogic
             _handsParent = hands.leftHand.transform.parent;
             ui.gestureInput.image.color = _palette.clear;
             playerStateChangedEvent?.Invoke(playerState = PlayerState.ACTIVE);
-            hands.HandEnabled();
+            hands.OnEnabled();
         }
         
         //Simulate Gestures

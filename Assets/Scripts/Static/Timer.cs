@@ -11,9 +11,9 @@ namespace Scripts.Static
         private float time = 0;
         private readonly Action action;
         private readonly UpdateEvent _update;
-        public Timer(float time, Action action, UpdateEvent update)
+        public Timer(float seconds, Action action, UpdateEvent update)
         {
-            this.time = time;
+            this.time = seconds;
             this.action = action;
             this._update = update;
             _update.AddListener(Count);

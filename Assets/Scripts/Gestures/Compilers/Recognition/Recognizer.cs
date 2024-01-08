@@ -13,12 +13,6 @@ namespace Scripts.Gestures
   
     public class Recognizer: MonoBehaviour
     {
-        [Serializable] private struct RecognizerProperties
-        {
-            [Range(0, 1f)] public float positionQuality; // 1 - tutelka v tutelky, 0 - authomaticaly recongize
-            [Range(0, 1f)] public float rotationQuality; // 1 - tutelka v tutelky, 0 - authomaticaly recongize
-        }
-
         [SerializeField] private RecognizerProperties playerProperties;
         [SerializeField] private RecognizerProperties supportiveProperties;
     
@@ -88,7 +82,7 @@ namespace Scripts.Gestures
 
                 foreach (var hand in _rig.GetHands.handVisualiser.activeHands)
                 {
-                    (hand as HandMesh)?.ChangeColorPinPong(HandShaderProps.EdgeColor, new Color(1,1,1,0.1f), new Color(1,1,1,0.5f), 2);
+                    hand.ChangeColorPinPong(HandShaderProps.EdgeColor, new Color(1,1,1,0.1f), new Color(1,1,1,0.5f), 2);
                 }
 
                 wasDrawnПриблизительно = true;
@@ -128,8 +122,8 @@ namespace Scripts.Gestures
                 if (!_rig.GetHands.IsRecognized)
                     return -1;
                 
-                if (RecognizeHand(_possibleFrames[i].Hands.LeftBones, _rig.GetHands.leftHand.points, playerProperties)
-                    && RecognizeHand(_possibleFrames[i].Hands.RightBones, _rig.GetHands.rightHand.points, playerProperties))
+                if (RecognizeHand(_possibleFrames[i].Hands.LeftBones, _rig.GetHands.leftHand.points, props)
+                    && RecognizeHand(_possibleFrames[i].Hands.RightBones, _rig.GetHands.rightHand.points, props))
                  {
                      return i;
                  }
@@ -145,8 +139,7 @@ namespace Scripts.Gestures
             var dist = OptimizedDistance(bonesData.rootPos, handSkeleton[0].localPosition);
          
             if (1 - dist < props.positionQuality)
-            {
-                //  l.rl("Canceled, because position: " + OptimizedDistance(bonesData.rootPos, handSkeleton[0].localPosition) + " > " + posQuality);
+            {// l.rl("Canceled, because position: " + dist + " > " + props.positionQuality);
                 return false;
             }
             
@@ -156,7 +149,7 @@ namespace Scripts.Gestures
               
                 if (distance < props.rotationQuality) // 0 - bad, 1 - good, 0.9 - ok
                 {
-              //      l.rl("Canceled, because rotation: " + distance + " < " + rotQuality);
+                    //l.rl("Canceled, because rotation: " + distance + " < " + props.rotationQuality);
                     return false;
                 }
             }

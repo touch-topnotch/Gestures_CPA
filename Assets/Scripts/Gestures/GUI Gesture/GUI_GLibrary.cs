@@ -1,6 +1,10 @@
+using System.Timers;
+using Scripts.Events;
 using Scripts.Hands;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
+using Zenject;
+using Timer = Scripts.Static.Timer;
 
 namespace Scripts.Gestures.GGUI
 {
@@ -34,6 +38,7 @@ namespace Scripts.Gestures.GGUI
 
     public class DG_Katana : GUIGesture
     {
+        [Inject] private UpdateEvent onUpdate;
         private Transform _katana;
         private DissolveSlider _dissolveSlider;
 
@@ -48,6 +53,7 @@ namespace Scripts.Gestures.GGUI
             _katana.eulerAngles = new Vector3(0, -90, 0);
             Debug.Log("Katana assets added!");
         }
+        
 
         public override void ShowEffects(int frameId, GestureFrame gFrame)
         {
@@ -71,6 +77,11 @@ namespace Scripts.Gestures.GGUI
                     break;
                 case 5:
                     _dissolveSlider.UpdateDisolveValue(0f);
+                    new Timer(5, () =>
+                    {
+                        _dissolveSlider.UpdateDisolveValue(0f);
+                        
+                    }, onUpdate);
                     break;
             }
         }

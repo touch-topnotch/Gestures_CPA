@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Scripts.Events;
 using Scripts.Gestures;
+using Scripts.Static;
 using UnityEngine;
 using Zenject;
 using Timer = Scripts.Static.Timer;
@@ -199,20 +200,32 @@ namespace Scripts.Hands
         
         public void ResetMaterial()
         {
-            
-            material.SetColor(HandShaderProps.MainColor, _defaultMaterial.GetColor(HandShaderProps.MainColor));
-            material.SetColor(HandShaderProps.EdgeColor, _defaultMaterial.GetColor(HandShaderProps.EdgeColor));
-            material.SetFloat(HandShaderProps.EdgeHighlightPower, _defaultMaterial.GetFloat(HandShaderProps.EdgeHighlightPower));
-            material.SetColor(HandShaderProps.ThumbColor, _defaultMaterial.GetColor(HandShaderProps.ThumbColor));
-            material.SetColor(HandShaderProps.FingerColor1, _defaultMaterial.GetColor(HandShaderProps.FingerColor1));
-            material.SetColor(HandShaderProps.FingerColor2, _defaultMaterial.GetColor(HandShaderProps.FingerColor2));
-            material.SetColor(HandShaderProps.FingerColor3, _defaultMaterial.GetColor(HandShaderProps.FingerColor3));
-            material.SetColor(HandShaderProps.FingerColor4, _defaultMaterial.GetColor(HandShaderProps.FingerColor4));
-            material.SetVector(HandShaderProps.FadeCenter, _defaultMaterial.GetVector(HandShaderProps.FadeCenter));
-            material.SetVector(HandShaderProps.FadeScale, _defaultMaterial.GetVector(HandShaderProps.FadeScale));
-            material.SetFloat(HandShaderProps.FadeStart, _defaultMaterial.GetFloat(HandShaderProps.FadeStart));
-            material.SetFloat(HandShaderProps.NoiseScale, _defaultMaterial.GetFloat(HandShaderProps.NoiseScale));
-            material.SetFloat(HandShaderProps.NoiseStrength, _defaultMaterial.GetFloat(HandShaderProps.NoiseStrength));
+            if(material.GetColor(HandShaderProps.MainColor) != _defaultMaterial.GetColor(HandShaderProps.MainColor))
+                material.SetColor(HandShaderProps.MainColor, _defaultMaterial.GetColor(HandShaderProps.MainColor));
+            if(material.GetColor(HandShaderProps.EdgeColor) != _defaultMaterial.GetColor(HandShaderProps.EdgeColor))
+                material.SetColor(HandShaderProps.EdgeColor, _defaultMaterial.GetColor(HandShaderProps.EdgeColor));
+            if(!Calculations.fEqual(material.GetFloat(HandShaderProps.EdgeHighlightPower), _defaultMaterial.GetFloat(HandShaderProps.EdgeHighlightPower)))
+                material.SetFloat(HandShaderProps.EdgeHighlightPower, _defaultMaterial.GetFloat(HandShaderProps.EdgeHighlightPower));
+            if(material.GetColor(HandShaderProps.ThumbColor) != _defaultMaterial.GetColor(HandShaderProps.ThumbColor))
+                material.SetColor(HandShaderProps.ThumbColor, _defaultMaterial.GetColor(HandShaderProps.ThumbColor));
+            if(material.GetColor(HandShaderProps.FingerColor1) != _defaultMaterial.GetColor(HandShaderProps.FingerColor1))
+                material.SetColor(HandShaderProps.FingerColor1, _defaultMaterial.GetColor(HandShaderProps.FingerColor1));
+            if(material.GetColor(HandShaderProps.FingerColor2) != _defaultMaterial.GetColor(HandShaderProps.FingerColor2))
+                material.SetColor(HandShaderProps.FingerColor2, _defaultMaterial.GetColor(HandShaderProps.FingerColor2));
+            if(material.GetColor(HandShaderProps.FingerColor3) != _defaultMaterial.GetColor(HandShaderProps.FingerColor3))
+                material.SetColor(HandShaderProps.FingerColor3, _defaultMaterial.GetColor(HandShaderProps.FingerColor3));
+            if (material.GetColor(HandShaderProps.FingerColor4) != _defaultMaterial.GetColor(HandShaderProps.FingerColor4))
+                material.SetColor(HandShaderProps.FingerColor4, _defaultMaterial.GetColor(HandShaderProps.FingerColor4));
+            if(material.GetVector(HandShaderProps.FadeCenter) != _defaultMaterial.GetVector(HandShaderProps.FadeCenter))
+                material.SetVector(HandShaderProps.FadeCenter, _defaultMaterial.GetVector(HandShaderProps.FadeCenter));
+            if(material.GetVector(HandShaderProps.FadeScale) != _defaultMaterial.GetVector(HandShaderProps.FadeScale))
+                material.SetVector(HandShaderProps.FadeScale, _defaultMaterial.GetVector(HandShaderProps.FadeScale));
+            if(!Calculations.fEqual(material.GetFloat(HandShaderProps.FadeStart),_defaultMaterial.GetFloat(HandShaderProps.FadeStart)))
+                material.SetFloat(HandShaderProps.FadeStart, _defaultMaterial.GetFloat(HandShaderProps.FadeStart));
+            if(!Calculations.fEqual(material.GetFloat(HandShaderProps.NoiseScale), _defaultMaterial.GetFloat(HandShaderProps.NoiseScale)))
+                material.SetFloat(HandShaderProps.NoiseScale, _defaultMaterial.GetFloat(HandShaderProps.NoiseScale));
+            if (!Calculations.fEqual(material.GetFloat(HandShaderProps.NoiseStrength), _defaultMaterial.GetFloat(HandShaderProps.NoiseStrength))) 
+                material.SetFloat(HandShaderProps.NoiseStrength, _defaultMaterial.GetFloat(HandShaderProps.NoiseStrength));
             
         }
 
