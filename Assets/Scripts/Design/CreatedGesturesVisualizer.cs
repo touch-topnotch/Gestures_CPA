@@ -32,20 +32,20 @@ namespace Scripts.Design
             {
                 GameObject toggleObject = Instantiate(togglePrefab, scrollRect.content);
                 scrollRect.content.SetParent(toggleObject.transform);
-                toggleObject.GetComponent<Toggle>().GetComponentInChildren<Text>().text = frame.Name;
+                toggleObject.GetComponent<Toggle>().GetComponentInChildren<Text>().text = frame.Key;
                 toggleObject.GetComponent<ToggleContainer>().Visualizer = this;
-                toggleObject.GetComponent<ToggleContainer>().Gesture = frame;
+                toggleObject.GetComponent<ToggleContainer>().Gesture = frame.Value;
             }
         }
         private IEnumerator DynamicAnimation(DynamicGesture dGesture, Toggle toggle)
         {
-            creator.CreateNewStack(dGesture.Frames[0].Hands.LeftBones);
-            creator.AddToStack(dGesture.Frames[0].Hands.RightBones);
+            creator.CreateNewStack(dGesture.frames[0].Hands.LeftBones);
+            creator.AddToStack(dGesture.frames[0].Hands.RightBones);
             int i = 0;
-            while (i < dGesture.Frames.Count)
+            while (i < dGesture.frames.Count)
             {
-                creator.MoveHand(dGesture.Frames[i].Hands.LeftBones, 0);
-                creator.MoveHand(dGesture.Frames[i].Hands.RightBones, 1);
+                creator.MoveHand(dGesture.frames[i].Hands.LeftBones, 0);
+                creator.MoveHand(dGesture.frames[i].Hands.RightBones, 1);
                 i += 1;
                 print("try to move");
                 yield return _waitGesture;

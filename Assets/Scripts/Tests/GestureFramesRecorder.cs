@@ -87,7 +87,7 @@ namespace Scripts.Tests
         private void SendToCompiler()
         {
            
-            _library.Record(_recordedHandStruct, _currentName);
+            _library.RecordFrame(_recordedHandStruct, _currentName);
         }
         
         public virtual void RecordName(string name)

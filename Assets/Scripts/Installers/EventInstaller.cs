@@ -1,6 +1,5 @@
 using Scripts.Events;
 using UnityEngine;
-using UnityEngine.Assertions;
 using Zenject;
 namespace Scripts.Installers
 {
@@ -16,6 +15,11 @@ namespace Scripts.Installers
         private void Update()
         {
             OnFrameUpdated?.Invoke();
+        }
+
+        private static void type()
+        {
+           
         }
     }
 }

@@ -13,11 +13,8 @@ namespace Scripts.Gestures
   
     public class Recognizer: MonoBehaviour
     {
-        [SerializeField] private RecognizerProperties playerProperties;
-        [SerializeField] private RecognizerProperties supportiveProperties;
-    
         private Rig _rig;
-        
+        private RecognitionPropertiesConfig rigConfig => _rig.RecognitionProperties;
         private RecognitionEvent _onRecognized;
         private UpdateEvent _onUpdate;
         
@@ -34,17 +31,17 @@ namespace Scripts.Gestures
             _onUpdate = onUpdate;
         }
         
-        public void RecognizeDynamicGesture(List<DynamicGesture> possibleGestures, ref RecognitionEvent onRecognized)
+        public void RecognizeDynamicGesture(Dictionary<string, DynamicGesture> possibleGestures, ref RecognitionEvent onRecognized)
         {
             
             Debug.Log("Start to recognize dynamic gesture...");
            
             _onRecognized = onRecognized;
-            _possibleGestures = possibleGestures;
+            _possibleGestures = new List<DynamicGesture>(possibleGestures.Values);
             _possibleFrames = new List<GestureFrame>();
-            for (int i = 0; i < possibleGestures.Count; i++)
+            for (int i = 0; i < _possibleGestures.Count; i++)
             {
-                _possibleFrames.Add(possibleGestures[i].GetGestureFrame());
+                _possibleFrames.Add(_possibleGestures[i].GetGestureFrame());
                 //possibleGestures[i].LogFrames();
             }
             LogPossibleFrames();
@@ -56,7 +53,7 @@ namespace Scripts.Gestures
             
             DrawПриблизетльныйGesture();
 
-            var frameId = RecognizeFrame(playerProperties);
+            var frameId = RecognizeFrame(rigConfig.PlayerProperties);
             if (frameId != -1)
             {     
                 _onUpdate.RemoveListener(FindStartOfDynamicGesture);
@@ -75,7 +72,7 @@ namespace Scripts.Gestures
             if (wasDrawnПриблизительно)
                 return;
 
-            var приблизительныйFrameId = RecognizeFrame(supportiveProperties);
+            var приблизительныйFrameId = RecognizeFrame(rigConfig.SupportiveProperties);
             if (приблизительныйFrameId != -1)
             {
                 _rig.GetHands.handVisualiser.OverrideHands(_possibleFrames[приблизительныйFrameId].Hands);
@@ -93,7 +90,7 @@ namespace Scripts.Gestures
         {
             
             DrawПриблизетльныйGesture();
-            var frameId = RecognizeFrame(playerProperties);
+            var frameId = RecognizeFrame(rigConfig.PlayerProperties);
             if (frameId != -1)
             {
                 HideHands();
@@ -115,7 +112,7 @@ namespace Scripts.Gestures
             _possibleFrames.Add(_possibleGestures[_curGesture].GetGestureFrame());
             _onUpdate.AddListener(GoByOneGesture);
         }
-        private int RecognizeFrame(RecognizerProperties props)
+        private int RecognizeFrame(RecognitionProperties props)
         {
             for(int i = 0; i < _possibleFrames.Count; i++)
             {
@@ -130,7 +127,7 @@ namespace Scripts.Gestures
             }
             return -1;
         }
-        private bool RecognizeHand(in BonesData bonesData, in Transform[] handSkeleton, in RecognizerProperties props)
+        private bool RecognizeHand(in BonesData bonesData, in Transform[] handSkeleton, in RecognitionProperties props)
         {
             if (bonesData.rotations?.Length != handSkeleton.Length)
                 return true;

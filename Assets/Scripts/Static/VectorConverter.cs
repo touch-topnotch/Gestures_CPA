@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Globalization;
+using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Scripts.Static
 {
 
     
-    public class VectorConverter : JsonConverter<Vector3>
+    public static class VectorConverter
     {
         private const float unicodeOverDeg = 181.9444444444f;
         private const float degOverUnicode = 0.005496183206f;
@@ -21,13 +20,28 @@ namespace Scripts.Static
             {
                 return null;
             }
+            
+            // count chars == !
 
-            int length = value.Length / 3;
+            int length = (value.Length + 2 * value.Count(c => c == '!')) / 3;
+            
             Vector3[] jArr = new Vector3[length];
+            
+            var j = 0;
+            
             for (int i = 0; i < length; i++)
             {
-         
-                jArr[i] = CodeToVec3Rot(value[i*3], value[i*3+1], value[i*3+2]);
+                if(j >= value.Length)
+                    break;
+                
+                if (value[j] == '!')
+                {
+                    jArr[i] = Vector3.zero;
+                    j++;
+                    continue;
+                }
+                jArr[i] = CodeToVec3Rot(value[j], value[j+1], value[j+2]);
+                j += 3;
             }
 
             return jArr;
@@ -42,8 +56,7 @@ namespace Scripts.Static
             var vec3s = CodeToVector3RotArray(value);
             var quaternions = new Quaternion[vec3s.Length];
             for (int i = 0; i < vec3s.Length; i++)
-            {   
-                
+            {
                 quaternions[i] = Quaternion.Euler(vec3s[i]);
             }
 
@@ -85,7 +98,7 @@ namespace Scripts.Static
             
             if (value == null || value.Length == 0)
             {
-                return null;
+                return "";
             }
 
             string s = "";
@@ -100,34 +113,7 @@ namespace Scripts.Static
         
        // private static string Round(float value) => string.Format("{0:N"+$"{quality}"+"}", value);
 
-        public override void WriteJson(JsonWriter writer, Vector3 value, JsonSerializer serializer)
-        { ;
-            writer.WriteStartObject();
-            writer.WritePropertyName("x");
-            writer.WriteValue(value.x);
-            writer.WritePropertyName("y");
-            writer.WriteValue(value.y);
-            writer.WritePropertyName("z");
-            writer.WriteValue(value.z);
-            writer.WriteEndObject();
-        }
-
-        public override Vector3 ReadJson(JsonReader reader, Type objectType, Vector3 existingValue, bool hasExistingValue,
-            JsonSerializer serializer)
-        {
-            // Load the JSON object from the reader
-            JObject obj = JObject.Load(reader);
-
-            // Extract the x, y, and z values from the JSON object
-            float x = obj.GetValue("x")!.ToObject<float>();
-            float y = obj.GetValue("y")!.ToObject<float>();
-            float z = obj.GetValue("z")!.ToObject<float>();
-
-            // Create and return a new Vector3 object with the extracted values
-            return new Vector3(x, y, z);
-        }
-
-        public static Vector3[] TransfToPos(in Transform[] transf)
+       public static Vector3[] TransfToPos(in Transform[] transf)
         {
             Vector3[] positions = new Vector3[transf.Length];
             for (int i = 0; i < transf.Length; i++)
@@ -143,6 +129,9 @@ namespace Scripts.Static
         public static Vector3 CodeToVec3Rot(string s) => CodeToVec3Rot(s[0], s[1], s[2]);
         public static Vector3 CodeToVec3Rot(char x, char y, char z) // 36, 65536
         {
+            if (x == '!' || y == '!' || z == '!')
+                throw new CharToVec3Exception('!');
+
             var vec = new Vector3();
             
             vec.x = (x-36) * degOverUnicode;
@@ -150,9 +139,12 @@ namespace Scripts.Static
             vec.z = (z-36) * degOverUnicode;
             return vec;
         }
-        public static Vector3 CodeToVec3Pos(string s) => CodeToVec3Pos(s[0], s[1], s[2]);
+
+        public static Vector3 CodeToVec3Pos(string s) => s == "!"? Vector3.zero : CodeToVec3Pos(s[0], s[1], s[2]);
         public static Vector3 CodeToVec3Pos(char x, char y, char z)
         {
+            if(x == '!' || y == '!' || z == '!')
+                throw new CharToVec3Exception('!');
             var vec = new Vector3();
             vec.x = (x - 32750) / 10000f;
             vec.y = (y - 32750) / 10000f;
@@ -162,14 +154,16 @@ namespace Scripts.Static
 
         public static string VecToCodeRot(Vector3 vec)
         {
-            var s = "";
-            s += FloatToChar(vec.x);
-            s += FloatToChar(vec.y);
-            s += FloatToChar(vec.z);
-            return s;
+            if(vec == Vector3.zero)
+                return "!";
+
+            return ""+FloatToChar(vec.x) + FloatToChar(vec.y) + FloatToChar(vec.z);
         }
         public static string VecToCodePos(Vector3 vec)
         {
+            if(vec == Vector3.zero)
+                return "!";
+            
             var s = "";
             s += UnsignedFloatToChar(vec.x);
             s += UnsignedFloatToChar(vec.y);
@@ -177,8 +171,10 @@ namespace Scripts.Static
             return s;
         }
 
-        private static char FloatToChar(float f)
+        private static char FloatToChar(float f) // range [0, 360]
         {
+            if (f < 0)
+                throw new FloatToCharException(f);
             f *= unicodeOverDeg;
             f += 36;
             return (char)((int)f);
@@ -187,9 +183,8 @@ namespace Scripts.Static
         private static char UnsignedFloatToChar(float f) // range [-3.2750, 3.2750] - optimal way for save v3 position
         {
             if (f < -3.2750 || f > 3.2750)
-            {
-                Debug.LogError("UnsignedFloatToChar: float out of range [-3.2750, 3.2750]");
-            }
+                throw new FloatToCharException(f); 
+            
 
             var rounded = Math.Round(f, 4) * 10000 + 32750;
             if (rounded is >= 0 and < 36)

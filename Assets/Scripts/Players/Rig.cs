@@ -31,11 +31,17 @@ namespace Scripts.PlayerLogic
         
         
         [SerializeField] protected Transform body;
+        
+        [Header("Properties")]
+        [Space]
+        [SerializeField] private RecognitionPropertiesConfig recognitionProperties;
+        public RecognitionPropertiesConfig RecognitionProperties => recognitionProperties;
         public Transform GetBody => body;
         
         protected PlayerStateChangedEvent playerStateChangedEvent;
         protected PlayerState playerState;
 
+        
         
         [Inject]
         private void Construct(GesturesLibrary library)
@@ -43,7 +49,7 @@ namespace Scripts.PlayerLogic
             if (!transform.gameObject.activeSelf)
                 return;
       
-            foreach (var gesture in library.DynamicGestures)
+            foreach (var gesture in library.DynamicGestures.Values)
             {
                 gesture.AddGraphicsToRigHands(hands);
             }

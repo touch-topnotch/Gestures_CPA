@@ -92,7 +92,7 @@ namespace Scripts.Gestures
         }
         private string _name;
         public string baseName { get; private set; }
-
+        
         public string name
         {
             get => _name;

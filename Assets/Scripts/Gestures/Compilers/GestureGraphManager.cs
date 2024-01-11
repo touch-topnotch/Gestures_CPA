@@ -4,11 +4,11 @@ namespace Scripts.Gestures
 {
     public static class GestureGraphManager
     {
-        public static GestureGraph InitializeGestureGraph(List<DynamicGesture> all_gestures)
+        public static GestureGraph InitializeGestureGraph(Dictionary<string, DynamicGesture> all_gestures)
         {
             // write graph of _all_gestures in GestureGraph.json;
             GestureGraph heap = new GestureGraph();
-            AddToGraph(new GestureGraph(), all_gestures);
+            AddToGraph(new GestureGraph(), new List<DynamicGesture>(all_gestures.Values));
             return heap;
             // в каждой ветке будем рекурсивно создавать новые, пока не закончится массив
         }
