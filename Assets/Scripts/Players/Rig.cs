@@ -15,34 +15,21 @@ namespace Scripts.PlayerLogic
         DYED,
         SPECTATOR
     }
-    public abstract class Rig : MonoBehaviour
+    public abstract class Rig : MonoBehaviour, IMovable
     {
         
         [SerializeField] protected PlayerHands hands;
-        public PlayerHands GetHands => hands;
-        
-        
-        [SerializeField] protected Movement movement;
-        public Movement GetMovement => movement;
-        
-        
-        [SerializeField] protected Transform head;
-        public Transform GetHead => head;
-        
-        
-        [SerializeField] protected Transform body;
+        public PlayerHands Hands => hands;
+        public BodyAnchors anchors;
         
         [Header("Properties")]
         [Space]
         [SerializeField] private RecognitionPropertiesConfig recognitionProperties;
         public RecognitionPropertiesConfig RecognitionProperties => recognitionProperties;
-        public Transform GetBody => body;
         
         protected PlayerStateChangedEvent playerStateChangedEvent;
         protected PlayerState playerState;
 
-        
-        
         [Inject]
         private void Construct(GesturesLibrary library)
         {
@@ -64,5 +51,9 @@ namespace Scripts.PlayerLogic
         {
             Debug.Log("Current state: " + state);
         }
+
+        public abstract bool isMoved();
+        public abstract void StartMove();
+        public abstract void StopMove();
     }
 }

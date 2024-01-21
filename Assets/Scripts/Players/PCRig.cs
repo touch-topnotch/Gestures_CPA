@@ -21,8 +21,10 @@ namespace Scripts.PlayerLogic
         
         [SerializeField] protected PCUI ui;
         [SerializeField] protected Palette _palette;
+        [SerializeField] protected FirstPersonController _personController;
         
         protected GesturesLibrary _library;
+        
         private WaitForSeconds _waitUntilNextFrame;
         private Transform _handsParent;
         
@@ -96,15 +98,22 @@ namespace Scripts.PlayerLogic
             switch (state)
             {
                 case PlayerState.MENU:
-                    movement.StopMove();
+                    StopMove();
                     ui.Show();
                     break;
                 case PlayerState.ACTIVE:
-                    movement.StartMove();
+                    StartMove();
                     ui.Hide();
                     break;
             }
         }
+
+        
+        public override bool isMoved() => _personController.enabled;
+        public override void StartMove() => _personController.enabled = true;
+        public override void StopMove() => _personController.enabled = false;
+        
+
         private void ToggleMenu()
         {
             if ((Input.GetKey(KeyCode.LeftCommand) || Input.GetKey(KeyCode.LeftControl)) &&

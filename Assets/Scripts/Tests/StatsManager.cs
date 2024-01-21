@@ -34,9 +34,10 @@ namespace Scripts.Tests
 
         private void UpdateProps()
         {
-            speedText.text = "Speed: " + (Vector3.Distance(rig.GetBody.position, lastPostion) / Time.deltaTime) +
+            var position = rig.anchors.Body.position;
+            speedText.text = "Speed: " + (Vector3.Distance(position, lastPostion) / Time.deltaTime) +
                              " units/sec";
-            lastPostion = rig.GetBody.position;
+            lastPostion = position;
         }
 
         private void WaitCommand()
