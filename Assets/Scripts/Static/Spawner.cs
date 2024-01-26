@@ -21,6 +21,13 @@ namespace Scripts.Static
             return Instantiate(prefab, parent, !hasParent);
         }
         
+        public static GameObject SpawnPooledPrefab(GameObject prefab, Transform parent = null, bool enbaled = false)
+        {
+            var instPrefab = Instantiate(prefab, parent);
+            instPrefab.SetActive(enbaled);
+            return instPrefab;
+        }
+        
 
         public static T TryGetComponent<T>(in Transform prefab, out T component)
             where T : Component

@@ -1,15 +1,17 @@
-using System.Collections;
-using System.Collections.Generic;
-using Scripts.Events;
-using Scripts.Gestures;
 using UnityEngine;
-using Zenject;
+using UnityEngine.SceneManagement;
 
 public class test : MonoBehaviour
 {
     public Transform db_transform;
     public Transform hand_root;
-
+    
+    //когда пришел запрос измени сцену
+    private void ChangeScene()
+    {
+        SceneManager.LoadScene("LobbyGroup");
+    }
+    
     private void Update()
     {
 

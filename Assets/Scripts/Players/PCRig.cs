@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Gesture_Editor_SDK.Realtime;
 using Scripts.Events;
 using Scripts.Gestures;
 using Scripts.Hands;
@@ -29,12 +30,17 @@ namespace Scripts.PlayerLogic
         private Transform _handsParent;
         
         private GestureFrame _targetFrame;
+        
+        
         [Inject]
         private void Construct(UpdateEvent onUpdate, GesturesLibrary gesturesLibrary)
         {
             onUpdate?.AddListener(ToggleMenu);
             _waitUntilNextFrame= new WaitForSeconds(handsProperties.delayOnFrame);
             _library = gesturesLibrary;
+            Engine.Instance().stats.hands = hands;
+            Engine.Instance().stats.bodyAnchors = anchors;
+
         }
         protected override void Start()
         {
@@ -42,6 +48,11 @@ namespace Scripts.PlayerLogic
             
             _handsParent = hands.leftHand.transform.parent;
             ui.gestureInput.image.color = _palette.clear;
+            
+            playerStateChangedEvent.AddListener((state) =>
+            {
+                Cursor.visible = state == PlayerState.MENU;
+            });
             playerStateChangedEvent?.Invoke(playerState = PlayerState.ACTIVE);
             hands.OnEnabled();
         }
@@ -57,16 +68,19 @@ namespace Scripts.PlayerLogic
                 SimulateDynamicGesture();
                 return;
             }
+            
+            print("TryGetGestureFrame: " + GestureMapper.PrefixOfName(frameName));
             if(_library.DynamicGestures.TryGetValue(GestureMapper.PrefixOfName(frameName), out dynamicGesture))
             {
-                if(dynamicGesture.TryGetGestureFrame(frameName, out var gestureFrame))
+                if (dynamicGesture.TryGetGestureFrame(frameName, out var gestureFrame))
+                {
+                    print(gestureFrame.name);
                     ui.gestureInput.image.color = _palette.enabled;
                     // play Gesture Frame
-                    hands.MoveHands(gestureFrame, handsProperties.handSpeed, () =>
-                    {
-                        ui.gestureInput.image.color = _palette.clear;
-                    });
+                    hands.MoveHands(gestureFrame, handsProperties.handSpeed,
+                        () => { ui.gestureInput.image.color = _palette.clear; });
                     return;
+                }
             }
             ui.gestureInput.image.color = _palette.wrong;
         }
@@ -110,9 +124,18 @@ namespace Scripts.PlayerLogic
 
         
         public override bool isMoved() => _personController.enabled;
-        public override void StartMove() => _personController.enabled = true;
-        public override void StopMove() => _personController.enabled = false;
-        
+
+        public override void StartMove()
+        {
+            _personController.playerCanMove = true;
+            _personController.cameraCanMove = true;
+        }
+
+        public override void StopMove()
+        {
+            _personController.playerCanMove = false;
+            _personController.cameraCanMove = false;
+        }
 
         private void ToggleMenu()
         {
@@ -122,13 +145,15 @@ namespace Scripts.PlayerLogic
                 playerState = playerState == PlayerState.MENU ? PlayerState.ACTIVE : PlayerState.MENU;
                 playerStateChangedEvent?.Invoke(playerState);
             }
+
+            if (playerState == PlayerState.MENU)
+                _personController.cameraCanMove = Input.GetKey(KeyCode.LeftShift);
         }
         public void ToggleParentingHands(bool toggle)
         {
             if (hands == null)
                 return;
-            hands.leftHand.transform.SetParent(toggle ? _handsParent : null);
-            hands.rightHand.transform.SetParent(toggle ? _handsParent : null);
+            hands.transform.SetParent(toggle ? _handsParent : null);
         }
     }
 }
