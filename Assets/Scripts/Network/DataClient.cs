@@ -47,7 +47,6 @@ public class NewBehaviourScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var anonType = new { cmd: "string", Foo = 100, Bar = "ass" };
-        Send(anonType);
+
     }
 }
