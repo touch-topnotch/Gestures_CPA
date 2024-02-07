@@ -1,14 +1,17 @@
 
 using UnityEngine;
 
-public class GestureCreationTest: MonoBehaviour
+namespace Scripts.Tests
 {
-    public Transform parent;
-    public Transform child;
-    public Transform rezult;
-
-    public void Update()
+    public class GestureCreationTest: MonoBehaviour
     {
-        rezult.position = parent.InverseTransformPoint(child.position);
+        public Transform parent;
+        public Transform child;
+        public Transform rezult;
+
+        public void Update()
+        {
+            rezult.position = parent.InverseTransformPoint(child.position);
+        }
     }
 }

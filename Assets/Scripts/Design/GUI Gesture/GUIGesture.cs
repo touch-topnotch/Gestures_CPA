@@ -1,12 +1,9 @@
-using System.Collections.Generic;
-using Scripts.Events;
+using Scripts.Gestures;
 using Scripts.Hands;
 using Scripts.Static;
 using UnityEngine;
-using UnityEngine.Events;
-using Zenject;
 
-namespace Scripts.Gestures.GGUI
+namespace Scripts.Design.GUI_Gesture
 {
 
     public abstract class GUIGesture

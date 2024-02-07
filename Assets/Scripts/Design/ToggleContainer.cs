@@ -1,19 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
-using Scripts.Design;
 using Scripts.Gestures;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ToggleContainer : MonoBehaviour
+namespace Scripts.Design
 {
-
-    public CreatedGesturesVisualizer Visualizer;
-    public DynamicGesture Gesture;
-    
-    public void OnToggleClicked(bool isOn)
+    public class ToggleContainer : MonoBehaviour
     {
-        if(isOn)
-            Visualizer.ShowDynamicGesture(Gesture, GetComponent<Toggle>());
+
+        public CreatedGesturesVisualizer Visualizer;
+        public DynamicGesture Gesture;
+    
+        public void OnToggleClicked(bool isOn)
+        {
+            if(isOn)
+                Visualizer.ShowDynamicGesture(Gesture, GetComponent<Toggle>());
+        }
     }
 }

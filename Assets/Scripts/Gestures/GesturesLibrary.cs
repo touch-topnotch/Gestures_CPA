@@ -9,21 +9,24 @@ namespace Scripts.Gestures
 
         private Dictionary<string, DynamicGesture> _dynamicGestures = new();
 
-        public Dictionary<string, DynamicGesture> DynamicGestures => _dynamicGestures; // словарь, потому что поиск за 
-        // O(1), а не O(n) как в листе
-
-        
-        
-        public GesturesLibrary()
+        public Dictionary<string, DynamicGesture> DynamicGestures => _dynamicGestures; // словарь, потому что поиск за
+                                                                                       // O(1), а не O(n) как в листе
+        private static GesturesLibrary _instance;
+        public static GesturesLibrary Instance => _instance ??= new GesturesLibrary();
+        private GesturesLibrary()
         {
             //GestureMapper.ReplaceCharacters();
             ReadGestures();
-            Debug.Log("Library has initialized:\nDynamic gestures count: " + DynamicGestures.Count);
+            Debug.Log("Library has initialized.");
+            var log = "Mapped gestures: ";
+            foreach (var VARIABLE in DynamicGestures)
+            {
+                log += VARIABLE.Key + ", ";
+            }
+            Debug.Log(log);
         }
 
-        
-      
-        public void ReadGestures()
+        private void ReadGestures()
         {
             _dynamicGestures = GestureMapper.ReadDynamicGestures();
         }
@@ -32,6 +35,20 @@ namespace Scripts.Gestures
         {
             SetGestureFrame(new GestureFrame(name, hands));
             GestureMapper.UpdateDynamicGesture(DynamicGestures[GestureMapper.PrefixOfName(name)]);
+        }
+        public bool TryGetDynamicGesture(string gesture, out DynamicGesture frame)
+        {
+            return DynamicGestures.TryGetValue(gesture, out frame);
+        }
+        public bool TryGetGestureFrame(string name, out GestureFrame frame)
+        {
+            if (DynamicGestures.ContainsKey(GestureMapper.PrefixOfName(name)))
+            {
+                frame = DynamicGestures[GestureMapper.PrefixOfName(name)].frames[GestureMapper.IndexOfName(name)];
+                return true;
+            }
+            frame = null;
+            return false;
         }
 
         private void SetGestureFrame(GestureFrame frame)

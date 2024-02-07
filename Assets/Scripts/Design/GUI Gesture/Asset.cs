@@ -1,4 +1,4 @@
-namespace Design.GUI_Gesture
+namespace Scripts.Design.GUI_Gesture
 {
     public enum AssetType
     {

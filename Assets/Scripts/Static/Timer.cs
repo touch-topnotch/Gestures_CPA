@@ -1,7 +1,6 @@
 using System;
 using Scripts.Events;
 using UnityEngine;
-using Zenject;
 
 namespace Scripts.Static
 {

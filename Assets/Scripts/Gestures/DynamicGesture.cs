@@ -1,7 +1,6 @@
+using System;
 using System.Collections.Generic;
 using Gesture_Editor_SDK.Realtime;
-using Scripts.Events;
-using Scripts.Gestures.GGUI;
 using Scripts.Hands;
 using Scripts.Static;
 using UnityEngine;
@@ -20,11 +19,9 @@ namespace Scripts.Gestures
     {
         public List<GestureFrame> frames{ get;}
         
-        private readonly FrameDetected onFrameDetected = new();
         private IRecognizable _recognizable;
-
+        
         private string _name;
-        private int _currentGesture = 0;
         public string Name
         {
             get => _name;
@@ -58,7 +55,7 @@ namespace Scripts.Gestures
             frames.Add(frame);
         }
         
-        public GestureFrame GetGestureFrame() => _currentGesture < frames.Count ? frames[_currentGesture] : null;
+        //    public GestureFrame GetGestureFrame() => _currentGesture < frames.Count ? frames[_currentGesture] : null;
         
         public GestureFrame GetNextFrameOf(GestureFrame frame)
         {
@@ -71,35 +68,18 @@ namespace Scripts.Gestures
             
             return index + 1 < frames.Count ? frames[index + 1] : null;
         }
-        public void FrameRecognized()
+        public void FrameRecognized(string name)
         {
-            Debug.Log($"Frame {GetGestureFrame().name} recognized!");
-            
-            
-            onFrameDetected?.Invoke(_currentGesture, GetGestureFrame());
-            NextFrame();
+            _recognizable.OnFrameRecognized(name);
         }
 
-        public void NextFrame()
-        {
-            if (_currentGesture >= frames.Count)
-            {
-                // AllFramesDetected();
-                return;
-            }
-
-            _currentGesture += 1;
-        }
-
-        public void AllFramesDetected()
+        public void AllFramesDetected(Action onAbilityReleasedCallback)
         {
             _recognizable.AbilityCalled();
             _recognizable.OnAbilityReleased.AddListener(() =>
             {
-                // Start to recognize next gesture
+                onAbilityReleasedCallback?.Invoke();
             });
-            _currentGesture = 0;
-            
         }
 
         public void LogFrames()
@@ -111,15 +91,6 @@ namespace Scripts.Gestures
             }
 
             Debug.Log(log);
-        }
-
-        public void AddGraphicsToRigHands(PlayerHands hands)
-        {
-            // CHANGE IT TO NEW SYSTEM WITH RECOGNIZABLE
-            // if (_gui == null)
-            //     return;
-            // _gui.Construct(hands);
-            onFrameDetected.AddListener(_recognizable.OnFrameRecognized);
         }
         public bool TryGetGestureFrame(string name, out GestureFrame gestureFrame)
         {

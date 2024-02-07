@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using Scripts.Gestures;
-using Scripts.Gestures.GGUI;
 
-namespace Design.GUI_Gesture
+namespace Scripts.Design.GUI_Gesture
 {
     public class ParsedGUI:GUIGesture
     {

@@ -12,6 +12,7 @@ namespace Scripts.UI
         [SerializeField] private Toggle _handParentedToggle;
         [SerializeField] private GameObject _rootObject;
         [SerializeField] private GameObject _GestureLabelText;
+        
         public TMP_InputField gestureInput => _gestureInput;
         public Toggle handParentedToggle => _handParentedToggle;
 

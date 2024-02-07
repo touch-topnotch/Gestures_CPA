@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using Gesture_Editor_SDK.EditorAttributes.InspectorButtonAttribute;
 using Scripts.Events;
 using Scripts.Gestures;
 using Scripts.Static;
 using UnityEngine;
-using Zenject;
 using Timer = Scripts.Static.Timer;
 
 namespace Scripts.Hands
@@ -19,6 +20,7 @@ namespace Scripts.Hands
         private enum HandMaterialType
         {
             Player,
+            Enemy,
             Ghost
         }
         [Header("Types")]
@@ -36,19 +38,48 @@ namespace Scripts.Hands
         
         private readonly List<PinPongProp> _pinPongs = new ();
         
-        protected UpdateEvent onUpdate;
+        protected UpdateEvent onUpdate => UpdateEvent.Instance;
         
         private Action _onPlaced;
         private float _speed;
         private bool _isMoved;
         private BonesData _target;
-
-        
+        private const string _sourceMaterialPath = "Assets/Resources/Materials/Hands/DefaultHandMaterial.mat";
+        private Material GenerateMaterial(string path, string fileName)
+        {
+            var o = Resources.Load(path);
+            if(o != null)
+            {
+                return o as Material;
+            }
+            else
+            {
+                // create new material by path
+                if (File.Exists(_sourceMaterialPath))
+                {
+                    File.Copy(_sourceMaterialPath, "Assets/Resources/" + path + ".mat" );
+                    Debug.Log("Generating new material: " + path+  ".mat");
+                    o = Resources.Load(path);
+                    
+                    return Resources.Load(path) as Material;
+                } 
+                else
+                {
+                    Debug.LogError("Source material does not exist in the specified path");
+                    return null;
+                }
+            } 
+        }
+        [InspectorButton("Add missing components")]
         public void RefreshProperties()
         {
             if (name.Contains("Player"))
             {
                 _handMaterialType = HandMaterialType.Player;
+            }
+            else if(name.Contains("Enemy"))
+            {
+                _handMaterialType = HandMaterialType.Enemy;
             }
             else
             {
@@ -61,8 +92,15 @@ namespace Scripts.Hands
                 ResetMaterial();
             else
             {
-                material = Resources.Load("Materials/Hands/Runtime/Runtime " + _handMaterialType.ToString() + "HandMat_" + char.ToUpper(_handType.ToString()[0])) as Material;
-                _defaultMaterial = Resources.Load("Materials/Hands/" + _handMaterialType.ToString() + "HandMat_" + char.ToUpper(_handType.ToString()[0])) as Material;
+                string path_runtime = "Materials/Hands/Runtime/Runtime " + _handMaterialType.ToString() + "HandMat_" +
+                                      char.ToUpper(_handType.ToString()[0]);
+                string path_default = "Materials/Hands/" + _handMaterialType.ToString() + "HandMat_" +
+                                      char.ToUpper(_handType.ToString()[0]);
+
+                material = GenerateMaterial(path_runtime,
+                    "Runtime " + _handMaterialType.ToString() + "HandMat_" + char.ToUpper(_handType.ToString()[0]));
+                _defaultMaterial = GenerateMaterial(path_default,
+                         _handMaterialType.ToString() + "HandMat_" + char.ToUpper(_handType.ToString()[0]));
             }
             if (points == null ||points.Length == 0)
             {
@@ -103,18 +141,6 @@ namespace Scripts.Hands
             {
                 points[i].rotation = Quaternion.Euler(rotations[i]);
             }
-        }
-        
-        public void Initialize(ref UpdateEvent _onUpdate)
-        {
-            Construct(_onUpdate);
-        }
-
-        [Inject]
-        protected void Construct(UpdateEvent updateEvent)
-        {
-            onUpdate = updateEvent;
-            onUpdate.AddListener(UpdateProperties);
         }
         
         private void Start()
@@ -196,7 +222,7 @@ namespace Scripts.Hands
             {
                 gameObject.SetActive(false);
             },onUpdate);
-        }
+        } 
         
         public void ResetMaterial()
         {

@@ -1,8 +1,8 @@
 using Gesture_Editor_SDK.Realtime;
+using Scripts.Effects;
 using Scripts.Gestures;
 using Scripts.Hands;
 using UnityEngine;
-
 
     public class Katana : RecognizableObject
     {
@@ -16,8 +16,10 @@ using UnityEngine;
             _dissolveSlider = _katana.GetComponent<DissolveSlider>();
             _katana.SetActive(false);
         }
-        public override void OnFrameRecognized(int frameId, GestureFrame frame)
+
+        public override void OnFrameRecognized(string frameName)
         {
+            var frameId = GestureMapper.IndexOfName(frameName);
             switch (frameId)
             {
                 case 0:
@@ -56,4 +58,5 @@ using UnityEngine;
         
         }
     }
+
 

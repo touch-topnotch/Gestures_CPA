@@ -1,4 +1,3 @@
-using Scripts.Static;
 using Unity.Netcode.Components;
 using UnityEngine;
 

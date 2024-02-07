@@ -1,8 +1,7 @@
-using Scripts.Network;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace DedicatedServers.LobbyServer
+namespace Scripts.GameControllers
 {
     public class UsersSpawner
     {

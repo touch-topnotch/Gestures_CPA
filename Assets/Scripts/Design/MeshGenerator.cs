@@ -1,10 +1,8 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using Scripts.Static;
 using UnityEngine;
 
-namespace Design
+namespace Scripts.Design
 {
     public class MeshGenerator : MonoBehaviour
     {
