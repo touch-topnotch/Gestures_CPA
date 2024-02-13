@@ -1,5 +1,13 @@
+using System.Collections.Generic;
+using Scripts.GameControllers;
+using Scripts.Gestures;
+using Scripts.Network;
+using Scripts.Static;
+using Sirenix.OdinInspector;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
+using ClientTransform = Scripts.Network.ClientTransform;
 
 namespace Scripts.PlayerLogic
 {
@@ -10,8 +18,11 @@ namespace Scripts.PlayerLogic
     {
 
         private Player _player;
-        // private UpdateEvent _onUpdate;
+        
         private bool _isSynchronized;
+
+        public Player localPlayer => _player;
+
 
         private void Awake()
         {
@@ -20,62 +31,61 @@ namespace Scripts.PlayerLogic
         
         public override void OnNetworkSpawn()
         {
+       
+            
             Debug.Log("NETWORK SPAWN");
             transform.name = $"Player {OwnerClientId}";
+            
+            _player.characterPool.SetMaterialId((int)OwnerClientId); 
+            _player.characterPool.SetCharacter((int)OwnerClientId % 2 == 0 ? "Anger" : "Grief");
             
             if (IsClient && !IsOwner)
             {
                 _player.RigType = RigType.NoRig;
-                _player.Character.CurrentType = AvatarType.Enemy;
-                
+                _player.characterPool.SetAvatarType(AvatarType.Enemy);
+
             }
 
             if (IsClient && IsOwner)
             {
                 _player.RigType = RigType.PCRig;
-                _player.Character.CurrentType = AvatarType.Local;
+                _player.characterPool.SetAvatarType(AvatarType.Local);
+                _player.CurRig.Anchors.Body.position = new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10));
             }
 
             if (IsServer)
             {
-                _player.RigType = RigType.NoRig; 
-                _player.Character.CurrentType = AvatarType.None;
+                _player.RigType = RigType.NoRig;
+                _player.characterPool.SetAvatarType(AvatarType.None);
             }
-            Debug.Log("Changing player: " + _player.name + " to " + _player.Character.CurrentType);
-            
+         
             _player.Initialize();
-        }
-        private void Start()
-        {
-            StartWatch();
-        }
-        
-        private  void StartWatch()
-        {
-            _isSynchronized = true;
-            // _onUpdate?.AddListener(UpdateTransforms);
-        }
-        
-        private void StopWatch()
-        {
-            _isSynchronized = false;
-            // _onUpdate?.RemoveListener(UpdateTransforms);
-        }
 
-        private void Update()
-        {
-            if (_isSynchronized)
+            if (IsClient && IsOwner)
             {
-                UpdateTransforms();
+                _player.gestureCombiner.OnFrameRecognized.AddListener(
+                    (frame) => { OnLocalClientFrameRecognizedServerRpc(frame, OwnerClientId); });
             }
         }
-
-        private void UpdateTransforms()
+        
+        [ServerRpc]
+        public void OnLocalClientFrameRecognizedServerRpc(string frameName, ulong client)
         {
-            // _pLayer.CurAvatar.head.position = _anchors.Head.position;
-            // _pLayer.CurAvatar.head.rotation = _anchors.Head.rotation;
-            // _pLayer.CurAvatar.body.position = _anchors.Body.position;
-            // _pLayer.CurAvatar.body.rotation = _anchors.Body.rotation;
+            Debug.Log("Play Gesture Frame of player "+ _player.name);
+            _player.gestureCombiner.SimulateFrame(frameName);
+            CallFrameRecognizedClientRpc(frameName, client);
+        }
+
+        // void called on all clients on Player[Client]
+        [ClientRpc]
+        void CallFrameRecognizedClientRpc(string frameName, ulong client)
+        {
+            Debug.Log("void CallFrameRecognizedClientRpc(string frameName, ulong client)");
+            if (OwnerClientId == client && !IsOwner)
+            {
+                Debug.Log("Play Gesture Frame of player " + _player.name);
+                _player.gestureCombiner.SimulateFrame(frameName);
+            }
         }
     }
 }

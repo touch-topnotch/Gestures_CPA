@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Scripts.Design;
 using Scripts.Events;
-using Scripts.Hands;
+using Scripts.HandsLogic;
 using UnityEngine;
 
 namespace Scripts.Gestures
@@ -40,6 +41,7 @@ namespace Scripts.Gestures
             {
                 _possibleGestures[_curGesture].FrameRecognized(name);
             });
+            
             onGestureRecognized.AddListener(GestureLog);
         }
 
@@ -55,9 +57,7 @@ namespace Scripts.Gestures
         
         public void RecognizeDynamicGesture(Dictionary<string, DynamicGesture> possibleGestures)
         {
-            
-            Debug.Log("Start to recognize dynamic gesture...");
-           
+        
             _possibleGestures = new List<DynamicGesture>(possibleGestures.Values);
             _possibleFrames = new List<GestureFrame>();
             

@@ -1,7 +1,6 @@
 using Scripts.Effects;
 using Scripts.Events;
 using Scripts.Gestures;
-using Scripts.Hands;
 using UnityEngine;
 using Zenject;
 using Timer = Scripts.Static.Timer;

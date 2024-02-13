@@ -4,7 +4,7 @@ namespace Scripts.Effects
 {
     public class DissolveSlider : MonoBehaviour
     {
-        [Range(0, 1)] public float dissolveToValue = 1f;
+       [SerializeField] private float dissolveToValue = 0f;
 
         private float _dissolvePreviousValue;
 
@@ -13,13 +13,16 @@ namespace Scripts.Effects
 
 
         private float _fraction = 0;
+        private static readonly int Disappear = Shader.PropertyToID("_Disappear");
 
         void Start()
+        
         {
+           // Debug.Log("Disappear id: " + Disappear);
             _material = GetComponent<Renderer>().material;
-            _material.SetFloat("_DissolveVal", dissolveToValue);
+            _material.SetFloat(Disappear, dissolveToValue);
 
-            _dissolvePreviousValue = dissolveToValue;
+            _dissolvePreviousValue = dissolveToValue; 
         }
 
         void FixedUpdate()
@@ -32,7 +35,7 @@ namespace Scripts.Effects
             _fraction += Time.deltaTime;
             if (_fraction >= 1) _fraction = 1;
             float newValue = Mathf.Lerp(_dissolvePreviousValue, dissolveToValue, _fraction);
-            _material.SetFloat("_DissolveVal", newValue);
+            _material.SetFloat(Disappear, newValue);
         }
 
         public void UpdateDisolveValue(float val)

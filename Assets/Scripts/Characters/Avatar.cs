@@ -1,5 +1,4 @@
 
-using Scripts.Hands;
 using UnityEngine;
 
 namespace Scripts.PlayerLogic
@@ -12,11 +11,9 @@ namespace Scripts.PlayerLogic
     } 
     public class Avatar: MonoBehaviour
     {
+        
         public AvatarType type;
         [Space]
-        public Transform head;
-        public Transform body;
-        public PlayerHands hands;
-       
+        public BodyAnchors Anchors;
     }
 } 

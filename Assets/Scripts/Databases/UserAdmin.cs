@@ -14,7 +14,7 @@ namespace Scripts.Databases
         public static void Add(UserData userData)
         {
             // add userData to json by databasePath 
-            List<UserData> userLibrary = JsonConvert.DeserializeObject<List<UserData>>(DataChanel.Get(databasePath));
+            List<UserData> userLibrary = JsonConvert.DeserializeObject<List<UserData>>(DataChanel.Get(databasePath, (ulong)userData.id));
             if (userLibrary.Count > 1)
                 userData.id = userLibrary[-1].id + 1;
             else
@@ -26,7 +26,7 @@ namespace Scripts.Databases
 
         public static void Override(in UserData userData)
         {
-            List<UserData> userLibrary = JsonConvert.DeserializeObject<List<UserData>>(DataChanel.Get(databasePath));
+            List<UserData> userLibrary = JsonConvert.DeserializeObject<List<UserData>>(DataChanel.Get(databasePath, (ulong)userData.id));
             for (int i = 0; i < userLibrary.Count; i++)
             {
                 if (userLibrary[i].id == userData.id)
@@ -39,7 +39,7 @@ namespace Scripts.Databases
 
         public static void Remove(in int id)
         {
-            List<UserData> userLibrary = JsonConvert.DeserializeObject<List<UserData>>(DataChanel.Get(databasePath));
+            List<UserData> userLibrary = JsonConvert.DeserializeObject<List<UserData>>(DataChanel.Get(databasePath,(ulong)id));
             for (int i = 0; i < userLibrary.Count; i++)
             {
                 if (userLibrary[i].id == id)
@@ -52,7 +52,7 @@ namespace Scripts.Databases
 
         public static bool HasIncluded(in int id)
         {
-            List<UserData> userLibrary = JsonConvert.DeserializeObject<List<UserData>>(DataChanel.Get(databasePath));
+            List<UserData> userLibrary = JsonConvert.DeserializeObject<List<UserData>>(DataChanel.Get(databasePath, (ulong)id));
             for (int i = 0; i < userLibrary.Count; i++)
             {
                 if (userLibrary[i].id == id)

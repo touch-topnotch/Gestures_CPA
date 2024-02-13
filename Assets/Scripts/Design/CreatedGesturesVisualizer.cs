@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using Scripts.Gestures;
-using Scripts.Hands;
+using Scripts.HandsLogic;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;

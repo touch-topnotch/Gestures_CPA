@@ -1,4 +1,4 @@
-using Scripts.Hands;
+using Scripts.HandsLogic;
 using Scripts.PlayerLogic;
 using Zenject;
 

@@ -12,7 +12,7 @@ namespace Scripts.Network
             File.WriteAllText(jsonPath, value);
         }
 
-        public static string Get(string jsonPath)
+        public static string Get(string jsonPath, ulong id)
         {
             jsonPath = Calculations.ConvertToResourceFormat(jsonPath);
             var jsonFile = Resources.Load<TextAsset>(jsonPath);

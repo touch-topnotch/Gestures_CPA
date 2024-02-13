@@ -1,30 +1,26 @@
 using Scripts.Gestures;
+using Scripts.HandsLogic;
+using Scripts.PlayerLogic;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace Gesture_Editor_SDK.Realtime
 {
-    public class EmptyRecognizable: MonoBehaviour, IRecognizable
+    public class EmptyRecognizable: RecognizableObject
     {
-        public EmptyRecognizable()
-        {
-            OnAbilityReleased = new UnityEvent();
-        }
-        public void OnFrameRecognized(string name)
+        public override void OnFrameRecognized(string name)
         {
             Debug.Log("Executed empty gesture on frame: " + name);
         }
 
-        public void AbilityCalled()
+        public override void AbilityCalled()
         {
             AbilityReleased();
         }
 
-        public void AbilityReleased()
+        protected override void OnAbilityReleased()
         {
-            OnAbilityReleased?.Invoke();
+            
         }
-
-        public UnityEvent OnAbilityReleased { get; }
     }
 }

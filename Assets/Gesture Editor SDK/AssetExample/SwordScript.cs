@@ -1,5 +1,6 @@
 using Gesture_Editor_SDK.Realtime;
 using Scripts.Gestures;
+using Scripts.HandsLogic;
 
 namespace Gesture_Editor_SDK.AssetExample
 {

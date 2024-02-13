@@ -22,12 +22,12 @@ namespace Scripts.PlayerLogic
         [SerializeField] protected Palette _palette;
         [SerializeField] protected FirstPersonController _personController;
 
-        protected GesturesLibrary _library;
-        
         private WaitForSeconds _waitUntilNextFrame;
         private Transform _handsParent;
         
         private GestureFrame _targetFrame;
+
+        public GesturesLibrary library;
         
         protected override void Start()
         {
@@ -36,10 +36,7 @@ namespace Scripts.PlayerLogic
             UpdateEvent.Instance?.AddListener(ToggleMenu);
             UpdateEvent.Instance?.AddListener(SimulateHit);
             _waitUntilNextFrame= new WaitForSeconds(handsProperties.delayOnFrame);
-            _library = GesturesLibrary.Instance;
-    
-            Engine.Instance().stats.hands = hands;
-            Engine.Instance().stats.bodyAnchors = anchors;
+            
             
             _handsParent = hands.leftHand.transform.parent;
             _ui.gestureInput.image.color = _palette.clear;
@@ -49,13 +46,16 @@ namespace Scripts.PlayerLogic
                 //Cursor.visible = state == PlayerState.MENU;
             });
             playerStateChangedEvent?.Invoke(playerState = PlayerState.ACTIVE);
+
+            
+            
             hands.OnEnabled();
         }
 
         //Simulate Gestures
         public void TryGetGestureFrame(string frameName)
         {
-            if(_library.DynamicGestures.TryGetValue(frameName, out var dynamicGesture))
+            if(library.DynamicGestures.TryGetValue(frameName, out var dynamicGesture))
             {
                 _ui.gestureInput.image.color = _palette.active;
                 // play Dynamic Gesture
@@ -64,7 +64,7 @@ namespace Scripts.PlayerLogic
                 return;
             }
             
-            if(_library.DynamicGestures.TryGetValue(GestureMapper.PrefixOfName(frameName), out dynamicGesture))
+            if(library.DynamicGestures.TryGetValue(GestureMapper.PrefixOfName(frameName), out dynamicGesture))
             {
                 if (dynamicGesture.TryGetGestureFrame(frameName, out var gestureFrame))
                 {
@@ -88,7 +88,7 @@ namespace Scripts.PlayerLogic
                 return;
             }
 
-            var dynamic = _library.DynamicGestures[_targetFrame.baseName];
+            var dynamic = library.DynamicGestures[_targetFrame.baseName];
             
             hands.MoveHands(_targetFrame, handsProperties.handSpeed, ()=>{StartCoroutine(WaitUntilNextFrame());});
             
@@ -108,10 +108,12 @@ namespace Scripts.PlayerLogic
                 case PlayerState.MENU:
                     StopMove();
                     _ui.Show();
+                  //  Cursor.visible = true;
                     break;
                 case PlayerState.ACTIVE:
                     StartMove();
                     _ui.Hide();
+                  //  Cursor.visible = false;
                     break;
             }
         }

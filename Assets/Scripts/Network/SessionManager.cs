@@ -38,9 +38,6 @@ namespace Scripts.Network
 
                 }
             }
-            #if UNITY_EDITOR
-                networkManager.StartClient();
-            #endif
         }
         
     }

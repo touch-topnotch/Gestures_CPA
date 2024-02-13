@@ -2,8 +2,9 @@ using System.Collections.Generic;
 using Gesture_Editor_SDK.Realtime;
 using Newtonsoft.Json;
 using Scripts.Databases;
-using Scripts.Hands;
+using Scripts.HandsLogic;
 using Scripts.Network;
+using Scripts.PlayerLogic;
 using UnityEngine;
 using Scripts.Static;
 using FrameAtlas = System.Collections.Generic.Dictionary<string,Scripts.Databases.DBFrameStruct>;
@@ -16,8 +17,8 @@ namespace Scripts.Gestures
         private static string _emptyRecognizablePath = "Effects/Empty/EmptyPrefab";
         private static readonly string _jsonPath = Application.dataPath + "/Resources/Database/GesturesLibrary.json";
 
-        public static Dictionary<string, JsonGestureStruct> GetJsonGesturesStruct =>
-            JsonConvert.DeserializeObject<GestureAtlas>(DataChanel.Get(_jsonPath));
+        public static Dictionary<string, JsonGestureStruct> GetJsonGesturesStruct(ulong id)=>
+            JsonConvert.DeserializeObject<GestureAtlas>(DataChanel.Get(_jsonPath, id));
 
         public static void SendJsonGesturesStruct(Dictionary<string, JsonGestureStruct> structs) =>
          DataChanel.Send(
@@ -25,9 +26,9 @@ namespace Scripts.Gestures
              JsonConvert.SerializeObject(structs, Formatting.Indented)
              );
         
-        public static void ReplaceCharacters()
+        public static void ReplaceCharacters(ulong id)
         {
-            var jsonStruct = GetJsonGesturesStruct;
+            var jsonStruct = GetJsonGesturesStruct(id);
             foreach (var name in jsonStruct.Keys)  
             {
 
@@ -57,9 +58,9 @@ namespace Scripts.Gestures
             }
             SendJsonGesturesStruct(jsonStruct);
         }
-        public static Dictionary<string, DynamicGesture> ReadDynamicGestures()
+        public static Dictionary<string, DynamicGesture> ReadDynamicGestures(PlayerData data)
         {
-            var gestureDict = GetJsonGesturesStruct;
+            var gestureDict = GetJsonGesturesStruct(data.id);
 
             if (gestureDict == null)
                 return null;
@@ -106,20 +107,26 @@ namespace Scripts.Gestures
                     }
                 }
 
-                if(asset.Type == 0)
-                    res = Spawner.SpawnPooledPrefab(res, null, true);
+                if (res == null)
+                    return null;
                 
+                if(asset.Type == 0)
+                    res = Spawner.SpawnPooledPrefab(res, data.transform, true);
+
+                recognizable = res.GetComponent(typeof(IRecognizable)) as IRecognizable;
+                recognizable.playerData = data;
                 dynamicGestures.Add(jsonGesture.Key, new DynamicGesture(
                     jsonGesture.Key,
                     frames,
-                    res.GetComponent(typeof(IRecognizable)) as IRecognizable
+                    recognizable
                 ));
             }
 
             return dynamicGestures;
         }
 
-        public static void UpdateDynamicGesture(DynamicGesture gesture)
+
+        public static void UpdateDynamicGesture(DynamicGesture gesture, ulong playerId)
         {
             var name = gesture.Name;
 
@@ -133,7 +140,7 @@ namespace Scripts.Gestures
                 }
             };
 
-            var _gestureDict = GetJsonGesturesStruct;
+            var _gestureDict = GetJsonGesturesStruct(playerId);
 
             if (!_gestureDict.ContainsKey(name))
             {
