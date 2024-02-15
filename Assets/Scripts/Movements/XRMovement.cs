@@ -38,7 +38,7 @@ namespace Scripts.Movements
 
     private Vector3 _velocity;
 
-    private bool _isMoved;
+    [SerializeField] private bool _isMoved;
     public bool isMoved() => _isMoved;
 
     public void StartMove()
