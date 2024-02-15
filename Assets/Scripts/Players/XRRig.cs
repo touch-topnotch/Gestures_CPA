@@ -8,6 +8,11 @@ namespace Scripts.PlayerLogic
         [SerializeField] protected Transform  _trackedPoseDriverTransform;
         
         [SerializeField] private XRMovement _movement;
+        [Range(0, 10)] [SerializeField] private float bodyPositionSpeed;
+        [Range(0, 10)] [SerializeField] private float headPositionSpeed;
+        [Range(0, 1000)] [SerializeField] private float bodyRotationSpeed;
+     
+        [Range(0, 1000)] [SerializeField] private float headRotationSpeed;
         public override bool isMoved() => _movement.isMoved();
 
         public override void StartMove() => _movement.StartMove();
@@ -16,20 +21,26 @@ namespace Scripts.PlayerLogic
 
         private void Update()
         {
+   
             // Get the tracked pose driver's localEulerAngles once
             Vector3 localEulerAngles = ClampRotation(_trackedPoseDriverTransform.localEulerAngles);
-
+           
             // Update body rotation
-            anchors.Body.localRotation = Quaternion.Euler(new Vector3(0, localEulerAngles.y, 0));
+            anchors.Body.localRotation = Quaternion.Lerp( anchors.Body.localRotation,Quaternion.Euler(new Vector3(0, localEulerAngles.y, 0)),Time.deltaTime*bodyRotationSpeed );
 
             // Update head rotation
-            anchors.Head.localRotation = Quaternion.Euler(new Vector3(localEulerAngles.x, 0, localEulerAngles.z));
-            
+            anchors.Head.localRotation = Quaternion.Lerp(anchors.Head.localRotation,
+                Quaternion.Euler(new Vector3(localEulerAngles.x, 0, localEulerAngles.z)),
+                    Time.deltaTime * headRotationSpeed);
+
             if (!isMoved())
             {
                 Vector3 localPosition = _trackedPoseDriverTransform.localPosition;
-                anchors.Body.localPosition = new Vector3(localPosition.x, anchors.Body.localPosition.y, localPosition.z);
-                anchors.Head.localPosition = new Vector3(0, localPosition.y, 0);
+                anchors.Body.localPosition = Vector3.Lerp(anchors.Body.localPosition,
+                    new Vector3(localPosition.x, anchors.Body.localPosition.y, localPosition.z), bodyPositionSpeed);
+
+                anchors.Head.localPosition = Vector3.Lerp(anchors.Head.localPosition,
+                    new Vector3(0,1.8f, 0), headPositionSpeed);
             }
         }
         private static Vector3 ClampRotation(Vector3 rotation)
