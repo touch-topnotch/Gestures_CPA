@@ -78,10 +78,10 @@ namespace Scripts.Gestures
         public void AllFramesDetected(Action onAbilityReleasedCallback)
         {
             _recognizable.AbilityCalled();
-            _recognizable.OnAbilityReleased.AddListener(() =>
+            _recognizable.onAbilityReleased += ()=>
             {
                 onAbilityReleasedCallback?.Invoke();
-            });
+            };
         }
 
         public void LogFrames()

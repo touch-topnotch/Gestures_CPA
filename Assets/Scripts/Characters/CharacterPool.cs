@@ -14,7 +14,6 @@ using UnityEngine.Events;
 
 namespace Scripts.Characters
 {
-
     public class CharacterPool : MonoBehaviour
     {
         [Header("Properties")]
@@ -36,64 +35,13 @@ namespace Scripts.Characters
 
         [Header("Events")] public UnityEvent<string> OnCharacterChanged = new();
 
-        public void LogCharacter(string name)
-        {
-            Debug.Log("Character " + transform.parent.name + " changed on "+ name + ", "+ _currentCharacterName);
-        }
+   
         private void OnValidate()
         {
             SetCharacter(_currentCharacterName);
             SetAvatarType(_currentType);
         }
-
-        public void SetMaterialPair(MaterialPair pair)
-        {
-            _hands.HandMaterialPair = pair;
-            CurrentCharacter?.ChangeMaterials(_hands.HandMaterialPair);
-        }
-
-        public void SetAvatarType(AvatarType type)
-        {
-            _currentType = type;
-            CurrentCharacter?.ChangeAvatarType(type, _hands);
-        }
-
-        public void SetCharacter(string name)
-        {
-            if (name == _currentCharacterName)
-            {
-                ReactivateCharacters();
-                return;
-            }
-            
-            if (charactersDict.ContainsKey(name))
-            {
-                _currentCharacterName = name;
-            }
-            else
-            {
-                Debug.LogWarning("There is no character with name: " + _currentCharacterName);
-                return;
-            }
-            ReactivateCharacters();
-
-            OnCharacterChanged?.Invoke(_currentCharacterName);
-        }
-
-        public void SetCharAndId(int id, string name)
-        {
-            _hands.HandMaterialPair = _materials[id% _materials.Count];
-            SetCharacter(name);
-        }
-
-        public void SetMaterialId(int id)
-        {
-            _hands.HandMaterialPair = _materials[id% _materials.Count];
-        }
-
-        public Character CurrentCharacter => charactersDict.ContainsKey(_currentCharacterName) ? charactersDict[_currentCharacterName] : null;
-        
-        
+        #region Unity Inspectors tools
 #if UNITY_EDITOR
         [InspectorButton("Update Characters", space: 4)]
         public void UpdateCharacters()
@@ -191,6 +139,59 @@ namespace Scripts.Characters
             DestroyImmediate(characterPrefab);
         }
 #endif
+        #endregion
+        public void SetMaterialPair(MaterialPair pair)
+        {
+            _hands.HandMaterialPair = pair;
+            CurrentCharacter?.ChangeMaterials(_hands.HandMaterialPair);
+        }
+
+        public void SetAvatarType(AvatarType type)
+        {
+            _currentType = type;
+            CurrentCharacter?.ChangeAvatarType(type, _hands);
+        }
+
+        public void SetCharacter(string name)
+        {
+            if (name == _currentCharacterName)
+            {
+                ReactivateCharacters();
+                return;
+            }
+            
+            if (charactersDict.ContainsKey(name))
+            {
+                _currentCharacterName = name;
+            }
+            else
+            {
+                Debug.LogWarning("There is no character with name: " + _currentCharacterName);
+                return;
+            }
+            ReactivateCharacters();
+
+            OnCharacterChanged?.Invoke(_currentCharacterName);
+        }
+
+        public void SetCharAndId(int id, string name)
+        {
+            _hands.HandMaterialPair = _materials[id% _materials.Count];
+            SetCharacter(name);
+        }
+
+        public void SetMaterialId(int id)
+        {
+            _hands.HandMaterialPair = _materials[id% _materials.Count];
+        }
+
+        public Character CurrentCharacter => charactersDict.ContainsKey(_currentCharacterName) ? charactersDict[_currentCharacterName] : null;
+        
+        
+        public void LogCharacter(string name)
+        {
+            Debug.Log("Character " + transform.parent.name + " changed on "+ name + ", "+ _currentCharacterName);
+        }
         private void RefreshDictionary()
         {
             foreach (var VARIABLE in transform.GetComponentsInChildren<Character>())

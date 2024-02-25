@@ -150,10 +150,6 @@ namespace Scripts.Characters
             if(_handAppearance)
                 _handAppearance.ChangeMaterialPair(materialPair, type);
         }
-        public void ChangeMaterials(MaterialPair materialPair, string stage)
-        {
-            _handAppearance.ChangeMaterialPair(materialPair, stage);
-        }
-       
+
     }
 }

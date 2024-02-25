@@ -33,7 +33,7 @@ Transform:
   - {fileID: 3132398389654234233}
   - {fileID: 7991390612586249969}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2889349828044328304
 MonoBehaviour:
@@ -47,36 +47,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a18a86e22f64b3e8875843ee0fa265e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  appearancesList:
-  - stageName: default_local
-    MainColor: {r: 0, g: 0, b: 0, a: 0.87058824}
-    EdgeColor: {r: 0.7264151, g: 0.3340449, b: 0, a: 0.44705883}
-    EdgeHighlightPower: 2
-    ThumbColor: {r: 1, g: 0.45882353, b: 0, a: 0.38431373}
-    FingerColor1: {r: 1, g: 0.45882353, b: 0, a: 0.38431373}
-    FingerColor2: {r: 1, g: 0.45882353, b: 0, a: 0.38431373}
-    FingerColor3: {r: 1, g: 0.45882353, b: 0, a: 0.38431373}
-    FingerColor4: {r: 1, g: 0.45882353, b: 0, a: 0.38431373}
-    FadeCenter: {x: 0, y: 0, z: 0.15}
-    FadeScale: {x: 1, y: 4, z: 1}
-    FadeStart: 0.12
-    NoiseScale: 5000
-    NoiseStrength: 0.5
-  - stageName: default_enemy
-    MainColor: {r: 0, g: 0, b: 0, a: 0.87058824}
-    EdgeColor: {r: 0.7254902, g: 0.051943585, b: 0, a: 0.44705883}
-    EdgeHighlightPower: 2
-    ThumbColor: {r: 1, g: 0.45882353, b: 0, a: 0.38431373}
-    FingerColor1: {r: 1, g: 0.45882353, b: 0, a: 0.38431373}
-    FingerColor2: {r: 1, g: 0.45882353, b: 0, a: 0.38431373}
-    FingerColor3: {r: 1, g: 0.45882353, b: 0, a: 0.38431373}
-    FingerColor4: {r: 1, g: 0.45882353, b: 0, a: 0.38431373}
-    FadeCenter: {x: 0, y: 0, z: 0.15}
-    FadeScale: {x: 1, y: 4, z: 1}
-    FadeStart: 0.12
-    NoiseScale: 5000
-    NoiseStrength: 0.5
-  debugStage: default_enemy
+  appearancesDict:
+    m_Keys: 0000000001000000
+    m_Values:
+    - MainColor: {r: 0.8584906, g: 0.32463536, b: 0, a: 1}
+      EdgeColor: {r: 0, g: 0, b: 0, a: 1}
+      EdgeHighlightPower: 1.2
+      ThumbColor: {r: 1, g: 0.54509807, b: 0.21176471, a: 1}
+      FingerColor1: {r: 1, g: 0.5445543, b: 0.21226418, a: 1}
+      FingerColor2: {r: 1, g: 0.54509807, b: 0.21176471, a: 1}
+      FingerColor3: {r: 1, g: 0.54509807, b: 0.21176471, a: 1}
+      FingerColor4: {r: 1, g: 0.54509807, b: 0.21176471, a: 1}
+      FadeCenter: {x: 0, y: 0, z: 0.15}
+      FadeScale: {x: 1, y: 4, z: 1}
+      FadeStart: 0.12
+      NoiseScale: 5000
+      NoiseStrength: 0.5
+    - MainColor: {r: 0.8584906, g: 0.32463536, b: 0, a: 1}
+      EdgeColor: {r: 0, g: 0, b: 0, a: 1}
+      EdgeHighlightPower: 1.2
+      ThumbColor: {r: 1, g: 0.54509807, b: 0.21176471, a: 1}
+      FingerColor1: {r: 1, g: 0.5445543, b: 0.21226418, a: 1}
+      FingerColor2: {r: 1, g: 0.54509807, b: 0.21176471, a: 1}
+      FingerColor3: {r: 1, g: 0.54509807, b: 0.21176471, a: 1}
+      FingerColor4: {r: 1, g: 0.54509807, b: 0.21176471, a: 1}
+      FadeCenter: {x: 0, y: 0, z: 0.15}
+      FadeScale: {x: 1, y: 4, z: 1}
+      FadeStart: 0.12
+      NoiseScale: 5000
+      NoiseStrength: 0.5
+  debugStage: 1
   debugPair:
     Left: {fileID: 2100000, guid: 92d95049810044f8c8587fd737b964d5, type: 2}
     Right: {fileID: 2100000, guid: f6fb483ae9d12430597f301a3c5a4fdc, type: 2}
@@ -92,12 +92,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6631bb181550438f96403f2c5d2f4f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currentType: 0
-  _avatars:
-  - _type: 0
-    avatar: {fileID: 4874107531579430355}
-  - _type: 1
-    avatar: {fileID: 8994673081169491458}
+  _avatarsDictionary:
+    m_Keys: 
+    m_Values: []
   _source: {fileID: 2481497400516132035, guid: 536dd3434f84f498192cecb7e608b1e3, type: 3}
   _handAppearance: {fileID: 2889349828044328304}
 --- !u!1001 &2480309489192729217
@@ -179,18 +176,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2480309489192729217}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8994673081169491458 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6825394162934533251, guid: f1d726e59c8454e9dbe4f8d5829cd84d,
-    type: 3}
-  m_PrefabInstance: {fileID: 2480309489192729217}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c6b998d365a4ee0a494d49c224f756e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &6408059926513688732
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -270,15 +255,3 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 6408059926513688732}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &4874107531579430355 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1966470449900205391, guid: fdf4b05da1baf4ba89cba68aa0695634,
-    type: 3}
-  m_PrefabInstance: {fileID: 6408059926513688732}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c6b998d365a4ee0a494d49c224f756e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
