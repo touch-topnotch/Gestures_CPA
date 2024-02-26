@@ -5,8 +5,9 @@ using UnityEngine;
 
 namespace Scripts.Weapons
 {
-    public abstract class Melee: Weapon
+    public class Melee: Weapon
     {
+        
         [Header("Melee components")]
         [SerializeField] private float _bladeMinSpeed;
         [SerializeField] private Blade _blade;
@@ -15,7 +16,7 @@ namespace Scripts.Weapons
         public int capacity
         {
             get => _capacity;
-            set
+            private set
             {
                 _capacity = value;
                 if (_capacity <= 0)
@@ -48,6 +49,5 @@ namespace Scripts.Weapons
                     break;
             }
         }
-        
     }
 }

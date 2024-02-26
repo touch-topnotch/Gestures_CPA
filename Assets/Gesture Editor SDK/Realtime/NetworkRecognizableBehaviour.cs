@@ -19,15 +19,6 @@ namespace Gesture_Editor_SDK.Realtime
             onAbilityReleased?.Invoke();
             // do functions and destroy it;
         }
-        protected void ChangeParent(Transform obj, Transform parent, bool adjustTransform = true)
-        {
-//            obj.SetParent(parent);
-            if (adjustTransform)
-            {
-                obj.localPosition = Vector3.zero;
-                obj.rotation = Quaternion.identity;
-            }
-        }
 
         public event Action onAbilityReleased;
     }

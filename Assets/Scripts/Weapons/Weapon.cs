@@ -18,18 +18,43 @@ namespace Scripts.Weapons
     }
     public abstract class Weapon : NetworkRecognizableBehaviour
     {
-       [Header("Weapons components")]
+        [Header("Weapons components")] 
+        
         [SerializeField]
-        protected AudioProcessor audioProcessor;
+        protected WeaponDesign weaponDesign;
         
         protected readonly NetworkVariable<State> state = new NetworkVariable<State>();
         protected UpdateEvent _onUpdate => UpdateEvent.Instance;
         protected abstract bool HitImpactCondition(out string affected);
         protected abstract bool HitCallCondition();
-        protected abstract void OnHitStartHold();
-        protected abstract void OnHitHolding();
-        protected abstract void OnHitCalled();
-        protected abstract void OnHitImpact(string affected);
+
+        protected virtual void OnHitStartHold()
+        {
+        }
+
+        protected virtual void OnHitHolding()
+        {
+            if (IsClient)
+                weaponDesign.OnHitHolding();
+        }
+
+        protected virtual void OnHitCalled()
+        {
+            if (IsClient)
+                weaponDesign.OnHitCalled();
+        }
+
+        protected virtual void OnHitImpact(string affected)
+        {
+            if (IsClient)
+                weaponDesign.OnHitImpact(affected);
+        }
+
+        public override void OnNetworkSpawn()
+        {
+            if (IsClient)
+                weaponDesign.SetPlayerData(playerData);
+        }
 
         [ClientRpc]
         private void OnHitImpactClientRpc(string affected)
@@ -89,5 +114,22 @@ namespace Scripts.Weapons
             }
         }
 
+        public override void OnFrameRecognized(string name)
+        {
+            if(IsClient)
+                weaponDesign.OnFrameRecognized(name);
+        }
+
+        public override void AbilityCalled()
+        {
+          if(IsClient)
+              weaponDesign.OnGestureDetected();
+        }
+
+        protected override void OnAbilityReleased()
+        {
+            if(IsClient)
+               weaponDesign.OnAbilityReleased();
+        }
     }
 }

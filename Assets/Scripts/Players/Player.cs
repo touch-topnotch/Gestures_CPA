@@ -23,12 +23,12 @@ namespace Scripts.PlayerLogic
     public struct PlayerData
     {
         public readonly ulong id;
-        public readonly Transform transform;
+        public readonly Transform playerTransform;
         public readonly PlayerHands hands;
         public PlayerData(ulong id, Transform transform, PlayerHands hands)
         {
             this.id = id;
-            this.transform = transform;
+            this.playerTransform = transform;
             this.hands = hands;
         }
     }
