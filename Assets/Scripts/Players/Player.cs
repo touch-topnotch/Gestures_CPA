@@ -15,9 +15,11 @@ using UnityEngine.Serialization;
 namespace Scripts.PlayerLogic
 {
     public enum RigType
-    {
-        PCRig,
+    {        
         XRRig,
+    
+        PCRig,
+
         NoRig,
     }
     public struct PlayerData
@@ -38,7 +40,32 @@ namespace Scripts.PlayerLogic
     public class Player : MonoBehaviour
     {
         [Header("Runtime Settings")] 
-        [SerializeField] private RigType _rigType;
+       private RigType _rigType;
+
+        [ShowInInspector]
+        public RigType rigType
+        {
+            get => _rigType;
+            set
+            {
+                Debug.Log("Rig type changed on " + value);
+                _rigType = value;
+                switch (value)
+                {
+                    case RigType.XRRig: 
+                        curRig = _xrRig;
+                        break;
+                    case RigType.PCRig:
+                        curRig = _pcRig;
+                        break;
+                    case RigType.NoRig:
+                        curRig = null;
+                        break;
+                }
+                ActivateRig();
+            }
+
+        }
 
         [FormerlySerializedAs("_characterController")] [SerializeField] private CharacterPool _characterPool;
 
@@ -48,8 +75,9 @@ namespace Scripts.PlayerLogic
 
         [Header("Rigs")] [SerializeField] private PCRig _pcRig;
         [SerializeField] private XRRig _xrRig;
-        [SerializeField] private Rig _curRig;
-        
+
+        public Rig curRig { get; private set; }
+      
 
         [Header("Anchors")] 
         [SerializeField] private BodyAnchors _anchors;
@@ -62,54 +90,18 @@ namespace Scripts.PlayerLogic
         public BodyAnchors anchors => _anchors;
         public Character character => _characterPool.CurrentCharacter;
         public CharacterPool characterPool => _characterPool;
-        public RigType RigType
-        {
-            get => _rigType;
-            set
-            {
-                _rigType = value;
-                CurRig = GetRig();
-                ActivateRig();
-            }
-
-        }
-
-        public Rig CurRig
-        {
-            get => _curRig;
-            set
-            {
-                _curRig = value;
-                if(_curRig != null) ActivateRig();
-            }
-        }
-
-        private Rig GetRig()
-        {
-            switch (_rigType)
-            {
-                case RigType.XRRig:
-                    return _xrRig;
-                case RigType.PCRig:
-                    return _pcRig;
-                case RigType.NoRig:
-                    return null;
-                default:
-                    return _pcRig;
-            }
-        }
+       
 
         private void ActivateRig()
         {
             _pcRig.gameObject.SetActive(_rigType == RigType.PCRig);
             _xrRig.gameObject.SetActive(_rigType == RigType.XRRig);
         }
+        
 #if UNITY_EDITOR
         [Button("Add missing components")]
         private void AddMissingComponents()
         {
-           
-
             _characterPool = this.GetComponentInChildren<CharacterPool>();
             _anchors = this.transform.Find("Anchors").GetComponent<BodyAnchors>();
             _anchors.Body = _anchors.transform.Find("Body");
@@ -117,8 +109,6 @@ namespace Scripts.PlayerLogic
             _hands = _anchors.transform.GetComponentInChildren<PlayerHands>();
             _pcRig = transform.Find("PC Rig").GetComponent<PCRig>();
             _xrRig = transform.Find("XR Rig").GetComponent<XRRig>();
-            
-            CurRig = GetRig();
             
             if (!isLocal)
             {
@@ -154,10 +144,11 @@ namespace Scripts.PlayerLogic
 
         private void Awake()
         {
+            rigType = Application.platform == RuntimePlatform.Android ? RigType.XRRig : RigType.PCRig;
             data = new PlayerData(0, transform, _hands);
-            _gestureCombiner = new GestureCombiner(data);
+            _gestureCombiner = new GestureCombiner(data, _characterPool.charactersDict);
         }
-
+        
         private void Start()
         {
             if(isLocal) Initialize();
@@ -168,20 +159,28 @@ namespace Scripts.PlayerLogic
             
             if (_rigType != RigType.NoRig)
             {
-                
-                if (!_pcRig)
-                    _pcRig = GetComponentInChildren<PCRig>();
-                if (!_xrRig)
-                    _xrRig = GetComponentInChildren<XRRig>();
-
                 if (_rigType == RigType.PCRig)
                     _pcRig.library = _gestureCombiner.library;
                 
-                _gestureCombiner.CreateRecognizer(_curRig.RecognitionPropertiesConfig);
-                
-             //   _curRig.StartMove();
-              
+                _gestureCombiner.CreateRecognizer(curRig.RecognitionPropertiesConfig);
+                _characterPool.CharacterChangedEvent.AddListener((e) =>
+                {
+                    List<string> gestureNames = new();
+                    for (int i = 0; i < _characterPool.CurrentCharacter.recognizables.Count; i++)
+                    {
+                        gestureNames.Add(_characterPool.CurrentCharacter.recognizables[i].gestureName);
+                    }
+                    Debug.Log("Change directed recognition on " + gestureNames + gestureNames[0]);
+                    _gestureCombiner.library.gestures.ChangeActiveKeys(gestureNames);
+                });
+               
+                //   _curRig.StartMove();
             }
+         
+            _characterPool.SetCharacter("Anger");
+            _characterPool.SetAvatarType(AvatarType.Local);
+            
+
             UpdateEvent.Instance.AddListener(UpdateAnchors); 
         }
 
@@ -195,15 +194,15 @@ namespace Scripts.PlayerLogic
 
             return false;
         }
+
         protected void UpdateAnchors()
         {
             if (_rigType != RigType.NoRig)
-            { 
+            {
                 // updating 
-                BodyAnchors.EquateAnchors(_curRig.Anchors, _anchors); // нельзя прокинуть _anchors в риг напрямую, потому-что в риге находится камера.
+                BodyAnchors.EquateAnchors(curRig.Anchors, _anchors); // нельзя прокинуть _anchors в риг напрямую, потому-что в риге находится камера.
             }
-
-          
+            
             BodyAnchors.EquateAnchors(_anchors, character.GetAvatar()?.Anchors);
         }
     }

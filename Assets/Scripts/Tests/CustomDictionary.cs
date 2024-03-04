@@ -126,22 +126,12 @@ namespace Scripts.Tests
         /// </summary>
         public void OnBeforeSerialize()
         {
-            if (Application.isPlaying)
-            {
-                Debug.Log("Забыли обо всем, заново");
-                Debug.Log("Сейчас у нас " + Keys.Count +" ключей и "+ Values.Count + " вещей");
-            }
             m_Keys.Clear();
             m_Values.Clear();
             foreach (var kvp in this)
             {
                 m_Keys.Add(SerializeKey(kvp.Key));
-                if(Application.isPlaying)
-                    Debug.Log("Такс, получается сейчас в m_Values "+  m_Values.Count + " элементов, у kvp Value " + (kvp.Value as List<AudioClip>).Count + " sounds");
                 m_Values.Add(SerializeValue(kvp.Value));
-                if (Application.isPlaying)
-                    Debug.Log("теперь в m_Values " + m_Values.Count + " элементов");
-
             }
         }
         /// <summary>
@@ -153,7 +143,7 @@ namespace Scripts.Tests
             {
                 var key = DeserializeKey(m_Keys[i]);
                 
-                Debug.Log("Deserialized value: " + m_Values[i]);
+              //  Debug.Log("Deserialized value: " + m_Values[i]);
               
                 if(m_Values.Count < i)
                     continue;

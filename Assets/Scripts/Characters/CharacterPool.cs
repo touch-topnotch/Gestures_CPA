@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Characters;
 using Gesture_Editor_SDK.EditorAttributes.InspectorButtonAttribute;
 using Gesture_Editor_SDK.ReadOnly;
 using Scripts.Design;
@@ -8,13 +9,14 @@ using Scripts.HandsLogic;
 using Scripts.PlayerLogic;
 using Scripts.Tests;
 using Sirenix.OdinInspector;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace Scripts.Characters
 {
-    public class CharacterPool : MonoBehaviour
+    public class CharacterPool : SerializedMonoBehaviour
     {
         [Header("Properties")]
         [SerializeField] private string _currentCharacterName = "";
@@ -23,7 +25,7 @@ namespace Scripts.Characters
         [SerializeField] private AvatarType _currentType;
         
         [BoxGroup("Object pool")]
-        [SerializeField] private CustomDictionary<string, Character> charactersDict = new();
+        [SerializeField] public Dictionary<string, Character> charactersDict { get; private set; } = new();
         
         [BoxGroup("Object pool")]
         [SerializeField] private List<MaterialPair> _materials = new List<MaterialPair>();
@@ -33,7 +35,7 @@ namespace Scripts.Characters
         
         [SerializeField] private Hands _hands;
 
-        [Header("Events")] public UnityEvent<string> OnCharacterChanged = new();
+        [Header("Events")] public UnityEvent<string> CharacterChangedEvent = new();
 
    
         private void OnValidate()
@@ -44,6 +46,7 @@ namespace Scripts.Characters
         #region Unity Inspectors tools
 #if UNITY_EDITOR
         [InspectorButton("Update Characters", space: 4)]
+        
         public void UpdateCharacters()
         {
             RefreshDictionary();
@@ -111,8 +114,15 @@ namespace Scripts.Characters
 
                     Debug.Log("Trying to add character " + charName + "... ");
                     var character = spawnedObject.GetComponent<Character>();
-                
-                    charactersDict.SmartAdd(charName,character);
+                    if (charactersDict.ContainsKey(charName))
+                    {
+                        charactersDict[charName] = character;
+                    }
+                    else
+                    {
+                        charactersDict.Add(charName, character);
+                    }
+                   // charactersDict.SmartAdd(charName,character);
                     Debug.Log("Character " + charName + " added to Object Pool");
                 }
             }
@@ -133,9 +143,9 @@ namespace Scripts.Characters
                 return;
             }
 
-            character.SetSource(source);
+            //character.SetSource(source);
 
-            character.GenerateAvatars();
+          //  character.GenerateAvatars();
             DestroyImmediate(characterPrefab);
         }
 #endif
@@ -171,7 +181,7 @@ namespace Scripts.Characters
             }
             ReactivateCharacters();
 
-            OnCharacterChanged?.Invoke(_currentCharacterName);
+            CharacterChangedEvent?.Invoke(_currentCharacterName);
         }
 
         public void SetCharAndId(int id, string name)
@@ -196,7 +206,7 @@ namespace Scripts.Characters
         {
             foreach (var VARIABLE in transform.GetComponentsInChildren<Character>())
             {
-                if (!string.IsNullOrEmpty(VARIABLE.name) && !charactersDict.ContainsKey(VARIABLE.name))
+                if (!string.IsNullOrEmpty(VARIABLE.name) && !charactersDict.ContainsKey(VARIABLE.name) && !VARIABLE.name.Contains("Clone"))
                     charactersDict.Add(VARIABLE.name, VARIABLE);
             }
         
@@ -210,6 +220,21 @@ namespace Scripts.Characters
             }
         }
 
+        #if UNITY_EDITOR
+        public void AddCharacter(Character obj)
+        {
+            if (obj.name.Contains("Clone"))
+                return;
+            
+            if (!charactersDict.ContainsKey(obj.name))
+                charactersDict.Add(obj.name, obj);
+            else
+            {
+                charactersDict[obj.name] = obj;
+            }
+            RefreshDictionary();
+        }
+        #endif
         private void ReactivateCharacters()
         {
             foreach (var VARIABLE in charactersDict)
@@ -223,10 +248,9 @@ namespace Scripts.Characters
         }
 
         private void Start()
-        {
-            OnCharacterChanged.AddListener(LogCharacter);
+        { 
+            CharacterChangedEvent.AddListener(LogCharacter);
             //ReactivateCharacters();
         }
-   
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Scripts.Static
@@ -108,6 +109,14 @@ namespace Scripts.Static
             return s;
         }
 
+        private static Vector3 checkAngles(Vector3 vec)
+        {
+            if (vec.x < 0) vec.x = 360 + vec.x;
+            if (vec.y < 0) vec.y = 360 + vec.y;
+            if (vec.z < 0) vec.z = 360 + vec.z;
+            return vec;
+        }
+
         
        // private static string Round(float value) => string.Format("{0:N"+$"{quality}"+"}", value);
 
@@ -138,7 +147,7 @@ namespace Scripts.Static
             return vec;
         }
 
-        public static Vector3 CodeToVec3Pos(string s) => s == "!"? Vector3.zero : CodeToVec3Pos(s[0], s[1], s[2]);
+        public static Vector3 CodeToVec3Pos(string s) => s == "!" || s == "" ? Vector3.zero : CodeToVec3Pos(s[0], s[1], s[2]);
         public static Vector3 CodeToVec3Pos(char x, char y, char z)
         {
             if(x == '!' || y == '!' || z == '!')
@@ -150,12 +159,18 @@ namespace Scripts.Static
             return vec;
         }
 
+    
         public static string VecToCodeRot(Vector3 vec)
-        {
-            if(vec == Vector3.zero)
+        { 
+            if(isZeroVector(vec))
                 return "!";
-
             return ""+FloatToChar(vec.x) + FloatToChar(vec.y) + FloatToChar(vec.z);
+        }
+
+        public static bool isZeroVector(Vector3 vec)
+        {
+            return vec == Vector3.zero ||
+                   Math.Abs(vec.x) < 0.004f && Math.Abs(vec.y) < 0.004f && Math.Abs(vec.z) < 0.004f;
         }
         public static string VecToCodePos(Vector3 vec)
         {

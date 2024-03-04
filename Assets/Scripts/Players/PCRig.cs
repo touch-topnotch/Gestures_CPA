@@ -3,6 +3,7 @@ using System.Collections;
 using Gesture_Editor_SDK.Realtime;
 using Scripts.Events;
 using Scripts.Gestures;
+using Scripts.HandsLogic;
 using Scripts.UI;
 using UnityEngine;
 
@@ -55,7 +56,8 @@ namespace Scripts.PlayerLogic
         //Simulate Gestures
         public void TryGetGestureFrame(string frameName)
         {
-            if(library.DynamicGestures.TryGetValue(frameName, out var dynamicGesture))
+            Debug.Log(frameName + " - testing");
+            if (library.DynamicGestures.TryGetValue(frameName, out var dynamicGesture))
             {
                 _ui.gestureInput.image.color = _palette.active;
                 // play Dynamic Gesture
@@ -63,7 +65,7 @@ namespace Scripts.PlayerLogic
                 SimulateDynamicGesture();
                 return;
             }
-            
+
             if(library.DynamicGestures.TryGetValue(GestureMapper.PrefixOfName(frameName), out dynamicGesture))
             {
                 if (dynamicGesture.TryGetGestureFrame(frameName, out var gestureFrame))
@@ -71,6 +73,7 @@ namespace Scripts.PlayerLogic
 //                    print(gestureFrame.name);
                     _ui.gestureInput.image.color = _palette.enabled;
                     // play Gesture Frame
+                    
                     hands.MoveHands(gestureFrame, handsProperties.handSpeed,
                         () => { _ui.gestureInput.image.color = _palette.clear; });
                     return;
@@ -79,8 +82,10 @@ namespace Scripts.PlayerLogic
             _ui.gestureInput.image.color = _palette.wrong;
         }
         
+        
         public void SimulateDynamicGesture()
         {
+            Debug.Log("Simulating...");
             StopCoroutine(WaitUntilNextFrame());
             if (_targetFrame == null)
             {
@@ -94,6 +99,7 @@ namespace Scripts.PlayerLogic
             
             _targetFrame = dynamic.GetNextFrameOf(_targetFrame);
         }
+        
         private IEnumerator WaitUntilNextFrame()
         {
             yield return _waitUntilNextFrame;

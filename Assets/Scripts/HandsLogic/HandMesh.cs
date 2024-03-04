@@ -130,6 +130,8 @@ namespace Scripts.HandsLogic
 
         public void ChangePositionSmooth(in BonesData data, in float speed, in Action onPlaced = null)
         {
+            if (data == null || data.rotations == null || data.rotations.Length == 0)
+                return;
             _target = data;
             _speed = speed;
             _onPlaced = onPlaced;
@@ -156,7 +158,8 @@ namespace Scripts.HandsLogic
             }
             
             points[0].localPosition = Vector3.Lerp(points[0].localPosition, _target.rootPos, _speed*Time.deltaTime);
-            for(int i = 0; i < points.Length; i++)
+            
+            for(int i = 1; i < points.Length; i++)
             {
                 points[i].localRotation = Quaternion.Lerp(points[i].localRotation, _target.rotations[i], _speed*Time.deltaTime);
             }

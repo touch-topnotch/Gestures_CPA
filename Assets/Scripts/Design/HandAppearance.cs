@@ -54,91 +54,33 @@ namespace Scripts.Design
         public float NoiseScale;
         public float NoiseStrength;
     }
-    public class HandAppearance: MonoBehaviour
+   
+
+    [CreateAssetMenu(fileName = "Hand_Appearance_", menuName = "Character/HandAppearance")]
+    public class HandAppearance : SerializedScriptableObject
     {
-       
-        [SerializeField] private CustomDictionary<AvatarType, HandStageProps> appearancesDict = new CustomDictionary<AvatarType, HandStageProps>();
-        private string default_stage;
-        private string local_stage;
-        private string enemy_stage;
-        [Space]
-        [SerializeField] private AvatarType debugStage;
-        [SerializeField] private MaterialPair debugPair;
-        
-        public void ChangeMaterialPair(MaterialPair pair, AvatarType type)
+        [ShowInInspector]
+        public Dictionary<AvatarType, HandStageProps> appearancesDict { get; private set; } = new Dictionary<AvatarType, HandStageProps>()
         {
-           RefreshProps(pair, type);
-        }
-        private void RefreshProps(MaterialPair pair, AvatarType type)
-        {
-            RefreshProps(pair.Left, type);
-            RefreshProps(pair.Right, type);
-            // var isL = stage.Contains("_L");
-            // if (isL || stage.Contains("_R"))
-            // {
-            //     RefreshProps(isL ? pair.Left : pair.Right, stage);
-            // }
-            // else
-            // {
-            //     RefreshProps(pair.Left, stage);
-            //     RefreshProps(pair.Right, stage);
-            // }
-        }
-
-        private void RefreshProps(Material mat, AvatarType type)
-        {
-            if (appearancesDict.ContainsKey(type) && mat)
-            {
-//                Debug.Log("Set Props Material: "+  mat.name + " to stage " + stage);
-                var props = appearancesDict[type];
-                mat.SetColor(HandShaderProps.MainColor, props.MainColor);                             
-                mat.SetColor(HandShaderProps.EdgeColor, props.EdgeColor);
-                mat.SetFloat(HandShaderProps.EdgeHighlightPower, props.EdgeHighlightPower);
-                mat.SetColor(HandShaderProps.ThumbColor, props.ThumbColor);
-                mat.SetColor(HandShaderProps.FingerColor1, props.FingerColor1);
-                mat.SetColor(HandShaderProps.FingerColor2, props.FingerColor2);
-                mat.SetColor(HandShaderProps.FingerColor3, props.FingerColor3);
-                mat.SetColor(HandShaderProps.FingerColor4, props.FingerColor4);
-                mat.SetVector(HandShaderProps.FadeCenter, props.FadeCenter);
-                mat.SetVector(HandShaderProps.FadeScale, props.FadeScale);
-                mat.SetFloat(HandShaderProps.FadeStart, props.FadeStart);
-                mat.SetFloat(HandShaderProps.NoiseScale, props.NoiseScale);
-                mat.SetFloat(HandShaderProps.NoiseStrength, props.NoiseStrength);
+            {  
+                AvatarType.Local, new HandStageProps()
+                {
+                    MainColor = new Color(0.1f, 0, 0.2f, 0.55f),
+                    EdgeColor = new Color(0.53f, 0, 0.8f, 0.8f),
+                    ThumbColor = new Color(0.1f, 0, 0.2f, 0.55f),
+                    FingerColor1 = new Color(0.1f, 0, 0.2f, 0.55f),
+                    FingerColor2 = new Color(0.1f, 0, 0.2f, 0.55f),
+                    FingerColor3 = new Color(0.1f, 0, 0.2f, 0.55f),
+                    FingerColor4 = new Color(0.1f, 0, 0.2f, 0.55f),
+                    EdgeHighlightPower = 1,
+                    FadeCenter = new Vector3(0, 0, 0.15f),
+                    FadeScale = new Vector3(1, 4, 1),
+                    FadeStart = 0.12f,
+                    NoiseScale = 5000,
+                    NoiseStrength = 0.5f,
+                }
+            
             }
-        }
-        
-        #if UNITY_EDITOR
-        [Button("Check stage on material")]
-        private void CheckStage()
-        {
-            ChangeMaterialPair(debugPair, debugStage);
-        }
-        [Button("Set default values to debugStage")]
-        private void SetDefaultValuesToFirstStage()
-        {
-            var props = appearancesDict[debugStage];
-            props.MainColor = Color.white;
-            props.EdgeColor = Color.white;
-            props.ThumbColor = Color.white;
-            props.FingerColor1 = Color.white;
-            props.FingerColor2 = Color.white;
-            props.FingerColor3 = Color.white;
-            props.FingerColor4 = Color.white;
-            props.EdgeHighlightPower = 1;
-            props.FadeCenter = new Vector3(0, 0, 0.15f);
-            props.FadeScale = new Vector3(1, 4, 1);
-            props.FadeStart = 0.12f;
-            props.NoiseScale = 5000;
-            props.NoiseStrength = 0.5f;
-            appearancesDict[debugStage] = props;
-
-        }
-        
-        [Button("Duplicate first settings to last")]
-        private void DuplicateSettings()
-        {   
-            appearancesDict[appearancesDict.Keys.Last()] = appearancesDict.Values.First();
-        }
-    #endif
+        };
     }
 }

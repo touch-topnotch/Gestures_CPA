@@ -7,6 +7,7 @@ namespace Gesture_Editor_SDK.Realtime
 {
     public abstract class NetworkRecognizableBehaviour : NetworkBehaviour, IRecognizable
     {
+        public string gestureName => transform.name;
         public PlayerData playerData { get; set; }
         public abstract void OnFrameRecognized(string name);
 
@@ -16,10 +17,10 @@ namespace Gesture_Editor_SDK.Realtime
         public void AbilityReleased()
         {
             OnAbilityReleased();
-            onAbilityReleased?.Invoke();
+            AbilityReleasedEvent?.Invoke();
             // do functions and destroy it;
         }
 
-        public event Action onAbilityReleased;
+        public event Action AbilityReleasedEvent;
     }
 }

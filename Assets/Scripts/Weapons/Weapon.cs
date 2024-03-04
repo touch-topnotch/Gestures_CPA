@@ -16,6 +16,14 @@ namespace Scripts.Weapons
         HitCalled,
         HitImpact,
     }
+
+    public enum WeaponClass
+    {
+        Melee,
+        Magic,
+        Range,
+        Custom
+    }
     public abstract class Weapon : NetworkRecognizableBehaviour
     {
         [Header("Weapons components")] 

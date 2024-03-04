@@ -10,15 +10,13 @@ namespace Scripts.Gestures
 
     public enum GestureType
     {
-        CONTROL,
-        ABILITY,
-        HIT,
-        ULTIMATE,
+        System,
+        Weapon,
     }
     public class DynamicGesture
     {
         public List<GestureFrame> frames{ get;}
-        
+        public GestureType gestureType { get; private set; }
         private IRecognizable _recognizable;
         
         private string _name;
@@ -36,11 +34,11 @@ namespace Scripts.Gestures
                 _name = value ?? Calculations.RandomString(5);
             }
         }
-        public DynamicGesture(string name, List<GestureFrame> frames, IRecognizable recognizable)
+        public DynamicGesture(string name, GestureType type, List<GestureFrame> frames, IRecognizable recognizable)
         {
             Name = name;
+            gestureType = type;
             this.frames = frames;
-
             _recognizable = recognizable;
         }
 
@@ -72,18 +70,25 @@ namespace Scripts.Gestures
         }
         public void FrameRecognized(string name)
         {
-            _recognizable.OnFrameRecognized(name);
+            
+            _recognizable?.OnFrameRecognized(name);
         }
 
         public void AllFramesDetected(Action onAbilityReleasedCallback)
         {
-            _recognizable.AbilityCalled();
-            _recognizable.onAbilityReleased += ()=>
+            if (_recognizable != null)
             {
-                onAbilityReleasedCallback?.Invoke();
-            };
+                _recognizable.AbilityCalled();
+                _recognizable.AbilityReleasedEvent += () => { onAbilityReleasedCallback?.Invoke(); };
+            }
         }
-
+        public bool TryGetGestureFrame(string name, out GestureFrame gestureFrame)
+        {
+            var id = GestureMapper.IndexOfName(name);
+            gestureFrame = id < frames.Count ? frames[id] : null;
+            return id < frames.Count;
+        }
+        
         public void LogFrames()
         {
             var log = $"Gesture {Name} contains: ";
@@ -94,11 +99,6 @@ namespace Scripts.Gestures
 
             Debug.Log(log);
         }
-        public bool TryGetGestureFrame(string name, out GestureFrame gestureFrame)
-        {
-            var id = GestureMapper.IndexOfName(name);
-            gestureFrame = id < frames.Count ? frames[id] : null;
-            return id < frames.Count;
-        }
+
     }
 }

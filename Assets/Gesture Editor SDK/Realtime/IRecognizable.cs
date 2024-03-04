@@ -9,10 +9,11 @@ namespace Gesture_Editor_SDK.Realtime
 {
     public interface IRecognizable
     {
+        string gestureName { get; }
         PlayerData playerData {get; set; }
         void OnFrameRecognized(string name);
         void AbilityCalled();
         void AbilityReleased();
-        event Action onAbilityReleased;
+        event Action AbilityReleasedEvent;
     }
 }

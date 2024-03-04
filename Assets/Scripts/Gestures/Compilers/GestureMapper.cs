@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
+using Characters;
 using Gesture_Editor_SDK.Realtime;
 using Newtonsoft.Json;
+using Scripts.Characters;
 using Scripts.Databases;
 using Scripts.HandsLogic;
 using Scripts.Network;
@@ -9,181 +12,193 @@ using UnityEngine;
 using Scripts.Static;
 using FrameAtlas = System.Collections.Generic.Dictionary<string,Scripts.Databases.DBFrameStruct>;
 using GestureAtlas =  System.Collections.Generic.Dictionary<string,Scripts.Databases.JsonGestureStruct>;
+
 namespace Scripts.Gestures
 {
     public static class GestureMapper
     {
         private static readonly bool isDebug = true;
         private static string _emptyRecognizablePath = "Weapons/Empty/EmptyPrefab";
-        private static readonly string _jsonPath = Application.dataPath + "/Resources/Database/GesturesLibrary.json";
 
-        public static Dictionary<string, JsonGestureStruct> GetJsonGesturesStruct(ulong id)=>
-            JsonConvert.DeserializeObject<GestureAtlas>(DataChanel.Get(_jsonPath, id));
+        public static readonly string _jsonPath = Application.dataPath + "/Resources/Database/CharacterLibrary.json";
 
-        public static void SendJsonGesturesStruct(Dictionary<string, JsonGestureStruct> structs) =>
-         DataChanel.Send(
-             _jsonPath,
-             JsonConvert.SerializeObject(structs, Formatting.Indented)
-             );
-        
-        public static void ReplaceCharacters(ulong id)
+        public static string ReplaceCharacters(string input)
         {
-            var jsonStruct = GetJsonGesturesStruct(id);
-            foreach (var name in jsonStruct.Keys)  
+            var s = input;
+            if (s.Length < 3)
+                return input;
+
+            var newS = "";
+            for (int k = 0; k < s.Length; k += 3)
             {
-
-                for (int i = 0; i < jsonStruct[name].Frames.Count; i++)
+                if (s[k] == '$' && s[k + 1] == '$' && s[k + 2] == '$')
                 {
-                    for (int j = 0; j < 4; j++)
-                    {
-                        var s = jsonStruct[name].Frames[i][j];
-                        if (s.Length < 3)
-                            continue;
-                        
-                        var newS = "";
-                        for (int k = 0; k < s.Length; k+=3)
-                        {
-                            if (s[k] == '$' && s[k + 1] == '$' && s[k + 2] == '$')
-                            {
-                                newS += "!";
-                                continue;
-                            }
-                            newS += "" + s[k] + s[k + 1] + s[k + 2];
-                        }
+                    newS += "!";
+                    continue;
+                }
 
-                        jsonStruct[name].Frames[i][j] = newS;
-                    }
-                   
+                newS += "" + s[k] + s[k + 1] + s[k + 2];
+            }
+
+            return newS;
+        }
+
+        public static bool TryGetDynamicGesture(JsonGestureStruct jsonStruct, in List<IRecognizable> recognizables,
+            out DynamicGesture gesture)
+        {
+
+            // firstly, find IRecognizable, if exist.
+            IRecognizable recognizableObject = null;
+
+            foreach (var rec in recognizables)
+            {
+                if (rec.gestureName == jsonStruct.Name)
+                {
+                    recognizableObject = rec;
+                    break;
                 }
             }
-            SendJsonGesturesStruct(jsonStruct);
-        }
-        public static Dictionary<string, DynamicGesture> ReadDynamicGestures(PlayerData data)
-        {
-            var gestureDict = GetJsonGesturesStruct(data.id);
 
-            if (gestureDict == null)
+            if (recognizableObject == null)
+            {
+                Debug.Log("Recognizables for gesture " + jsonStruct.Name+ " not found");
+            }
+
+            List<GestureFrame> frames = new();
+
+            foreach (var frame in jsonStruct.Frames)
+            {
+                frames.Add(
+                    new GestureFrame(
+                        jsonStruct.Name + "_" + frames.Count,
+                        StringToHandsStruct(frame)
+                    )
+                );
+            }
+
+
+            gesture = new DynamicGesture(jsonStruct.Name,
+                (GestureType)jsonStruct.Type,
+                frames,
+                recognizableObject);
+
+            return true;
+        }
+
+        public static Dictionary<string, DynamicGesture> ReadDynamicGestures(
+            Dictionary<string, Character> characters)
+        {
+
+            var charStruct = CharacterMapper.GetCharacterStruct();
+            if (charStruct == null)
                 return null;
+            Dictionary<string, DynamicGesture> gestures = new();
 
-            var dynamicGestures = new Dictionary<string, DynamicGesture>();
-            foreach (var jsonGesture in gestureDict)
+            foreach (var jsonChar in charStruct)
             {
-                List<GestureFrame> frames = new();
-
-                foreach (var frame in jsonGesture.Value.Frames)
+                if (characters.ContainsKey(jsonChar.Name))
                 {
-                    frames.Add(
-                        new GestureFrame(
-                            jsonGesture.Key + "_" + frames.Count,
-                            StringToHandsStruct(frame)
-                        )
-                    );
-                }
-
-                var asset = jsonGesture.Value.Asset;
-
-                var res = Resources.Load(asset.Path) as GameObject;
-           
-                if (!res) // нет в папке Resources
-                {
-                    Debug.Log("Resource not found by path: " + asset.Path);
-                    if (!isDebug)
-                        continue;
-                    else
-                        res = Resources.Load(_emptyRecognizablePath) as GameObject;
-                }
-                
-                var recognizable = res.GetComponent(typeof(IRecognizable)) as IRecognizable;
-                
-                if (recognizable == null) // на текущем обьекте нет IRecognizable
-                {
-                    Debug.Log("Resource has no IRecognizable component");
-                    if(!isDebug)
-                        continue;
-                    else
+                    foreach (var gesture in jsonChar.Gestures)
                     {
-                        Debug.Log("Empty Recognizable added"); // берем пустой
-                        res = Resources.Load(_emptyRecognizablePath) as GameObject;
+                        if (TryGetDynamicGesture(gesture, characters[jsonChar.Name].recognizables,
+                                out var dynamicGesture))
+                        {
+                            gestures.Add(dynamicGesture.Name, dynamicGesture);
+                        }
                     }
                 }
-
-                if (res == null)
-                    return null;
-                
-                if(asset.Type == 0)
-                    res = Spawner.SpawnPooledPrefab(res, data.playerTransform, true);
-
-                recognizable = res.GetComponent(typeof(IRecognizable)) as IRecognizable;
-                recognizable.playerData = data;
-                dynamicGestures.Add(jsonGesture.Key, new DynamicGesture(
-                    jsonGesture.Key,
-                    frames,
-                    recognizable
-                ));
             }
 
-            return dynamicGestures;
+            return gestures;
         }
 
+      
 
-        public static void UpdateDynamicGesture(DynamicGesture gesture, ulong playerId)
+     public static void UpdateDynamicGesture(string characterName, JsonGestureStruct jsonGesture)
         {
-            var name = gesture.Name;
+            var _jsonCharacters = CharacterMapper.GetCharacterStruct();
+            
+            for(int i = 0; i < _jsonCharacters.Count; i ++)
+            {
+                if (_jsonCharacters[i].Name == characterName)
+                {
+                    for(int j = 0; j < _jsonCharacters[i].Gestures.Count; j ++)
+                    {
+                        if (_jsonCharacters[i].Gestures[j].Name == jsonGesture.Name)
+                        {
+                         
+                            _jsonCharacters[i].Gestures[j] = jsonGesture;
+                            
+                            CharacterMapper.SendCharacterStruct(_jsonCharacters);
+                            
+                            Debug.Log($"{jsonGesture.Name} overrided in Json");
+                            return;
+                        }
+                    }
+                    
+                    _jsonCharacters[i].Gestures.Add(jsonGesture);
+                    CharacterMapper.SendCharacterStruct(_jsonCharacters);
+                    Debug.Log($"{jsonGesture.Name} created in Character " + characterName);
+                    return;
+                }
+            }
+
+            _jsonCharacters.Add(new JsonCharacterStruct()
+            {
+                Name = characterName,
+                Description = characterName + " is cool!",
+                Gestures = new List<JsonGestureStruct>()
+                {
+                    jsonGesture,
+                },
+                RootFolder = "Resources/Characters/" + characterName
+            });
+            CharacterMapper.SendCharacterStruct(_jsonCharacters);
+            Debug.Log($"Gesture {jsonGesture.Name} and character " + characterName + " created");
+        }
+        public static void UpdateDynamicGesture(string characterName, DynamicGesture gesture)
+        {
 
             var jsonGesture = new JsonGestureStruct
             {
+                Name = gesture.Name,
+                Type = (int)gesture.gestureType,
                 Frames = gesture.frames.ConvertAll(frame => HandsStructToString(frame.Hands)),
-                Asset = new JsonAsset
-                {
-                    Type = 0,
-                    Path = "Prefabs/Effects/" + name + "/" + name + "Prefab"
-                }
             };
-
-            var _gestureDict = GetJsonGesturesStruct(playerId);
-
-            if (!_gestureDict.ContainsKey(name))
-            {
-                Debug.Log($"{name} added to Json");
-                _gestureDict.Add(name, jsonGesture);
-            }
-            else
-            {
-                Debug.Log($"{name} overrided in Json");
-                _gestureDict[name] = jsonGesture;
-            }
-
-            SendJsonGesturesStruct(_gestureDict);
+            UpdateDynamicGesture(characterName, jsonGesture);
+         
         }
 
+    
         public static List<string> HandsStructToString(HandsStruct hands)
         {
             return new List<string>
             {
-                VectorConverter.QuaternionArrayToCode(hands.LeftBones.rotations),
-                VectorConverter.QuaternionArrayToCode(hands.RightBones.rotations),
-                VectorConverter.VecToCodePos(hands.LeftBones.rootPos),
-                VectorConverter.VecToCodePos(hands.RightBones.rootPos)
+                hands.LeftBones == null ? "": VectorConverter.QuaternionArrayToCode(hands.LeftBones.rotations),
+                hands.RightBones == null ? "":VectorConverter.QuaternionArrayToCode(hands.RightBones.rotations),
+                hands.LeftBones == null ? "":VectorConverter.VecToCodePos(hands.LeftBones.rootPos),
+                hands.RightBones == null ? "":VectorConverter.VecToCodePos(hands.RightBones.rootPos)
             };
         }
 
         public static HandsStruct StringToHandsStruct(List<string> hands)
         {
             return new HandsStruct(
-                new BonesData(
+                hands[0] == "" ? null : new BonesData(
                     type: HandType.left,
                     rotations: VectorConverter.CodeToQuaternionArray(hands[0]),
                     rootPos: VectorConverter.CodeToVec3Pos(hands[2])
                 ),
-                new BonesData(
+                hands[2] == "" ? null : new BonesData(
                     type: HandType.right,
                     rotations: VectorConverter.CodeToQuaternionArray(hands[1]),
                     rootPos: VectorConverter.CodeToVec3Pos(hands[3])
                 )
             );
+            
         }
 
-        public static string PrefixOfName(string name) => name.Substring(0,
+        public static string PrefixOfName(string name) => name.Split('_').Length == 1 ? name : name.Substring(0,
             name.Length - name.Split('_')[^1].Length - 1);
 
         public static int IndexOfName(string name) => int.Parse(name.Split('_')[^1]);

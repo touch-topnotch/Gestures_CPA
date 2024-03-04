@@ -40,22 +40,22 @@ namespace Scripts.PlayerLogic
             _player.characterPool.SetCharacter((int)OwnerClientId % 2 == 0 ? "Anger" : "Grief");
             
             if (IsClient && !IsOwner)
-            {
-                _player.RigType = RigType.NoRig;
+            { 
+                _player.rigType = RigType.NoRig;
                 _player.characterPool.SetAvatarType(AvatarType.Enemy);
 
             }
 
             if (IsClient && IsOwner)
             {
-                _player.RigType = RigType.PCRig;
+                _player.rigType = RigType.PCRig;
                 _player.characterPool.SetAvatarType(AvatarType.Local);
-                _player.CurRig.Anchors.Body.position = new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10));
+                _player.curRig.Anchors.Body.position = new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10));
             }
 
             if (IsServer)
             {
-                _player.RigType = RigType.NoRig;
+                _player.rigType = RigType.NoRig;
                 _player.characterPool.SetAvatarType(AvatarType.None);
             }
          

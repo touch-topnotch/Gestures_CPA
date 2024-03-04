@@ -1,9 +1,5 @@
-using System;
 using Gesture_Editor_SDK.ReadOnly;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UIElements;
 
 namespace Scripts.Weapons
 {

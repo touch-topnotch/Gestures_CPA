@@ -51,7 +51,7 @@ namespace Scripts.HandsLogic
         
         public void AddToStack(BonesData data)
         {
-            if (!data.Exists())
+            if (data == null)
                 return;
             
             if (hiddenHands.Count == 0)
