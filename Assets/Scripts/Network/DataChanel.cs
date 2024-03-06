@@ -1,41 +1,48 @@
-using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
-using System.Net;
-using System.Text;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 using UnityEngine;
 using File = System.IO.File;
 using Scripts.Static;
-using Telegram.Bot;
-using Telegram.Bot.Args;
-using Telegram.Bot.Types;
-using UnityEngine.Networking.PlayerConnection;
+using Telegram.Bot.Types.Enums;
 
 namespace Scripts.Network
 {
     public static class DataChanel
     {
      
-        public static void Send(string jsonPath, string value)
+        public static void WriteAndSendFile(string filePath, string value)
         {
+          
+            Task.Run(async () =>
+            {
+                await WriteAndSendFileAsync(filePath, value);
+            });
             
-            File.WriteAllText(jsonPath, value);
-            SendDocumentAsync(jsonPath);
-        }
-        static async void SendDocumentAsync(string jsonPath)
-        {
-            try
-            {
-                await TelegramBotProcessor.SendToTelegramAsync(jsonPath);
-                Debug.Log("Document sent successfully.");
-            }
-            catch (Exception e)
-            {
-                Debug.LogWarning($"Failed to send document: {e.Message}");
-            }
         }
 
+
+        private static async Task WriteAndSendFileAsync(string filePath, string value)
+        {
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                await writer.WriteAsync(value);
+            }
+
+            var name = Path.GetFileName(filePath);
+            foreach (var VARIABLE in TelegramBotProcessor.receivedMessages)
+            {
+                if (VARIABLE.Type == MessageType.Document && VARIABLE.Document.FileName == name)
+                {
+                    TelegramBotProcessor.DeleteMessage(VARIABLE.MessageId);
+                }
+            }
+            
+            await TelegramBotProcessor.SendFileToTelegram(name, value);
+            
+        }
+    
         public static string Get(string jsonPath)
         {
             jsonPath = Calculations.ConvertToResourceFormat(jsonPath);

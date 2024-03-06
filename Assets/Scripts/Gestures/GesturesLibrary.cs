@@ -112,6 +112,7 @@ namespace Scripts.Gestures
         public void RecordFrame(HandsStruct hands, string name, string characterName)
         {
 
+            Debug.Log("Recording frame: " +name);
             var jsonCharacterStructs = CharacterMapper.GetCharacterStruct();
             if (jsonCharacterStructs == null)
             {
