@@ -147,11 +147,11 @@ namespace Scripts.HandsLogic
                 StopMoveHand();
                 return;
             }
-            if(Vector3.Distance(points[0].localPosition, _target.rootPos) < 0.05f &&
-               Quaternion.Angle(points[0].localRotation, _target.rotations[0]) < 0.05f&&
-                Quaternion.Angle(points[13].localRotation, _target.rotations[13]) < 0.05f
-               
-               )
+
+            var dist = Vector3.Distance(points[0].localPosition, _target.rootPos);
+            var a1 = Quaternion.Angle(points[0].localRotation, _target.rotations[0]);
+            var a2 = Quaternion.Angle(points[13].localRotation, _target.rotations[13]);
+            if(dist < 0.05f && a1 < 0.05f&& a2< 0.05f)
             {
                 StopMoveHand();
                 return;
@@ -159,10 +159,11 @@ namespace Scripts.HandsLogic
             
             points[0].localPosition = Vector3.Lerp(points[0].localPosition, _target.rootPos, _speed*Time.deltaTime);
             
-            for(int i = 1; i < points.Length; i++)
+            for(int i = 0; i < points.Length; i++)
             {
                 points[i].localRotation = Quaternion.Lerp(points[i].localRotation, _target.rotations[i], _speed*Time.deltaTime);
             }
+           
         }
         
         private void StopMoveHand()

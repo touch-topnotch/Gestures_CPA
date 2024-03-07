@@ -4,7 +4,9 @@ using Gesture_Editor_SDK.EditorAttributes.SerializeByTypeAttribute;
 using Scripts.Events;
 using Scripts.Gestures;
 using Scripts.Static;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.XR;
 using Zenject;
 
 namespace Scripts.HandsLogic
@@ -27,12 +29,19 @@ namespace Scripts.HandsLogic
         public List<HandMesh> hiddenHands = new List<HandMesh>();
         private UpdateEvent _onUpdate => UpdateEvent.Instance;
 
+        [SerializeField] private Material default_mat;
         private void OnValidate()
         {
             if (Parent == null)
             {
                 Parent = transform;
             }
+        }
+
+        private void Start()
+        {
+            LeftHand.GetComponent<HandMesh>().HandMaterial = default_mat;
+            RightHand.GetComponent<HandMesh>().HandMaterial = default_mat;
         }
 
         public void CreateNewStack(BonesData data)

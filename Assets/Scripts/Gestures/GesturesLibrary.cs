@@ -18,7 +18,7 @@ namespace Scripts.Gestures
         private readonly PlayerData _playerData;
 
         private Dictionary<string, DynamicGesture> allGestures => gestures.GetOpenDict();
-        public Dictionary<string, DynamicGesture> DynamicGestures => gestures.GetLimitedDict();
+        public Dictionary<string, DynamicGesture> DynamicGestures => gestures.GetOpenDict();
         private Dictionary<string, Character> _characters;
         public GesturesLibrary(PlayerData data, Dictionary<string, Character> characters)
         {
