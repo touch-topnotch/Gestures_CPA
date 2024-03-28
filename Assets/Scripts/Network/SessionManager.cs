@@ -1,4 +1,6 @@
+using System;
 using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 
 namespace Scripts.Network
@@ -6,9 +8,9 @@ namespace Scripts.Network
     
     public static class SessionManager
     {
-     
-        
-        public static void Connect(NetworkManager networkManager)
+
+        private static ushort serverPort;
+        public static void ReadCommandArgs(NetworkManager networkManager)
         {
             
             Application.targetFrameRate = 60;
@@ -28,14 +30,15 @@ namespace Scripts.Network
                         
                       //  LoadScene
                         break;
-                    
+
                     case "-client":
                         // /Users/dmitry057/Projects/UnityProjects/Gestures_CPA/Builds/NetworkTest.app/Contents/MacOS/Gesture -lobby-client -logfile- & /Users/dmitry057/Projects/UnityProjects/Gestures_CPA/Builds/NetworkTest.app/Contents/MacOS/Gesture -lobby-client -logfile -
                         networkManager.StartClient();
                         break;
-                    
-                 
-
+                    case "-port":
+                        if (i + 1 != args.Length)
+                            ushort.TryParse(args[i + 1], out serverPort);
+                        break;
                 }
             }
         }

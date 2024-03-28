@@ -1,10 +1,34 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Scripts.Tests
 {
+    public class EditableDictionary<K, V> : Dictionary<K, V>, IPrefabDictionaryEditable<K, V>
+    {
+        public Dictionary<K, V> GetDictionaryInEditMode()
+        {
+            return this;
+        }
+
+        public void SetDictionaryInEditMode(Dictionary<K, V> dict)
+        {
+            Clear();
+            foreach (var key in dict.Keys)
+            {
+                Add(key, dict[key]);
+            }
+           
+        }
+    }
+    public interface IPrefabDictionaryEditable<K, V>
+    {
+        public Dictionary<K,V> GetDictionaryInEditMode();
+        public void SetDictionaryInEditMode(Dictionary<K, V> dict);
+        
+    }
     /// <summary>
     /// Unity can't serialize Dictionary so here's a custom wrapper that does. Note that you have to
     /// extend it before it can be serialized as Unity won't serialized generic-based types either.
@@ -30,7 +54,7 @@ namespace Scripts.Tests
         /// <param name="val">The value</param>
         /// <returns>The value</returns>
         public override V SerializeValue(V val) => val;
-        
+
 
         public override V SerializeValue(List<V> value)
         {
@@ -43,7 +67,6 @@ namespace Scripts.Tests
 
             return (V)(object)serializedList;
         }
-        
 
 
         /// <summary>
@@ -59,7 +82,7 @@ namespace Scripts.Tests
         /// <param name="val">The value</param>
         /// <returns>The value</returns>
         public override V DeserializeValue(V val) => val;
-        
+
         public void SmartAdd(K key, V val)
         {
             if (ContainsKey(key))
@@ -71,9 +94,53 @@ namespace Scripts.Tests
                 Add(key, val);
             }
         }
-        
+        #if UNITY_EDITOR
+        public static Dictionary<K, V> GetDictionaryFromPrefab(string path)
+        {
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+
+            if (prefab == null)
+                throw new NullReferenceException();
+
+            if (prefab.TryGetComponent(typeof(IPrefabDictionaryEditable<K, V>), out var component))
+            {
+                // Change a property of the component
+                var prefabDictEditable = (IPrefabDictionaryEditable<K, V>)component;
+                return prefabDictEditable.GetDictionaryInEditMode();
+            }
+
+            throw new NullReferenceException();
+        }
+
+        public static void SetDictionaryToPrefab(string path, Dictionary<K,V> dict)
+        {
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+
+            if (prefab == null)
+                throw new NullReferenceException();
+            
+            GameObject prefabInstance = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
+            
+            if (prefabInstance == null)
+                throw new NullReferenceException();
+            
+            if (prefabInstance.TryGetComponent(typeof(IPrefabDictionaryEditable<K, V>), out var component))
+            {
+                var prefabDictEditable = (IPrefabDictionaryEditable<K, V>)component;
+                prefabDictEditable.SetDictionaryInEditMode(dict);
+                
+                PrefabUtility.ApplyPrefabInstance(prefabInstance, InteractionMode.AutomatedAction);
+                Object.DestroyImmediate(prefabInstance);
+                AssetDatabase.Refresh();
+            }
+            else
+            {
+                throw new NullReferenceException();
+            }
+        }
+        #endif
     }
-    
+
     /// <summary>
     /// Dictionary that can serialize keys and values as other types
     /// </summary>
@@ -84,12 +151,10 @@ namespace Scripts.Tests
     [Serializable]
     public abstract class CustomDictionary<K, V, SK, SV> : Dictionary<K, V>, ISerializationCallbackReceiver
     {
-        [SerializeField]
-        List<SK> m_Keys = new List<SK>();
+        [SerializeField] List<SK> m_Keys = new List<SK>();
 
-        [SerializeField]
-        List<SV> m_Values = new List<SV>();
-        
+        [SerializeField] List<SV> m_Values = new List<SV>();
+
         /// <summary>
         /// From <see cref="K"/> to <see cref="SK"/>
         /// </summary>
@@ -105,7 +170,7 @@ namespace Scripts.Tests
         public abstract SV SerializeValue(V value);
 
         public abstract SV SerializeValue(List<V> value);
-        
+
         /// <summary>
         /// From <see cref="SK"/> to <see cref="K"/>
         /// </summary>
@@ -120,7 +185,7 @@ namespace Scripts.Tests
         /// <returns>The value in <see cref="V"/></returns>
         public abstract V DeserializeValue(SV serializedValue);
 
-        
+
         /// <summary>
         /// OnBeforeSerialize implementation.
         /// </summary>
@@ -134,6 +199,7 @@ namespace Scripts.Tests
                 m_Values.Add(SerializeValue(kvp.Value));
             }
         }
+
         /// <summary>
         /// OnAfterDeserialize implementation.
         /// </summary>
@@ -142,10 +208,10 @@ namespace Scripts.Tests
             for (int i = 0; i < m_Keys.Count; i++)
             {
                 var key = DeserializeKey(m_Keys[i]);
-                
-              //  Debug.Log("Deserialized value: " + m_Values[i]);
-              
-                if(m_Values.Count < i)
+
+                //  Debug.Log("Deserialized value: " + m_Values[i]);
+
+                if (m_Values.Count < i)
                     continue;
                 if (ContainsKey(key))
                 {
@@ -156,11 +222,9 @@ namespace Scripts.Tests
                     Add(key, DeserializeValue(m_Values[i]));
                 }
             }
-            
+
             m_Keys.Clear();
             m_Values.Clear();
         }
     }
-    
-    
 }

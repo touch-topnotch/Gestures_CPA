@@ -1,33 +1,31 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using Design.RecordingScene;
+using Design.RecordingScene.Design.RecordingScene;
 using Scripts.PlayerLogic;
 using Scripts.Gestures;
 using Scripts.HandsLogic;
 using Scripts.Network;
 using Scripts.Static;
-using Telegram.Bot;
-using Telegram.Bot.Polling;
+using Scripts.Systems;
 using Telegram.Bot.Types;
 using TMPro;
 using UI.KeyboardPack;
 using UnityEngine;
 using UnityEngine.UI;
-using Zenject;
 
 namespace Scripts.Tests
 {
     public class GestureFramesRecorder : MonoBehaviour
 
     {
-        public Toggle leftToggle;
-        public Toggle rightToggle;
+        public BubbleToggle leftToggle;
+        public BubbleToggle rightToggle;
         public XRInputField nameInput;
         public XRInputField characterNameInput;
-        public Button newGestureButton;
-        public Button continueRecording;
-        public Text gestureLabelText;
-        public Text characterLabelText;
+        public BubbleButton newGestureButton;
+        public BubbleButton continueRecording;
+        public TMP_Text gestureLabelText;
+        public TMP_Text characterLabelText;
         public Player _player;
         private SupportHandVisualiser _supportHdCreator;
        // private GesturesLibrary _library;
@@ -49,68 +47,82 @@ namespace Scripts.Tests
         }
 
         private HandsStruct _recordedHandStruct = new();
-
-        private bool taskCompleted = false;
         private void OnMessageReceived(Message message)
         {
             var text = message.Text;
             if (text == null)
                 return;
-            
-            if(text.Contains("Char"))
+            var tokens = text.Split(' ');
+            int i = 0;
+            while(i < tokens.Length)
             {
-                string characterName =
-                    text.Split(' ').Length > 0 ? text.Split(' ')[1] : Calculations.RandomString(6);
-                characterNameInput.inputString = characterName;
-                _curCharacterName = characterName;
-                TelegramBotProcessor.SendTextToTelegram("Принято, теперь перса зовут " + characterName);
-            }
-
-            if (text.Contains("Gest"))
-            {
-                string gestureName = text.Split(' ').Length > 0 ? text.Split(' ')[1] : Calculations.RandomString(8);
-                nameInput.inputString = gestureName;
-                Name = gestureName;
-                TelegramBotProcessor.SendTextToTelegram("Принято, теперь жест называется " + gestureName);
-            }
-
-            if (text.Contains("Continue"))
-            {
-                ContinueRecording();
-                TelegramBotProcessor.SendTextToTelegram("Nessun problema, caro amico!");
-            }
-            
-            if (text.Contains("Left"))
-            {
-                leftToggle.isOn = true;
-                TelegramBotProcessor.SendTextToTelegram("Nessun problema, caro amico!");
-            }
-
-            if (text.Contains("Right"))
-            {
-                rightToggle.isOn = true;
-                TelegramBotProcessor.SendTextToTelegram("Nessun problema, caro amico!");
+                switch (tokens[i])
+                {
+                    case"/char":
+                        string characterName = i + 1 < tokens.Length ? tokens[i+1] : Calculations.RandomString(6);
+                        characterNameInput.inputString = characterName;
+                        _curCharacterName = characterName;
+                        TelegramBotProcessor.Instance.SendTextToTelegramFunc("Принято, теперь перса зовут " + characterName);
+                        i += 2;
+                        break;
+                    case "/gest":
+                        string gestureName= i + 1 < tokens.Length ? tokens[i+1] : Calculations.RandomString(6);
+                        nameInput.inputString = gestureName;
+                        Name = gestureName;
+                        TelegramBotProcessor.Instance.SendTextToTelegramFunc("Принято, теперь жест называется " + gestureName);
+                        i += 2;
+                        break;
+                    case "/continue":
+                        ContinueRecording();
+                        TelegramBotProcessor.Instance.SendTextToTelegramFunc("Nessun problema, caro amico!");
+                        i++;
+                        break;
+                    case "/left":
+                        leftToggle.isOn = !leftToggle.isOn;
+                        TelegramBotProcessor.Instance.SendTextToTelegramFunc("Nessun problema, caro amico!");
+                        i++;
+                        break;
+                    case "/right":
+                        rightToggle.isOn = !rightToggle.isOn;
+                        TelegramBotProcessor.Instance.SendTextToTelegramFunc("Nessun problema, caro amico!");
+                        i++;
+                        break;
+                    default:
+                        i++;
+                        break;
+                }
             }
         }
-
-        void Awake()
-        {
-            TelegramBotProcessor.StartReceiving();
-            TelegramBotProcessor.onMessageReceived += OnMessageReceived;
-        }
-
-    
-
+        
         private void Start ()
         {
-            //_rig = rig;
+            TelegramBotProcessor.Instance.StartReceiving();
+            TelegramBotProcessor.onMessageReceived += OnMessageReceived;
+            _player.curRig.headInteraction.onHeadInteraction += (type) =>
+            {
+                switch (type)
+                {
+                    case HeadInteractionType.Left:
+                        leftToggle.isOn = true;
+                        break;
+                    case HeadInteractionType.Right:
+                        rightToggle.isOn = true;
+                        break;
+                    case HeadInteractionType.Shaking:
+                        leftToggle.isOn = true;
+                        rightToggle.isOn = true;
+                        break;
+                    case HeadInteractionType.DoubleNod:
+                        ContinueRecording();
+                        break;
+                }
+            };
             _supportHdCreator = _player.data.hands.handVisualiser;
             
             leftToggle.onValueChanged.AddListener(RecordLeft);
             rightToggle.onValueChanged.AddListener(RecordRight);
             
             nameInput.OnExit.AddListener(RecordName);
-    //        characterNameInput.OnExit.AddListener((e) => { characterLabelText.text = e;});
             
             newGestureButton.onClick.AddListener(NewGestureGroup);
             continueRecording.onClick.AddListener(ContinueRecording);
@@ -136,22 +148,22 @@ namespace Scripts.Tests
             continueRecording.interactable = interactable;
         }
 
-        public virtual void NewGestureGroup()
+        public async void NewGestureGroup()
         { 
             _supportHdCreator.CreateNewStack(_recordedHandStruct);
-            SendToCompiler();
+            await SendToCompiler(_recordedHandStruct);
             ReloadToggles();
             Name = "";
         }
-        public void ContinueRecording()
+        public async void ContinueRecording()
         {
-            SendToCompiler();
+            await SendToCompiler(_recordedHandStruct);
             ReloadToggles();
             AddIndexToName();
         }
-        private void SendToCompiler()
+        private async Task SendToCompiler(HandsStruct handStruct)
         {
-            _player.gestureCombiner.library.RecordFrame(_recordedHandStruct, _currentName, characterLabelText.text);
+            await _player.gestureCombiner.library.RecordFrame(handStruct, _currentName, characterLabelText.text);
         }
         
         public virtual void RecordName(string name)
@@ -175,7 +187,7 @@ namespace Scripts.Tests
             Name = string.Join("_", words);
         }
 
-        public virtual void RecordLeft(bool isOn)
+        public void RecordLeft(bool isOn)
         {
             _recordedHandStruct.LeftBones = isOn ? new BonesData(_player.data.hands.leftHand.points, HandType.left) : null;
             if (isOn)
@@ -189,10 +201,10 @@ namespace Scripts.Tests
             }
         }
 
-        public virtual void RecordRight(bool isOn)
-        {
+        public void RecordRight(bool isOn)
+        {           
             _recordedHandStruct.RightBones = isOn ? new BonesData(_player.data.hands.rightHand.points, HandType.right) : null;
-      
+         
             if (isOn)
             {
                 _supportHdCreator.AddToStack(_recordedHandStruct.RightBones);

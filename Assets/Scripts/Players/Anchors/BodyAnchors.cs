@@ -7,14 +7,14 @@ namespace Scripts.PlayerLogic
 {
     public class BodyAnchors: MonoBehaviour
     {
-     //   public Transform Root;
+        public Transform Root;
         public Transform Body;
         public Transform Head;
 
         private void OnValidate()
         {
-            // if (Root == null)
-            //     Root = transform;
+            if (Root == null)
+                Root = transform;
             if (Body == null)
                 Body = transform.Find("Body");
             if (Head == null)
@@ -28,7 +28,7 @@ namespace Scripts.PlayerLogic
                 return;
             }
 
-          //  target.Root.position = master.Root.position;
+            target.Root.position = master.Root.position;
             
             target.Head.position = master.Head.position;
             target.Head.rotation = master.Head.rotation;

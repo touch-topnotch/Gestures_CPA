@@ -88,7 +88,7 @@ namespace Scripts.PlayerLogic
         public PlayerData data;
         public GestureCombiner gestureCombiner => _gestureCombiner;
         public BodyAnchors anchors => _anchors;
-        public Character character => _characterPool.CurrentCharacter;
+        public Character character => _characterPool.currentCharacter;
         public CharacterPool characterPool => _characterPool;
        
 
@@ -146,11 +146,12 @@ namespace Scripts.PlayerLogic
         {
             rigType = Application.platform == RuntimePlatform.Android ? RigType.XRRig : RigType.PCRig;
             data = new PlayerData(0, transform, _hands);
-            _gestureCombiner = new GestureCombiner(data, _characterPool.charactersDict);
+      
         }
         
         private void Start()
-        {
+        {      
+            _gestureCombiner = new GestureCombiner(data, _characterPool.charactersDict);
             if(isLocal) Initialize();
         }
 
@@ -163,15 +164,15 @@ namespace Scripts.PlayerLogic
                     _pcRig.library = _gestureCombiner.library;
                 
                 _gestureCombiner.CreateRecognizer(curRig.RecognitionPropertiesConfig);
-                _characterPool.CharacterChangedEvent.AddListener((e) =>
+                _characterPool.characterChangedEvent.AddListener((e) =>
                 {
-                    List<string> gestureNames = new();
-                    for (int i = 0; i < _characterPool.CurrentCharacter.recognizables.Count; i++)
-                    {
-                        gestureNames.Add(_characterPool.CurrentCharacter.recognizables[i].gestureName);
-                    }
-                    Debug.Log("Change directed recognition on " + gestureNames + gestureNames[0]);
-                    _gestureCombiner.library.gestures.ChangeActiveKeys(gestureNames);
+                    // List<string> gestureNames = new();
+                    // for (int i = 0; i < _characterPool.currentCharacter.recognizables.Count; i++)
+                    // {
+                    //     gestureNames.Add(_characterPool.currentCharacter.recognizables[i].gestureName);
+                    // }
+                    // Debug.Log("Change directed recognition on " + gestureNames + gestureNames[0]);
+                    // _gestureCombiner.library.gestures.ChangeActiveKeys(gestureNames);
                 });
                
                 //   _curRig.StartMove();

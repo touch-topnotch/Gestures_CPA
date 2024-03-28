@@ -39,6 +39,7 @@ namespace Scripts.Static
                     j++;
                     continue;
                 }
+
                 jArr[i] = CodeToVec3Rot(value[j], value[j+1], value[j+2]);
                 j += 3;
             }
@@ -132,9 +133,7 @@ namespace Scripts.Static
 
             return positions;
         }
-
-        public static Vector3 CodeToVec3Rot(string s) => CodeToVec3Rot(s[0], s[1], s[2]);
-        public static Vector3 CodeToVec3Rot(char x, char y, char z) // 36, 65536
+       public static Vector3 CodeToVec3Rot(char x, char y, char z) // 36, 65536
         {
             if (x == '!' || y == '!' || z == '!')
                 throw new CharToVec3Exception('!');

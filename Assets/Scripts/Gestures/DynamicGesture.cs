@@ -13,7 +13,7 @@ namespace Scripts.Gestures
         System,
         Weapon,
     }
-    public class DynamicGesture
+    public class DynamicGesture // frame + IRecognizable = оружие
     {
         public List<GestureFrame> frames{ get;}
         public GestureType gestureType { get; private set; }

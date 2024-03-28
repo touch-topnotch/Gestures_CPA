@@ -1,15 +1,18 @@
 
 #if UNITY_EDITOR
 using System;
+using System.Collections.Generic;
 using System.IO;
+using Characters;
 using Components;
 using Scripts.Characters;
 using Scripts.Design;
+using Scripts.Events;
 using Scripts.PlayerLogic;
+using Scripts.Static;
 using Scripts.Weapons;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using Avatar = Scripts.PlayerLogic.Avatar;
@@ -20,15 +23,8 @@ public class CharacterCreatorWindow: OdinEditorWindow
     {
         GetWindow<CharacterCreatorWindow>().Show();
     }
-
-
-    [BoxGroup("Properties")] [FolderPath]
-    public string telegramResources;
     [Header("Character")]  [OnValueChanged("ChangeConfigName")]
     [BoxGroup("Properties")] public string characterName;
-    
-
-    
     [Tooltip("Model of character with 2 children: Head and Body with correctly constructed pivots")]
     [BoxGroup("Properties",true, true)]
     [PreviewField(100)]
@@ -43,16 +39,11 @@ public class CharacterCreatorWindow: OdinEditorWindow
 
     [FoldoutGroup("Add Hand Appearance")] [ShowIf("configureHandAppearance")]
     public string handConfigName;
-    
     [FoldoutGroup("Add Hand Appearance")] [ShowIf("configureHandAppearance")] [InlineEditor()]
     public HandAppearance handAppearance;
-
-
-  
     private void ChangeConfigName()
     {
-        Debug.Log("Test");
-        handConfigName = "Hand_Appearance_"+characterName;
+        handConfigName = "HandAppearance_" + characterName;
     }
     
     private void CreateConfigFile()
@@ -71,9 +62,9 @@ public class CharacterCreatorWindow: OdinEditorWindow
                     Debug.Log("File with same name has found, renaming and moving to the right folder");
                     AssetDatabase.MoveAsset(wrongPath +"/"+ handAppearance.name + ".asset", targetPath);
                     Debug.Log("File has been moved to " + targetPath);
-                    if (Directory.GetFiles(wrongPath).Length < 2)
+                    if (Directory.Exists(wrongPath) && Directory.GetFiles(wrongPath).Length < 2)
                     {
-                       // delete other files and folder charName
+                       // delete other files and folder charNameт
                        
                           Directory.Delete("wrongPath");
                           Debug.Log("Folder " + wrongPath + " has been deleted");
@@ -92,7 +83,7 @@ public class CharacterCreatorWindow: OdinEditorWindow
             if(!Directory.Exists(folderPath))
                 Directory.CreateDirectory(folderPath);
             
-            handAppearance = ScriptableObject.CreateInstance<HandAppearance>();
+            handAppearance = CreateInstance<HandAppearance>();
             AssetDatabase.CreateAsset(handAppearance, targetPath);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
@@ -112,7 +103,7 @@ public class CharacterCreatorWindow: OdinEditorWindow
     {
         Debug.Log("Bake started!");
         CheckComponents();
-        GenerateCharacter();
+        GenerateCharacterData();
     }
 
     public void CheckComponents()
@@ -152,98 +143,147 @@ public class CharacterCreatorWindow: OdinEditorWindow
             throw new UnityException("Hand appearance is not found");
     }
 
-    public void GenerateCharacter()
+    public void GenerateCharacterData()
     {
-        GameObject characterInstance = new();
-        var character = characterInstance.AddComponent<Character>();
-        character.AddComponent<HandAppearanceProcessor>();
-        character.handAppearance = character.GetComponent<HandAppearanceProcessor>();
-        if(configureHandAppearance)
-            character.handAppearance.handAppearanceConfig = handAppearance;
-        var modelInstance = Instantiate(characterModel);
-        var prefChar =  GeneratePrefabs(character, modelInstance, characterName);
-        
-        var prefAsset = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Managers/CharacterController.prefab");
-        
-        var characterPoolInstance =
-            PrefabUtility.InstantiatePrefab(prefAsset) as GameObject;
-        
-        if (!characterPoolInstance.transform.Find(characterName))
-        {
-            var charI = Instantiate(prefChar, characterPoolInstance.transform);
-            charI.name = characterName;
-            characterPoolInstance.GetComponent<CharacterPool>().AddCharacter(charI.GetComponent<Character>());
-        }
 
-        PrefabUtility.SaveAsPrefabAssetAndConnect(characterPoolInstance,
-            "Assets/Prefabs/Managers/CharacterController.prefab", InteractionMode.AutomatedAction);
-       
+        string path = CustomPaths.CharacterNameFolder(characterName);
+        CreateIfNotExist(path);
+        // create object of CharacterData scripltable object file
+        var characterData = CreateInstance<CharacterData>();
+        
+        characterData.characterName = characterName;
+        var modelInstance = Instantiate(characterModel);
+        
+        characterData.avatars = GenerateAvatars(characterModel, characterName, path);
+        characterData.weapons = GenerateWeapons(weapons, CustomPaths.Weapons);
+        if(configureHandAppearance)
+            characterData.handAppearance = handAppearance;
+        
+        AssetDatabase.CreateAsset(characterData, path + "/CharData_"+characterName+ ".asset");
+        AssetDatabase.SaveAssets();
+        
+        
+        var characterPoolAsset = AssetDatabase.LoadAssetAtPath<GameObject>(CustomPaths.CharacterManager);
+        var characterPoolInstance =
+            (PrefabUtility.InstantiatePrefab(characterPoolAsset) as GameObject);
+        if (characterPoolInstance)
+        {
+            var characterPool = characterPoolInstance.GetComponent<CharacterPool>();
+            if (characterPool)
+            {
+                var isReplaced = false;
+                for (int i = 0; i < characterPool.characterConfigs.Count; i++)
+                {
+                    if (characterPool.characterConfigs[i]?.characterName == characterName)
+                    {
+                        isReplaced = true;
+                        characterPool.characterConfigs[i] =
+                            AssetDatabase.LoadAssetAtPath<CharacterData>(path + "/CharData_" + characterName +
+                                                                         ".asset");
+                        break;
+                    }
+                }
+
+                if (!isReplaced)
+                    characterPool.characterConfigs.Add(characterData);
+            }
+
+            PrefabUtility.SaveAsPrefabAssetAndConnect(characterPoolInstance,
+                "Assets/Prefabs/Managers/CharacterController.prefab", InteractionMode.AutomatedAction);
+        }
+        DestroyImmediate(modelInstance);
+        DestroyImmediate(characterPoolAsset);
+        DestroyImmediate(characterPoolInstance);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        DestroyImmediate(modelInstance);
-        DestroyImmediate(characterInstance);
-        DestroyImmediate(characterPoolInstance);
-        DestroyImmediate(prefChar);
-        DestroyImmediate(character);
+    
         Debug.Log("Completed!");
     }
 
-    public static GameObject GeneratePrefabs(Character character, GameObject characterPref, string characterName)
+    private static void CreateIfNotExist(string path)
     {
-        // if source name includes _Character - find children with name Body, Head
-        // then generate avatars by path Resources/Avatars/CharacterName
-        // each avatar must have Avatar component
-        // each avatar must have Head and Body fromm source
-        // avatars should be saved by path Resources/Avatars/CharacterName/CharacterName_AvatarType
-        Transform head = characterPref.transform.Find("Head");
-        Transform body = characterPref.transform.Find("Body");
-        if (head == null || body == null)
-        {
-            throw new UnityException("Body parts are null");
-        }
-        string path = $"Assets/Resources/Characters/{characterName}/";
-
         if (!System.IO.Directory.Exists(path))
         {
             System.IO.Directory.CreateDirectory(path);
         }
-
-        foreach (var avatarType in Enum.GetNames(typeof(AvatarType)))
+    }
+    public static Dictionary<string, GameObject> GenerateWeapons(WeaponData[] data, string path)
+    {
+        var d = new Dictionary<string, GameObject>();
+        foreach (WeaponData weaponData in data)
         {
-            if (avatarType == "None")
-                continue;
-            // create new GameObject
-            // add Avatar component
-            // add Head and Body from source
-            // save as prefab
-
-            var temporaryObject = new GameObject();
-            var avatarPrefab = Instantiate(temporaryObject, character.transform);
-
-            avatarPrefab.name = $"{characterName}_{avatarType}";
-            var avatar = avatarPrefab.AddComponent<Avatar>();
-            var anchors = avatarPrefab.AddComponent<BodyAnchors>();
-            avatar.Anchors = anchors;
-            avatar.GetComponent<Avatar>().type = (AvatarType)Enum.Parse(typeof(AvatarType), avatarType);
-
-            var headClone = Instantiate(head, avatarPrefab.transform);
-            headClone.name = "Head";
-            avatar.Anchors.Head = headClone;
-            headClone.gameObject.SetActive(avatarType != "Local");
-
-            var bodyClone = Instantiate(body, avatarPrefab.transform);
-            bodyClone.name = "Body";
-            avatar.Anchors.Body = bodyClone;
-
-            UnityEditor.PrefabUtility.SaveAsPrefabAsset(avatarPrefab, $"{path}{avatar.name}.prefab");
-            DestroyImmediate(temporaryObject);
+            GameObject weaponInstance = new GameObject();
+            weaponInstance.name = weaponData.weaponName + "_Weapon";
+            if (weaponData.addDesign)
+                weaponInstance.AddComponent(weaponData.weaponDesign.GetClass());
+            if (weaponData.addCustomLogic)
+                weaponInstance.AddComponent(weaponData.weaponLogic.GetClass());
+            weaponInstance.AddComponent<AudioProcessor>();
+            weaponInstance.AddComponent<VFXProcessor>();
+            CreateIfNotExist($"{path}/{weaponData.weaponName}");
+            var o = PrefabUtility.SaveAsPrefabAsset(weaponInstance, $"{path}/{weaponData.weaponName}/{weaponData.weaponName}_Weapon.prefab");
+            
+            d.Add(weaponData.weaponName, o);
+            DestroyImmediate(weaponInstance);
+            AssetDatabase.Refresh();
         }
 
-        character.FindAvatars();
+        return d;
+    }
+    public static GameObject GenerateAvatar(AvatarType avatarType, Transform head, Transform body, string path, string characterName)
+    {
+        if (avatarType == AvatarType.None)
+            return null;
+        // create new GameObject
+        // add Avatar component
+        // add Head and Body from source
+        // save as prefab
+
+        var avatarPrefab = new GameObject();
         
-        UnityEditor.PrefabUtility.SaveAsPrefabAsset(character.gameObject, $"{path}{characterName}.prefab");
+
+        avatarPrefab.name = $"{characterName}_{avatarType}";
+        var avatar = avatarPrefab.AddComponent<Avatar>();
+        
+        var anchors = avatarPrefab.AddComponent<BodyAnchors>();
+        
+        avatar.Anchors = anchors;
+        avatar.GetComponent<Avatar>().type = avatarType;
+
+        var headClone = Instantiate(head, avatarPrefab.transform);
+        headClone.name = "Head";
+        avatar.Anchors.Head = headClone;
+        headClone.gameObject.SetActive(avatarType != AvatarType.Local);
+
+        var bodyClone = Instantiate(body, avatarPrefab.transform);
+        bodyClone.name = "Body";
+        avatar.Anchors.Body = bodyClone;
+        var o = UnityEditor.PrefabUtility.SaveAsPrefabAsset(avatarPrefab, $"{path}/{avatar.name}.prefab");
+        DestroyImmediate(avatarPrefab);
         AssetDatabase.Refresh();
-        return AssetDatabase.LoadAssetAtPath<GameObject>($"{path}{characterName}.prefab");
+        return o;
+    }
+    public static Dictionary<AvatarType, GameObject> GenerateAvatars(GameObject model, string characterName, string path)
+    {
+        var v = Enum.GetValues(typeof(AvatarType));
+        
+        Transform head = model.transform.Find("Head");
+        Transform body = model.transform.Find("Body");
+        
+        if (head == null || body == null)
+        {
+            throw new UnityException("Body parts are null");
+        }
+        
+        var d = new Dictionary<AvatarType, GameObject>();
+        foreach (AvatarType avatarType in v)
+        {
+            if(avatarType == AvatarType.None)
+                continue;
+            d.Add(avatarType, GenerateAvatar(avatarType, head, body, path,characterName));
+        }
+
+        return d;
     }
 }
 

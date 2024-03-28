@@ -1,15 +1,13 @@
-using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Characters;
 using Gesture_Editor_SDK.Realtime;
-using Newtonsoft.Json;
 using Scripts.Characters;
 using Scripts.Databases;
 using Scripts.HandsLogic;
-using Scripts.Network;
-using Scripts.PlayerLogic;
 using UnityEngine;
 using Scripts.Static;
+using Scripts.Weapons;
 using FrameAtlas = System.Collections.Generic.Dictionary<string,Scripts.Databases.DBFrameStruct>;
 using GestureAtlas =  System.Collections.Generic.Dictionary<string,Scripts.Databases.JsonGestureStruct>;
 
@@ -17,9 +15,6 @@ namespace Scripts.Gestures
 {
     public static class GestureMapper
     {
-        private static readonly bool isDebug = true;
-        private static string _emptyRecognizablePath = "Weapons/Empty/EmptyPrefab";
-
         public static readonly string _jsonPath = Application.dataPath + "/Resources/Database/CharacterLibrary.json";
 
         public static string ReplaceCharacters(string input)
@@ -43,18 +38,18 @@ namespace Scripts.Gestures
             return newS;
         }
 
-        public static bool TryGetDynamicGesture(JsonGestureStruct jsonStruct, in List<IRecognizable> recognizables,
+        public static bool TryGetDynamicGesture(JsonGestureStruct jsonStruct, in Dictionary<string, Weapon> recognizables,
             out DynamicGesture gesture)
         {
 
             // firstly, find IRecognizable, if exist.
             IRecognizable recognizableObject = null;
 
-            foreach (var rec in recognizables)
+            foreach (var gestureName in recognizables.Keys)
             {
-                if (rec.gestureName == jsonStruct.Name)
+                if (gestureName == jsonStruct.Name)
                 {
-                    recognizableObject = rec;
+                    recognizableObject = recognizables[gestureName];
                     break;
                 }
             }
@@ -85,22 +80,22 @@ namespace Scripts.Gestures
             return true;
         }
 
-        public static Dictionary<string, DynamicGesture> ReadDynamicGestures(
+        public static async Task<Dictionary<string, DynamicGesture>> ReadDynamicGestures(
             Dictionary<string, Character> characters)
         {
 
-            var charStruct = CharacterMapper.GetCharacterStruct();
-            if (charStruct == null)
+            var jsonCharacters  =await CharacterMapper.GetCharacterStructs(); // json прочитали
+            if (jsonCharacters == null)
                 return null;
             Dictionary<string, DynamicGesture> gestures = new();
-
-            foreach (var jsonChar in charStruct)
+ 
+            foreach (var charKey in jsonCharacters.Keys)
             {
-                if (characters.ContainsKey(jsonChar.Name))
+                if (characters.ContainsKey(charKey))
                 {
-                    foreach (var gesture in jsonChar.Gestures)
+                    foreach (var gesture in jsonCharacters[charKey].Gestures)
                     {
-                        if (TryGetDynamicGesture(gesture, characters[jsonChar.Name].recognizables,
+                        if (TryGetDynamicGesture(gesture, characters[charKey].weapons,
                                 out var dynamicGesture))
                         {
                             gestures.Add(dynamicGesture.Name, dynamicGesture);
@@ -114,46 +109,44 @@ namespace Scripts.Gestures
 
       
 
-     public static void UpdateDynamicGesture(string characterName, JsonGestureStruct jsonGesture)
+     public static async void UpdateDynamicGesture(string characterName, JsonGestureStruct jsonGesture)
         {
-            var _jsonCharacters = CharacterMapper.GetCharacterStruct();
-            
-            for(int i = 0; i < _jsonCharacters.Count; i ++)
+            var _jsonCharacters = await CharacterMapper.GetCharacterStructs();
+
+            foreach (var key in _jsonCharacters.Keys)
             {
-                if (_jsonCharacters[i].Name == characterName)
+                if (key == characterName)
                 {
-                    for(int j = 0; j < _jsonCharacters[i].Gestures.Count; j ++)
+                    for(int j = 0; j < _jsonCharacters[key].Gestures.Count; j ++)
                     {
-                        if (_jsonCharacters[i].Gestures[j].Name == jsonGesture.Name)
+                        if (_jsonCharacters[key].Gestures[j].Name == jsonGesture.Name)
                         {
                          
-                            _jsonCharacters[i].Gestures[j] = jsonGesture;
+                            _jsonCharacters[key].Gestures[j] = jsonGesture;
                             
-                            CharacterMapper.SendCharacterStruct(_jsonCharacters);
+                            CharacterMapper.SendCharacterStruct(new JsonCharacterStruct(key, _jsonCharacters[key]));
                             
                             Debug.Log($"{jsonGesture.Name} overrided in Json");
                             return;
                         }
                     }
                     
-                    _jsonCharacters[i].Gestures.Add(jsonGesture);
-                    CharacterMapper.SendCharacterStruct(_jsonCharacters);
+                    _jsonCharacters[key].Gestures.Add(jsonGesture);
+                    CharacterMapper.SendCharacterStruct(new JsonCharacterStruct(key, _jsonCharacters[key]));
                     Debug.Log($"{jsonGesture.Name} created in Character " + characterName);
                     return;
                 }
             }
-
-            _jsonCharacters.Add(new JsonCharacterStruct()
-            {
-                Name = characterName,
-                Description = characterName + " is cool!",
-                Gestures = new List<JsonGestureStruct>()
-                {
-                    jsonGesture,
-                },
-                RootFolder = "Resources/Characters/" + characterName
-            });
-            CharacterMapper.SendCharacterStruct(_jsonCharacters);
+            
+            CharacterMapper.SendCharacterStruct(new JsonCharacterStruct(characterName,
+                new JsonCharacterProperties(
+                    characterName + " is cool!",
+                    "Resources/Characters/" + characterName,
+                    new List<JsonGestureStruct>()
+                    {
+                        jsonGesture,
+                    })));
+            
             Debug.Log($"Gesture {jsonGesture.Name} and character " + characterName + " created");
         }
         public static void UpdateDynamicGesture(string characterName, DynamicGesture gesture)
@@ -169,19 +162,21 @@ namespace Scripts.Gestures
          
         }
 
-    
-        public static List<string> HandsStructToString(HandsStruct hands)
+
+        public static string[] HandsStructToString(HandsStruct hands)
         {
-            return new List<string>
-            {
-                hands.LeftBones == null ? "": VectorConverter.QuaternionArrayToCode(hands.LeftBones.rotations),
-                hands.RightBones == null ? "":VectorConverter.QuaternionArrayToCode(hands.RightBones.rotations),
-                hands.LeftBones == null ? "":VectorConverter.VecToCodePos(hands.LeftBones.rootPos),
-                hands.RightBones == null ? "":VectorConverter.VecToCodePos(hands.RightBones.rootPos)
-            };
+            Debug.Log(hands.LeftBones);
+            Debug.Log(hands.RightBones);
+            var s = new string [4];
+            s[0] = hands.LeftBones == null ? "!" : VectorConverter.QuaternionArrayToCode(hands.LeftBones.rotations);
+            s[1] = hands.RightBones == null ? "!" : VectorConverter.QuaternionArrayToCode(hands.RightBones.rotations);
+            s[2] = hands.LeftBones == null ? "!" : VectorConverter.VecToCodePos(hands.LeftBones.rootPos);
+            s[3] = hands.RightBones == null ? "!" : VectorConverter.VecToCodePos(hands.RightBones.rootPos);
+            return s;
         }
 
-        public static HandsStruct StringToHandsStruct(List<string> hands)
+
+        public static HandsStruct StringToHandsStruct(string[] hands)
         {
             return new HandsStruct(
                 hands[0] == "" ? null : new BonesData(

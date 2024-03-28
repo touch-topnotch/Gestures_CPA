@@ -1,50 +1,47 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Characters;
 using Gesture_Editor_SDK.EditorAttributes.InspectorButtonAttribute;
-using Gesture_Editor_SDK.ReadOnly;
 using Scripts.Design;
 using Scripts.HandsLogic;
 using Scripts.PlayerLogic;
+using Scripts.Static;
+using Scripts.Systems;
 using Scripts.Tests;
 using Sirenix.OdinInspector;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace Scripts.Characters
 {
-    public class CharacterPool : SerializedMonoBehaviour
+    public class CharacterPool : MonoBehaviour
     {
         [Header("Properties")]
         [SerializeField] private string _currentCharacterName = "";
 
         [EnumToggleButtons]
         [SerializeField] private AvatarType _currentType;
-        
+
         [BoxGroup("Object pool")]
-        [SerializeField] public Dictionary<string, Character> charactersDict { get; private set; } = new();
+        public List<CharacterData> characterConfigs;
+        public Dictionary<string, Character> charactersDict { get; private set; }
         
         [BoxGroup("Object pool")]
         [SerializeField] private List<MaterialPair> _materials = new List<MaterialPair>();
         
-        [FolderPath]
-        [SerializeField] private string _assetPath;
-        
         [SerializeField] private Hands _hands;
 
-        [Header("Events")] public UnityEvent<string> CharacterChangedEvent = new();
-
-   
-        private void OnValidate()
-        {
-            SetCharacter(_currentCharacterName);
-            SetAvatarType(_currentType);
-        }
+        [Header("Events")] public UnityEvent<string> characterChangedEvent = new();
+        public Character currentCharacter => charactersDict.ContainsKey(_currentCharacterName) ? charactersDict[_currentCharacterName] : null;
+        
         #region Unity Inspectors tools
 #if UNITY_EDITOR
+        [Button]
+        public void UpdateCharacter()
+        {
+            SetCharacter(_currentCharacterName);
+        }
         [InspectorButton("Update Characters", space: 4)]
         
         public void UpdateCharacters()
@@ -52,7 +49,7 @@ namespace Scripts.Characters
             RefreshDictionary();
             // for all folders in the asset path
             // find object with name, which contains "_character", spawn it and add to the pool
-            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(_assetPath);
+            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(CustomPaths.Characters);
             System.IO.DirectoryInfo[] subDirs = dir.GetDirectories();
             foreach (var subDir in subDirs)
             {
@@ -122,7 +119,7 @@ namespace Scripts.Characters
                     {
                         charactersDict.Add(charName, character);
                     }
-                   // charactersDict.SmartAdd(charName,character);
+                    // charactersDict.SmartAdd(charName,character);
                     Debug.Log("Character " + charName + " added to Object Pool");
                 }
             }
@@ -150,16 +147,42 @@ namespace Scripts.Characters
         }
 #endif
         #endregion
+        
+        private void Awake()
+        {
+            charactersDict = new();
+            foreach (var VARIABLE in characterConfigs)
+            {
+                charactersDict.Add(VARIABLE.characterName, InitialiseCharacter(VARIABLE));
+            }
+        }
+    
+        private void Start()
+        { 
+            characterChangedEvent.AddListener(LogCharacter);
+        }
+        private Character InitialiseCharacter(CharacterData data)
+        {
+            var charInstance = new GameObject();
+            charInstance.transform.SetParent(this.transform, false);
+            charInstance.name = data.characterName;
+            var character = charInstance.AddComponent<Character>();
+            character.SetSource(data);
+            return character;
+        }
+        
         public void SetMaterialPair(MaterialPair pair)
         {
             _hands.HandMaterialPair = pair;
-            CurrentCharacter?.ChangeMaterials(_hands.HandMaterialPair);
+            if(currentCharacter != null)
+                currentCharacter.ChangeMaterials(_hands.HandMaterialPair);
         }
 
         public void SetAvatarType(AvatarType type)
         {
             _currentType = type;
-            CurrentCharacter?.ChangeAvatarType(type, _hands);
+            if(currentCharacter != null)
+                currentCharacter.ChangeAvatarType(type, _hands);
         }
 
         public void SetCharacter(string name)
@@ -180,8 +203,8 @@ namespace Scripts.Characters
                 return;
             }
             ReactivateCharacters();
-
-            CharacterChangedEvent?.Invoke(_currentCharacterName);
+            
+            characterChangedEvent?.Invoke(_currentCharacterName);
         }
 
         public void SetCharAndId(int id, string name)
@@ -195,8 +218,6 @@ namespace Scripts.Characters
             _hands.HandMaterialPair = _materials[id% _materials.Count];
         }
 
-        public Character CurrentCharacter => charactersDict.ContainsKey(_currentCharacterName) ? charactersDict[_currentCharacterName] : null;
-        
         
         public void LogCharacter(string name)
         {
@@ -204,12 +225,6 @@ namespace Scripts.Characters
         }
         private void RefreshDictionary()
         {
-            foreach (var VARIABLE in transform.GetComponentsInChildren<Character>())
-            {
-                if (!string.IsNullOrEmpty(VARIABLE.name) && !charactersDict.ContainsKey(VARIABLE.name) && !VARIABLE.name.Contains("Clone"))
-                    charactersDict.Add(VARIABLE.name, VARIABLE);
-            }
-        
             if (charactersDict.Count > 0)
             {
                 ReactivateCharacters();
@@ -220,21 +235,6 @@ namespace Scripts.Characters
             }
         }
 
-        #if UNITY_EDITOR
-        public void AddCharacter(Character obj)
-        {
-            if (obj.name.Contains("Clone"))
-                return;
-            
-            if (!charactersDict.ContainsKey(obj.name))
-                charactersDict.Add(obj.name, obj);
-            else
-            {
-                charactersDict[obj.name] = obj;
-            }
-            RefreshDictionary();
-        }
-        #endif
         private void ReactivateCharacters()
         {
             foreach (var VARIABLE in charactersDict)
@@ -243,14 +243,10 @@ namespace Scripts.Characters
                     VARIABLE.Value.gameObject.SetActive(VARIABLE.Key == _currentCharacterName);
             }
 
-            if (_hands && CurrentCharacter)
-                CurrentCharacter.ChangeMaterials(_hands.HandMaterialPair, _currentType);
+            if (_hands && currentCharacter)
+                currentCharacter.ChangeMaterials(_hands.HandMaterialPair, _currentType);
         }
 
-        private void Start()
-        { 
-            CharacterChangedEvent.AddListener(LogCharacter);
-            //ReactivateCharacters();
-        }
+    
     }
 }
