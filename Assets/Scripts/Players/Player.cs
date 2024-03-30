@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using Gesture_Editor_SDK.EditorAttributes.InspectorButtonAttribute;
 using Scripts.Characters;
 using Scripts.Events;
 using Scripts.Gestures;

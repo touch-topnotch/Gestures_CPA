@@ -1,13 +1,10 @@
-using System;
-using Scripts.HandsLogic;
-using UnityEditor.Search;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.XR.Interaction.Toolkit;
 
 namespace Design.RecordingScene
 {
-    [RequireComponent(typeof(XRSimpleInteractable), typeof(MeshRenderer))]
+    [RequireComponent(typeof(XRPokeInteractor), typeof(MeshRenderer))]
     public class BubbleToggle : MonoBehaviour
     {
         public Color colorEnabled;
@@ -22,7 +19,7 @@ namespace Design.RecordingScene
                 OnValueChanged();
             }
         }
-        private XRSimpleInteractable _xrSimpleInteractable;
+        private XRPokeInteractor _xrSimpleInteractable;
 
         private Material _mat;
         private float _defaultSize;
@@ -51,13 +48,8 @@ namespace Design.RecordingScene
         }
         private void OnValidate()
         {
-            _xrSimpleInteractable = GetComponent<XRSimpleInteractable>();
+            _xrSimpleInteractable = GetComponent<XRPokeInteractor>();
             _mat = GetComponent<MeshRenderer>().sharedMaterial;
-            
-            if (_xrSimpleInteractable.colliders.Count == 0)
-                _xrSimpleInteractable.colliders.Add(GetComponent<SphereCollider>());
-            else
-                _xrSimpleInteractable.colliders[0] = GetComponent<SphereCollider>();
         }
 
  
