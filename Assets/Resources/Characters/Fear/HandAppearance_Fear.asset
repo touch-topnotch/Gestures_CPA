@@ -1,0 +1,419 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a18a86e22f64b3e8875843ee0fa265e, type: 3}
+  m_Name: HandAppearance_Fear
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: handStages
+      Entry: 7
+      Data: 0|System.Collections.Generic.Dictionary`2[[Scripts.PlayerLogic.AvatarType,
+        Assembly-CSharp],[Scripts.Design.HandStageProps, Assembly-CSharp]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 1|System.Collections.Generic.EnumEqualityComparer`1[[Scripts.PlayerLogic.AvatarType,
+        Assembly-CSharp]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 2
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 0
+    - Name: $v
+      Entry: 7
+      Data: Scripts.Design.HandStageProps, Assembly-CSharp
+    - Name: MainColor
+      Entry: 7
+      Data: UnityEngine.Color, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.356862754
+    - Name: 
+      Entry: 4
+      Data: 0.266666681
+    - Name: 
+      Entry: 4
+      Data: 0.470588267
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: EdgeColor
+      Entry: 7
+      Data: UnityEngine.Color, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.8588236
+    - Name: 
+      Entry: 4
+      Data: 0.8235295
+    - Name: 
+      Entry: 4
+      Data: 0.7137255
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: EdgeHighlightPower
+      Entry: 4
+      Data: 1
+    - Name: ThumbColor
+      Entry: 7
+      Data: UnityEngine.Color, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.340696156
+    - Name: 
+      Entry: 4
+      Data: 0.132075474
+    - Name: 
+      Entry: 4
+      Data: 0.5283019
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: FingerColor1
+      Entry: 7
+      Data: UnityEngine.Color, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.340696156
+    - Name: 
+      Entry: 4
+      Data: 0.132075474
+    - Name: 
+      Entry: 4
+      Data: 0.5283019
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: FingerColor2
+      Entry: 7
+      Data: UnityEngine.Color, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.340696156
+    - Name: 
+      Entry: 4
+      Data: 0.132075474
+    - Name: 
+      Entry: 4
+      Data: 0.5283019
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: FingerColor3
+      Entry: 7
+      Data: UnityEngine.Color, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.340696156
+    - Name: 
+      Entry: 4
+      Data: 0.132075474
+    - Name: 
+      Entry: 4
+      Data: 0.5283019
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: FingerColor4
+      Entry: 7
+      Data: UnityEngine.Color, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.340696156
+    - Name: 
+      Entry: 4
+      Data: 0.132075474
+    - Name: 
+      Entry: 4
+      Data: 0.5283019
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: FadeCenter
+      Entry: 7
+      Data: UnityEngine.Vector3, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 4
+      Data: 0.15
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: FadeScale
+      Entry: 7
+      Data: UnityEngine.Vector3, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 4
+      Data: 4
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: FadeStart
+      Entry: 4
+      Data: 0.12
+    - Name: NoiseScale
+      Entry: 4
+      Data: 5000
+    - Name: NoiseStrength
+      Entry: 4
+      Data: 0.5
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 1
+    - Name: $v
+      Entry: 7
+      Data: Scripts.Design.HandStageProps, Assembly-CSharp
+    - Name: MainColor
+      Entry: 7
+      Data: UnityEngine.Color, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.356862754
+    - Name: 
+      Entry: 4
+      Data: 0.266666681
+    - Name: 
+      Entry: 4
+      Data: 0.470588267
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: EdgeColor
+      Entry: 7
+      Data: UnityEngine.Color, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 1.11647069
+    - Name: 
+      Entry: 4
+      Data: 0.8235295
+    - Name: 
+      Entry: 4
+      Data: 0.7137255
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: EdgeHighlightPower
+      Entry: 4
+      Data: 1
+    - Name: ThumbColor
+      Entry: 7
+      Data: UnityEngine.Color, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.340696156
+    - Name: 
+      Entry: 4
+      Data: 0.132075474
+    - Name: 
+      Entry: 4
+      Data: 0.5283019
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: FingerColor1
+      Entry: 7
+      Data: UnityEngine.Color, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.340696156
+    - Name: 
+      Entry: 4
+      Data: 0.132075474
+    - Name: 
+      Entry: 4
+      Data: 0.5283019
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: FingerColor2
+      Entry: 7
+      Data: UnityEngine.Color, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.340696156
+    - Name: 
+      Entry: 4
+      Data: 0.132075474
+    - Name: 
+      Entry: 4
+      Data: 0.5283019
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: FingerColor3
+      Entry: 7
+      Data: UnityEngine.Color, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.340696156
+    - Name: 
+      Entry: 4
+      Data: 0.132075474
+    - Name: 
+      Entry: 4
+      Data: 0.5283019
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: FingerColor4
+      Entry: 7
+      Data: UnityEngine.Color, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0.340696156
+    - Name: 
+      Entry: 4
+      Data: 0.132075474
+    - Name: 
+      Entry: 4
+      Data: 0.5283019
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: FadeCenter
+      Entry: 7
+      Data: UnityEngine.Vector3, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 4
+      Data: 0
+    - Name: 
+      Entry: 4
+      Data: 0.15
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: FadeScale
+      Entry: 7
+      Data: UnityEngine.Vector3, UnityEngine.CoreModule
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 4
+      Data: 4
+    - Name: 
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: FadeStart
+      Entry: 4
+      Data: 0.12
+    - Name: NoiseScale
+      Entry: 4
+      Data: 5000
+    - Name: NoiseStrength
+      Entry: 4
+      Data: 0.5
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+  mainColor: {r: 0.35686275, g: 0.26666668, b: 0.47058827, a: 1}
+  accentColor: {r: 0.8588236, g: 0.8235295, b: 0.7137255, a: 1}
+  fingerColor: {r: 0.34069616, g: 0.13207547, b: 0.5283019, a: 1}
+  tempType: 0
