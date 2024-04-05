@@ -4,63 +4,21 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 namespace Design.RecordingScene
 {
-    [RequireComponent(typeof(XRPokeInteractor), typeof(MeshRenderer))]
-    public class BubbleButton : MonoBehaviour
+    public class BubbleButton : BubbleItem
     {
-        public Color colorEnabled;
-        public Color colorDisabled;
-        private XRPokeInteractor _xrSimpleInteractable;
-
-        private Material _mat;
-        private float _defaultSize;
-        private FromToProp emissive;
-        private FromToProp size;
-        private bool _interactable;
         public UnityEvent onClick;
-        public bool interactable
+
+        protected override void OnHoverEntered() => OnClick();
+
+        protected override void OnHoverExited()
         {
-            get => _interactable;
-            set
-            {
-                _interactable = value;
-               _xrSimpleInteractable.hoverEntered.AddListener((a) => {if(_interactable) OnClick();});
-            }
+            throw new System.NotImplementedException();
         }
 
-        private void Awake()
+        protected override void UpdateProperties()
         {
-            
-            _defaultSize = transform.localScale.x;
-            size = new(_defaultSize, _defaultSize);
-            emissive = new(1, 0);
-            _xrSimpleInteractable.hoverEntered.AddListener((a) => { OnClick();});
-            _mat.EnableKeyword("_EMISSION");
-        }
-        private void OnValidate()
-        {
-            _mat = GetComponent<MeshRenderer>().sharedMaterial;
-            _xrSimpleInteractable = GetComponent<XRPokeInteractor>();
-        }
-
- 
-
-        private void UpdateProp(ref FromToProp prop, float speed)
-        {
-            if(prop.isEqual) 
-                return;
-            
-            prop.from = Mathf.Lerp(prop.from, prop.to, speed * Time.deltaTime);
-        }
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                OnClick();
-                Debug.Log("Hover simulation");
-            }
-            
-            UpdateProp(ref emissive, 15f);
-            UpdateProp(ref size, 15f);
+            UpdateProp(ref emissive, animSpeed);
+            UpdateProp(ref size, animSpeed);
             if(!emissive.isEqual)
                 _mat.SetColor("_EmissionColor", Color.Lerp(colorDisabled, colorEnabled, emissive.from));
             if (!size.isEqual)
@@ -71,7 +29,6 @@ namespace Design.RecordingScene
                 AnimateByStep();
             }
         }
-
         private int step = 2;
         private void AnimateByStep()
         {
@@ -79,11 +36,11 @@ namespace Design.RecordingScene
             {
                 case 0:
                     emissive.to = 1;
-                    size.to = _defaultSize * 1.3f;
+                    size.to = defaultSize * 1.3f;
                     break;
                 case 1:
                     emissive.to = 0;
-                    size.to = _defaultSize * 1f;
+                    size.to = defaultSize * 1f;
                     break;
             }
             
@@ -94,43 +51,6 @@ namespace Design.RecordingScene
             step = 0;
             AnimateByStep();
             onClick?.Invoke();
-        }
-
-        struct FromToProp
-        {
-            private float _from;
-            private float _to;
-            public float from
-            {
-                get => _from;
-                set
-                {
-                    _from = value;
-                    isEqual = (Mathf.Abs(_from - _to) < 0.001);
-                }
-            }
-
-            public float to
-            {
-                get => _to;
-                set
-                {
-                    _to = value;
-                    isEqual = (Mathf.Abs(_from - _to) < 0.001);
-                }
-            }
-            public bool isEqual;
-            public FromToProp(float from, float to)
-            {
-                _from = from;
-                _to = to;
-                isEqual =  (Mathf.Abs(_from - _to) < 0.001);
-            }
-
-            public override string ToString()
-            {
-                return "From: " + _from + ", To: " + to + ", IsEqual: " + isEqual;
-            }
         }
     }
 }

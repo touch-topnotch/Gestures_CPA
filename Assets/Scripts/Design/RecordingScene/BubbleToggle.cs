@@ -1,14 +1,10 @@
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.XR.Interaction.Toolkit;
 
 namespace Design.RecordingScene
 {
-    [RequireComponent(typeof(XRPokeInteractor), typeof(MeshRenderer))]
-    public class BubbleToggle : MonoBehaviour
+    public class BubbleToggle : BubbleItem
     {
-        public Color colorEnabled;
-        public Color colorDisabled;
         private bool _isOn = false;
         public bool isOn
         {
@@ -19,49 +15,18 @@ namespace Design.RecordingScene
                 OnValueChanged();
             }
         }
-        private XRPokeInteractor _xrSimpleInteractable;
-
-        private Material _mat;
-        private float _defaultSize;
-        private FromToProp emissive;
-        private FromToProp size;
-        private bool _interactable;
         public UnityEvent<bool> onValueChanged;
-        public bool interactable
+        protected override void OnHoverEntered()
         {
-            get => _interactable;
-            set
-            {
-                _interactable = value;
-               _xrSimpleInteractable.hoverEntered.AddListener((a) => { isOn = interactable ? !isOn : isOn;});
-            }
+            isOn = interactable ? !isOn : isOn;
         }
 
-        private void Awake()
+        protected override void OnHoverExited()
         {
-            
-            _defaultSize = transform.localScale.x;
-            size = new(_defaultSize, _defaultSize);
-            emissive = new(1, 0);
-            _xrSimpleInteractable.hoverEntered.AddListener((a) => { isOn = interactable ? !isOn : isOn;});
-            _mat.EnableKeyword("_EMISSION");
-        }
-        private void OnValidate()
-        {
-            _xrSimpleInteractable = GetComponent<XRPokeInteractor>();
-            _mat = GetComponent<MeshRenderer>().sharedMaterial;
+            throw new System.NotImplementedException();
         }
 
- 
-
-        private void UpdateProp(ref FromToProp prop, float speed)
-        {
-            if(prop.isEqual) 
-                return;
-            
-            prop.from = Mathf.Lerp(prop.from, prop.to, speed * Time.deltaTime);
-        }
-        private void Update()
+        protected override void UpdateProperties()
         {
             UpdateProp(ref emissive, 10f);
             UpdateProp(ref size, 10f);
@@ -75,53 +40,16 @@ namespace Design.RecordingScene
             if (_isOn)
             {
                 emissive.to = 1;
-                size.to = _defaultSize * 1.2f;
+                size.to = defaultSize * 1.2f;
             }
             else
             {
                 emissive.to = 0;
-                size.to = _defaultSize;
+                size.to = defaultSize;
             }
 
             onValueChanged?.Invoke(_isOn);
 
-        }
-
-        struct FromToProp
-        {
-            private float _from;
-            private float _to;
-            public float from
-            {
-                get => _from;
-                set
-                {
-                    _from = value;
-                    isEqual = (Mathf.Abs(_from - _to) < 0.001);
-                }
-            }
-
-            public float to
-            {
-                get => _to;
-                set
-                {
-                    _to = value;
-                    isEqual = (Mathf.Abs(_from - _to) < 0.001);
-                }
-            }
-            public bool isEqual;
-            public FromToProp(float from, float to)
-            {
-                _from = from;
-                _to = to;
-                isEqual =  (Mathf.Abs(_from - _to) < 0.001);
-            }
-
-            public override string ToString()
-            {
-                return "From: " + _from + ", To: " + to + ", IsEqual: " + isEqual;
-            }
         }
     }
 }
