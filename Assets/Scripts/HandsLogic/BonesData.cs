@@ -1,5 +1,6 @@
 using System;
 using Scripts.Static;
+using Scripts.Systems;
 using UnityEngine;
 
 namespace Scripts.HandsLogic
@@ -38,6 +39,10 @@ namespace Scripts.HandsLogic
             }
         }
         public HandType Type() => _type;
-        
+
+        public override string ToString()
+        {
+            return $"Root: {rootPos}, rotations: {Debugger.arrayToString<Quaternion>(rotations)}";
+        }
     }
 }

@@ -17,6 +17,7 @@ namespace Scripts.Network
 {
     public class TelegramBotProcessor: MonoBehaviour
     {
+        public bool askToInitializeOnAwake;
         public static Action<Message> onMessageReceived;
         private const string botToken = "7086788178:AAEmDpBcXwSh9QEZZ5MyLBtNg62mVjZ6PMg";
         private const string chatId = "-1002122572874";
@@ -32,12 +33,15 @@ namespace Scripts.Network
         private bool useBot;
         private void Awake()
         {
+            
             if (Instance == null)
                 Instance = this;
             else
                 Destroy(gameObject);
             
 #if UNITY_EDITOR
+            if (!askToInitializeOnAwake)
+                return;
             useBot = EditorUtility.DisplayDialog("Confirm Action", 
                 "Are you sure you want to check telegram bot functions?", "Yes", "No");
             if(!useBot)

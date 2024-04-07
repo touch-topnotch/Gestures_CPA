@@ -178,13 +178,14 @@ namespace Scripts.Gestures
 
         public static HandsStruct StringToHandsStruct(string[] hands)
         {
+            Debug.Log(hands);
             return new HandsStruct(
-                hands[0] == "" ? null : new BonesData(
+                hands[2] == ""  || hands[2] == "!"? null : new BonesData(
                     type: HandType.left,
                     rotations: VectorConverter.CodeToQuaternionArray(hands[0]),
                     rootPos: VectorConverter.CodeToVec3Pos(hands[2])
                 ),
-                hands[2] == "" ? null : new BonesData(
+                hands[3] == ""|| hands[3] == "!" ? null : new BonesData(
                     type: HandType.right,
                     rotations: VectorConverter.CodeToQuaternionArray(hands[1]),
                     rootPos: VectorConverter.CodeToVec3Pos(hands[3])
