@@ -7,6 +7,7 @@ using Scripts.Databases;
 using Scripts.HandsLogic;
 using UnityEngine;
 using Scripts.Static;
+using Scripts.Systems;
 using Scripts.Weapons;
 using FrameAtlas = System.Collections.Generic.Dictionary<string,Scripts.Databases.DBFrameStruct>;
 using GestureAtlas =  System.Collections.Generic.Dictionary<string,Scripts.Databases.JsonGestureStruct>;
@@ -178,9 +179,9 @@ namespace Scripts.Gestures
 
         public static HandsStruct StringToHandsStruct(string[] hands)
         {
-            Debug.Log(hands);
+            Debug.Log(Debugger.arrayToString(hands));
             return new HandsStruct(
-                hands[2] == ""  || hands[2] == "!"? null : new BonesData(
+                hands[2] == ""  || hands[2] == "!" ? null : new BonesData(
                     type: HandType.left,
                     rotations: VectorConverter.CodeToQuaternionArray(hands[0]),
                     rootPos: VectorConverter.CodeToVec3Pos(hands[2])

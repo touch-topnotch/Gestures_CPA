@@ -28,7 +28,7 @@ namespace Scripts.Design
 
         public void VisualizeScrollView()
         {
-            foreach (var frame in _library.DynamicGestures)
+            foreach (var frame in _library.dynamicGestures)
             {
                 GameObject toggleObject = Instantiate(togglePrefab, scrollRect.content);
                 scrollRect.content.SetParent(toggleObject.transform);

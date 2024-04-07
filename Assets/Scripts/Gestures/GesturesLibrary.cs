@@ -21,7 +21,7 @@ namespace Scripts.Gestures
         private readonly PlayerData _playerData;
 
         private Dictionary<string, DynamicGesture> allGestures => gestures.GetOpenDict();
-        public Dictionary<string, DynamicGesture> DynamicGestures => gestures.GetOpenDict();
+        public Dictionary<string, DynamicGesture> dynamicGestures => gestures.GetOpenDict();
         private Dictionary<string, Character> _characters;
         
         public GesturesLibrary(PlayerData data, Dictionary<string, Character> characters)
@@ -144,14 +144,14 @@ namespace Scripts.Gestures
         
         public bool TryGetDynamicGesture(string gesture, out DynamicGesture frame)
         {
-            return DynamicGestures.TryGetValue(gesture, out frame) ||
-                   DynamicGestures.TryGetValue(GestureMapper.PrefixOfName(gesture), out frame);
+            return dynamicGestures.TryGetValue(gesture, out frame) ||
+                   dynamicGestures.TryGetValue(GestureMapper.PrefixOfName(gesture), out frame);
         }
         public bool TryGetGestureFrame(string name, out GestureFrame frame)
         {
-            if (DynamicGestures.ContainsKey(GestureMapper.PrefixOfName(name)))
+            if (dynamicGestures.ContainsKey(GestureMapper.PrefixOfName(name)))
             {
-                frame = DynamicGestures[GestureMapper.PrefixOfName(name)].frames[GestureMapper.IndexOfName(name)];
+                frame = dynamicGestures[GestureMapper.PrefixOfName(name)].frames[GestureMapper.IndexOfName(name)];
                 return true;
             }
             frame = null;
@@ -160,16 +160,16 @@ namespace Scripts.Gestures
 
         private void SetGestureFrame(GestureFrame frame)
         {
-            if (DynamicGestures.ContainsKey(frame.baseName))
+            if (dynamicGestures.ContainsKey(frame.baseName))
             {
-                if (DynamicGestures[frame.baseName].frames.Count <= GestureMapper.IndexOfName(frame.name))
+                if (dynamicGestures[frame.baseName].frames.Count <= GestureMapper.IndexOfName(frame.name))
                 {
-                    for(int i = DynamicGestures[frame.baseName].frames.Count; i <= GestureMapper.IndexOfName(frame.name); i++)
+                    for(int i = dynamicGestures[frame.baseName].frames.Count; i <= GestureMapper.IndexOfName(frame.name); i++)
                     {
-                        DynamicGestures[frame.baseName].frames.Add(null);
+                        dynamicGestures[frame.baseName].frames.Add(null);
                     }
                 }
-                DynamicGestures[frame.baseName].frames[GestureMapper.IndexOfName(frame.name)] = frame;
+                dynamicGestures[frame.baseName].frames[GestureMapper.IndexOfName(frame.name)] = frame;
             }
             else
             { //gestures
@@ -177,8 +177,8 @@ namespace Scripts.Gestures
             }
         }
 
-        public bool ContainsFrame(string frame) => (DynamicGestures.ContainsKey(GestureMapper.PrefixOfName(frame))) &&
-                                                   DynamicGestures[GestureMapper.PrefixOfName(frame)].HasFrame(frame);
+        public bool ContainsFrame(string frame) => (dynamicGestures.ContainsKey(GestureMapper.PrefixOfName(frame))) &&
+                                                   dynamicGestures[GestureMapper.PrefixOfName(frame)].HasFrame(frame);
 
     }
 }
