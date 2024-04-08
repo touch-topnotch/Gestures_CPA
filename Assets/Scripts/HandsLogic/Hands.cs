@@ -66,7 +66,6 @@ namespace Scripts.HandsLogic
 
         public void MoveHands(in GestureFrame frame, in float speed, in Action onPlaced)
         {
-            Debug.Log($"Trying to move hand to {frame}");
             switch (frame.Hands.HandUsed)
             {
                 case HandUsedType.LEFT:

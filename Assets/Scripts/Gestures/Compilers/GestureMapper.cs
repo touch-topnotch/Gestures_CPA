@@ -1,14 +1,18 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Characters;
 using Gesture_Editor_SDK.Realtime;
+using Newtonsoft.Json;
 using Scripts.Characters;
 using Scripts.Databases;
 using Scripts.HandsLogic;
+using Scripts.Network;
 using UnityEngine;
 using Scripts.Static;
 using Scripts.Systems;
 using Scripts.Weapons;
+using Unity.Services.CloudSave;
 using FrameAtlas = System.Collections.Generic.Dictionary<string,Scripts.Databases.DBFrameStruct>;
 using GestureAtlas =  System.Collections.Generic.Dictionary<string,Scripts.Databases.JsonGestureStruct>;
 
@@ -18,6 +22,21 @@ namespace Scripts.Gestures
     {
         public static readonly string _jsonPath = Application.dataPath + "/Resources/Database/CharacterLibrary.json";
 
+        public static GestureFrame JsonGestureToGestureFrame(JsonGestureStruct jsonStruct, int index = 0)=>new GestureFrame(
+                jsonStruct.Name, StringToHandsStruct(jsonStruct.Frames[index]));
+        public static void SendGestureFrame(string collectionKey, GestureFrame frame)
+        {
+            var jsonStruct = new JsonGestureStruct
+            {
+                Name = frame.name,
+                Type = 0,
+                Frames = new List<string[]> {HandsStructToString(frame.Hands)}
+            };
+            CloudSaveProcessor.SetItemToCloud(JsonConvert.SerializeObject(jsonStruct), collectionKey, (e) =>
+            {
+                Debug.Log( collectionKey +": " + jsonStruct.Name + " was sent to cloud");
+            });
+        }
         public static string ReplaceCharacters(string input)
         {
             var s = input;
@@ -57,19 +76,19 @@ namespace Scripts.Gestures
 
             if (recognizableObject == null)
             {
-                Debug.Log("Recognizables for gesture " + jsonStruct.Name+ " not found");
+                //                Debug.Log("Recognizables for gesture " + jsonStruct.Name+ " not found");
             }
 
             List<GestureFrame> frames = new();
 
             foreach (var frame in jsonStruct.Frames)
             {
-                frames.Add(
-                    new GestureFrame(
-                        jsonStruct.Name + "_" + frames.Count,
-                        StringToHandsStruct(frame)
-                    )
-                );
+                    frames.Add(
+                        new GestureFrame(
+                            jsonStruct.Name + "_" + frames.Count,
+                            StringToHandsStruct(frame)
+                        )
+                    );
             }
 
 
@@ -80,12 +99,29 @@ namespace Scripts.Gestures
 
             return true;
         }
+        
 
-        public static async Task<Dictionary<string, DynamicGesture>> ReadDynamicGestures(
+        public static async Task<Dictionary<string, GestureFrame>> ReadGestureFrames(string collectionKey)
+        {
+            var jsonGestures = await CloudSaveService.Instance.Data.Custom.LoadAllAsync(collectionKey);
+            if (jsonGestures == null)
+            {
+                throw new Exception("Wrong collection key used or there is no gestures in collection");
+            }
+            var dictionary = new Dictionary<string, GestureFrame>();
+            foreach (var key in jsonGestures.Keys)
+            {
+                dictionary.Add(key,JsonGestureToGestureFrame(jsonGestures[key].Value.GetAs<JsonGestureStruct>()));
+            }
+
+            return dictionary;
+        }
+
+        public static async Task<Dictionary<string, DynamicGesture>> ReadCharacterGestures(
             Dictionary<string, Character> characters)
         {
 
-            var jsonCharacters  =await CharacterMapper.GetCharacterStructs(); // json прочитали
+            var jsonCharacters  = await CharacterMapper.GetCharacterStructs(); // json прочитали
             if (jsonCharacters == null)
                 return null;
             Dictionary<string, DynamicGesture> gestures = new();
@@ -166,8 +202,6 @@ namespace Scripts.Gestures
 
         public static string[] HandsStructToString(HandsStruct hands)
         {
-            Debug.Log(hands.LeftBones);
-            Debug.Log(hands.RightBones);
             var s = new string [4];
             s[0] = hands.LeftBones == null ? "!" : VectorConverter.QuaternionArrayToCode(hands.LeftBones.rotations);
             s[1] = hands.RightBones == null ? "!" : VectorConverter.QuaternionArrayToCode(hands.RightBones.rotations);
@@ -179,7 +213,6 @@ namespace Scripts.Gestures
 
         public static HandsStruct StringToHandsStruct(string[] hands)
         {
-            Debug.Log(Debugger.arrayToString(hands));
             return new HandsStruct(
                 hands[2] == ""  || hands[2] == "!" ? null : new BonesData(
                     type: HandType.left,
