@@ -22,8 +22,8 @@ namespace Scripts.Gestures
     {
         public static readonly string _jsonPath = Application.dataPath + "/Resources/Database/CharacterLibrary.json";
 
-        public static GestureFrame JsonGestureToGestureFrame(JsonGestureStruct jsonStruct, int index = 0)=>new GestureFrame(
-                jsonStruct.key, StringToHandsStruct(jsonStruct.value.Frames[index]));
+        public static GestureFrame JsonGestureToGestureFrame(string key, JsonGestureProperty jsonStruct, int index = 0)=>new GestureFrame(
+                key, StringToHandsStruct(jsonStruct.Frames[index]));
         public static void SendGestureFrame(string collectionKey, GestureFrame frame)
         {
             var jsonStruct = new JsonGestureStruct
@@ -113,9 +113,8 @@ namespace Scripts.Gestures
             var dictionary = new Dictionary<string, GestureFrame>();
             foreach (var key in jsonGestures.Keys)
             {
-                dictionary.Add(key,JsonGestureToGestureFrame(jsonGestures[key].Value.GetAs<JsonGestureStruct>()));
+                dictionary.Add(key,JsonGestureToGestureFrame(key, jsonGestures[key].Value.GetAs<JsonGestureProperty>()));
             }
-
             return dictionary;
         }
 
