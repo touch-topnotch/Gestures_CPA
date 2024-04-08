@@ -12,6 +12,7 @@ namespace Scripts.Systems
         Shaking,
         DoubleNod,
         LookingUp,
+        LookingDown,
     }
     
     public class HeadInteraction : MonoBehaviour
@@ -33,6 +34,7 @@ namespace Scripts.Systems
                 new Condition("z < 15, wait > 0.001, z > 15, wait > 1, z > 15", ()=> onHeadInteraction?.Invoke(HeadInteractionType.Left)),
                 new Condition("z > -15, wait > 0.001, z < -15, wait > 1, z < -15", ()=> onHeadInteraction?.Invoke(HeadInteractionType.Right)),     
                 new Condition("x > -39, wait > 0.001, x < -39, wait > 1, x < -39", ()=> onHeadInteraction?.Invoke(HeadInteractionType.LookingUp)),
+                new Condition("x < 39, wait > 0.001, x > 39, wait > 1, x > 39", ()=> onHeadInteraction?.Invoke(HeadInteractionType.LookingDown)),
                 new Condition("z > 4, wait < 1, z < -4, wait < 1, z > 4, wait < 1, z < -4, wait < 1, z > 4, wait < 1, z < -4",()=> onHeadInteraction?.Invoke(HeadInteractionType.Shaking)),
                 new Condition("x > 20, wait < 1, x < 5, wait < 1, x > 20, wait < 1, x < 5, wait < 1, x > 20, wait < 1, x < 5",()=> onHeadInteraction?.Invoke(HeadInteractionType.DoubleNod)),
             };

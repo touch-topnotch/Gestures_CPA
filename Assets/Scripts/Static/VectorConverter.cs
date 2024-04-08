@@ -25,9 +25,8 @@ namespace Scripts.Static
             int length = (value.Length + 2 * value.Count(c => c == '!')) / 3;
             
             Vector3[] jArr = new Vector3[length];
-            
+
             var j = 0;
-            
             for (int i = 0; i < length; i++)
             {
                 if(j >= value.Length)
@@ -39,11 +38,9 @@ namespace Scripts.Static
                     j++;
                     continue;
                 }
-
                 jArr[i] = CodeToVec3Rot(value[j], value[j+1], value[j+2]);
                 j += 3;
-            }
-
+            }      
             return jArr;
         }
         public static Quaternion[] CodeToQuaternionArray(string value)

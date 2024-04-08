@@ -141,7 +141,9 @@ namespace Scripts.HandsLogic
 
         
         private void MoveHand()
-        {  if (_target == null || _target.rotations == null)
+        {  
+       
+            if (_target == null || _target.rotations == null || _target.rotations?.Length != 26)
             {
                 _onPlaced = null;
                 StopMoveHand();

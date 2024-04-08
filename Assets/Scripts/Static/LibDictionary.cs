@@ -4,13 +4,13 @@ using Scripts.Gestures;
 
 namespace Scripts.Static
 {
-    public class Restrictive<K, T>
+    public class RestrictiveDictionary<K, T>
     {
         public List<T> GetList() => _limitedList;
         private readonly List<T> _limitedList = new();
 
-        public Dictionary<K, T> GetOpenDict() => _dict;
-        public Dictionary<K, T> GetLimitedDict() => _limitedDictionary;
+        public Dictionary<K, T> openDict => _dict;
+        public Dictionary<K, T> limitedDict => _limitedDictionary;
         private readonly Dictionary<K, T> _limitedDictionary = new();
         
         private Dictionary<K, T> _dict = new();
@@ -123,8 +123,8 @@ namespace Scripts.Static
     {
         void testt()
         {
-            Restrictive<string, int> restrictive =
-                new Restrictive<string, int>();
+            RestrictiveDictionary<string, int> restrictive =
+                new RestrictiveDictionary<string, int>();
             restrictive.AddItem("R", 1);
             restrictive.AddItem("K", 2);
             restrictive.AddActiveKey("K");

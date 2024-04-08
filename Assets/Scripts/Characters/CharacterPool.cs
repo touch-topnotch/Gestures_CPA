@@ -244,9 +244,11 @@ namespace Scripts.Characters
             }
 
             if (_hands && currentCharacter)
+            {
+                currentCharacter.RefreshAvatars();
                 currentCharacter.ChangeMaterials(_hands.HandMaterialPair, _currentType);
+            }
+            
         }
-
-    
     }
 }

@@ -17,18 +17,20 @@ namespace Scripts.Tests
     public class GestureFramesRecorder : MonoBehaviour
 
     {
+        
         public BubbleToggle leftToggle;
         public BubbleToggle rightToggle;
         public XRInputField nameInput;
         public XRInputField characterNameInput;
         public BubbleButton newGestureButton;
         public BubbleButton continueRecording;
-        public TMP_Text gestureLabelText;
-        public TMP_Text characterLabelText;
+        public TMP_Text gestureLabel;
+        public TMP_Text characterLabel;
+        public TMP_Text collectionLabel;
         public Player _player;
+ 
         private SupportHandVisualiser _supportHdCreator;
-       // private GesturesLibrary _library;
-
+        
         private string _curCharacterName = "";
         private string _currentName = "";
         public string Name
@@ -36,11 +38,16 @@ namespace Scripts.Tests
             get => _currentName;
             set
             {
-                _currentName = value; 
-                var words = value.Split('_');
-                if (!int.TryParse(words[^1], out var suff))
-                    Name += "_0";
-                gestureLabelText.text = _currentName;
+                _currentName = value;
+
+                if (collectionLabel.text == "character")
+                {
+                    var words = value.Split('_');
+                    if (!int.TryParse(words[^1], out var suff))
+                        _currentName += "_0";
+                }
+                
+                gestureLabel.text = _currentName;
                 LockButtons();
             }
         }
@@ -86,6 +93,9 @@ namespace Scripts.Tests
                         TelegramBotProcessor.Instance.SendTextToTelegramFunc("Nessun problema, caro amico!");
                         i++;
                         break;
+                    case "/type":
+                        collectionLabel.text = ++i < tokens.Length ? tokens[i++] : collectionLabel.text;
+                        break;
                     default:
                         i++;
                         break;
@@ -126,8 +136,8 @@ namespace Scripts.Tests
             newGestureButton.onClick.AddListener(NewGestureGroup);
             continueRecording.onClick.AddListener(ContinueRecording);
                 
-            Name = Calculations.RandomString(6)+ "_0";
-            characterNameInput.inputString = Calculations.RandomString(8);
+          //  Name = Calculations.RandomString(6)+ "_0";
+          //   characterNameInput.inputString = Calculations.RandomString(8);
         }
 
         private void ReloadToggles()
@@ -162,7 +172,20 @@ namespace Scripts.Tests
         }
         private async Task SendToCompiler(HandsStruct handStruct)
         {
-            await _player.gestureCombiner.library.RecordFrame(handStruct, _currentName, characterLabelText.text);
+            GestureCollections coll;//ch su // sy
+            if (collectionLabel.text[1] == 'h')
+            {
+                coll = GestureCollections.characters;
+            }
+            else if (collectionLabel.text[1] == 'u')
+            {
+                coll = GestureCollections.supportive;
+            }
+            else
+            {
+                coll = GestureCollections.system;
+            }
+            await _player.gestureCombiner.library.RecordFrame(handStruct, _currentName, coll,  characterLabel.text);
         }
         
         public virtual void RecordName(string name)

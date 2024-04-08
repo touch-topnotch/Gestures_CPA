@@ -55,7 +55,9 @@ using UnityEngine;
                     _hands.rightHand.SetColorSmooth(HandShaderProps.EdgeColor, new Color(0.53f, 0, 0.8f), 3);
                     _hands.leftHand.SetColorSmooth(HandShaderProps.EdgeColor, new Color(0.53f, 0, 0.8f), 3);
                     break;
-                
+                case 2:
+                    _hands.leftHand.points[0].position += new Vector3(1, 1, 1);
+                    break;
             }
         }
 
@@ -88,7 +90,6 @@ using UnityEngine;
 
         public override void OnAbilityReleased()
         {
-            
         }
     }
 

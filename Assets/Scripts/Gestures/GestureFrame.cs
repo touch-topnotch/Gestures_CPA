@@ -99,11 +99,17 @@ namespace Scripts.Gestures
             set
             {
                 _name = value;
-                baseName = value.Split('_')[0];
+                baseName = value.Split('_')?[0];
             }
         }
 
         public HandsStruct Hands;
+
+        public override string ToString()
+        {
+            return
+                $"GestureFrame {name} has {Hands.HandUsed},\n leftBones = {Hands.LeftBones?.ToString()}, \n rightBones = {Hands.RightBones?.ToString()}";
+        }
     }
 }
 
