@@ -84,7 +84,7 @@ namespace Scripts.Gestures
             var hasDynamic = false;
             for (int i = 0; i < gestures.Count; i++)
             {
-                if (gestures[i].Name == dynamicName)
+                if (gestures[i].key == dynamicName)
                 {
                     gestures[i] = AddToExistedGesture(name, hands, gestures[i]);
                     hasDynamic = true;
@@ -109,7 +109,7 @@ namespace Scripts.Gestures
         {
             int index = GestureMapper.IndexOfName(name);
             
-            List<string[]> frames = jsonStruct.Frames;
+            List<string[]> frames = jsonStruct.value.Frames;
             
             if (index < frames.Count)
             {
@@ -127,9 +127,11 @@ namespace Scripts.Gestures
             
             return new JsonGestureStruct()
             {
-                Name = jsonStruct.Name,
+                key = jsonStruct.key,
+                value = new JsonGestureProperty(){
                 Frames = frames,
-                Type = jsonStruct.Type
+                Type = jsonStruct.value.Type
+                }
             };
         }
         private static JsonGestureStruct CreateNewGesture(HandsStruct hands, string name)
@@ -150,9 +152,11 @@ namespace Scripts.Gestures
             }
             var t = new JsonGestureStruct()
             {
-                Name = GestureMapper.PrefixOfName(name),
+                key = GestureMapper.PrefixOfName(name),
+                value = new JsonGestureProperty(){
                 Frames = frames,
                 Type = (int)GestureType.Weapon
+                }
             };
             return t;
         }
