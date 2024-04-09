@@ -79,7 +79,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -309,10 +309,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4297029366125296814}
+  - component: {fileID: 5348051159063859710}
   - component: {fileID: 8258039175384466680}
   - component: {fileID: 853675210891194910}
   - component: {fileID: 6214895845742797372}
   - component: {fileID: 8901140457215151441}
+  - component: {fileID: 6453977984456059326}
   m_Layer: 0
   m_Name: Spear_Weapon
   m_TagString: Untagged
@@ -336,6 +338,24 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5348051159063859710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3222560392199370339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f964b13e2958e84f8867f6a65cab703, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponDesign: {fileID: 8258039175384466680}
+  _offlineTest: 1
+  _bladeMinSpeed: 1
+  _blade: {fileID: 6993892442895758170}
+  _weaponPoint: {fileID: 4752004106190894656}
+  _bladePoint: {fileID: 8230247313586452287}
 --- !u!114 &8258039175384466680
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -591,6 +611,25 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
+--- !u!114 &6453977984456059326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3222560392199370339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &5731800257655120390
 GameObject:
   m_ObjectHideFlags: 0
@@ -838,6 +877,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: V_S_Katana_Frame_4
       objectReference: {fileID: 0}
+    - target: {fileID: 8563557851848779126, guid: b9db2642d684b4c92a5815ff813c6ea8,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -861,6 +905,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: V_S_Katana_Frame_2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2479501331932242506, guid: 8279773a09c144d2cbe022d53026f997,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4317499799281632120, guid: 8279773a09c144d2cbe022d53026f997,
         type: 3}
@@ -946,6 +995,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: V_S_Katana_Frame_2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2479501331932242506, guid: 8279773a09c144d2cbe022d53026f997,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4317499799281632120, guid: 8279773a09c144d2cbe022d53026f997,
         type: 3}
@@ -1081,6 +1135,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: V_S_Katana_Frame_0
       objectReference: {fileID: 0}
+    - target: {fileID: 8378240561631164535, guid: ab899717048f94615be7189462589b88,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1165,6 +1224,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: V_S_Katana_Frame_4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8563557851848779126, guid: b9db2642d684b4c92a5815ff813c6ea8,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1251,6 +1315,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: V_S_Katana_Frame_5
       objectReference: {fileID: 0}
+    - target: {fileID: 7527189591377322382, guid: c59a7f396046141c49a62558cfc8d16a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1335,6 +1404,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: V_N_Katana_Idle
+      objectReference: {fileID: 0}
+    - target: {fileID: 5823183045941764963, guid: f1dcf9c5eb55f457dbe7670096208703,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

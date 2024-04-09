@@ -22,6 +22,14 @@ namespace Scripts.Weapons
         {
             lastTrigger = true;
             lastName = other.tag;
+            Debug.Log("Trigger Enter");
+        } 
+        
+        public void OnTriggerExit(Collider other)
+        {
+            lastTrigger = false;
+            lastName = "";
+            Debug.Log("Trigger Exit");
         }
         private void Update()
         {
