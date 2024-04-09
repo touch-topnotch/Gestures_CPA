@@ -7,6 +7,7 @@ using Sirenix.OdinInspector;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace Scripts.Weapons
 {
@@ -33,6 +34,8 @@ namespace Scripts.Weapons
         
         protected readonly NetworkVariable<State> state = new NetworkVariable<State>();
         protected UpdateEvent _onUpdate => UpdateEvent.Instance;
+
+        [SerializeField] private bool _offlineTest; 
         protected abstract bool HitImpactCondition(out string affected);
         protected abstract bool HitCallCondition();
 
@@ -42,32 +45,32 @@ namespace Scripts.Weapons
 
         protected virtual void OnHitHolding()
         {
-            if (IsClient)
+            if (IsClient || _offlineTest)
                 weaponDesign.OnHitHolding();
         }
 
         protected virtual void OnHitCalled()
         {
-            if (IsClient)
+            if (IsClient || _offlineTest)
                 weaponDesign.OnHitCalled();
         }
 
         protected virtual void OnHitImpact(string affected)
         {
-            if (IsClient)
+            if (IsClient || _offlineTest)
                 weaponDesign.OnHitImpact(affected);
         }
 
         public override void OnNetworkSpawn()
         {
-            if (IsClient)
+            if (IsClient || _offlineTest)
                 weaponDesign.SetPlayerData(playerData);
         }
 
         [ClientRpc]
         private void OnHitImpactClientRpc(string affected)
         {
-            if (IsServer)
+            if (IsServer || _offlineTest)
                 return;
             
             OnHitImpact(affected);
@@ -98,7 +101,7 @@ namespace Scripts.Weapons
         }
         private void HandleHitCall() 
         {
-            if (IsOwner && IsClient && HitCallCondition())
+            if ((IsOwner && IsClient  || _offlineTest) && HitCallCondition())
             {
                 if (HitCallCondition() && state.Value == State.HitHolding)
                 {
@@ -114,29 +117,33 @@ namespace Scripts.Weapons
 
         private void HandleHitImpact()
         {
-            if (IsServer && HitImpactCondition(out string affected))
+            if ((IsServer || _offlineTest) && HitImpactCondition(out string affected))
             {
                 state.Value = State.HitImpact;
                 OnHitImpact(affected);
                 OnHitImpactClientRpc(affected);
             }
+            else if (!HitCallCondition())
+            {
+                state.Value = State.HitHolding;
+            }
         }
 
         public override void OnFrameRecognized(string name)
         {
-            if(IsClient)
+            if(IsClient || _offlineTest)
                 weaponDesign.OnFrameRecognized(name);
         }
 
         public override void AbilityCalled()
         {
-          if(IsClient)
+          if(IsClient || _offlineTest)
               weaponDesign.OnGestureDetected();
         }
 
         protected override void OnAbilityReleased()
         {
-            if(IsClient)
+            if(IsClient || _offlineTest)
                weaponDesign.OnAbilityReleased();
         }
     }

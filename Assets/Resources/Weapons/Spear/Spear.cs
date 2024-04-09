@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Components;
+using Scripts.Gestures;
 using UnityEngine;
 
 public class Spear : WeaponDesign
@@ -19,31 +20,37 @@ public class Spear : WeaponDesign
 
     public override void OnFrameRecognized(string frameName)
     {
-        throw new System.NotImplementedException();
+        var frameId = GestureMapper.IndexOfName(frameName);
+        Debug.Log("FrameRecognized" + frameId);
+
     }
 
     public override void OnGestureDetected()
     {
-        throw new System.NotImplementedException();
+        Debug.Log("GestureDetected");
     }
 
     public override void OnHitHolding()
     {
-        throw new System.NotImplementedException();
+        Debug.Log("HitHolding");
+
     }
 
     public override void OnHitCalled()
     {
-        throw new System.NotImplementedException();
+        Debug.Log("HitCalled");
+
     }
 
     public override void OnHitImpact(string affected)
     {
-        throw new System.NotImplementedException();
+        Debug.Log("HitImpact " + affected);
+
     }
 
     public override void OnAbilityReleased()
     {
-        throw new System.NotImplementedException();
+        Debug.Log("AbilityReleased");
+
     }
 }

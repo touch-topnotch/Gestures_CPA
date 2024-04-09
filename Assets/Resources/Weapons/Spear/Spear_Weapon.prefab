@@ -63,7 +63,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!65 &9190239525677731556
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -79,7 +79,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -530,6 +530,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponDesign: {fileID: 1958357622632220776}
+  _offlineTest: 0
   _bladeMinSpeed: 5
   _blade: {fileID: 479167886705922931}
   _weaponPoint: {fileID: 2533415321984633053}
@@ -565,6 +566,12 @@ MonoBehaviour:
       Entry: 6
       Data: 
     - Name: hands
+      Entry: 6
+      Data: 
+    - Name: recognizer
+      Entry: 6
+      Data: 
+    - Name: library
       Entry: 6
       Data: 
     - Name: 
