@@ -312,14 +312,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 328542382}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.06736061, y: 0.69353056, z: -10.523068}
+  m_LocalRotation: {x: 0.08113793, y: 0.02087332, z: -0.0016995957, w: 0.99648285}
+  m_LocalPosition: {x: 6.39, y: 2.76, z: -10.523068}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 827309908}
   m_RootOrder: -1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 9.31, y: 2.4, z: 0}
 --- !u!114 &328542386
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -398,7 +398,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000014686511}
+  m_AnchoredPosition: {x: 0, y: -0.000016788726}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &355595360
@@ -967,7 +967,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 916699964}
   m_Direction: 0
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.99999994
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1261,6 +1261,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09ef111f49564599acb162eaa9a37a3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isInitialized: 0
 --- !u!1 &951068246
 GameObject:
   m_ObjectHideFlags: 0
@@ -1480,7 +1481,7 @@ MonoBehaviour:
   lobbyConnector: {fileID: 589738407}
   relayJoiner: {fileID: 659395216}
   relayCreator: {fileID: 1997706085}
-  _selectorEventSystem: {fileID: 1386050323}
+  _selectorEventSystem: {fileID: 1824217407}
 --- !u!1 &1046544288
 GameObject:
   m_ObjectHideFlags: 0
@@ -1656,7 +1657,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1976833177}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.99928236
+  m_Size: 0.9999959
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2227,7 +2228,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 1015
 --- !u!114 &1693271148
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2260,7 +2261,7 @@ Canvas:
   m_GameObject: {fileID: 1693271146}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 1
+  m_RenderMode: 0
   m_Camera: {fileID: 328542384}
   m_PlaneDistance: 100
   m_PixelPerfect: 0

@@ -29,11 +29,13 @@ namespace Scripts.PlayerLogic
         public BodyAnchors Anchors => anchors;
 
         public RecognitionPropertiesConfig RecognitionPropertiesConfig => _recognitionProperties;
-        protected virtual void Start()
+        protected PlayerData playerData;
+        public virtual void Initialize(PlayerData data)
         {
-            
             if (!transform.gameObject.activeSelf)
                 return;
+            
+            playerData = data;
             
             playerStateChangedEvent = new PlayerStateChangedEvent();
             playerStateChangedEvent.AddListener(OnPlayerStateChaned);
