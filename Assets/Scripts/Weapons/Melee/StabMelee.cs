@@ -11,12 +11,7 @@ public class StabMelee : Melee
     [SerializeField] private Transform _bladePoint;
 
     private Vector3 WeaponStabDirection => (_bladePoint.position - _weaponPoint.position).normalized;
-
-    private void Start()
-    {
-        StartShooting();
-    }
-
+    
     private float GetBladeSpeedAlongStabDirection(Vector3 bladeSpeedVec)
     {
         return Vector3.Dot(WeaponStabDirection, bladeSpeedVec);
