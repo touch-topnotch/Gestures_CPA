@@ -9,23 +9,33 @@ namespace Scripts.Weapons
         [SerializeField] private Transform bladePoint;
 
         [ReadOnlyInInspector]
-        [SerializeField] private float _speed;
+        [SerializeField] private Vector3 _speed;
 
         private Vector3 _prevPosition;
 
-        public float speed => _speed;
+        public float speed => _speed.magnitude;
+        public Vector3 speedVec => _speed;
         private bool lastTrigger = false;
+        private bool isTrigging = false;
         private string lastName = "";
         
         public void OnTriggerEnter(Collider other)
         {
             lastTrigger = true;
+            isTrigging = true;
             lastName = other.tag;
+            Debug.Log("Trigger Enter");
+        } 
+        
+        public void OnTriggerExit(Collider other)
+        {
+            isTrigging = false;
+            Debug.Log("Trigger Exit");
         }
         private void Update()
         {
             var position = bladePoint.position;
-            _speed = (position - _prevPosition).magnitude / Time.deltaTime;
+            _speed = (position - _prevPosition) / Time.deltaTime;
             _prevPosition = position;
         }
 
@@ -33,9 +43,10 @@ namespace Scripts.Weapons
         {
             tag = lastName;
             
-            if (lastTrigger)
+            if (lastTrigger && isTrigging)
             {
                 lastTrigger = false;
+                isTrigging = false;
                 return true;
             }
             
