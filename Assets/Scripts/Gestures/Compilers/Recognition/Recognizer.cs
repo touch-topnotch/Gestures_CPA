@@ -101,8 +101,6 @@ namespace Scripts.Gestures
                 _onUpdate.RemoveListener(FindStartOfDynamicGesture);
                 _curGesture = frameId;
                 _curFrameId++;
-                onFrameRecognized?.Invoke(_possibleGestures[_curGesture].frames[0].name);
-
                 HideHands();
                 RecognizeInOneGesture();
                 
