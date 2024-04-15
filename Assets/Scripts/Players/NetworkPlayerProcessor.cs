@@ -31,48 +31,38 @@ namespace Scripts.PlayerLogic
         
         public override void OnNetworkSpawn()
         {
-       
-            
             Debug.Log("NETWORK SPAWN");
+
+            var IsPlayer = IsClient || IsHost;
             transform.name = $"Player {OwnerClientId}";
             
-            _player.characterPool.SetMaterialId((int)OwnerClientId); 
-            _player.characterPool.SetCharacter((int)OwnerClientId % 2 == 0 ? "Anger" : "Grief");
-            
-            if (IsClient && !IsOwner)
-            { 
-                _player.rigType = RigType.NoRig;
-                _player.characterPool.SetAvatarType(AvatarType.Enemy);
-
+            if (IsPlayer && !IsOwner)
+            {   
+                _player.SetEnemy(OwnerClientId);
             }
-
-            if (IsClient && IsOwner)
+            if (IsPlayer && IsOwner)
             {
-                _player.rigType = RigType.PCRig;
-                _player.characterPool.SetAvatarType(AvatarType.Local);
+                _player.SetOwner(OwnerClientId);
                 _player.curRig.Anchors.Body.position = new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10));
-            }
-
-            if (IsServer)
-            {
-                _player.rigType = RigType.NoRig;
-                _player.characterPool.SetAvatarType(AvatarType.None);
-            }
-         
-            _player.Initialize();
-
-            if (IsClient && IsOwner)
-            {
                 _player.gestureCombiner.OnFrameRecognized.AddListener(
                     (frame) => { OnLocalClientFrameRecognizedServerRpc(frame, OwnerClientId); });
+            }
+            if (IsServer && !IsHost)
+            {
+                _player.SetEnemy(OwnerClientId);
+                _player.characterPool.SetAvatarType(AvatarType.None);
             }
         }
         
         [ServerRpc]
         public void OnLocalClientFrameRecognizedServerRpc(string frameName, ulong client)
         {
-            Debug.Log("Play Gesture Frame of player "+ _player.name);
-            _player.gestureCombiner.SimulateFrame(frameName);
+           
+            if (!IsOwner)
+            { 
+                Debug.Log("Play Gesture Frame of player "+ _player.name);
+                _player.gestureCombiner.SimulateFrame(_player.data.hands, frameName);
+            }
             CallFrameRecognizedClientRpc(frameName, client);
         }
 
@@ -80,11 +70,12 @@ namespace Scripts.PlayerLogic
         [ClientRpc]
         void CallFrameRecognizedClientRpc(string frameName, ulong client)
         {
-            Debug.Log("void CallFrameRecognizedClientRpc(string frameName, ulong client)");
+            //            Debug.Log($"void CallFrameRecognizedClientRpc(string {frameName}, ulong {client})");
+            
             if (OwnerClientId == client && !IsOwner)
             {
                 Debug.Log("Play Gesture Frame of player " + _player.name);
-                _player.gestureCombiner.SimulateFrame(frameName);
+                _player.gestureCombiner.SimulateFrame(_player.data.hands, frameName);
             }
         }
     }

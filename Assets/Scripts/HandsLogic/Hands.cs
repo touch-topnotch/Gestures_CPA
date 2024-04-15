@@ -30,7 +30,7 @@ namespace Scripts.HandsLogic
             }
             set
             {
-                Debug.Log("Setting left mat: " + value.Left.name + ", right mat: " + value.Right.name + " to " + transform.parent.parent.parent.name);
+                Debug.Log("Setting left mat: " + value.Left.name + ", right mat: " + value.Right.name + " to " + transform.parent.parent.name);
                 leftHand.HandMaterial = value.Left;
                 rightHand.HandMaterial = value.Right;
             }
