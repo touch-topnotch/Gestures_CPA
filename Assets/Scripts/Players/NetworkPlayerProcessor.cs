@@ -3,6 +3,7 @@ using Scripts.GameControllers;
 using Scripts.Gestures;
 using Scripts.Network;
 using Scripts.Static;
+using Scripts.Weapons;
 using Sirenix.OdinInspector;
 using Unity.Netcode;
 using Unity.VisualScripting;
@@ -31,48 +32,50 @@ namespace Scripts.PlayerLogic
         
         public override void OnNetworkSpawn()
         {
-       
-            
             Debug.Log("NETWORK SPAWN");
+
+            var IsPlayer = IsClient || IsHost;
             transform.name = $"Player {OwnerClientId}";
             
-            _player.characterPool.SetMaterialId((int)OwnerClientId); 
-            _player.characterPool.SetCharacter((int)OwnerClientId % 2 == 0 ? "Anger" : "Grief");
-            
-            if (IsClient && !IsOwner)
-            { 
-                _player.rigType = RigType.NoRig;
-                _player.characterPool.SetAvatarType(AvatarType.Enemy);
-
-            }
-
-            if (IsClient && IsOwner)
-            {
-                _player.rigType = RigType.PCRig;
-                _player.characterPool.SetAvatarType(AvatarType.Local);
-                _player.curRig.Anchors.Body.position = new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10));
-            }
-
+            _player.characterPool.SpawnCharacters();
             if (IsServer)
-            {
-                _player.rigType = RigType.NoRig;
-                _player.characterPool.SetAvatarType(AvatarType.None);
+                OnWeaponsInitializedClientRpc(JsonUtility.ToJson(_player.characterPool.SpawnWeapons()));
+            if (IsPlayer && !IsOwner)
+            {   
+                _player.SetEnemy(OwnerClientId);
             }
-         
-            _player.Initialize();
-
-            if (IsClient && IsOwner)
+            if (IsPlayer && IsOwner)
             {
+                _player.SetOwner(OwnerClientId);
+                _player.curRig.Anchors.Body.position = new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10));
                 _player.gestureCombiner.OnFrameRecognized.AddListener(
                     (frame) => { OnLocalClientFrameRecognizedServerRpc(frame, OwnerClientId); });
             }
+            
+            if (IsServer && !IsHost)
+            {
+                _player.SetEnemy(OwnerClientId);
+                _player.characterPool.SetAvatarType(AvatarType.None);
+            }
+
+          
         }
-        
+
+        [ClientRpc]
+        public void OnWeaponsInitializedClientRpc(string weapons)
+        {
+            if(!IsOwner)
+                _player.characterPool.SetWeapons(JsonUtility.FromJson<List<KeyValuePair<string, List<ulong>>>>(weapons));
+        }
         [ServerRpc]
         public void OnLocalClientFrameRecognizedServerRpc(string frameName, ulong client)
         {
-            Debug.Log("Play Gesture Frame of player "+ _player.name);
-            _player.gestureCombiner.SimulateFrame(frameName);
+           
+            if (!IsOwner)
+            { 
+                Debug.Log("Play Gesture Frame of player "+ _player.name);
+                _player.gestureCombiner.SimulateFrame(_player.data.hands, frameName);
+            }
             CallFrameRecognizedClientRpc(frameName, client);
         }
 
@@ -80,11 +83,12 @@ namespace Scripts.PlayerLogic
         [ClientRpc]
         void CallFrameRecognizedClientRpc(string frameName, ulong client)
         {
-            Debug.Log("void CallFrameRecognizedClientRpc(string frameName, ulong client)");
+            //            Debug.Log($"void CallFrameRecognizedClientRpc(string {frameName}, ulong {client})");
+            
             if (OwnerClientId == client && !IsOwner)
             {
                 Debug.Log("Play Gesture Frame of player " + _player.name);
-                _player.gestureCombiner.SimulateFrame(frameName);
+                _player.gestureCombiner.SimulateFrame(_player.data.hands, frameName);
             }
         }
     }
