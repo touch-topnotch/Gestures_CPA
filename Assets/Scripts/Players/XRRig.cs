@@ -17,9 +17,9 @@ namespace Scripts.PlayerLogic
 
         public override void StopMove() => _movement.StopMove();
 
-        protected override void Start()
+        public override void Initialize(PlayerData data)
         {
-            base.Start();
+            base.Initialize(data);
             Centrize();
         }
         private void Update()

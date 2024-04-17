@@ -54,7 +54,7 @@ namespace Scripts.Gestures
             Debug.Log("Dynamic Gesture " + name + " recognized");
         }
 
-        public bool RecognizeFrame(RecognitionProperties properties, GestureFrame frame)
+        public bool RecognizeFrame(RecognitionProperties properties, GestureFrame frame, bool invokeEvent)
         {
 
             if (!_hands.IsRecognized)
@@ -63,6 +63,8 @@ namespace Scripts.Gestures
             if (RecognizeHand(frame.Hands.LeftBones, _hands.leftHand.points, properties)
                 && RecognizeHand(frame.Hands.RightBones, _hands.rightHand.points, properties))
             {
+                if(invokeEvent)
+                    onFrameRecognized?.Invoke(frame.name);
                 return true;
             }
             
@@ -93,14 +95,12 @@ namespace Scripts.Gestures
             
             DrawNearlyGesture();
 
-            var frameId = RecognizeFrame(_config.PlayerProperties);
+            var frameId = RecognizeFrame(_config.PlayerProperties, true);
             if (frameId != -1)
             {     
                 _onUpdate.RemoveListener(FindStartOfDynamicGesture);
                 _curGesture = frameId;
                 _curFrameId++;
-                onFrameRecognized?.Invoke(_possibleGestures[_curGesture].frames[0].name);
-
                 HideHands();
                 RecognizeInOneGesture();
                 
@@ -112,7 +112,7 @@ namespace Scripts.Gestures
             if (wasDrawnNearly)
                 return;
 
-            var NearlyFrameId = RecognizeFrame(_config.SupportiveProperties);
+            var NearlyFrameId = RecognizeFrame(_config.SupportiveProperties, false);
             if (NearlyFrameId != -1)
             {
                 _hands.handVisualiser.OverrideHands(_possibleFrames[NearlyFrameId].Hands);
@@ -130,13 +130,13 @@ namespace Scripts.Gestures
             
             DrawNearlyGesture();
             
-            var frameId = RecognizeFrame(_config.PlayerProperties);
+            var frameId = RecognizeFrame(_config.PlayerProperties, true);
             
             if (frameId != -1)
             {
                 HideHands();
                 
-                onFrameRecognized?.Invoke(_possibleGestures[_curGesture].frames[_curFrameId].name);
+            //    onFrameRecognized?.Invoke(_possibleGestures[_curGesture].frames[_curFrameId].name);
                 _curFrameId++;
                 
                 if (_curFrameId < _possibleGestures[_curGesture].frames.Count)  // all possible gestures = one gesture (list of one element);
@@ -158,11 +158,11 @@ namespace Scripts.Gestures
             _onUpdate.AddListener(GoByOneGesture);
         }
         
-        private int RecognizeFrame(RecognitionProperties props)
+        private int RecognizeFrame(RecognitionProperties props, bool invokeEvent)
         {
             for(int i = 0; i < _possibleFrames.Count; i++)
             {
-                if (RecognizeFrame(props, _possibleFrames[i]))
+                if (RecognizeFrame(props, _possibleFrames[i], invokeEvent))
                     return i;
             }
             return -1;
