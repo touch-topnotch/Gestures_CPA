@@ -35,22 +35,10 @@ namespace Scripts.Weapons
         [SerializeField]
         protected WeaponDesign weaponDesign;
         
-        private int _power;
+        protected int _power;
         
         [ShowInInspector]
-        public int power
-        {
-            get => _power;
-            protected set
-            {
-                _power = value;
-                if (_power <= 0)
-                {
-                    AbilityReleased();
-                    _power = 0;
-                }
-            }
-        }
+        
         
         [SerializeField]
         [Tooltip("Weapon hit call cooldown")] private float _hitCallDelay = 0.5f;
@@ -62,16 +50,11 @@ namespace Scripts.Weapons
         
         protected abstract bool HitImpactCondition(out string affected);
         protected abstract bool HitCallCondition();
-
-       
         
-        private void Update()
+        public void Initialize(PlayerData data)
         {
-            if (Input.GetKeyDown(KeyCode.Y))
-            {
-                playerData = transform.parent.GetComponent<Player>().data;
-                weaponDesign.SetPlayerData(playerData);
-            }
+            playerData = data;
+            weaponDesign.SetPlayerData(playerData);
         }
 
         protected virtual void OnHitStartHold()
@@ -104,8 +87,7 @@ namespace Scripts.Weapons
 
         public override void OnNetworkSpawn()
         {
-            if (IsClient)
-                weaponDesign.SetPlayerData(playerData);
+            if (IsClient) { }
         }
 
         [ClientRpc]
