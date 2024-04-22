@@ -48,13 +48,10 @@ namespace Scripts.Weapons
 
        
         
-        private void Update()
+        public void Initialize(PlayerData data)
         {
-            if (Input.GetKeyDown(KeyCode.Y))
-            {
-                playerData = transform.parent.parent.parent.GetComponent<Player>().data;
-                weaponDesign.SetPlayerData(playerData);
-            }
+            playerData = data;
+            weaponDesign.SetPlayerData(data);
         }
 
         protected virtual void OnHitStartHold()
