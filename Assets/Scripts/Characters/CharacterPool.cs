@@ -10,6 +10,7 @@ using Scripts.Systems;
 using Scripts.Tests;
 using Scripts.Weapons;
 using Sirenix.OdinInspector;
+using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
@@ -34,9 +35,12 @@ namespace Scripts.Characters
         [SerializeField] private Hands _hands;
 
         [Header("Events")] public UnityEvent<string> characterChangedEvent = new();
-        public Character currentCharacter => charactersDict.ContainsKey(_currentCharacterName) ? charactersDict[_currentCharacterName] : null;
-        
-        #region Unity Inspectors tools
+
+        public Character currentCharacter => charactersDict.ContainsKey(_currentCharacterName)
+            ? charactersDict[_currentCharacterName]
+            : null;
+
+            #region Unity Inspectors tools
 #if UNITY_EDITOR
         [Button]
         public void UpdateCharacter()
@@ -176,7 +180,12 @@ namespace Scripts.Characters
             foreach (var char_weapons in weapons)
             {
                 charactersDict[char_weapons.Key].SetWeapons(char_weapons.Value);
+                foreach (var VARIABLE in char_weapons.Value)
+                {
+                    NetworkManager.Singleton.SpawnManager.SpawnedObjects[VARIABLE].GetComponent<Weapon>().Initialize(transform.parent.GetComponent<PlayerData>());
+                }
             }
+
         }
         
 

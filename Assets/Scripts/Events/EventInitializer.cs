@@ -24,13 +24,21 @@ namespace Scripts.Events
                 onServicesInitilalised?.Invoke();
             }
         }
-        public static EventInitializer Instance { get; private set; }
+
+        public static EventInitializer Instance;
+        
         private void Awake()
         {
-            if (Instance != null)
+            if(Instance != null)
                 Destroy(this);
             else
+            {
                 Instance = this;
+                DontDestroyOnLoad(this);
+            }
+
+            Debug.Log("Event system initialized");
+
             onServicesInitilalised += () => { isInitialized = true; };
             CheckServicesInitialization();
         }
