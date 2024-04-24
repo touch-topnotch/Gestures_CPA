@@ -28,16 +28,12 @@ namespace Scripts.Weapons
     }
 
    
-    public abstract class Weapon : NetworkRecognizableBehaviour, IGrabable
+    public abstract class Weapon : NetworkRecognizableBehaviour
     {
         [Header("Weapons components")] 
         
         [SerializeField]
         protected WeaponDesign weaponDesign;
-        
-        [field:SerializeField] public GrabSystem grabSystem { get; set; }
-
-        protected int _power;
         
         [SerializeField]
         [Tooltip("Weapon hit call cooldown")] private float _hitCallDelay = 0.5f;
@@ -49,37 +45,13 @@ namespace Scripts.Weapons
         
         protected abstract bool HitImpactCondition(out string affected);
         protected abstract bool HitCallCondition();
+
+       
         
         public void Initialize(PlayerData data)
         {
             playerData = data;
-            weaponDesign.SetPlayerData(playerData);
-            SetGrabSystemPlayerData(data);
-        }
-
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                Initialize(transform.parent.GetComponent<Player>().data);
-            }
-        }
-        
-        public void SetGrabSystemPlayerData(PlayerData data)
-        {
-            grabSystem.SetPlayerData(data);
-            grabSystem.OnGrabStart += OnGrabbed;
-            grabSystem.OnGrabEnd += OnUnGrabbed;
-        }
-        
-        public void OnGrabbed()
-        {
-            
-        }
-
-        public void OnUnGrabbed()
-        {
-            
+            weaponDesign.SetPlayerData(data);
         }
 
         protected virtual void OnHitStartHold()
@@ -112,7 +84,8 @@ namespace Scripts.Weapons
 
         public override void OnNetworkSpawn()
         {
-            if (IsClient) { }
+            if (IsClient)
+                weaponDesign.SetPlayerData(playerData);
         }
 
         [ClientRpc]
@@ -172,7 +145,7 @@ namespace Scripts.Weapons
 
         private void HandleHitImpact()
         {
-            if (IsServer && HitImpactCondition(out string affected))
+            if ((IsServer) && HitImpactCondition(out string affected))
             {
                 state.Value = State.HitImpact;
                 OnHitImpact(affected);

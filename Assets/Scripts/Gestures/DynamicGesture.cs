@@ -70,7 +70,6 @@ namespace Scripts.Gestures
         }
         public void FrameRecognized(string name)
         {
-            
             _recognizable?.OnFrameRecognized(name);
         }
 
