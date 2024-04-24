@@ -28,12 +28,16 @@ namespace Scripts.Weapons
     }
 
    
-    public abstract class Weapon : NetworkRecognizableBehaviour
+    public abstract class Weapon : NetworkRecognizableBehaviour, IGrabable
     {
         [Header("Weapons components")] 
         
         [SerializeField]
         protected WeaponDesign weaponDesign;
+        
+        [field:SerializeField] public GrabSystem grabSystem { get; set; }
+
+        protected int _power;
         
         [SerializeField]
         [Tooltip("Weapon hit call cooldown")] private float _hitCallDelay = 0.5f;
@@ -45,13 +49,29 @@ namespace Scripts.Weapons
         
         protected abstract bool HitImpactCondition(out string affected);
         protected abstract bool HitCallCondition();
-
-       
         
         public void Initialize(PlayerData data)
         {
             playerData = data;
-            weaponDesign.SetPlayerData(data);
+            weaponDesign.SetPlayerData(playerData);
+            SetGrabSystemPlayerData(data);
+        }
+        
+        public void SetGrabSystemPlayerData(PlayerData data)
+        {
+            grabSystem.SetPlayerData(data);
+            grabSystem.OnGrabStart += OnGrabbed;
+            grabSystem.OnGrabEnd += OnUnGrabbed;
+        }
+        
+        public void OnGrabbed()
+        {
+            
+        }
+
+        public void OnUnGrabbed()
+        {
+            
         }
 
         protected virtual void OnHitStartHold()
@@ -84,8 +104,7 @@ namespace Scripts.Weapons
 
         public override void OnNetworkSpawn()
         {
-            if (IsClient)
-                weaponDesign.SetPlayerData(playerData);
+            if (IsClient) { }
         }
 
         [ClientRpc]
@@ -145,7 +164,7 @@ namespace Scripts.Weapons
 
         private void HandleHitImpact()
         {
-            if ((IsServer) && HitImpactCondition(out string affected))
+            if (IsServer && HitImpactCondition(out string affected))
             {
                 state.Value = State.HitImpact;
                 OnHitImpact(affected);
