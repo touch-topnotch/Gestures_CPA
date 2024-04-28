@@ -13,12 +13,6 @@ namespace Components
         [HideInInspector]
         public PlayerData playerData;
 
-        public void SetPlayerData(PlayerData data)
-        {
-            this.transform.SetParent(playerData.playerTransform);
-            playerData = data;
-        }
-
         public abstract void OnFrameRecognized(string frameName);
         
         public abstract void OnGestureDetected();

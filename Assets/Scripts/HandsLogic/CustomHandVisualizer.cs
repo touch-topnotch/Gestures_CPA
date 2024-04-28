@@ -23,7 +23,7 @@ namespace Scripts.HandsLogic
 
         [SerializeField]
         XROrigin m_Origin;
-
+        
         [SerializeField] 
         private PlayerHands m_PlayerHands;
         
@@ -135,6 +135,7 @@ namespace Scripts.HandsLogic
             if (m_LeftHandGameObjects == null)
             {
                 m_LeftHandGameObjects = new HandGameObjects(
+          
                     Handedness.Left,
                     m_PlayerHands.leftHand,
                     m_DebugDrawPrefab,
@@ -144,11 +145,13 @@ namespace Scripts.HandsLogic
             if (m_RightHandGameObjects == null)
             {
                 m_RightHandGameObjects = new HandGameObjects(
+           
                     Handedness.Right,
                     m_PlayerHands.rightHand,
                     m_DebugDrawPrefab,
                     m_VelocityPrefab);
             }
+
 
             UpdateRenderingVisibility(m_LeftHandGameObjects, m_Subsystem.leftHand.isTracked);
             UpdateRenderingVisibility(m_RightHandGameObjects, m_Subsystem.rightHand.isTracked);
@@ -264,7 +267,7 @@ namespace Scripts.HandsLogic
 
         class HandGameObjects
         {
-            private HandMesh m_HandMesh;
+            public HandMesh m_HandMesh;
             GameObject m_DrawJointsParent;
 
             Transform[] m_JointXforms = new Transform[XRHandJointID.EndMarker.ToIndex()];
@@ -304,9 +307,9 @@ namespace Scripts.HandsLogic
                     m_Lines[jointIndex].SetPositions(s_LinePointsReuse);
                 }
 
-                m_HandMesh = handMesh;
+                m_HandMesh = handMesh; 
                 var hand_transf = m_HandMesh.transform;
-                hand_transf.parent.transform.localPosition = Vector3.zero;
+            //    hand_transf.parent.transform.localPosition = handOffset;
                 hand_transf.localRotation = Quaternion.identity;
 
                 Transform wristRootXform = null;

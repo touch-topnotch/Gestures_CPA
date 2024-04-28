@@ -9,10 +9,7 @@ using Zenject;
 namespace Scripts.Movements
 {
     public class XRMovement : MonoBehaviour
-
     {
-
-
         public bool moveOnAwake;
         [SerializeField] protected BodyAnchors _rigAnchors;
         [SerializeField] protected CharacterController parentMoveController;
@@ -53,6 +50,7 @@ namespace Scripts.Movements
 
         public void StartMove()
         {
+            
             _isMoved = true;
             pivot.position = _rigAnchors.Head.position;
             Debug.Log("Movement started");
