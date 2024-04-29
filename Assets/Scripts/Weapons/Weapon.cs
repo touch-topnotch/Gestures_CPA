@@ -35,7 +35,7 @@ namespace Scripts.Weapons
         [SerializeField]
         protected WeaponDesign weaponDesign;
         
-        [field:SerializeField] public GrabSystem grabSystem { get; set; }
+        [field:SerializeField] public GrabSystem GrabSystem{ get; set; }
 
         protected int _power;
         
@@ -59,9 +59,9 @@ namespace Scripts.Weapons
         
         public void SetGrabSystemPlayerData(PlayerData data)
         {
-            grabSystem.SetPlayerData(data);
-            grabSystem.OnGrabStart += OnGrabbed;
-            grabSystem.OnGrabEnd += OnUnGrabbed;
+            GrabSystem.SetPlayerData(data);
+            GrabSystem.OnGrabStart += OnGrabbed;
+            GrabSystem.OnGrabEnd += OnUnGrabbed;
         }
         
         public void OnGrabbed()

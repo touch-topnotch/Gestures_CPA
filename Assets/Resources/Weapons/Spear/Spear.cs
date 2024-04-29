@@ -11,6 +11,8 @@ using UnityEngine.Serialization;
 public class Spear : WeaponDesign
 {
     [SerializeField] private LayerMask _floorMask;
+
+    [SerializeField] private AudioProcessor weaponAudioProcessor;
     
     [Header("Spear Settings")]
     [SerializeField] private Transform _startSpawnPoint;
@@ -148,12 +150,12 @@ public class Spear : WeaponDesign
     public override void OnHitCalled()
     {
         //Debug.Log("HitCalled");
-        audioProcessor.ActivateRandomResource("Swing");
+        weaponAudioProcessor.ActivateRandomResource("Swing");
     }
 
     public override void OnHitImpact(string affected)
     {
-        audioProcessor.ActivateRandomResource("Hit_" + affected);
+        weaponAudioProcessor.ActivateRandomResource("Hit_" + affected);
     }
 
     public override void OnAbilityReleased()

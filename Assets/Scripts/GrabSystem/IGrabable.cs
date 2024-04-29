@@ -5,7 +5,7 @@ using UnityEngine;
 
 public interface IGrabable
 {
-    GrabSystem grabSystem { get; set; }
+    GrabSystem GrabSystem { get; set; }
     
     public void SetGrabSystemPlayerData(PlayerData data);
     
