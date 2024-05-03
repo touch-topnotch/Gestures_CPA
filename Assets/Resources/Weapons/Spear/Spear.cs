@@ -5,6 +5,7 @@ using Components;
 using Scripts.Design;
 using Scripts.Gestures;
 using Scripts.HandsLogic;
+using Scripts.PlayerLogic;
 using UnityEngine;
 
 public class Spear : WeaponDesign
@@ -27,8 +28,7 @@ public class Spear : WeaponDesign
         Debug.Log("Design FrameRecognized " + frameId);
         
         audioProcessor.ActivateResource("Frame_" + frameId);
-        
-        
+        playerData = PlayerData.local;
         switch (frameId)
         {
             case 0:

@@ -9,9 +9,8 @@ namespace Components
     {
         public AudioProcessor audioProcessor;
         public VFXProcessor vfxProcessor;
-        
-        [HideInInspector]
-        public PlayerData playerData;
+
+        [HideInInspector] public PlayerData playerData;
 
         public abstract void OnFrameRecognized(string frameName);
         

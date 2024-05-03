@@ -76,17 +76,14 @@ namespace Scripts.PlayerLogic
         
         public void SimulateDynamicGesture()
         {
-            StopCoroutine(WaitUntilNextFrame());
-            Debug.Log("Simulating...");
-           
             if (_targetFrame == null)
             {
                 _ui.gestureInput.image.color = _palette.clear;
                 return;
             }
-
-            var dynamic = playerData.library.characterGestures[_targetFrame.baseName];
             
+            var dynamic = playerData.library.characterGestures[_targetFrame.baseName];
+            Debug.Log("Simulating " +  _targetFrame.name);
             hands.MoveHands(_targetFrame, anchors, handsProperties.handSpeed, ()=>{StartCoroutine(WaitUntilNextFrame());});
             
             _targetFrame = dynamic.GetNextFrameOf(_targetFrame);

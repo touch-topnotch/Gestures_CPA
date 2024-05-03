@@ -20,7 +20,7 @@ namespace Scripts.PlayerLogic
 
         NoRig,
     }
-    public struct PlayerData
+    public class PlayerData
     {
         public static PlayerData local;
         public readonly ulong id;
@@ -105,9 +105,7 @@ namespace Scripts.PlayerLogic
             
             if (_rigType == RigType.XRRig)
                 _xrRig.Initialize(data);
-            
-         
-        
+
         }
         
 #if UNITY_EDITOR
@@ -156,10 +154,12 @@ namespace Scripts.PlayerLogic
 
         private void Awake()
         {
+      
             if (isLocal)
             {
-                _characterPool.SpawnCharacters();
+               
                 SetOwner(0);
+                _characterPool.SpawnCharacters();
             }
                 
         }
@@ -167,6 +167,7 @@ namespace Scripts.PlayerLogic
         public void SetOwner(ulong id)
         {
             InitializeComponents(id);
+            
             if (_rigType == RigType.NoRig)
                 rigType = RigType.PCRig;
 #if UNITY_EDITOR
@@ -187,6 +188,7 @@ namespace Scripts.PlayerLogic
         public void SetEnemy(ulong id)
         {
             InitializeComponents(id);
+            
             rigType = RigType.NoRig;
             characterPool.SetAvatarType(AvatarType.Enemy);
         }

@@ -168,7 +168,7 @@ namespace Scripts.Characters
             var all_weapons = new List<KeyValuePair<string, List<ulong>>>();
             foreach (var VARIABLE in characterConfigs)
             {
-                var spawns = charactersDict[VARIABLE.characterName].SpawnWeapons(VARIABLE.weapons);
+                var spawns = charactersDict[VARIABLE.characterName].SpawnWeapons(VARIABLE.weapons,PlayerData.local);
                 all_weapons.Add(new(VARIABLE.characterName, spawns));
             }
 
@@ -182,7 +182,7 @@ namespace Scripts.Characters
                 charactersDict[char_weapons.Key].SetWeapons(char_weapons.Value);
                 foreach (var VARIABLE in char_weapons.Value)
                 {
-                    NetworkManager.Singleton.SpawnManager.SpawnedObjects[VARIABLE].GetComponent<Weapon>().Initialize(transform.parent.GetComponent<PlayerData>());
+                    NetworkManager.Singleton.SpawnManager.SpawnedObjects[VARIABLE].GetComponent<Weapon>().Initialize(PlayerData.local);
                 }
             }
 
