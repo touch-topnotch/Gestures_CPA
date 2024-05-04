@@ -3,6 +3,7 @@ using Scripts.Design;
 using Scripts.Effects;
 using Scripts.Gestures;
 using Scripts.HandsLogic;
+using Scripts.Systems;
 using Scripts.Weapons;
 using UnityEngine;
 
@@ -46,14 +47,14 @@ using UnityEngine;
             switch (frameId)
             {
                 case 0:
-                    _hands.rightHand.SetColorSmooth(HandShaderProps.MainColor, new Color(0.1f, 0, 0.2f, 0.55f), 3);
-                    _hands.leftHand.SetColorSmooth(HandShaderProps.MainColor, new Color(0.1f, 0, 0.2f, 0.55f), 3);
-                    _hands.rightHand.SetColorSmooth(HandShaderProps.EdgeColor, new Color(0.53f, 0, 0.8f, 0), 3);
-                    _hands.leftHand.SetColorSmooth(HandShaderProps.EdgeColor, new Color(0.53f, 0, 0.8f, 0), 3);
+                    _hands.rightHand.ChangeColorSmooth( new Color(0.1f, 0, 0.2f, 0.55f), new ColorParams(HandShaderProps.MainColor,3, false));
+                    _hands.leftHand.ChangeColorSmooth(new Color(0.1f, 0, 0.2f, 0.55f),new ColorParams(HandShaderProps.MainColor,3, false));
+                    _hands.rightHand.ChangeColorSmooth(new Color(0.53f, 0, 0.8f, 0), new ColorParams(HandShaderProps.EdgeColor,3, false));
+                    _hands.leftHand.ChangeColorSmooth(new Color(0.53f, 0, 0.8f, 0), new ColorParams(HandShaderProps.EdgeColor,3, false));
                     break;
                 case 1:
-                    _hands.rightHand.SetColorSmooth(HandShaderProps.EdgeColor, new Color(0.53f, 0, 0.8f), 3);
-                    _hands.leftHand.SetColorSmooth(HandShaderProps.EdgeColor, new Color(0.53f, 0, 0.8f), 3);
+                    _hands.rightHand.ChangeColorSmooth(new Color(0.53f, 0, 0.8f), new ColorParams(HandShaderProps.EdgeColor,3, false));
+                    _hands.leftHand.ChangeColorSmooth( new Color(0.53f, 0, 0.8f), new ColorParams(HandShaderProps.EdgeColor,3, false));
                     break;
                 case 2:
                     _hands.leftHand.points[0].position += new Vector3(1, 1, 1);

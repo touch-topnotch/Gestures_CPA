@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using Scripts.Design;
 using Scripts.Events;
 using Scripts.HandsLogic;
+using Scripts.PlayerLogic;
+using Scripts.Static;
+using Scripts.Systems;
 using UnityEngine;
 
 namespace Scripts.Gestures
@@ -11,7 +14,9 @@ namespace Scripts.Gestures
     {
         public readonly GestureRecognized onGestureRecognized;
         public readonly FrameRecognized onFrameRecognized;
-        
+
+        private Color _colorActive = new Color(1, 1, 1, 0.0f);
+        private Color _colorPassive = new Color(1, 1, 1, 0.5f);
         private List<GestureFrame> _possibleFrames;
         private List<DynamicGesture> _possibleGestures;
         
@@ -20,12 +25,10 @@ namespace Scripts.Gestures
         private readonly UpdateEvent _onUpdate;
 
         private readonly GesturesLibrary _library;
-
+        private BodyAnchors bodyAnchors;
         private int _curGesture = 0;
         private int _curFrameId = 0;
         private bool wasDrawnNearly = false;
-        
-
         public Recognizer(PlayerHands hands, RecognitionPropertiesConfig config)
         {
             _hands = hands;
@@ -35,7 +38,7 @@ namespace Scripts.Gestures
             onFrameRecognized = new FrameRecognized();
             
             onGestureRecognized = new GestureRecognized();
-
+            bodyAnchors = _hands.transform.parent.GetComponent<BodyAnchors>();
             onFrameRecognized.AddListener(FrameLog);
             onFrameRecognized.AddListener((name)=>
             {
@@ -43,6 +46,10 @@ namespace Scripts.Gestures
             });
             
             onGestureRecognized.AddListener(GestureLog);
+            onGestureRecognized.AddListener((s)=>
+            {
+                HideHands();
+            });
         }
 
         private void FrameLog(string name)
@@ -54,17 +61,21 @@ namespace Scripts.Gestures
             Debug.Log("Dynamic Gesture " + name + " recognized");
         }
 
-        public bool RecognizeFrame(RecognitionProperties properties, GestureFrame frame, bool invokeEvent)
+        public bool RecognizeFrame(RecognitionProperties properties, GestureFrame frame, bool invokeEvent, int gestureId)
         {
-
-            if (!_hands.IsRecognized)
-                return false;
-            
+            //
+            // if (!_hands.IsRecognized)
+            //     return false;
+            //
             if (RecognizeHand(frame.Hands.LeftBones, _hands.leftHand.points, properties)
                 && RecognizeHand(frame.Hands.RightBones, _hands.rightHand.points, properties))
             {
-                if(invokeEvent)
+                if (invokeEvent)
+                {
+                    _curGesture = gestureId;
                     onFrameRecognized?.Invoke(frame.name);
+                }
+                    
                 return true;
             }
             
@@ -88,12 +99,13 @@ namespace Scripts.Gestures
             
             LogPossibleFrames();
             
-            _onUpdate.AddListener(FindStartOfDynamicGesture);
+           _onUpdate.AddListener(FindStartOfDynamicGesture);
         }
         private void FindStartOfDynamicGesture()
         {
             
             DrawNearlyGesture();
+
 
             var frameId = RecognizeFrame(_config.PlayerProperties, true);
             if (frameId != -1)
@@ -111,16 +123,16 @@ namespace Scripts.Gestures
         {
             if (wasDrawnNearly)
                 return;
-
+      
             var NearlyFrameId = RecognizeFrame(_config.SupportiveProperties, false);
+            
             if (NearlyFrameId != -1)
             {
-                _hands.handVisualiser.OverrideHands(_possibleFrames[NearlyFrameId].Hands);
-
-                foreach (var hand in _hands.handVisualiser.activeHands)
-                {
-                    hand.ChangeColorPinPong(HandShaderProps.EdgeColor, new Color(1,1,1,0.1f), new Color(1,1,1,0.5f), 2);
-                }
+                Debug.Log("Draw nearly" + _possibleFrames[NearlyFrameId].name);
+                _hands.handVisualiser.Move(_possibleFrames[NearlyFrameId].Hands, 4, null);
+                _hands.handVisualiser.ManipulateLasts((m)=>m.ChangeColorPinPong(_colorActive, _colorPassive, new ColorParams(
+                    HandShaderProps.EdgeColor,
+                        1, false)));
 
                 wasDrawnNearly = true;
             }
@@ -133,7 +145,7 @@ namespace Scripts.Gestures
             var frameId = RecognizeFrame(_config.PlayerProperties, true);
             
             if (frameId != -1)
-            {
+            { 
                 HideHands();
                 
             //    onFrameRecognized?.Invoke(_possibleGestures[_curGesture].frames[_curFrameId].name);
@@ -147,8 +159,8 @@ namespace Scripts.Gestures
                 
                 
                 _onUpdate.RemoveListener(GoByOneGesture);
-                
                 onGestureRecognized.Invoke(_possibleGestures[_curGesture].Name);
+    
             }
         }
         
@@ -162,33 +174,42 @@ namespace Scripts.Gestures
         {
             for(int i = 0; i < _possibleFrames.Count; i++)
             {
-                if (RecognizeFrame(props, _possibleFrames[i], invokeEvent))
+                if (RecognizeFrame(props, _possibleFrames[i], invokeEvent, i))
                     return i;
             }
             return -1;
         }
-        
-        
-        private static bool RecognizeHand(in BonesData bonesData, in Transform[] handSkeleton, in RecognitionProperties props)
+
+      
+        private bool RecognizeHand(in BonesData bonesData, in Transform[] handSkeleton, in RecognitionProperties props)
         {
             if (bonesData == null || bonesData.rotations?.Length != handSkeleton.Length)
                 return true;
-
-
+            
+            bonesData.ListenAnchors(PlayerData.local.bodyAnchors);
             var dist = OptimizedDistance(bonesData.rootPos, handSkeleton[0].localPosition);
-         
-            if (1 - dist < props.positionQuality)
-            {// l.rl("Canceled, because position: " + dist + " > " + props.positionQuality);
+          
+            if (1 - dist < props.positionQuality) 
+            {
+                //l.rl("Canceled, because position: " + dist + " < " + props.positionQuality);
                 return false;
             }
-            
-            for (int i = 0; i < bonesData.rotations.Length; i++)
+            float distance = OptimizedDistance(bonesData.rotations[0],handSkeleton[0].localRotation);
+
+            if (distance < props.rootRotationQuality)
             {
-                float distance = OptimizedDistance( bonesData.rotations[i], handSkeleton[i].localRotation);
-                var quality = i == 0 ? props.rootRotationQuality : props.rotationQuality;
+               // l.rl("Canceled, because root rotation: " + distance + " > " + props.rootRotationQuality);
+                return false;
+            }
+                
+   
+            for (int i = 1; i < bonesData.rotations.Length; i++)
+            {
+                distance = OptimizedDistance( bonesData.rotations[i], handSkeleton[i].localRotation);
+                var quality = props.rotationQuality;
                 if (distance < quality) // 0 - bad, 1 - good, 0.9 - ok
                 {
-                    //l.rl("Canceled, because rotation: " + distance + " < " + props.rotationQuality);
+                //    l.rl("Canceled, because rotation: " + distance + " > " + props.rotationQuality);
                     return false;
                 }
             }
@@ -197,8 +218,8 @@ namespace Scripts.Gestures
         
         public void HideHands()
         {
-            Debug.Log("Hide Hands");
-             _hands.handVisualiser.HideHands();
+            Debug.Log("Hide hands"); 
+            _hands.handVisualiser.ManipulateAll((e)=>e.Hide());
             wasDrawnNearly = false;
         }
 
@@ -211,8 +232,9 @@ namespace Scripts.Gestures
             }
             Debug.Log(log);
         }
+
         public static float OptimizedDistance(in Vector3 a, in Vector3 b) =>
-            (a.x - b.x) * (a.x - b.x) + (a.y - b.y)* (a.y - b.y) + (a.z - b.z) * (a.z - b.z);
+            (float)Math.Sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z));
         public static float OptimizedDistance(in Vector4 a, in Vector4 b) =>
             (a.x - b.x) * (a.x - b.x) + (a.y - b.y)* (a.y - b.y) + (a.z - b.z) * (a.z - b.z) + (a.w - b.w) * (a.w - b.w);
         public static float OptimizedDistance(in Quaternion a, in Quaternion b) =>

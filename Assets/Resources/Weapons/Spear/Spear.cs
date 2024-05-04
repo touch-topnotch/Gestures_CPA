@@ -5,8 +5,8 @@ using Components;
 using Scripts.Design;
 using Scripts.Gestures;
 using Scripts.HandsLogic;
+using Scripts.PlayerLogic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class Spear : WeaponDesign
 {
@@ -46,14 +46,12 @@ public class Spear : WeaponDesign
         Debug.Log("Design FrameRecognized " + frameId);
         
         audioProcessor.ActivateResource("Frame_" + frameId);
-        
-        
+        playerData = PlayerData.local;
         switch (frameId)
         {
-            case 1: // 0
-                transform.position = playerData.anchors.Root.transform.position;
-                transform.rotation = playerData.anchors.Body.transform.rotation;
-                
+            case 0:
+                transform.position = playerData.bodyAnchors.Body.position;
+                transform.rotation = playerData.bodyAnchors.Body.rotation;
                 RaycastHit hit;
                 if (Physics.Raycast(_startSpawnPoint.position, Vector3.down, out hit, 10f, _floorMask))
                 {
@@ -88,7 +86,7 @@ public class Spear : WeaponDesign
                 break;
         }
     }
-
+    
     private IEnumerator PlayPortalSound()
     {
         WaitForSeconds delayWFS = new WaitForSeconds(_portalSoundDelay);

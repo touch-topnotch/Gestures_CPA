@@ -37,9 +37,9 @@ public abstract class GrabSystem : MonoBehaviour
     protected abstract void HandleGrab();
     protected abstract void SetGrabObjectTransform();
     
-    public void SetPlayerData(PlayerData data)
+    public void Start()
     {
-        _playerData = data;
+        _playerData = PlayerData.local;
     }
     
     protected virtual void OnGrabStarted()
@@ -117,7 +117,7 @@ public abstract class GrabSystem : MonoBehaviour
     protected bool RecognizeFrame(string grabGesture)
     {
         return _playerData.recognizer.RecognizeFrame(_recognitionProperties,
-            _playerData.library.supportiveGestures[grabGesture], false);
+            _playerData.library.supportiveGestures[grabGesture], false, 0);
     }
 }
 

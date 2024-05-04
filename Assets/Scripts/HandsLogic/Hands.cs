@@ -3,6 +3,7 @@ using Gesture_Editor_SDK.ReadOnly;
 using Scripts.Design;
 using Scripts.Events;
 using Scripts.Gestures;
+using Scripts.PlayerLogic;
 using Scripts.Systems;
 using UnityEngine;
 
@@ -15,7 +16,8 @@ namespace Scripts.HandsLogic
         public HandMesh rightHand;
 
         private MaterialPair _handMaterialPair;
-
+        private bool _isSync;
+        private Action _onPlaced;
         public MaterialPair HandMaterialPair
         {
             get
@@ -64,19 +66,31 @@ namespace Scripts.HandsLogic
         //         MoveHands(frame,speed, onPlaced);
         // }
 
-        public void MoveHands(in GestureFrame frame, in float speed, in Action onPlaced)
+        public void SyncHands()
         {
+            _isSync = !_isSync;
+            if (_isSync)
+            {
+                _onPlaced?.Invoke();
+            }
+        }
+        public void MoveHands(in GestureFrame frame,in BodyAnchors anchors, float speed, Action onPlaced)
+        {
+            frame.Hands.LeftBones?.ListenAnchors(anchors);
+            frame.Hands.RightBones?.ListenAnchors(anchors);
             switch (frame.Hands.HandUsed)
             {
                 case HandUsedType.LEFT:
-                    leftHand.ChangePositionSmooth(frame.Hands.LeftBones, speed, onPlaced);
+                    leftHand.Move(frame.Hands.LeftBones, speed, onPlaced);
                     break;
                 case HandUsedType.RIGHT:
-                    rightHand.ChangePositionSmooth(frame.Hands.RightBones, speed, onPlaced);
+                    rightHand.Move(frame.Hands.RightBones, speed, onPlaced);
                     break;
                 case HandUsedType.LEFTNRIGHT:
-                    leftHand.ChangePositionSmooth(frame.Hands.LeftBones, speed, onPlaced);
-                    rightHand.ChangePositionSmooth(frame.Hands.RightBones, speed);
+                    _onPlaced = onPlaced;
+                    _isSync = true; //  0 hands - true, 1 hand - false, 2 hands - true. Короче это так работает, забей
+                    leftHand.Move(frame.Hands.LeftBones, speed, SyncHands);
+                    rightHand.Move(frame.Hands.RightBones, speed, SyncHands);
                     break;
                 case HandUsedType.NULL:
                     Debug.LogError("Gesture: " + frame.name + " doesn't contains bones!");

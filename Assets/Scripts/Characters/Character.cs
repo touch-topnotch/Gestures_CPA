@@ -58,7 +58,7 @@ namespace Scripts.Characters
             }
             Debug.Log("Character " + name + " contains " + Debugger.dictionaryToString(_weapons, false, true));
         }
-        public List<ulong> SpawnWeapons(in Dictionary<string, GameObject> weapons)
+        public List<ulong> SpawnWeapons(in Dictionary<string, GameObject> weapons, PlayerData data)
         {
             var spawns = new List<ulong>();
             if (weapons != null)
@@ -92,9 +92,8 @@ namespace Scripts.Characters
                     {
                         Debug.Log("Adding weapon " + WEAPON.Key);
                         _weapons.Add(WEAPON.Key, instance.GetComponent<Weapon>());
-                     
                     }
-
+                    _weapons[WEAPON.Key].Initialize(data);
                     spawns.Add(_weapons[WEAPON.Key].NetworkObjectId);
                 }
             }

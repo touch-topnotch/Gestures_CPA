@@ -38,6 +38,7 @@ namespace Scripts.Gestures
         {
             _characterPool = characterPool;
            // _characterPool.characterChangedEvent.AddListener(OnCharacterChanged);
+           Debug.Log("Trying to invoke");
            if (!EventInitializer.Instance.isInitialized)
            {
                EventInitializer.Instance.onServicesInitilalised += ()=>

@@ -3,7 +3,6 @@ using Scripts.Design;
 using Scripts.PlayerLogic;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using Avatar = Unity.AppUI.UI.Avatar;
 
 namespace Characters
 {

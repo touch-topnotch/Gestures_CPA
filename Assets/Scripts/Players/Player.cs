@@ -20,22 +20,22 @@ namespace Scripts.PlayerLogic
 
         NoRig,
     }
-    public struct PlayerData
+    public class PlayerData
     {
+        public static PlayerData local;
         public readonly ulong id;
-        public readonly Transform playerTransform;
+        public readonly BodyAnchors bodyAnchors;
         public readonly PlayerHands hands;
-        public readonly BodyAnchors anchors;
         public Recognizer recognizer;
         public GesturesLibrary library;
-        public PlayerData(ulong id, Transform transform, PlayerHands hands, BodyAnchors anchors, Recognizer recognizer, GesturesLibrary library)
+        public PlayerData(ulong id, BodyAnchors bodyAnchors, PlayerHands hands, Recognizer recognizer, GesturesLibrary library)
         {
             this.id = id;
-            this.playerTransform = transform;
+            this.bodyAnchors = bodyAnchors;
             this.hands = hands;
-            this.anchors = anchors;
             this.recognizer = recognizer;
             this.library = library;
+            local = this;
         }
     }
 
@@ -97,15 +97,15 @@ namespace Scripts.PlayerLogic
 
         private void ActivateRig()
         {
+            _pcRig.gameObject.SetActive(_rigType == RigType.PCRig);
+            _xrRig.gameObject.SetActive(_rigType == RigType.XRRig);
+            
             if (_rigType == RigType.PCRig)
                 _pcRig.Initialize(data);
             
             if (_rigType == RigType.XRRig)
                 _xrRig.Initialize(data);
-            
-            _pcRig.gameObject.SetActive(_rigType == RigType.PCRig);
-            _xrRig.gameObject.SetActive(_rigType == RigType.XRRig);
-        
+
         }
         
 #if UNITY_EDITOR
@@ -149,16 +149,17 @@ namespace Scripts.PlayerLogic
                 }
             }
         }
-        
 #endif
 
 
         private void Awake()
         {
+      
             if (isLocal)
             {
                 _characterPool.SpawnCharacters();
                 SetOwner(0);
+               
             }
                 
         }
@@ -166,6 +167,7 @@ namespace Scripts.PlayerLogic
         public void SetOwner(ulong id)
         {
             InitializeComponents(id);
+            
             if (_rigType == RigType.NoRig)
                 rigType = RigType.PCRig;
 #if UNITY_EDITOR
@@ -176,7 +178,7 @@ namespace Scripts.PlayerLogic
             rigType = _rigType;
 #endif
             characterPool.SetAvatarType(AvatarType.Local);
-            _gestureCombiner.CreateRecognizer(curRig.RecognitionPropertiesConfig, data);
+            _gestureCombiner.CreateRecognizer(curRig.RecognitionPropertiesConfig);
             data.library.onLibraryInitialized += () =>
             {
                 _gestureCombiner.RecognizeWithAllGestures();
@@ -186,6 +188,7 @@ namespace Scripts.PlayerLogic
         public void SetEnemy(ulong id)
         {
             InitializeComponents(id);
+            
             rigType = RigType.NoRig;
             characterPool.SetAvatarType(AvatarType.Enemy);
         }
@@ -193,7 +196,7 @@ namespace Scripts.PlayerLogic
         private void InitializeComponents(ulong id)
         {
             _gestureCombiner = new GestureCombiner(_characterPool);
-            data = new PlayerData(id, transform, _hands, anchors, _gestureCombiner.recognizer, _gestureCombiner.library);
+            data = new PlayerData(id, anchors, _hands, _gestureCombiner.recognizer, _gestureCombiner.library);
             characterPool.SetMaterialId((int)id); 
             UpdateEvent.Instance.AddListener(UpdateAnchors);
             Debug.Log($"Player {id} initialized. RigType = {rigType}");
