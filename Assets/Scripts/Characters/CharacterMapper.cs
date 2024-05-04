@@ -50,6 +50,7 @@ namespace Characters
         }
         public static async Task<Dictionary<string, JsonCharacterProperties>> GetCharacterStructs()
         {
+            Debug.Log("Дошли до сюда");
             var data = await CloudSaveService.Instance.Data.Custom.LoadAllAsync("characters");
             var converted = new Dictionary<string, JsonCharacterProperties>();
             foreach (var charKey in data.Keys)

@@ -47,7 +47,9 @@ public class TestController : MonoBehaviour
         var systemGesturesRing = GestureFramesRing(_systemGestures);
 
         _rings = new List<Ring>();
-
+        // _rings.Add(Ring.CreateRing(
+        //     "types", new Dictionary<string, Object>(), pair => pair.Value.name,
+        //     i => { Debug.Log($"Ring invoked onClick Action; Name: {i.Name} Key:{i.Key}"); }));
         if (dynamicGesturesRing.Elements.Count > 0)
         {
             _rings.Add(dynamicGesturesRing);
@@ -103,7 +105,7 @@ public class TestController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.G))
         {
             //SetMode(ControllerMode.Menu);
 

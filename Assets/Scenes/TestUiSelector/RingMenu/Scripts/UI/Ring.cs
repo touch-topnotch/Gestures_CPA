@@ -14,7 +14,8 @@ public class Ring
         Elements = elements;
     }
 
-    public static Ring CreateRing<T>(string ringName, Dictionary<string, T> data,
+    public static Ring CreateRing<T>
+    (string ringName, Dictionary<string, T> data,
         Func<KeyValuePair<string, T>, string> getIdFromNodeAction, Action<RingElement> onClick)
     {
         var intNameRingElements = new List<RingElement>();
