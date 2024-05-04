@@ -158,6 +158,7 @@ namespace Scripts.HandsLogic
         public void Hide()
         {
             ChangeColorForProps(Color.clear, HandShaderProps.AllColors, new ColorParams(0, 1, false));
+            
         }
 
         public void Replace(BonesData target)

@@ -11,6 +11,7 @@ using Scripts.Static;
 using Scripts.Systems;
 using Scripts.Tests;
 using Unity.Services.CloudSave;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Scripts.Gestures
@@ -34,6 +35,18 @@ namespace Scripts.Gestures
 
         private CharacterPool _characterPool;
         
+        GestureFrame this[string name]
+        {
+            get
+            {
+                if (allAvailableFrames.ContainsKey(name))
+                {
+                    return allAvailableFrames[name];
+                }
+                else
+                    return null;
+            } 
+        }
         public GesturesLibrary(CharacterPool characterPool)
         {
             _characterPool = characterPool;
@@ -251,5 +264,6 @@ namespace Scripts.Gestures
                     break;
             }
         }
+       
     }
 }
