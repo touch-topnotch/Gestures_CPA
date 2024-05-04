@@ -218,8 +218,6 @@ GameObject:
   m_Component:
   - component: {fileID: 958577761637848256}
   - component: {fileID: 5540023307826102968}
-  - component: {fileID: 5524015065713999587}
-  - component: {fileID: 1228796391793296939}
   m_Layer: 0
   m_Name: SpearAura
   m_TagString: Untagged
@@ -254,7 +252,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0593fc4bf2d0aae45972f0cc4254ad17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _audioProcessor: {fileID: 1228796391793296939}
+  _audioProcessor: {fileID: 4359717989948164839}
   _startSounds:
   - Start_Aura
   _startSoundsRandom:
@@ -271,284 +269,6 @@ MonoBehaviour:
   _endSounds:
   - End_Aura
   _endSoundsRandom: []
---- !u!82 &5524015065713999587
-AudioSource:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1383405317539875607}
-  m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
-  m_Volume: 1
-  m_Pitch: 1
-  Loop: 0
-  Mute: 0
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 10
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
---- !u!114 &1228796391793296939
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1383405317539875607}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 120b55196a0b42a2995cbd4dc13e0f94, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects:
-    - {fileID: 8300000, guid: 51d5fba6f3c5cb141bcb81db0142fb7f, type: 3}
-    - {fileID: 8300000, guid: 15341d3c05a8b934cbd647b5c2ce094a, type: 3}
-    - {fileID: 8300000, guid: 78802f538760aeb438e9a4d127e357b1, type: 3}
-    - {fileID: 8300000, guid: d028b255d12607d43a37c2befe8f5be0, type: 3}
-    - {fileID: 8300000, guid: 80c33d00c8ca5244ebcce01385e52823, type: 3}
-    - {fileID: 8300000, guid: de1117b147dcfc548bdf3be14b1f91dc, type: 3}
-    - {fileID: 8300000, guid: 4919b0402d4f3b5409630142d4f8e603, type: 3}
-    - {fileID: 8300000, guid: 8ef6cc4cdba0b9548ae080862b4b340c, type: 3}
-    - {fileID: 8300000, guid: 83fef0fa34de59844821bba6f8fd84f2, type: 3}
-    - {fileID: 8300000, guid: 689f0c0c854ca164b80bbc4c3e0b3050, type: 3}
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes:
-    - Name: itemsDict
-      Entry: 7
-      Data: 0|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[UnityEngine.AudioClip,
-        UnityEngine.AudioModule]], mscorlib
-    - Name: comparer
-      Entry: 7
-      Data: 1|System.Collections.Generic.GenericEqualityComparer`1[[System.String,
-        mscorlib]], mscorlib
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 12
-      Data: 2
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: Start_Aura
-    - Name: $v
-      Entry: 10
-      Data: 0
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: End_Aura
-    - Name: $v
-      Entry: 10
-      Data: 1
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: listOfItemsDict
-      Entry: 7
-      Data: 2|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Collections.Generic.List`1[[UnityEngine.AudioClip,
-        UnityEngine.AudioModule]], mscorlib]], mscorlib
-    - Name: comparer
-      Entry: 9
-      Data: 1
-    - Name: 
-      Entry: 12
-      Data: 3
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: Horse_Aura
-    - Name: $v
-      Entry: 7
-      Data: 3|System.Collections.Generic.List`1[[UnityEngine.AudioClip, UnityEngine.AudioModule]],
-        mscorlib
-    - Name: 
-      Entry: 12
-      Data: 3
-    - Name: 
-      Entry: 10
-      Data: 2
-    - Name: 
-      Entry: 10
-      Data: 3
-    - Name: 
-      Entry: 10
-      Data: 4
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: Crowd_Aura
-    - Name: $v
-      Entry: 7
-      Data: 4|System.Collections.Generic.List`1[[UnityEngine.AudioClip, UnityEngine.AudioModule]],
-        mscorlib
-    - Name: 
-      Entry: 12
-      Data: 3
-    - Name: 
-      Entry: 10
-      Data: 5
-    - Name: 
-      Entry: 10
-      Data: 6
-    - Name: 
-      Entry: 10
-      Data: 7
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: Anvil_Aura
-    - Name: $v
-      Entry: 7
-      Data: 5|System.Collections.Generic.List`1[[UnityEngine.AudioClip, UnityEngine.AudioModule]],
-        mscorlib
-    - Name: 
-      Entry: 12
-      Data: 2
-    - Name: 
-      Entry: 10
-      Data: 8
-    - Name: 
-      Entry: 10
-      Data: 9
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-  _audioSource: {fileID: 5524015065713999587}
 --- !u!1 &2635504360525779583
 GameObject:
   m_ObjectHideFlags: 0
@@ -559,7 +279,6 @@ GameObject:
   m_Component:
   - component: {fileID: 609646881167454359}
   - component: {fileID: 365174912446849160}
-  - component: {fileID: 325054492661339239}
   m_Layer: 0
   m_Name: GrabSystem
   m_TagString: Untagged
@@ -611,27 +330,6 @@ MonoBehaviour:
     GrabPointLength: 0.3
   grabberTwistAngle: 60
   angleBetweenGrabbers: 25
---- !u!114 &325054492661339239
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2635504360525779583}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3bc5c56687c48cc44a32a56d3b54f557, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _grabObject: {fileID: 8410959810567742289}
-  rightHandGrabGesture: fist_r
-  leftHandGrabGesture: fist_l
-  moveLerpSpeed: 0
-  rotationSlerpSpeed: 0
-  _mainGrabPoint:
-    GrabPointTransform: {fileID: 2637184139787185049}
-    GrabPointRadius: 0.1
-    GrabPointLength: 0.5
 --- !u!1 &3222560392199370339
 GameObject:
   m_ObjectHideFlags: 0
@@ -749,6 +447,7 @@ MonoBehaviour:
   _spearObject: {fileID: 6222985961634163518}
   _spearAura: {fileID: 1383405317539875607}
   _portalVFX: {fileID: 468598426393822796}
+  _portalSoundDelay: 0
 --- !u!82 &853675210891194910
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1163,6 +862,7 @@ GameObject:
   - component: {fileID: 6309593632385555344}
   - component: {fileID: 5364567717828501341}
   - component: {fileID: 3798863013767446009}
+  - component: {fileID: 4359717989948164839}
   m_Layer: 0
   m_Name: Spear Variant
   m_TagString: Untagged
@@ -1557,6 +1257,188 @@ Animation:
   m_PlayAutomatically: 0
   m_AnimatePhysics: 0
   m_CullingType: 0
+--- !u!114 &4359717989948164839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6222985961634163518}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 120b55196a0b42a2995cbd4dc13e0f94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects:
+    - {fileID: 8300000, guid: 51d5fba6f3c5cb141bcb81db0142fb7f, type: 3}
+    - {fileID: 8300000, guid: 15341d3c05a8b934cbd647b5c2ce094a, type: 3}
+    - {fileID: 8300000, guid: 78802f538760aeb438e9a4d127e357b1, type: 3}
+    - {fileID: 8300000, guid: d028b255d12607d43a37c2befe8f5be0, type: 3}
+    - {fileID: 8300000, guid: 80c33d00c8ca5244ebcce01385e52823, type: 3}
+    - {fileID: 8300000, guid: de1117b147dcfc548bdf3be14b1f91dc, type: 3}
+    - {fileID: 8300000, guid: 4919b0402d4f3b5409630142d4f8e603, type: 3}
+    - {fileID: 8300000, guid: 8ef6cc4cdba0b9548ae080862b4b340c, type: 3}
+    - {fileID: 8300000, guid: 83fef0fa34de59844821bba6f8fd84f2, type: 3}
+    - {fileID: 8300000, guid: 689f0c0c854ca164b80bbc4c3e0b3050, type: 3}
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: itemsDict
+      Entry: 7
+      Data: 0|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[UnityEngine.AudioClip,
+        UnityEngine.AudioModule]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 1|System.Collections.Generic.GenericEqualityComparer`1[[System.String,
+        mscorlib]], mscorlib
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 2
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Start_Aura
+    - Name: $v
+      Entry: 10
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: End_Aura
+    - Name: $v
+      Entry: 10
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: listOfItemsDict
+      Entry: 7
+      Data: 2|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Collections.Generic.List`1[[UnityEngine.AudioClip,
+        UnityEngine.AudioModule]], mscorlib]], mscorlib
+    - Name: comparer
+      Entry: 9
+      Data: 1
+    - Name: 
+      Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Horse_Aura
+    - Name: $v
+      Entry: 7
+      Data: 3|System.Collections.Generic.List`1[[UnityEngine.AudioClip, UnityEngine.AudioModule]],
+        mscorlib
+    - Name: 
+      Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 10
+      Data: 2
+    - Name: 
+      Entry: 10
+      Data: 3
+    - Name: 
+      Entry: 10
+      Data: 4
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Crowd_Aura
+    - Name: $v
+      Entry: 7
+      Data: 4|System.Collections.Generic.List`1[[UnityEngine.AudioClip, UnityEngine.AudioModule]],
+        mscorlib
+    - Name: 
+      Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 10
+      Data: 5
+    - Name: 
+      Entry: 10
+      Data: 6
+    - Name: 
+      Entry: 10
+      Data: 7
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Anvil_Aura
+    - Name: $v
+      Entry: 7
+      Data: 5|System.Collections.Generic.List`1[[UnityEngine.AudioClip, UnityEngine.AudioModule]],
+        mscorlib
+    - Name: 
+      Entry: 12
+      Data: 2
+    - Name: 
+      Entry: 10
+      Data: 8
+    - Name: 
+      Entry: 10
+      Data: 9
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+  _audioSource: {fileID: 6309593632385555344}
 --- !u!1 &6829160652071403930
 GameObject:
   m_ObjectHideFlags: 0

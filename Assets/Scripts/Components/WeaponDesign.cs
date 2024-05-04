@@ -25,5 +25,10 @@ namespace Components
         public abstract void OnHitCalled();
         public abstract void OnHitImpact(string affected);
         public abstract void OnAbilityReleased();
+
+        public virtual void OnGrabbed()
+        {
+            
+        }
     }
 }

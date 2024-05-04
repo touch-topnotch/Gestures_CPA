@@ -66,7 +66,7 @@ namespace Scripts.Weapons
         
         public void OnGrabbed()
         {
-            
+            weaponDesign.OnGrabbed();
         }
 
         public void OnUnGrabbed()
