@@ -56,7 +56,6 @@ namespace Scripts.Gestures
                 yield return v_waitForUpdate;
             }
             // call the Frame Recognized Event after it
-              v_possibleGestures[v_curGesture].FrameRecognized(v_possibleFrames[v_curGesture].name);
             onFrameRecognized?.Invoke(v_possibleFrames[v_curGesture].name);
             
             
