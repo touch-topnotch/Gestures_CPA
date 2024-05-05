@@ -10,7 +10,7 @@ namespace Scripts.Systems
         public void Show();
         public void Hide();
         public void Replace(T target);
-        public void Move(T target, float speed, Action onPlaced);
+        public void Move(T target, float speed, Action onPlaced, bool changePosition);
         public void Destroy();
     }
 
@@ -142,7 +142,7 @@ namespace Scripts.Systems
         public void Move(T target, float speed, Action onPlaced, int index = -1)
         {
             if(index == -1) index = lastIndex;
-            objects[index].Move(target, speed, onPlaced);
+            objects[index].Move(target, speed, onPlaced, true);
         }
         
         public void HideAll()

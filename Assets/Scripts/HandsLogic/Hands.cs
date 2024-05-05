@@ -74,23 +74,23 @@ namespace Scripts.HandsLogic
                 _onPlaced?.Invoke();
             }
         }
-        public void MoveHands(in GestureFrame frame,in BodyAnchors anchors, float speed, Action onPlaced)
+        public void MoveHands(in GestureFrame frame,in BodyAnchors anchors, float speed, Action onPlaced, bool changePosition)
         {
             frame.Hands.LeftBones?.ListenAnchors(anchors);
             frame.Hands.RightBones?.ListenAnchors(anchors);
             switch (frame.Hands.HandUsed)
             {
                 case HandUsedType.LEFT:
-                    leftHand.Move(frame.Hands.LeftBones, speed, onPlaced);
+                    leftHand.Move(frame.Hands.LeftBones, speed, onPlaced, changePosition);
                     break;
                 case HandUsedType.RIGHT:
-                    rightHand.Move(frame.Hands.RightBones, speed, onPlaced);
+                    rightHand.Move(frame.Hands.RightBones, speed, onPlaced, changePosition);
                     break;
                 case HandUsedType.LEFTNRIGHT:
                     _onPlaced = onPlaced;
                     _isSync = true; //  0 hands - true, 1 hand - false, 2 hands - true. Короче это так работает, забей
-                    leftHand.Move(frame.Hands.LeftBones, speed, SyncHands);
-                    rightHand.Move(frame.Hands.RightBones, speed, SyncHands);
+                    leftHand.Move(frame.Hands.LeftBones, speed, SyncHands, changePosition);
+                    rightHand.Move(frame.Hands.RightBones, speed, SyncHands, changePosition);
                     break;
                 case HandUsedType.NULL:
                     Debug.LogError("Gesture: " + frame.name + " doesn't contains bones!");
