@@ -26,14 +26,12 @@ namespace Scripts.PlayerLogic
         public readonly ulong id;
         public readonly BodyAnchors bodyAnchors;
         public readonly PlayerHands hands;
-        public Recognizer recognizer;
         public GesturesLibrary library;
-        public PlayerData(ulong id, BodyAnchors bodyAnchors, PlayerHands hands, Recognizer recognizer, GesturesLibrary library)
+        public PlayerData(ulong id, BodyAnchors bodyAnchors, PlayerHands hands, GesturesLibrary library)
         {
             this.id = id;
             this.bodyAnchors = bodyAnchors;
             this.hands = hands;
-            this.recognizer = recognizer;
             this.library = library;
             local = this;
         }
@@ -44,6 +42,7 @@ namespace Scripts.PlayerLogic
     public class Player : MonoBehaviour
     {
         [Header("Runtime Settings")]
+        [SerializeField] private bool isLocal;
         [InspectorName("Debug Rig")]
         [SerializeField] private RigType _rigType;
         public RigType rigType
@@ -72,9 +71,9 @@ namespace Scripts.PlayerLogic
 
         [FormerlySerializedAs("_characterController")] [SerializeField] private CharacterPool _characterPool;
 
-        [SerializeField] private bool isLocal;
+  
 
-        private GestureCombiner _gestureCombiner;
+        [SerializeField] private GestureCombiner _gestureCombiner;
 
         [Header("Rigs")] [SerializeField] private PCRig _pcRig;
         [SerializeField] private XRRig _xrRig;
@@ -119,6 +118,7 @@ namespace Scripts.PlayerLogic
             _hands = _anchors.transform.GetComponentInChildren<PlayerHands>();
             _pcRig = transform.Find("PC Rig").GetComponent<PCRig>();
             _xrRig = transform.Find("XR Rig").GetComponent<XRRig>();
+            _gestureCombiner = transform.Find("GestureCombiner").GetComponent<GestureCombiner>();
             
             if (!isLocal)
             {
@@ -195,8 +195,9 @@ namespace Scripts.PlayerLogic
 
         private void InitializeComponents(ulong id)
         {
-            _gestureCombiner = new GestureCombiner(_characterPool);
-            data = new PlayerData(id, anchors, _hands, _gestureCombiner.recognizer, _gestureCombiner.library);
+            _gestureCombiner.Initialize(characterPool);
+            data = new PlayerData(id, anchors, _hands, _gestureCombiner.library);
+            
             characterPool.SetMaterialId((int)id); 
             UpdateEvent.Instance.AddListener(UpdateAnchors);
             Debug.Log($"Player {id} initialized. RigType = {rigType}");
