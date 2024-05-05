@@ -1,12 +1,15 @@
 using UnityEngine;
 using System.Linq;
 using Cysharp.Threading.Tasks;
+using Scripts.Events;
 using Unity.Services.Authentication;
+using Unity.Services.Core;
 
 namespace Network.Test
 {
     public class UILobbyConnector : MonoBehaviour
     {
+        [SerializeField] private bool CreateOnAwake;
         [SerializeField] private LobbyConnector lobbyConnector;
         [SerializeField] private UIListLobbies uiListLobbies;
         [SerializeField] private GameObject LobbyActionVariants;
@@ -18,6 +21,13 @@ namespace Network.Test
         private float _currentTime = 3f;
         private bool _isUpdating = false;
 
+        private void Awake()
+        {
+            if (CreateOnAwake)
+            {
+                EventInitializer.Instance.onServicesInitilalised += CreateLobby;
+            }
+        }
         private void OnEnable()
         {
             uiListLobbies.LobbyChosenForConnect += OnLobbyChosenForConnect;
