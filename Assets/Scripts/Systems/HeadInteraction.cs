@@ -150,7 +150,7 @@ namespace Scripts.Systems
 
                 if (conditions[step][0] == 'w')
                 {
-                    var keys = conditions[step].Split(' ');
+                    var keys = conditions[step].Split(' '); 
                     timer = float.Parse(keys[2]);
                     _timerType = keys[1] == ">" ? TimerType.more : TimerType.less;
                     step += 1;
