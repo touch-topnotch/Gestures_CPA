@@ -36,7 +36,6 @@ Transform:
   - {fileID: 6842040292115017435}
   - {fileID: 1930021325919542999}
   - {fileID: 715713551747779496}
-  - {fileID: 7624396442608586788}
   - {fileID: 5500666737035074512}
   m_Father: {fileID: 4581418375920583303}
   m_RootOrder: -1
@@ -669,7 +668,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3243430589405087147
 Transform:
   m_ObjectHideFlags: 0
@@ -678,7 +677,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3673535004748917195}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 1.102, z: 0}
+  m_LocalPosition: {x: 0, y: 1.5, z: 0}
   m_LocalScale: {x: 0.28405, y: 0.28405, z: 0.28405}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -703,15 +702,15 @@ VisualEffect:
   m_PropertySheet:
     m_Float:
       m_Array:
-      - m_Value: -0.12
-        m_Name: FeathDistance
-        m_Overridden: 0
       - m_Value: 0
+        m_Name: FeathDistance
+        m_Overridden: 1
+      - m_Value: 1
         m_Name: TwirlStrength
         m_Overridden: 1
-      - m_Value: 2
+      - m_Value: -2
         m_Name: Speed
-        m_Overridden: 0
+        m_Overridden: 1
     m_Vector2f:
       m_Array: []
     m_Vector3f:
@@ -721,16 +720,16 @@ VisualEffect:
       - m_Value: {x: 12.869575, y: 44.72705, z: 30.729065, w: 0.6666667}
         m_Name: PortalColor
         m_Overridden: 0
-      - m_Value: {x: 4.070143, y: 95.874535, z: 81.62964, w: 1}
+      - m_Value: {x: 4.070143, y: 95.874535, z: 81.62964, w: 0}
         m_Name: CylinderColor
-        m_Overridden: 0
+        m_Overridden: 1
     m_Uint:
       m_Array: []
     m_Int:
       m_Array:
-      - m_Value: 3
+      - m_Value: 10
         m_Name: FeathCount
-        m_Overridden: 0
+        m_Overridden: 1
     m_Matrix4x4f:
       m_Array: []
     m_AnimationCurve:
@@ -764,11 +763,11 @@ VisualEffect:
           atime6: 0
           atime7: 0
           m_Mode: 2
-          m_ColorSpace: -1
+          m_ColorSpace: 1
           m_NumColorKeys: 2
           m_NumAlphaKeys: 2
         m_Name: FeathGradient
-        m_Overridden: 0
+        m_Overridden: 1
       - m_Value:
           serializedVersion: 2
           key0: {r: 0.000112567286, g: 0.000112567286, b: 0.000112567286, a: 0}
@@ -813,7 +812,7 @@ VFXRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3673535004748917195}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -1087,77 +1086,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &6391007883680707494
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 7624396442608586788}
-  - component: {fileID: 7180650102477166898}
-  - component: {fileID: 6441750447931015889}
-  m_Layer: 0
-  m_Name: Sphere Volume
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &7624396442608586788
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6391007883680707494}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.25, y: 1.25, z: 1.25}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 5043607200963286701}
-  m_RootOrder: -1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &7180650102477166898
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6391007883680707494}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 2.84
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &6441750447931015889
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6391007883680707494}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_IsGlobal: 0
-  priority: 0
-  blendDistance: 1
-  weight: 1
-  sharedProfile: {fileID: 11400000, guid: 36097d876233544719279730db243c9f, type: 2}
 --- !u!1 &6577373813440522902
 GameObject:
   m_ObjectHideFlags: 0
@@ -1423,6 +1351,7 @@ MonoBehaviour:
   _spearAura: {fileID: 6657744914178785833}
   _portalVFX: {fileID: 6864945273772439407}
   _portalSoundDelay: 1.5
+  _portalOffsetY: 0.8
 --- !u!82 &3393876225162420465
 AudioSource:
   m_ObjectHideFlags: 0
