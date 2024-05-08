@@ -1,34 +1,34 @@
 Весь код проекта можно разделить на 3 отдельные категории -
- - Gesture recognition process
+ - [Gesture recognition process](#gesture-recognition-process)
 
- - Player - character - ability manipulation
+ - [Player - Character - Ability manipulation](#player---character---ability-manipulation)
 
- - Multiplayer
+ - [Multiplayer](#multiplayer)
+
 
 ## Gesture recognition process
 
 Распознавание жестов происходит по принципу сравнения расстояний до точек -
-![](38844476-0b1d-445b-97d1-bbdb5a6527af.png)
+![](source/hand_structure.png)
 
 Соответсвенно, для сохранения одного жеста (будем называть их фреймами) нам нужно записать rotations всех его костей. При этом, если мы хотим добавить соблюдение расположения фрейма (игрок должен показать жест в конкретном месте (допустим, над головой)) нам не нужно запоминать расположение всех 26 точек (общее колличество считываемых костей в одной руке), а достаточно всего лишь запомнить одну позицию Root кости.
 
 Класс [BonesData](../Assets/Scripts/HandsLogic/BonesData.cs) как раз описывает эту структуру.
-
-![](b1239390-f02b-4b7b-bbf7-736703af61df.png)
+<img style="float: right" src="source/hand_struct_shema.png" width = "30%" alt="Description of the image">
 Комбинация из двух рук - [HandsStruct](../Assets/Scripts/Gestures/GestureFrame.cs) будет использоваться в большинстве дальнейших вычислений (хранение фреймов в базе, распознавание, промежуточная синхронизация и т.д.). Она же включена в [GestureFrame](../Assets/Scripts/Gestures/GestureFrame.cs), который добавляет необходимую информацию для хранения.
 
 Теперь можно перейти к динамическим жестам. По сути, [DynamicGesture](../Assets/Scripts/Gestures/DynamicGesture.cs) можно представлять как анимацию из фреймов, которую игрок должен проиграть самостоятельно.
 
-![](https://api.media.atlassian.com/file/3d2afa04-5e85-406a-899a-0d7774b5051e/artifact/video_1280.mp4/binary?client=776c504b-d08e-49f2-bccc-7b970896fe61&collection=contentId-131405&max-age=2592000&token=eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiI3NzZjNTA0Yi1kMDhlLTQ5ZjItYmNjYy03Yjk3MDg5NmZlNjEiLCJhY2Nlc3MiOnsidXJuOmZpbGVzdG9yZTpjb2xsZWN0aW9uOmNvbnRlbnRJZC0xMzE0MDUiOlsicmVhZCJdfSwiZXhwIjoxNzE1MDc5NjAwLCJuYmYiOjE3MTUwNzY3MjB9.JKwvbw9AAixcY0e-rqv8mhkh0rfH8PFciug0uvXK_D8)
+[![preview](source/video_hammer.jpeg)](https://drive.google.com/file/d/14N-DLuZlFBPJ5Sl5EA9njLUwK82zKFie/view?usp=drive_link)
 
 Ну и соответсвенно, [Recognizer](../Assets/Scripts/Gestures/Compilers/Recognition/Recognizer.cs) отвечает за распознавание жестов. На вход могут подаваться массивы из жестов, а также отдельные фреймы (для обработки [условий взаимодействия оружий](../Assets/Scripts/Weapons/Weapon.cs)).
-![](516c55d8-d8a7-4828-b06e-5d2da3e551f2.png)
+![](source/dynamic_gesture.png)
 
 Каждый динамический жест хранит свой IRecognizable класс, который ответственен за логику - что должно произойти, когда сработал определенный фрейм (Показать оружие/ изменить цвет руки/ проиграть звук/vfx или заспавнить огромного механического единорога, который будет кидаться апельсинами во врагов).
 
-## Player - Character - Ability manipulation
+## Player -  Character - Ability manipulation
 
-![](a153dbf8-c0fa-4b5b-9dec-bb0a85df5ae9.png)
+![](source/anchors.png)
 Для того, чтобы понять, что тут происходит, нужно понять, какие цели мы преследуем. Нам нужно создать префаб, который способен:
 
 Поддерживать разные типы ввода (от шлема и джойстиков, клавиатуры, телефона, микроволновки)
@@ -45,18 +45,22 @@
 
 Независимо от рига, анкоры аватара всегда привязаны к PlayerAnchors.
 
+
+![k](source/gesture_rec.png)
+
+
 А что-же делать с синхронизацией позиций рук? Тут все просто. Вместо того, чтобы каждый кадр обновлять позиции всех 52 костей, мы будем синхронизировать позиции 2х Root костей каждой руки и изменять жесты только если они были распознаны рекогнайзером.
 
-![](6ab9709d-53b2-4064-8927-e1fcf949bfe4.png)
+
 Теперь следует перейти в форму представления Character. Так как каждый персонаж имеет уникальные магические способности, все IRecognizables (помните их, да) хранятся в нем. Допустим, есть IRecognizable Hammer и оно будет принадлежать персонажу Anger. Следовательно, при запуске игры, recognizer будет распознавать только этот жест, экономя ресурсы платформы. Как и было указано ранее, все персонажи (в режиме эдитора их конфиги) хранятся в CharacterPool и инициализируются один раз за всю игру.
 
 ## Multiplayer
-![](4c9ba3a0-a2b7-40df-9876-61763af85f83.png)
+![](source/multiplayer.png)
 
 
 Тут проще начать от целого к частному. Мы можем представить работу мультиплеера как совокупность из 2х серверов -
 
-Spring boot (в нашем случае - data server yopta), который способен принимать и обрабатывать входящие запросы о статистике игрока, доступных жестах и др. Однако, в данный момент я все больше и больше склоняюсь к cloud save, в которой эти моменты уже автоматизированы и ускорены. (В дальнейшем вам придется часто взаимодействовать с cloud save для взаимодействия с gesture recorderом, так что базовую структуру с Player/Game data нужно понимать).
+Spring boot (в нашем случае - data server yopta), который способен принимать и обрабатывать входящие запросы о статистике игрока, доступных жестах и др. Однако, в данный момент я все больше и больше склоняюсь к [Cloud Save](https://docs.unity.com/ugs/en-us/manual/cloud-save/manual), в которой эти моменты уже давно автоматизированы и ускорены. (В дальнейшем вам придется часто взаимодействовать с cloud save для использования gesture recorderа, так что базовую структуру с Player/Game data нужно понимать).
 
 Мы используем Server Game Hosting от unity, поскольку там удобно работать с активными сессионками, pvp и деплоем. Соответсвенно, вместе с ним фреймворк Netcode for GameObjects.
 
