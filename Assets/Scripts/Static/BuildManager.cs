@@ -9,24 +9,24 @@ using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
-
 using UnityEditor.Callbacks;
 
-public class BuildManager: IPreprocessBuildWithReport
+public class BuildManager : IPreprocessBuildWithReport
 {
-
     private static string[] commands =
     {
         "/Users/dmitry057/Projects/UnityProjects/Gestures_CPA/Builds/NetworkTest.app/Contents/MacOS/Gesture -client -n ",
         "/Users/dmitry057/Projects/UnityProjects/Gestures_CPA/Builds/NetworkTest.app/Contents/MacOS/Gesture -client -n ",
         "/Users/dmitry057/Projects/UnityProjects/Gestures_CPA/Builds/NetworkTest.app/Contents/MacOS/Gesture -lobby-server -n "
     };
-    
+
     public int callbackOrder { get; }
+
     public void OnPreprocessBuild(BuildReport report)
     {
         StopSCC();
     }
+
     [PostProcessBuild(1)]
     public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject)
     {
@@ -47,6 +47,7 @@ public class BuildManager: IPreprocessBuildWithReport
         //     }
         // }
     }
+
     [MenuItem("Testing/RunSCC")]
     static void RunSCC()
     {
@@ -62,10 +63,11 @@ public class BuildManager: IPreprocessBuildWithReport
                 command += " & " + commands[i];
             }
         }
+
         RunTerminalCommand(command);
     }
-    
-    
+
+
     static void RunTerminalCommand(string command)
     {
         Debug.Log(command);
@@ -77,21 +79,20 @@ public class BuildManager: IPreprocessBuildWithReport
         process.Start();
         process.Close();
     }
+
     [MenuItem("Testing/StopSCC")]
     static void StopSCC()
     {
         RunTerminalCommand("pgrep -f NetworkTest | xargs kill");
     }
-
-
-   
 }
+
 public class AdbInstaller
 {
     public void InstallApk(string sdkPath, string apkPath)
     {
         Debug.Log("Importing apk to the oculus quest ... ");
-        
+
         string apkFileName = Path.GetFileName(apkPath);
         ProcessStartInfo startInfo = new ProcessStartInfo();
         startInfo.FileName = "/bin/bash";
@@ -124,10 +125,7 @@ public class AdbInstaller
             }
         }
     }
-
 }
-
-
 
 
 #endif

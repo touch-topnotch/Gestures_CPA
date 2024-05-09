@@ -1,4 +1,3 @@
-
 using Scripts.PlayerLogic;
 using Scripts.Static;
 using UnityEngine;
@@ -6,15 +5,15 @@ using Zenject;
 
 namespace Scripts.Installers
 {
-    public class RigInstaller: MonoInstaller
+    public class RigInstaller : MonoInstaller
     {
         [SerializeField] private bool instantiate;
-        
+
         [SerializeField] private RigType type;
 
         [SerializeField] private Rig spawnedRig;
-        
-        
+
+
         // lets spawn player at first and after connection add him to NetworkUser
         public override void InstallBindings()
         {
@@ -50,7 +49,7 @@ namespace Scripts.Installers
         {
             Debug.Log("LOADING XR RIG PREFAB");
             return Resources.Load("Players/XR Rig") as GameObject;
-            
+
             // if (XRGeneralSettings.Instance.Manager.activeLoader)
             // {
             //     return Resources.Load("Players/XR Rig") as GameObject;

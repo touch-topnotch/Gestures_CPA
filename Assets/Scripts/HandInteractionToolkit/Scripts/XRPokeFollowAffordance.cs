@@ -31,7 +31,8 @@ namespace XRInteraction
 
         [SerializeField]
         [Range(0f, 20f)]
-        [Tooltip("Multiplies transform position interpolation as a factor of Time.deltaTime. If 0, no smoothing will be applied.")]
+        [Tooltip(
+            "Multiplies transform position interpolation as a factor of Time.deltaTime. If 0, no smoothing will be applied.")]
         float m_SmoothingSpeed = 16f;
 
         /// <summary>
@@ -44,7 +45,8 @@ namespace XRInteraction
         }
 
         [SerializeField]
-        [Tooltip("When this component is no longer the target of the poke, the Poke Follow Transform returns to the original position.")]
+        [Tooltip(
+            "When this component is no longer the target of the poke, the Poke Follow Transform returns to the original position.")]
         bool m_ReturnToInitialPosition = true;
 
         /// <summary>
@@ -84,8 +86,7 @@ namespace XRInteraction
             set => m_ClampToMaxDistance = value;
         }
 
-        [SerializeField]
-        [Tooltip("The maximum distance from this transform that the Poke Follow Transform can move.")]
+        [SerializeField] [Tooltip("The maximum distance from this transform that the Poke Follow Transform can move.")]
         float m_MaxDistance;
 
         /// <summary>
@@ -151,6 +152,7 @@ namespace XRInteraction
                 m_IsFirstFrame = false;
                 return;
             }
+
             m_TransformTweenableVariable.HandleTween(m_SmoothingSpeed > 0f ? Time.deltaTime * m_SmoothingSpeed : 1f);
         }
 

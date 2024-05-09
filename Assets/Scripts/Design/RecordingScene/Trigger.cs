@@ -6,7 +6,7 @@ using Zenject;
 namespace Scripts.Design
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class Trigger: MonoBehaviour
+    public class Trigger : MonoBehaviour
     {
         public Action<string> OnEnter;
         public Action<string> OnExit;

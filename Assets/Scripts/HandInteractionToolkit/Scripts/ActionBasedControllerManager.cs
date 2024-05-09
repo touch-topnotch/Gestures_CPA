@@ -23,26 +23,21 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets
 
         [Space]
         [Header("Interactors")]
-
         [SerializeField]
         [Tooltip("The GameObject containing the interaction group used for direct and distant manipulation.")]
         XRInteractionGroup m_ManipulationInteractionGroup;
 
-        [SerializeField]
-        [Tooltip("The GameObject containing the interactor used for direct manipulation.")]
+        [SerializeField] [Tooltip("The GameObject containing the interactor used for direct manipulation.")]
         XRDirectInteractor m_DirectInteractor;
 
-        [SerializeField]
-        [Tooltip("The GameObject containing the interactor used for distant/ray manipulation.")]
+        [SerializeField] [Tooltip("The GameObject containing the interactor used for distant/ray manipulation.")]
         XRRayInteractor m_RayInteractor;
 
-        [SerializeField]
-        [Tooltip("The GameObject containing the interactor used for teleportation.")]
+        [SerializeField] [Tooltip("The GameObject containing the interactor used for teleportation.")]
         XRRayInteractor m_TeleportInteractor;
 
         [Space]
         [Header("Controller Actions")]
-
         [SerializeField]
         [Tooltip("The reference to the action to start the teleport aiming mode for this controller.")]
         InputActionReference m_TeleportModeActivate;
@@ -55,23 +50,21 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets
         [Tooltip("The reference to the action of continuous turning the XR Origin with this controller.")]
         InputActionReference m_Turn;
 
-        [SerializeField]
-        [Tooltip("The reference to the action of snap turning the XR Origin with this controller.")]
+        [SerializeField] [Tooltip("The reference to the action of snap turning the XR Origin with this controller.")]
         InputActionReference m_SnapTurn;
 
-        [SerializeField]
-        [Tooltip("The reference to the action of moving the XR Origin with this controller.")]
+        [SerializeField] [Tooltip("The reference to the action of moving the XR Origin with this controller.")]
         InputActionReference m_Move;
 
         [Space]
         [Header("Locomotion Settings")]
-
         [SerializeField]
         [Tooltip("If true, continuous movement will be enabled. If false, teleport will enabled.")]
         bool m_SmoothMotionEnabled;
-        
+
         [SerializeField]
-        [Tooltip("If true, continuous turn will be enabled. If false, snap turn will be enabled. Note: If smooth motion is enabled and enable strafe is enabled on the continuous move provider, turn will be overriden in favor of strafe.")]
+        [Tooltip(
+            "If true, continuous turn will be enabled. If false, snap turn will be enabled. Note: If smooth motion is enabled and enable strafe is enabled on the continuous move provider, turn will be overriden in favor of strafe.")]
         bool m_SmoothTurnEnabled;
 
         public bool smoothMotionEnabled
@@ -220,7 +213,9 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets
 
             if (m_ManipulationInteractionGroup == null)
             {
-                Debug.LogError("Missing required Manipulation Interaction Group reference. Use the Inspector window to assign the XR Interaction Group component reference.", this);
+                Debug.LogError(
+                    "Missing required Manipulation Interaction Group reference. Use the Inspector window to assign the XR Interaction Group component reference.",
+                    this);
                 return;
             }
 

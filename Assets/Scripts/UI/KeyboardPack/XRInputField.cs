@@ -9,12 +9,13 @@ using UnityEngine.UI;
 
 namespace UI.KeyboardPack
 {
-    public class XRInputField: MonoBehaviour
+    public class XRInputField : MonoBehaviour
     {
         [SerializeField] private TMP_Text inputText;
         [SerializeField] private TMP_Text supportiveText;
 
         private string _inputString;
+
         public string inputString
         {
             get => _inputString;
@@ -24,25 +25,23 @@ namespace UI.KeyboardPack
                 inputText.text = value;
             }
         }
-        [SerializeField] private string supportiveString = "Click to write";
+
         [SerializeField] private XRInputField[] otherInputFields;
+
         public void Awake()
         {
             GetComponent<BubbleToggle>().onValueChanged.AddListener(ToggleKeyboard);
             otherInputFields = FindObjectsOfType<XRInputField>();
-            OnExit.AddListener((e) =>
-            {
-                UnLink();
-            });
+            OnExit.AddListener((e) => { UnLink(); });
         }
 
         public void OffOthers()
         {
             for (int i = 0; i < otherInputFields.Length; i++)
             {
-                if(otherInputFields[i] == this)
+                if (otherInputFields[i] == this)
                     continue;
-                if(otherInputFields[i].GetComponent<BubbleToggle>().isOn)
+                if (otherInputFields[i].GetComponent<BubbleToggle>().isOn)
                 {
                     otherInputFields[i].GetComponent<BubbleToggle>().isOn = false;
                 }
@@ -56,7 +55,7 @@ namespace UI.KeyboardPack
                 OffOthers();
                 Link();
                 OnStartEdit.Invoke();
-                if(supportiveText)
+                if (supportiveText)
                     supportiveText.gameObject.SetActive(false);
                 inputText.gameObject.SetActive(true);
             }
@@ -65,9 +64,8 @@ namespace UI.KeyboardPack
             {
                 OnExit.Invoke(inputString);
             }
-            
+
             XRKeyboard.instance.gameObject.SetActive(enabled);
-            
         }
 
         private void Link()
@@ -93,12 +91,14 @@ namespace UI.KeyboardPack
             UnLink();
             XRKeyboard.instance.gameObject.SetActive(false);
         }
+
         public void OnButtonClick(string value)
         {
             inputString += value;
             inputText.text = inputString;
             OnTextChanged.Invoke(inputString);
         }
+
         public void BackspaceText()
         {
             if (inputString.Length > 0)
@@ -110,7 +110,7 @@ namespace UI.KeyboardPack
         }
 
         public UnityEvent OnStartEdit = new UnityEvent();
-        public UnityEvent<string>  OnExit = new UnityEvent<string>();
+        public UnityEvent<string> OnExit = new UnityEvent<string>();
         public UnityEvent<string> OnTextChanged = new UnityEvent<string>();
     }
 }

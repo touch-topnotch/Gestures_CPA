@@ -14,7 +14,7 @@ namespace Network
         private Lobby _currentLobby;
         private float _heartbeatTimer = 0;
         private const float HEART_BEAT_TIMER_MAX = 15f;
-        private const string RELAY_CODE_KEY =  "RelayCode"; 
+        private const string RELAY_CODE_KEY = "RelayCode";
         public string CurrentLobbyID { get; private set; }
 
         public event Action<string> LobbyConnected;

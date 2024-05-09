@@ -5,13 +5,13 @@ using UnityEngine;
 
 namespace Scripts.Weapons
 {
-    public class Melee: Weapon
+    public class Melee : Weapon
     {
-        
-        [Header("Melee components")]
-        [SerializeField] protected float _bladeMinSpeed;
+        [Header("Melee components")] [SerializeField]
+        protected float _bladeMinSpeed;
+
         [SerializeField] protected Blade _blade;
-        
+
         public int capacity
         {
             get => _power;
@@ -25,7 +25,7 @@ namespace Scripts.Weapons
                 }
             }
         }
-        
+
         private Vector3 _previousBladePointPosition;
 
         private bool _bladeTriggered;
@@ -53,6 +53,7 @@ namespace Scripts.Weapons
                     capacity -= 5;
                     break;
             }
+
             StartShooting();
         }
     }

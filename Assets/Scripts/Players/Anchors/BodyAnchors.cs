@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Scripts.PlayerLogic
 {
-    public class BodyAnchors: MonoBehaviour
+    public class BodyAnchors : MonoBehaviour
     {
         public Transform Root;
         public Transform Body;
@@ -29,17 +29,12 @@ namespace Scripts.PlayerLogic
             }
 
             target.Root.position = master.Root.position;
-            
+
             target.Head.position = master.Head.position;
             target.Head.rotation = master.Head.rotation;
-            
-            target.Body.position= master.Body.position;
-            target.Body.rotation = master.Body.rotation;
-            
-        }
-        
-    }
 
-   
-    
+            target.Body.position = master.Body.position;
+            target.Body.rotation = master.Body.rotation;
+        }
+    }
 }

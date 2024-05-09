@@ -4,11 +4,10 @@ using UnityEngine;
 
 namespace Components
 {
-    public class VFXProcessor: ResourcesProcessor<GameObject>
+    public class VFXProcessor : ResourcesProcessor<GameObject>
     {
         protected override void ManipulateResource(GameObject resource)
         {
-            
         }
 #if UNITY_EDITOR
         protected override void AddMissingResources()
@@ -22,7 +21,5 @@ namespace Components
         {
             ManipulateOfAllObjects((o => { o.SetActive(false); }));
         }
-
-   
     }
 }

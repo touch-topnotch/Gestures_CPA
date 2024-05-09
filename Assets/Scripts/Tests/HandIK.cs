@@ -12,6 +12,7 @@ namespace Scripts.Tests
         {
             GoByChildren(RigRoot);
         }
+
         public void GoByChildren(in Transform parent)
         {
             if (parent.GetComponent<TwoBoneIKConstraint>())
@@ -25,13 +26,11 @@ namespace Scripts.Tests
                 return;
             for (int i = 0; i < parent.childCount; i++)
             {
-            
                 GoByChildren(parent.GetChild(i));
             }
         }
-
- 
     }
+
     public static class TransformExtensions
     {
         public static Transform GetChildByName(this Transform parent, string childName)
@@ -44,6 +43,7 @@ namespace Scripts.Tests
                     return child;
                 }
             }
+
             return null;
         }
     }

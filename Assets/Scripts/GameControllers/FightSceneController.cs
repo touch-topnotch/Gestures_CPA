@@ -4,7 +4,6 @@ namespace Scripts.GameControllers
 {
     public class FightSceneController : MonoBehaviour
     {
-    
         // private NetworkPlayer _networkPlayer;
         // private GestureCombiner _gestureCombiner;
         //
@@ -14,6 +13,5 @@ namespace Scripts.GameControllers
         //     _networkPlayer = networkPlayer;
         //     _gestureCombiner = gestureCombiner;
         // }
-
     }
 }

@@ -5,13 +5,14 @@ using XRInteraction;
 
 namespace UI.KeyboardPack
 {
-   public enum ButtonType
+    public enum ButtonType
     {
         capslock,
-        enter, 
+        enter,
         backspace,
         simple
     }
+
     [RequireComponent(typeof(XRPokeFollowAffordance))]
     public class KeyboardButton : MonoBehaviour
     {
@@ -21,9 +22,10 @@ namespace UI.KeyboardPack
 
         public void Awake()
         {
-            if(button)
+            if (button)
                 button.onClick.AddListener(() => OnClick?.Invoke(text.text));
         }
+
         public void SetText(string value)
         {
             text.text = value;

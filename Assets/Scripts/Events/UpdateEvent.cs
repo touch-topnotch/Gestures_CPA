@@ -8,5 +8,8 @@ namespace Scripts.Events
         private static UpdateEvent _instance;
         public static UpdateEvent Instance => _instance ??= new UpdateEvent();
     }
-    public class UpdateEvent<T> : UnityEvent<T>{}
+
+    public class UpdateEvent<T> : UnityEvent<T>
+    {
+    }
 }

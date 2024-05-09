@@ -13,15 +13,18 @@ namespace Scripts.Design.RecordingScene
     {
         public TMP_Text timerText;
         public Trigger leftAnchor;
+
         public Trigger rightAnchor;
+
         //private NetworkPlayer _networkPlayer;
         private UpdateEvent _onUpdate;
+
         //private bool _isStarted = false;
         private bool _leftPrepared = false;
         private bool _rightPrepared = false;
-        
+
         private UserData testUserData;
-       
+
         public void Construct()
         {
             // if (!UserAdmin.HasIncluded(player.ownUser.userData.id))
@@ -33,7 +36,7 @@ namespace Scripts.Design.RecordingScene
             {
                 id = 0,
                 name = "debugger",
-                bonesData = new float[26,2],
+                bonesData = new float[26, 2],
             });
             //_networkPlayer = networkPlayer;
             // leftAnchor.OnEnter += (tag)=> {if(tag == "LeftHandTrigger")
@@ -57,7 +60,7 @@ namespace Scripts.Design.RecordingScene
 
         private void CheckOnEntering()
         {
-            if(_leftPrepared && _rightPrepared)
+            if (_leftPrepared && _rightPrepared)
             {
                 //_isStarted = true;
                 leftAnchor.OnEnter = null;
@@ -73,7 +76,7 @@ namespace Scripts.Design.RecordingScene
             var wait1 = new WaitForSeconds(1);
             for (int i = 5; i > 0; i--)
             {
-                timerText.text = "BIODATA RECORDING AFTER: " + i.ToString(); 
+                timerText.text = "BIODATA RECORDING AFTER: " + i.ToString();
                 yield return wait1;
             }
             // _networkPlayer.CurAvatar.hands.SetSameColor("_EdgeColor",  Color.red);
@@ -93,9 +96,6 @@ namespace Scripts.Design.RecordingScene
             // yield return wait1;
             // yield return wait1;
             // _networkPlayer.CurAvatar.hands.SetSameColor("_EdgeColor",  Color.clear);
-
         }
-         
     }
-
 }

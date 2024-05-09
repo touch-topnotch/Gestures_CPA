@@ -13,10 +13,10 @@ using Unity.Services.CloudSave;
 using Unity.Services.Core;
 using UnityEngine;
 
-public class test: MonoBehaviour
+public class test : MonoBehaviour
 {
-  //  [Button("Test send to cloud save")]
- //   public void Start()
+    //  [Button("Test send to cloud save")]
+    //   public void Start()
     // {
     //     CloudSaveProcessor.SetItemToCloud(File.ReadAllText(Application.dataPath + "/Resources/Database/test.json"),
     //         "characters", (e) =>
@@ -28,10 +28,9 @@ public class test: MonoBehaviour
     [Button("Get All")]
     public async void Start()
     {
-
         await UnityServices.InitializeAsync();
 
-        var chars =await CloudSaveService.Instance.Data.Custom.LoadAllAsync("characters");
+        var chars = await CloudSaveService.Instance.Data.Custom.LoadAllAsync("characters");
         Debug.Log(JsonConvert.SerializeObject(chars));
     }
 
@@ -56,14 +55,16 @@ public class test: MonoBehaviour
                 {
                     Debug.Log($"Key: {propertyInfo.Name}, Value: {value}");
                 }
+
                 PrintRecursive(value);
             }
         }
     }
+
     [Button("Get by key")]
     [BoxGroup("By key")]
     public void GetByKey()
     {
-      //  Debug.Log(CloudSaveService.Instance.Data.Custom.QueryAsy);
+        //  Debug.Log(CloudSaveService.Instance.Data.Custom.QueryAsy);
     }
 }

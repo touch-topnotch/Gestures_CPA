@@ -13,13 +13,14 @@ using UnityEngine.Serialization;
 namespace Scripts.PlayerLogic
 {
     public enum RigType
-    {        
+    {
         XRRig,
-    
+
         PCRig,
 
         NoRig,
     }
+
     public class PlayerData
     {
         public static PlayerData local;
@@ -27,6 +28,7 @@ namespace Scripts.PlayerLogic
         public readonly BodyAnchors bodyAnchors;
         public readonly PlayerHands hands;
         public GesturesLibrary library;
+
         public PlayerData(ulong id, BodyAnchors bodyAnchors, PlayerHands hands, GesturesLibrary library)
         {
             this.id = id;
@@ -37,14 +39,15 @@ namespace Scripts.PlayerLogic
         }
     }
 
- 
 
     public class Player : MonoBehaviour
     {
-        [Header("Runtime Settings")]
-        [SerializeField] private bool isLocal;
-        [InspectorName("Debug Rig")]
-        [SerializeField] private RigType _rigType;
+        [Header("Runtime Settings")] [SerializeField]
+        private bool isLocal;
+
+        [InspectorName("Debug Rig")] [SerializeField]
+        private RigType _rigType;
+
         public RigType rigType
         {
             get => _rigType;
@@ -54,7 +57,7 @@ namespace Scripts.PlayerLogic
                 _rigType = value;
                 switch (value)
                 {
-                    case RigType.XRRig: 
+                    case RigType.XRRig:
                         curRig = _xrRig;
                         break;
                     case RigType.PCRig:
@@ -64,14 +67,14 @@ namespace Scripts.PlayerLogic
                         curRig = null;
                         break;
                 }
+
                 ActivateRig();
             }
-
         }
 
-        [FormerlySerializedAs("_characterController")] [SerializeField] private CharacterPool _characterPool;
+        [FormerlySerializedAs("_characterController")] [SerializeField]
+        private CharacterPool _characterPool;
 
-  
 
         [SerializeField] private GestureCombiner _gestureCombiner;
 
@@ -79,34 +82,32 @@ namespace Scripts.PlayerLogic
         [SerializeField] private XRRig _xrRig;
 
         public Rig curRig { get; private set; }
-      
 
-        [Header("Anchors")] 
-        [SerializeField] private BodyAnchors _anchors;
+
+        [Header("Anchors")] [SerializeField] private BodyAnchors _anchors;
 
         [SerializeField] private PlayerHands _hands;
-        
-        
+
+
         public PlayerData data;
         public GestureCombiner gestureCombiner => _gestureCombiner;
         public BodyAnchors anchors => _anchors;
         public Character character => _characterPool.currentCharacter;
         public CharacterPool characterPool => _characterPool;
-       
+
 
         private void ActivateRig()
         {
             _pcRig.gameObject.SetActive(_rigType == RigType.PCRig);
             _xrRig.gameObject.SetActive(_rigType == RigType.XRRig);
-            
+
             if (_rigType == RigType.PCRig)
                 _pcRig.Initialize(data);
-            
+
             if (_rigType == RigType.XRRig)
                 _xrRig.Initialize(data);
-
         }
-        
+
 #if UNITY_EDITOR
         [Button("Add missing components")]
         private void AddMissingComponents()
@@ -117,9 +118,11 @@ namespace Scripts.PlayerLogic
             _anchors.Head = _anchors.Body.Find("Head");
             _hands = _anchors.transform.GetComponentInChildren<PlayerHands>();
             _pcRig = transform.Find("PC Rig").GetComponent<PCRig>();
+            _pcRig.AddMissingComponents();
             _xrRig = transform.Find("XR Rig").GetComponent<XRRig>();
+            _xrRig.AddMissingComponents();
             _gestureCombiner = transform.Find("GestureCombiner").GetComponent<GestureCombiner>();
-            
+
             if (!isLocal)
             {
                 Calculations.AddComponentSmart<NetworkPlayerProcessor>(transform);
@@ -154,20 +157,18 @@ namespace Scripts.PlayerLogic
 
         private void Awake()
         {
-      
+            rigType = RigType.NoRig;
             if (isLocal)
             {
                 _characterPool.SpawnCharacters();
                 SetOwner(0);
-               
             }
-                
         }
 
         public void SetOwner(ulong id)
         {
             InitializeComponents(id);
-            
+
             if (_rigType == RigType.NoRig)
                 rigType = RigType.PCRig;
 #if UNITY_EDITOR
@@ -179,17 +180,13 @@ namespace Scripts.PlayerLogic
 #endif
             characterPool.SetAvatarType(AvatarType.Local);
             _gestureCombiner.CreateRecognizer(curRig.RecognitionPropertiesConfig);
-            data.library.onLibraryInitialized += () =>
-            {
-                _gestureCombiner.RecognizeWithAllGestures();
-            };
+            data.library.onLibraryInitialized += () => { _gestureCombiner.RecognizeWithAllGestures(); };
         }
 
         public void SetEnemy(ulong id)
         {
-            InitializeComponents(id);
-            
             rigType = RigType.NoRig;
+            InitializeComponents(id);
             characterPool.SetAvatarType(AvatarType.Enemy);
         }
 
@@ -197,13 +194,13 @@ namespace Scripts.PlayerLogic
         {
             _gestureCombiner.Initialize(characterPool);
             data = new PlayerData(id, anchors, _hands, _gestureCombiner.library);
-            
-            characterPool.SetMaterialId((int)id); 
+
+            characterPool.SetMaterialId((int)id);
             UpdateEvent.Instance.AddListener(UpdateAnchors);
             Debug.Log($"Player {id} initialized. RigType = {rigType}");
         }
 
-      
+
         private bool isAnyNull()
         {
             if (_pcRig == null || _xrRig == null)
@@ -220,9 +217,10 @@ namespace Scripts.PlayerLogic
             if (_rigType != RigType.NoRig)
             {
                 // updating 
-                BodyAnchors.EquateAnchors(curRig.Anchors, _anchors); // нельзя прокинуть _anchors в риг напрямую, потому-что в риге находится камера.
+                BodyAnchors.EquateAnchors(curRig.Anchors,
+                    _anchors); // нельзя прокинуть _anchors в риг напрямую, потому-что в риге находится камера.
             }
-            
+
             BodyAnchors.EquateAnchors(_anchors, character.GetAvatar()?.Anchors);
         }
     }

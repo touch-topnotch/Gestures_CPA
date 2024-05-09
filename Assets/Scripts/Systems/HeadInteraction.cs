@@ -17,7 +17,6 @@ namespace Scripts.Systems
 
     public class HeadInteraction : MonoBehaviour
     {
-
         [SerializeField] private Transform trackedHead;
         [SerializeField] [Range(0.1f, 3f)] private float trackedTime;
         public event Action<HeadInteractionType> onHeadInteraction;
@@ -26,7 +25,7 @@ namespace Scripts.Systems
         private bool isInvoked;
 
         private List<Condition> conditions;
-        
+
         private void Awake()
         {
             conditions = new List<Condition>()
@@ -150,7 +149,7 @@ namespace Scripts.Systems
 
                 if (conditions[step][0] == 'w')
                 {
-                    var keys = conditions[step].Split(' '); 
+                    var keys = conditions[step].Split(' ');
                     timer = float.Parse(keys[2]);
                     _timerType = keys[1] == ">" ? TimerType.more : TimerType.less;
                     step += 1;
@@ -158,8 +157,6 @@ namespace Scripts.Systems
 
                 if (_timerType != TimerType.none)
                     CheckTimer(rotation, stop);
-
-
             }
         }
 

@@ -13,8 +13,8 @@ namespace Network
     public class RelayJoiner : MonoBehaviour
     {
         private const string CONNECTION_TYPE = "udp";
-        private const string RELAY_CODE_KEY =  "RelayCode"; 
-        
+        private const string RELAY_CODE_KEY = "RelayCode";
+
         public async UniTask AutojoinRelayWithLobby(string lobbyID)
         {
             while (true)
@@ -28,6 +28,7 @@ namespace Network
                         return;
                     }
                 }
+
                 await UniTask.Delay(2000);
             }
         }

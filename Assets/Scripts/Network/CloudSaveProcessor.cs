@@ -18,7 +18,7 @@ namespace Scripts.Network
         private const string environmentId = CustomPaths.environmentId;
         public static CloudSaveProcessor Instance { get; private set; }
 
-        private async void Awake()
+        private void Awake()
         {
             if (Instance == null)
             {
@@ -28,9 +28,10 @@ namespace Scripts.Network
             {
                 Destroy(gameObject);
             }
-
         }
-        public static void GetAllCustomItems(Action<string> onSuccess){
+
+        public static void GetAllCustomItems(Action<string> onSuccess)
+        {
             string url =
                 $"https://services.api.unity.com/cloud-save/v1/data/projects/{projectId}/environments/{environmentId}/custom"; //
 
@@ -43,9 +44,10 @@ namespace Scripts.Network
                 onSuccess
             );
         }
+
         public static void SetItemToCloud(string item, string itemKey, Action<string> onSuccess)
         {
-            Debug.Log("ITEM: " +item);
+            Debug.Log("ITEM: " + item);
             var url =
                 $"https://services.api.unity.com/cloud-save/v1/data/projects/{projectId}/environments/{environmentId}/custom/{itemKey}/items";
             WebRequests.PostJson(
@@ -53,16 +55,17 @@ namespace Scripts.Network
                 (UnityWebRequest unityWebRequest) =>
                 {
                     unityWebRequest.SetRequestHeader("Authorization",
-                        "Basic " + CustomPaths.keyBase64); 
+                        "Basic " + CustomPaths.keyBase64);
                 },
                 item,
                 (string error) => { Debug.LogError("Error: " + error); },
                 onSuccess
             );
         }
+
         public static void SetItemToCloud(ItemStruct item, string itemKey, Action<string> onSuccess)
         {
-            SetItemToCloud(JsonUtility.ToJson(item), itemKey,onSuccess);
+            SetItemToCloud(JsonUtility.ToJson(item), itemKey, onSuccess);
         }
 
         public struct ItemStruct

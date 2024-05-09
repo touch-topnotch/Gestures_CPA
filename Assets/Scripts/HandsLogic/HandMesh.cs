@@ -17,6 +17,7 @@ namespace Scripts.HandsLogic
         left,
         right
     }
+
     public class HandMesh : MonoBehaviour, IQueueVisualised<BonesData>, IColorable
     {
         private enum HandMaterialType
@@ -24,15 +25,14 @@ namespace Scripts.HandsLogic
             Player,
             Ghost
         }
-        [Header("Types")]
-        [SerializeField] private HandMaterialType _handMaterialType;
+
+        [Header("Types")] [SerializeField] private HandMaterialType _handMaterialType;
         [SerializeField] private HandType _handType;
-        [Space]
-        [Header("Transforms")]
-        public Transform grabPoint;
+        [Space] [Header("Transforms")] public Transform grabPoint;
         public Transform[] points;
 
         [SerializeField] private List<Material> _materials = new List<Material>();
+
         public Material HandMaterial
         {
             get => _meshRenderer.sharedMaterials[1];
@@ -44,11 +44,11 @@ namespace Scripts.HandsLogic
         }
 
         [SerializeField] private SkinnedMeshRenderer _meshRenderer;
-        
-        private readonly List<TargetProp> _targets = new ();
-        
-        private readonly List<PinPongProp> _pinPongs = new ();
-        
+
+        private readonly List<TargetProp> _targets = new();
+
+        private readonly List<PinPongProp> _pinPongs = new();
+
         private UpdateEvent onUpdate => UpdateEvent.Instance;
 
         private bool _isPlaced;
@@ -58,16 +58,16 @@ namespace Scripts.HandsLogic
         private BonesData _target;
         private Tween _tween;
         private bool _changePosition;
-
+#if UNITY_EDITOR
         [Button("Add missing components")]
         public void AddMissingComponents()
         {
             _handType = name[^1] == 'L' ? HandType.left : HandType.right;
-            
+
             _meshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
             _materials = _meshRenderer.sharedMaterials.ToList();
-            
-            if (points == null ||points.Length == 0)
+
+            if (points == null || points.Length == 0)
             {
                 points = new Transform[26];
                 for (int i = 0; i < transform.childCount; i++)
@@ -80,17 +80,17 @@ namespace Scripts.HandsLogic
                 }
             }
         }
+#endif
 
-        private int AddAllChildren(Transform parent, int id=0)
+        private int AddAllChildren(Transform parent, int id = 0)
         {
             if (id == 26)
                 return 0;
             points[id] = parent;
             id++;
-            
+
             for (int i = 0; i < parent.childCount; i++)
             {
-               
                 id = AddAllChildren(parent.GetChild(i), id);
             }
 
@@ -111,8 +111,7 @@ namespace Scripts.HandsLogic
         }
 
         private void MoveHand()
-        {  
-       
+        {
             if (_target == null || _target.rotations == null || _target.rotations?.Length != 26)
             {
                 _onPlaced = null;
@@ -125,23 +124,25 @@ namespace Scripts.HandsLogic
             var dist = Vector3.Distance(points[0].localPosition, _target.rootPos);
             var a1 = Quaternion.Angle(points[0].localRotation, _target.rotations[0]);
             var a2 = Quaternion.Angle(points[13].localRotation, _target.rotations[13]);
-            if(a1 < 0.05f&& a2< 0.05f)
+            if (a1 < 0.05f && a2 < 0.05f)
             {
-                if(!_isPlaced && (!_changePosition || dist < 0.05f))
+                if (!_isPlaced && (!_changePosition || dist < 0.05f))
                     StopMoveHand();
                 return;
             }
-            if(_changePosition)
-                points[0].localPosition = Vector3.Lerp(points[0].localPosition, _target.rootPos, _speed*Time.deltaTime);
-            
-            for(int i = 0; i < points.Length; i++)
+
+            if (_changePosition)
+                points[0].localPosition =
+                    Vector3.Lerp(points[0].localPosition, _target.rootPos, _speed * Time.deltaTime);
+
+            for (int i = 0; i < points.Length; i++)
             {
-                points[i].localRotation = Quaternion.Lerp(points[i].localRotation, _target.rotations[i], _speed*Time.deltaTime);
+                points[i].localRotation =
+                    Quaternion.Lerp(points[i].localRotation, _target.rotations[i], _speed * Time.deltaTime);
             }
-           
         }
-        
-        
+
+
         private void StopMoveHand()
         {
             _onPlaced?.Invoke();
@@ -150,12 +151,13 @@ namespace Scripts.HandsLogic
         }
 
         public bool IsActive() => gameObject.activeSelf;
+
         public void Show()
         {
             gameObject.SetActive(true);
             Debug.Log("SHOW HAND");
         }
-        
+
 
         public void Hide()
         {
@@ -182,6 +184,7 @@ namespace Scripts.HandsLogic
                 points[i].localRotation = target.rotations[i];
             }
         }
+
         public void Move(BonesData target, float speed, Action onPlaced, bool changePosition = true)
         {
             if (target == null || target.rotations == null || target.rotations.Length == 0)
@@ -200,17 +203,15 @@ namespace Scripts.HandsLogic
             HandMaterial.DOKill();
             GameObject.Destroy(this);
         }
-        
-        public void ChangeColorForProps(in Color color, in int[] props, in ColorParams pColorParams, Action<int> onComplete)
+
+        public void ChangeColorForProps(in Color color, in int[] props, in ColorParams pColorParams,
+            Action<int> onComplete)
         {
             foreach (int prop in props)
             {
                 if (pColorParams.speed > 0)
                 {
-                    ChangeColorSmooth(color, new ColorParams(prop, pColorParams), () =>
-                    {
-                        onComplete?.Invoke(prop);
-                    });
+                    ChangeColorSmooth(color, new ColorParams(prop, pColorParams), () => { onComplete?.Invoke(prop); });
                 }
                 else
                 {
@@ -218,6 +219,7 @@ namespace Scripts.HandsLogic
                 }
             }
         }
+
         public void ChangeColor(in Color color, int id)
         {
             HandMaterial.SetColor(id, color);
@@ -225,7 +227,7 @@ namespace Scripts.HandsLogic
 
         public void ChangeColorPinPong(Color active, Color passive, ColorParams pColorParams)
         {
-            if(pColorParams.kill)
+            if (pColorParams.kill)
                 HandMaterial.DOKill();
             HandMaterial.DOColor(active, pColorParams.id, 1 / pColorParams.speed).onComplete = () =>
             {
@@ -236,21 +238,14 @@ namespace Scripts.HandsLogic
                 };
             };
         }
-        
+
         public void ChangeColorSmooth(Color color, ColorParams pColorParams, TweenCallback onComplete = null)
         {
-            if(pColorParams.kill)
+            if (pColorParams.kill)
                 HandMaterial.DOKill();
 
             HandMaterial.DOColor(color, pColorParams.id, 1 / pColorParams.speed).onComplete =
                 onComplete;
         }
-
-       
     }
-
-   
-    
-
- 
 }

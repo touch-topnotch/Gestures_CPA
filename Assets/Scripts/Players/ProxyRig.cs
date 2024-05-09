@@ -1,6 +1,6 @@
 namespace Scripts.PlayerLogic
 {
-    public class ProxyRig: Rig
+    public class ProxyRig : Rig
     {
         public override bool isMoved()
         {

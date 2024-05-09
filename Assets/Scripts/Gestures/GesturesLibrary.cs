@@ -22,19 +22,20 @@ namespace Scripts.Gestures
         supportive,
         characters
     }
+
     public class GesturesLibrary
     {
         public Dictionary<string, GestureFrame> allAvailableFrames = new();
         public Dictionary<string, DynamicGesture> characterGestures;
-        public  Dictionary<string, GestureFrame> systemGestures = new();
-        public  Dictionary<string, GestureFrame> supportiveGestures = new();
+        public Dictionary<string, GestureFrame> systemGestures = new();
+        public Dictionary<string, GestureFrame> supportiveGestures = new();
 
         public event Action onLibraryInitialized;
         private readonly RestrictiveDictionary<string, DynamicGesture> allCharacterGestures = new();
 
 
         private CharacterPool _characterPool;
-        
+
         GestureFrame this[string name]
         {
             get
@@ -45,36 +46,31 @@ namespace Scripts.Gestures
                 }
                 else
                     return null;
-            } 
+            }
         }
+
         public GesturesLibrary(CharacterPool characterPool)
         {
             _characterPool = characterPool;
-           // _characterPool.characterChangedEvent.AddListener(OnCharacterChanged);
-           Debug.Log("Trying to invoke");
-           if (!EventInitializer.Instance.isInitialized)
-           {
-               EventInitializer.Instance.onServicesInitilalised += ()=>
-               {
-                   AddDictionary();
-               };
-           }
-           else
-           {
-               AddDictionary();
-           }
-           
+            // _characterPool.characterChangedEvent.AddListener(OnCharacterChanged);
+            Debug.Log("Trying to invoke");
+            if (!EventInitializer.Instance.isInitialized)
+            {
+                EventInitializer.Instance.onServicesInitilalised += () => { AddDictionary(); };
+            }
+            else
+            {
+                AddDictionary();
+            }
         }
 
         private async void AddDictionary()
         {
-            var c = new Dictionary<string, Character>();
-            c.Add("Bravery", _characterPool.charactersDict["Bravery"]);
-            allCharacterGestures.AddDictionary(await GestureMapper.ReadCharacterGestures(c));
+            allCharacterGestures.AddDictionary(await GestureMapper.ReadCharacterGestures(_characterPool.charactersDict));
             characterGestures = allCharacterGestures.openDict;
             systemGestures = await GestureMapper.ReadGestureFrames("system");
             supportiveGestures = await GestureMapper.ReadGestureFrames("supportive");
-            foreach(var dgesture in characterGestures)
+            foreach (var dgesture in characterGestures)
             {
                 foreach (var frame in dgesture.Value.frames)
                 {
@@ -86,21 +82,24 @@ namespace Scripts.Gestures
             {
                 allAvailableFrames.Add(frame.Key, frame.Value);
             }
+
             foreach (var frame in supportiveGestures)
             {
                 allAvailableFrames.Add(frame.Key, frame.Value);
             }
+
             var log = $"Library has initialized! .\n"
                       + $"   All Parsed Gestures: {Debugger.dictionaryToString(allCharacterGestures.openDict, false, true)}"
                       + $"\n   Character Gestures (Now without limitations): {Debugger.dictionaryToString(characterGestures, false, true)}"
                       + $"\n   System Gestures: {Debugger.dictionaryToString(systemGestures, false, true)}"
                       + $"\n   Supportive Gestures: {Debugger.dictionaryToString(supportiveGestures, false, true)}";
-          
+
             Debug.Log(log);
             onLibraryInitialized?.Invoke();
         }
 
-        private static JsonCharacterProperties AddGestureToChar(string name,  HandsStruct hands,  JsonCharacterProperties jsonChar)
+        private static JsonCharacterProperties AddGestureToChar(string name, HandsStruct hands,
+            JsonCharacterProperties jsonChar)
         {
             string dynamicName = GestureMapper.PrefixOfName(name);
             var gestures = jsonChar.Gestures;
@@ -125,15 +124,16 @@ namespace Scripts.Gestures
                 Description = jsonChar.Description,
                 RootFolder = jsonChar.RootFolder,
                 Gestures = gestures
-                
             };
         }
-        private static JsonGestureStruct AddToExistedGesture(string name, HandsStruct hands, JsonGestureStruct jsonStruct)
+
+        private static JsonGestureStruct AddToExistedGesture(string name, HandsStruct hands,
+            JsonGestureStruct jsonStruct)
         {
             int index = GestureMapper.IndexOfName(name);
-            
+
             List<string[]> frames = jsonStruct.value.Frames;
-            
+
             if (index < frames.Count)
             {
                 frames[index] = GestureMapper.HandsStructToString(hands);
@@ -144,19 +144,21 @@ namespace Scripts.Gestures
                 {
                     frames.Add(null);
                 }
-                
+
                 frames.Add(GestureMapper.HandsStructToString(hands));
             }
-            
+
             return new JsonGestureStruct()
             {
                 key = jsonStruct.key,
-                value = new JsonGestureProperty(){
-                Frames = frames,
-                Type = jsonStruct.value.Type
+                value = new JsonGestureProperty()
+                {
+                    Frames = frames,
+                    Type = jsonStruct.value.Type
                 }
             };
         }
+
         private static JsonGestureStruct CreateNewGesture(HandsStruct hands, string name)
         {
             int index = GestureMapper.IndexOfName(name);
@@ -168,17 +170,20 @@ namespace Scripts.Gestures
                     frames.Add(null);
                 }
             }
+
             frames.Add(GestureMapper.HandsStructToString(hands));
             for (int i = 0; i < frames[0].Length; i++)
             {
                 Debug.Log(frames[0][i]);
             }
+
             var t = new JsonGestureStruct()
             {
                 key = GestureMapper.PrefixOfName(name),
-                value = new JsonGestureProperty(){
-                Frames = frames,
-                Type = (int)GestureType.Weapon
+                value = new JsonGestureProperty()
+                {
+                    Frames = frames,
+                    Type = (int)GestureType.Weapon
                 }
             };
             return t;
@@ -223,16 +228,17 @@ namespace Scripts.Gestures
                         }
                     }
                     : AddGestureToChar(name, hands, dictionary[characterName]);
-                CharacterMapper.SendCharacterStruct(new JsonCharacterStruct(){key = characterName,value = jsonChar});
+                CharacterMapper.SendCharacterStruct(new JsonCharacterStruct()
+                    { key = characterName, value = jsonChar });
             }
-
         }
-        
+
         public bool TryGetDynamicGesture(string gesture, out DynamicGesture frame)
         {
             return characterGestures.TryGetValue(gesture, out frame) ||
                    characterGestures.TryGetValue(GestureMapper.PrefixOfName(gesture), out frame);
         }
+
         public bool TryGetGestureFrame(string name, out GestureFrame frame)
         {
             if (characterGestures.ContainsKey(GestureMapper.PrefixOfName(name)))
@@ -240,6 +246,7 @@ namespace Scripts.Gestures
                 frame = characterGestures[GestureMapper.PrefixOfName(name)].frames[GestureMapper.IndexOfName(name)];
                 return true;
             }
+
             frame = null;
             return false;
         }
@@ -249,22 +256,20 @@ namespace Scripts.Gestures
             switch (key)
             {
                 case "system":
-                    if(systemGestures.ContainsKey(frame.name))
+                    if (systemGestures.ContainsKey(frame.name))
                         systemGestures[frame.name] = frame;
                     else
                         systemGestures.Add(frame.name, frame);
                     break;
                 case "supportive":
-                    if(supportiveGestures.ContainsKey(frame.name))
+                    if (supportiveGestures.ContainsKey(frame.name))
                         supportiveGestures[frame.name] = frame;
                     else
                         supportiveGestures.Add(frame.name, frame);
                     break;
                 case "characters":
                     throw new NotImplementedException();
-                    break;
             }
         }
-       
     }
 }

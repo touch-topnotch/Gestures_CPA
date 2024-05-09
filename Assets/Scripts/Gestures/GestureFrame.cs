@@ -20,11 +20,12 @@ namespace Scripts.Gestures
 
         private BonesData _left = new BonesData(HandType.left);
         private BonesData _right = new BonesData(HandType.right);
+
         public HandsStruct()
         {
             HandUsed = HandUsedType.NULL;
         }
-        
+
         public HandsStruct(
             BonesData left,
             BonesData right
@@ -33,24 +34,28 @@ namespace Scripts.Gestures
             LeftBones = left;
             RightBones = right;
         }
+
         public BonesData LeftBones
         {
             get => _left;
             set => _left = SetHandPoints(value, HandUsedType.LEFT);
         }
+
         public BonesData RightBones
         {
             get => _right;
             set => _right = SetHandPoints(value, HandUsedType.RIGHT);
         }
+
         private BonesData SetHandPoints(BonesData points, HandUsedType handUsed)
         {
             if (points != null && points.Exists())
                 AddToEnum(handUsed);
-            else 
+            else
                 RemoveFrEnum(handUsed);
             return points;
         }
+
         private void AddToEnum(HandUsedType hand)
         {
             HandUsed = hand switch
@@ -63,9 +68,9 @@ namespace Scripts.Gestures
                     : HandUsedType.RIGHT
             };
         }
+
         private void RemoveFrEnum(HandUsedType hand)
         {
-            
             if (hand == HandUsedType.LEFTNRIGHT)
             {
                 HandUsed = HandUsedType.NULL;
@@ -83,14 +88,16 @@ namespace Scripts.Gestures
                 HandUsed = HandUsedType.NULL;
             }
         }
-        
+
         public delegate void HandManipulation<T>(T item, BonesData data);
-        public static void SwitchManipulation<T>(HandsStruct target, HandManipulation<T> manipulate, T left, T right, Action nullCallback = null)
+
+        public static void SwitchManipulation<T>(HandsStruct target, HandManipulation<T> manipulate, T left, T right,
+            Action nullCallback = null)
         {
             switch (target.HandUsed)
             {
                 case HandUsedType.NULL:
-                    if(nullCallback != null) nullCallback();
+                    if (nullCallback != null) nullCallback();
                     return;
                 case HandUsedType.LEFT:
                     manipulate(left, target.LeftBones);
@@ -105,19 +112,22 @@ namespace Scripts.Gestures
             }
         }
 
-        public void SwitchManipulation<T>(HandManipulation<T> manipulate, T left, T right, Action nullCallback = null) =>
+        public void SwitchManipulation<T>(HandManipulation<T> manipulate, T left, T right,
+            Action nullCallback = null) =>
             SwitchManipulation(this, manipulate, left, right, nullCallback);
     }
+
     public class GestureFrame
     {
         public GestureFrame(string name, HandsStruct handsStruct)
-        {  
+        {
             Hands = handsStruct;
             this.name = name;
         }
+
         private string _name;
         public string baseName { get; private set; }
-        
+
         public string name
         {
             get => _name;
@@ -137,4 +147,3 @@ namespace Scripts.Gestures
         }
     }
 }
-

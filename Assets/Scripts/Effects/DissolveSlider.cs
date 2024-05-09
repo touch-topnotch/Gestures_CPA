@@ -4,7 +4,7 @@ namespace Scripts.Effects
 {
     public class DissolveSlider : MonoBehaviour
     {
-       [SerializeField] private float dissolveToValue = 0f;
+        [SerializeField] private float dissolveToValue = 0f;
 
         private float _dissolvePreviousValue;
 
@@ -16,13 +16,13 @@ namespace Scripts.Effects
         private static readonly int Disappear = Shader.PropertyToID("_Disappear");
 
         void Start()
-        
+
         {
-           // Debug.Log("Disappear id: " + Disappear);
+            // Debug.Log("Disappear id: " + Disappear);
             _material = GetComponent<Renderer>().material;
             _material.SetFloat(Disappear, dissolveToValue);
 
-            _dissolvePreviousValue = dissolveToValue; 
+            _dissolvePreviousValue = dissolveToValue;
         }
 
         void FixedUpdate()

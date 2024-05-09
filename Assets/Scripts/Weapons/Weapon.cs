@@ -27,36 +27,35 @@ namespace Scripts.Weapons
         Custom
     }
 
-   
+
     public abstract class Weapon : NetworkRecognizableBehaviour, IGrabable
     {
-        [Header("Weapons components")] 
-        
-        [SerializeField]
+        [Header("Weapons components")] [SerializeField]
         protected WeaponDesign weaponDesign;
-        
-        [field:SerializeField] public GrabSystem GrabSystem { get; set; }
-        
+
+        [field: SerializeField] public GrabSystem GrabSystem { get; set; }
+
         protected int _power;
-        
-        [SerializeField]
-        [Tooltip("Weapon hit call cooldown")] private float _hitCallDelay = 0.5f;
+
+        [SerializeField] [Tooltip("Weapon hit call cooldown")]
+        private float _hitCallDelay = 0.5f;
+
         private float _hitCallTimer;
         private bool CanHitCall => _hitCallTimer <= 0;
 
         protected readonly NetworkVariable<State> state = new NetworkVariable<State>();
         protected UpdateEvent _onUpdate => UpdateEvent.Instance;
-        
+
         protected abstract bool HitImpactCondition(out string affected);
         protected abstract bool HitCallCondition();
 
         public void Initialize(PlayerData data)
         {
             Debug.Log(name + " initialized. " + playerData);
-                playerData = data;
+            playerData = data;
             SetGrabSystemPlayerData();
         }
-        
+
         public void SetGrabSystemPlayerData()
         {
             GrabSystem.OnGrabStart += OnGrabbed;
@@ -65,12 +64,11 @@ namespace Scripts.Weapons
 
         public void OnGrabbed()
         {
-           weaponDesign.OnGrabbed();
+            weaponDesign.OnGrabbed();
         }
 
         public void OnUnGrabbed()
         {
-            
         }
 
         protected virtual void OnHitStartHold()
@@ -94,7 +92,7 @@ namespace Scripts.Weapons
                 _onUpdate.AddListener(UpdateHitCallTimer);
             }
         }
-        
+
         protected virtual void OnHitImpact(string affected)
         {
             if (IsClient)
@@ -112,7 +110,7 @@ namespace Scripts.Weapons
         {
             if (IsServer)
                 return;
-            
+
             OnHitImpact(affected);
         }
 
@@ -122,13 +120,14 @@ namespace Scripts.Weapons
             if (CanHitCall)
                 _onUpdate.RemoveListener(UpdateHitCallTimer);
         }
-  
+
         protected void StartShooting()
         {
             state.Value = State.HitHolding;
             OnHitStartHold();
             _onUpdate.AddListener(AbilityShootingProcess);
         }
+
         private void AbilityShootingProcess()
         {
             switch (state.Value)
@@ -146,7 +145,8 @@ namespace Scripts.Weapons
                     return;
             }
         }
-        private void HandleHitCall() 
+
+        private void HandleHitCall()
         {
             if ((IsOwner && IsClient) && HitCallCondition())
             {
@@ -158,7 +158,6 @@ namespace Scripts.Weapons
                 {
                     state.Value = State.HitHolding;
                 }
-                   
             }
         }
 
@@ -178,20 +177,20 @@ namespace Scripts.Weapons
 
         public override void OnFrameRecognized(string name)
         {
-            if(IsClient)
+            if (IsClient)
                 weaponDesign.OnFrameRecognized(name);
         }
 
         public override void AbilityCalled()
         {
-          if(IsClient)
-              weaponDesign.OnGestureDetected();
+            if (IsClient)
+                weaponDesign.OnGestureDetected();
         }
 
         protected override void OnAbilityReleased()
         {
-            if(IsClient)
-               weaponDesign.OnAbilityReleased();
+            if (IsClient)
+                weaponDesign.OnAbilityReleased();
         }
     }
 }

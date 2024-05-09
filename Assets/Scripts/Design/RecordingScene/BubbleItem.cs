@@ -4,7 +4,6 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 namespace Design.RecordingScene
 {
-
     [RequireComponent(typeof(XRSimpleInteractable), typeof(MeshRenderer))]
     public abstract class BubbleItem : MonoBehaviour
     {
@@ -17,19 +16,20 @@ namespace Design.RecordingScene
         protected float defaultSize;
         protected FromToProp emissive;
         protected FromToProp size;
-        
+
         private bool _interactable;
+
         public bool interactable
         {
             get => _interactable;
             set
             {
                 _interactable = value;
-               _xrSimpleInteractable.hoverEntered.AddListener((a)=>
-               {
-                   if (_interactable)
-                       OnHoverEntered();
-               });
+                _xrSimpleInteractable.hoverEntered.AddListener((a) =>
+                {
+                    if (_interactable)
+                        OnHoverEntered();
+                });
             }
         }
 
@@ -38,27 +38,26 @@ namespace Design.RecordingScene
 
         private void Awake()
         {
-            
             defaultSize = transform.localScale.x;
             size = new(defaultSize, defaultSize);
             emissive = new(1, 0);
-            if(!_xrSimpleInteractable)
+            if (!_xrSimpleInteractable)
                 _xrSimpleInteractable = GetComponent<XRSimpleInteractable>();
-            if(!_mat)
+            if (!_mat)
                 _mat = GetComponent<MeshRenderer>().sharedMaterial;
-            _xrSimpleInteractable.hoverEntered.AddListener((a)=>
+            _xrSimpleInteractable.hoverEntered.AddListener((a) =>
             {
                 if (_interactable)
                     OnHoverEntered();
             });
             _mat.EnableKeyword("_EMISSION");
         }
-        
+
         protected void UpdateProp(ref FromToProp prop, float speed)
         {
-            if(prop.isEqual) 
+            if (prop.isEqual)
                 return;
-            
+
             prop.from = Mathf.Lerp(prop.from, prop.to, speed * Time.deltaTime);
         }
 
@@ -68,12 +67,13 @@ namespace Design.RecordingScene
         {
             UpdateProperties();
         }
-     
+
 
         protected struct FromToProp
         {
             private float _from;
             private float _to;
+
             public float from
             {
                 get => _from;
@@ -93,12 +93,14 @@ namespace Design.RecordingScene
                     isEqual = (Mathf.Abs(_from - _to) < 0.001);
                 }
             }
+
             public bool isEqual;
+
             public FromToProp(float from, float to)
             {
                 _from = from;
                 _to = to;
-                isEqual =  (Mathf.Abs(_from - _to) < 0.001);
+                isEqual = (Mathf.Abs(_from - _to) < 0.001);
             }
 
             public override string ToString()

@@ -1,7 +1,6 @@
 namespace Scripts.HandsLogic
 {
-    public class EnemyHands: Hands
+    public class EnemyHands : Hands
     {
-        
     }
 }

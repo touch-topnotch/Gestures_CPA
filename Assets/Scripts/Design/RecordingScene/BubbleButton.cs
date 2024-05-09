@@ -19,7 +19,7 @@ namespace Design.RecordingScene
         {
             UpdateProp(ref emissive, animSpeed);
             UpdateProp(ref size, animSpeed);
-            if(!emissive.isEqual)
+            if (!emissive.isEqual)
                 _mat.SetColor("_EmissionColor", Color.Lerp(colorDisabled, colorEnabled, emissive.from));
             if (!size.isEqual)
                 transform.localScale = Vector3.one * size.from;
@@ -29,7 +29,9 @@ namespace Design.RecordingScene
                 AnimateByStep();
             }
         }
+
         private int step = 2;
+
         private void AnimateByStep()
         {
             switch (step)
@@ -43,9 +45,8 @@ namespace Design.RecordingScene
                     size.to = defaultSize * 1f;
                     break;
             }
-            
-          
         }
+
         private void OnClick()
         {
             step = 0;

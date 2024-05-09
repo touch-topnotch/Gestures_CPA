@@ -23,7 +23,6 @@ namespace Scripts.Static
 
         public static string ConvertToResourceFormat(string path)
         {
-
             // Find the index of the "Resources" keyword in the original path
             int resourcesIndex = path.IndexOf("Resources", StringComparison.Ordinal);
 
@@ -43,8 +42,9 @@ namespace Scripts.Static
                 throw new ArgumentException("The original path does not contain the keyword 'Resources'.");
             }
         }
+
         public static T AddComponentSmart<T>(Transform transf)
-        where T : Component
+            where T : Component
         {
             if (transf.TryGetComponent<T>(out var temp))
                 return temp;
@@ -56,7 +56,7 @@ namespace Scripts.Static
             float radian = yAngle * Mathf.Deg2Rad;
             float newX = vec.x * Mathf.Cos(radian) - vec.z * Mathf.Sin(radian);
             float newZ = vec.x * Mathf.Sin(radian) + vec.z * Mathf.Cos(radian);
-    
+
             return new Vector3(newX, vec.y, newZ);
         }
     }

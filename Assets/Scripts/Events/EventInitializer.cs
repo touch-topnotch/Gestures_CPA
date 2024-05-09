@@ -1,4 +1,3 @@
-
 using System;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
@@ -6,10 +5,11 @@ using UnityEngine;
 
 namespace Scripts.Events
 {
-    public class EventInitializer: MonoBehaviour
+    public class EventInitializer : MonoBehaviour
     {
         public bool isInitialized;
         public event Action onServicesInitilalised;
+
         private async void CheckServicesInitialization()
         {
             if (UnityServices.State != ServicesInitializationState.Initialized)
@@ -26,10 +26,10 @@ namespace Scripts.Events
         }
 
         public static EventInitializer Instance;
-        
+
         private void Awake()
         {
-            if(Instance != null)
+            if (Instance != null)
                 Destroy(this);
             else
             {

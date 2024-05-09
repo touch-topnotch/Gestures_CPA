@@ -4,8 +4,9 @@ namespace UI.KeyboardPack
 {
     public class ArcDrawer
     {
-        
-        private ArcDrawer() { }
+        private ArcDrawer()
+        {
+        }
 
         /// <summary>
         /// Draws a wire arc.
@@ -15,7 +16,8 @@ namespace UI.KeyboardPack
         /// <param name="anglesRange">The angle range, in degrees.</param>
         /// <param name="radius"></param>
         /// <param name="maxSteps">How many steps to use to draw the arc.</param>
-        public static void DrawWireArc(Vector3 position, Vector3 dir, float anglesRange, float radius, float maxSteps = 20)
+        public static void DrawWireArc(Vector3 position, Vector3 dir, float anglesRange, float radius,
+            float maxSteps = 20)
         {
             var srcAngles = GetAnglesFromDir(position, dir);
             var initialPos = position;
@@ -33,6 +35,7 @@ namespace UI.KeyboardPack
                 angle += stepAngles;
                 posA = posB;
             }
+
             Gizmos.DrawLine(posA, initialPos);
         }
 

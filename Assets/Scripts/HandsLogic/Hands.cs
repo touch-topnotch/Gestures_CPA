@@ -9,15 +9,15 @@ using UnityEngine;
 
 namespace Scripts.HandsLogic
 {
-    public class Hands: MonoBehaviour
+    public class Hands : MonoBehaviour
     {
-       
         public HandMesh leftHand;
         public HandMesh rightHand;
 
         private MaterialPair _handMaterialPair;
         private bool _isSync;
         private Action _onPlaced;
+
         public MaterialPair HandMaterialPair
         {
             get
@@ -32,25 +32,27 @@ namespace Scripts.HandsLogic
             }
             set
             {
-                Debug.Log("Setting left mat: " + value.Left.name + ", right mat: " + value.Right.name + " to " + transform.parent.parent.name);
+                Debug.Log("Setting left mat: " + value.Left.name + ", right mat: " + value.Right.name + " to " +
+                          transform.parent.parent.name);
                 leftHand.HandMaterial = value.Left;
                 rightHand.HandMaterial = value.Right;
             }
         }
-        
+
         public bool IsRecognized { get; private set; }
         public void OnEnabled() => IsRecognized = true;
         public void OnDisabled() => IsRecognized = false;
+
         public void SetSameColor(string param, Color color)
         {
-           // leftHand.material.SetColor(param, color);
-           // rightHand.material.SetColor(param, color);
+            // leftHand.material.SetColor(param, color);
+            // rightHand.material.SetColor(param, color);
         }
 
         public void RecoverLeftHand(in HandAnchor anchor)
         {
             leftHand.points[0].position = anchor.rootPos;
-       
+
             leftHand.SetRotations(anchor.rotations);
         }
 
@@ -74,7 +76,9 @@ namespace Scripts.HandsLogic
                 _onPlaced?.Invoke();
             }
         }
-        public void MoveHands(in GestureFrame frame,in BodyAnchors anchors, float speed, Action onPlaced, bool changePosition)
+
+        public void MoveHands(in GestureFrame frame, in BodyAnchors anchors, float speed, Action onPlaced,
+            bool changePosition)
         {
             frame.Hands.LeftBones?.ListenAnchors(anchors);
             frame.Hands.RightBones?.ListenAnchors(anchors);

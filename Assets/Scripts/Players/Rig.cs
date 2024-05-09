@@ -3,6 +3,8 @@ using Scripts.Gestures;
 using Scripts.HandsLogic;
 using Scripts.Movements;
 using Scripts.Systems;
+using Sirenix.OdinInspector;
+using UnityEditor;
 using UnityEngine;
 
 namespace Scripts.PlayerLogic
@@ -14,15 +16,15 @@ namespace Scripts.PlayerLogic
         DYED,
         SPECTATOR
     }
+
     public abstract class Rig : MonoBehaviour, IMovable
     {
-     
         [SerializeField] protected BodyAnchors anchors;
         [SerializeField] protected Hands hands;
-        
+
         [SerializeField] private RecognitionPropertiesConfig _recognitionProperties;
         [SerializeField] private HeadInteraction _headInteraction;
- 
+
         protected PlayerStateChangedEvent playerStateChangedEvent;
         protected PlayerState playerState;
         public HeadInteraction headInteraction => _headInteraction;
@@ -31,15 +33,16 @@ namespace Scripts.PlayerLogic
         public RecognitionPropertiesConfig RecognitionPropertiesConfig => _recognitionProperties;
         protected PlayerData playerData;
         public static Rig instance;
-        
+
+
         public virtual void Initialize(PlayerData data)
         {
             if (!transform.gameObject.activeSelf)
                 return;
-            
+
             playerData = data;
             instance = this;
-            
+
             playerStateChangedEvent = new PlayerStateChangedEvent();
             playerStateChangedEvent.AddListener(OnPlayerStateChanged);
             headInteraction.onHeadInteraction += (headInteractionType) =>
@@ -51,8 +54,18 @@ namespace Scripts.PlayerLogic
                 //     Centrize();
                 // }
             };
-            
         }
+
+#if UNITY_EDITOR
+        public virtual void AddMissingComponents()
+        {
+            var rig = Selection.activeGameObject.GetComponentInChildren<XRRig>() ??
+                      Selection.activeGameObject.GetComponent<XRRig>();
+            anchors ??= rig.GetComponentInChildren<BodyAnchors>();
+            hands ??= Selection.activeGameObject.GetComponentInChildren<PlayerHands>();
+            _headInteraction ??= rig.GetComponentInChildren<HeadInteraction>();
+        }
+#endif
 
         protected virtual void OnPlayerStateChanged(PlayerState state)
         {

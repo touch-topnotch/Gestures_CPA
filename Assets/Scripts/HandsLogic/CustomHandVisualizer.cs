@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Unity.XR.CoreUtils;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -18,27 +19,24 @@ namespace Scripts.HandsLogic
         }
 
         [SerializeField]
-        [Tooltip("If this is enabled, this component will enable the Input System internal feature flag 'USE_OPTIMIZED_CONTROLS'. You must have at least version 1.5.0 of the Input System and have its backend enabled for this to take effect.")]
+        [Tooltip(
+            "If this is enabled, this component will enable the Input System internal feature flag 'USE_OPTIMIZED_CONTROLS'. You must have at least version 1.5.0 of the Input System and have its backend enabled for this to take effect.")]
         bool m_UseOptimizedControls;
 
-        [SerializeField]
-        XROrigin m_Origin;
-        
-        [SerializeField] 
-        private PlayerHands m_PlayerHands;
-        
+        [SerializeField] XROrigin m_Origin;
+
+        [SerializeField] private PlayerHands m_PlayerHands;
+
         public bool drawMeshes
         {
             get => m_DrawMeshes;
             set => m_DrawMeshes = value;
         }
 
-        [SerializeField]
-        bool m_DrawMeshes;
+        [SerializeField] bool m_DrawMeshes;
         bool m_PreviousDrawMeshes;
 
-        [SerializeField]
-        GameObject m_DebugDrawPrefab;
+        [SerializeField] GameObject m_DebugDrawPrefab;
 
         public bool debugDrawJoints
         {
@@ -46,12 +44,10 @@ namespace Scripts.HandsLogic
             set => m_DebugDrawJoints = value;
         }
 
-        [SerializeField]
-        bool m_DebugDrawJoints;
+        [SerializeField] bool m_DebugDrawJoints;
         bool m_PreviousDebugDrawJoints;
 
-        [SerializeField]
-        GameObject m_VelocityPrefab;
+        [SerializeField] GameObject m_VelocityPrefab;
 
         public VelocityType velocityType
         {
@@ -59,14 +55,11 @@ namespace Scripts.HandsLogic
             set => m_VelocityType = value;
         }
 
-        [SerializeField]
-        VelocityType m_VelocityType;
+        [SerializeField] VelocityType m_VelocityType;
         VelocityType m_PreviousVelocityType;
 
-        [SerializeField]
-        UnityEvent m_OnEnabled;
-        [SerializeField] 
-        UnityEvent m_OnDisabled;
+        [SerializeField] UnityEvent m_OnEnabled;
+        [SerializeField] UnityEvent m_OnDisabled;
 
         XRHandSubsystem m_Subsystem;
         HandGameObjects m_LeftHandGameObjects;
@@ -80,8 +73,18 @@ namespace Scripts.HandsLogic
             if (m_UseOptimizedControls)
                 InputSystem.settings.SetInternalFeatureFlag("USE_OPTIMIZED_CONTROLS", true);
 #endif // ENABLE_INPUT_SYSTEM
-           
         }
+
+#if UNITY_EDITOR
+        public void AddMissingComponents()
+        {
+            m_Origin ??= Selection.activeGameObject.GetComponentInChildren<XROrigin>();
+            m_PlayerHands ??= Selection.activeGameObject.GetComponentInChildren<PlayerHands>();
+            m_OnEnabled.AddListener(m_PlayerHands.OnEnabled);
+            m_OnDisabled.AddListener(m_PlayerHands.OnDisabled);
+        }
+#endif
+
 
         protected void OnEnable()
         {
@@ -135,7 +138,6 @@ namespace Scripts.HandsLogic
             if (m_LeftHandGameObjects == null)
             {
                 m_LeftHandGameObjects = new HandGameObjects(
-          
                     Handedness.Left,
                     m_PlayerHands.leftHand,
                     m_DebugDrawPrefab,
@@ -145,7 +147,6 @@ namespace Scripts.HandsLogic
             if (m_RightHandGameObjects == null)
             {
                 m_RightHandGameObjects = new HandGameObjects(
-           
                     Handedness.Right,
                     m_PlayerHands.rightHand,
                     m_DebugDrawPrefab,
@@ -177,6 +178,7 @@ namespace Scripts.HandsLogic
             {
                 m_OnDisabled?.Invoke();
             }
+
             handGameObjects.ToggleDrawMesh(m_DrawMeshes && isTracked);
             handGameObjects.ToggleDebugDrawJoints(m_DebugDrawJoints && isTracked);
             handGameObjects.SetVelocityType(isTracked ? m_VelocityType : VelocityType.None);
@@ -210,7 +212,8 @@ namespace Scripts.HandsLogic
             }
         }
 
-        void OnUpdatedHands(XRHandSubsystem subsystem, XRHandSubsystem.UpdateSuccessFlags updateSuccessFlags, XRHandSubsystem.UpdateType updateType)
+        void OnUpdatedHands(XRHandSubsystem subsystem, XRHandSubsystem.UpdateSuccessFlags updateSuccessFlags,
+            XRHandSubsystem.UpdateType updateType)
         {
             // We have no game logic depending on the Transforms, so early out here
             // (add game logic before this return here, directly querying from
@@ -260,7 +263,7 @@ namespace Scripts.HandsLogic
                 m_DrawMeshes,
                 m_DebugDrawJoints,
                 m_VelocityType);
-            
+
             if ((updateSuccessFlags & XRHandSubsystem.UpdateSuccessFlags.RightHandRootPose) != 0)
                 m_RightHandGameObjects.UpdateRootPose(subsystem.rightHand);
         }
@@ -290,7 +293,6 @@ namespace Scripts.HandsLogic
                     Transform jointXform,
                     Transform drawJointsParent)
                 {
-                    
                     int jointIndex = jointId.ToIndex();
                     m_JointXforms[jointIndex] = jointXform;
 
@@ -307,9 +309,9 @@ namespace Scripts.HandsLogic
                     m_Lines[jointIndex].SetPositions(s_LinePointsReuse);
                 }
 
-                m_HandMesh = handMesh; 
+                m_HandMesh = handMesh;
                 var hand_transf = m_HandMesh.transform;
-            //    hand_transf.parent.transform.localPosition = handOffset;
+                //    hand_transf.parent.transform.localPosition = handOffset;
                 hand_transf.localRotation = Quaternion.identity;
 
                 Transform wristRootXform = null;
@@ -372,7 +374,9 @@ namespace Scripts.HandsLogic
                                 }
 
                                 if (!lastChild.name.EndsWith(XRHandJointIDUtility.FromIndex(jointIndex).ToString()))
-                                    throw new InvalidOperationException("Hand transform hierarchy not set correctly - couldn't find " + XRHandJointIDUtility.FromIndex(jointIndex) + " joint!");
+                                    throw new InvalidOperationException(
+                                        "Hand transform hierarchy not set correctly - couldn't find " +
+                                        XRHandJointIDUtility.FromIndex(jointIndex) + " joint!");
 
                                 var jointId = XRHandJointIDUtility.FromIndex(jointIndex);
                                 AssignJoint(jointId, lastChild, m_DrawJointsParent.transform);
@@ -389,7 +393,8 @@ namespace Scripts.HandsLogic
 
                     var jointId = fingerId.GetFrontJointID();
                     if (m_JointXforms[jointId.ToIndex()] == null)
-                        Debug.LogWarning("Hand transform hierarchy not set correctly - couldn't find " + jointId + " joint!");
+                        Debug.LogWarning("Hand transform hierarchy not set correctly - couldn't find " + jointId +
+                                         " joint!");
                 }
             }
 
@@ -435,7 +440,8 @@ namespace Scripts.HandsLogic
             public void SetVelocityType(VelocityType velocityType)
             {
                 for (int jointIndex = 0; jointIndex < m_VelocityParents.Length; ++jointIndex)
-                    ToggleRenderers<LineRenderer>(velocityType != VelocityType.None, m_VelocityParents[jointIndex].transform);
+                    ToggleRenderers<LineRenderer>(velocityType != VelocityType.None,
+                        m_VelocityParents[jointIndex].transform);
             }
 
             public void UpdateRootPose(XRHand hand)
@@ -468,23 +474,26 @@ namespace Scripts.HandsLogic
                 var originPose = new Pose(originTransform.position, originTransform.rotation);
 
                 var wristPose = Pose.identity;
-                UpdateJoint(debugDrawJoints, velocityType, originPose, hand.GetJoint(XRHandJointID.Wrist), ref wristPose);
-                UpdateJoint(debugDrawJoints, velocityType, originPose, hand.GetJoint(XRHandJointID.Palm), ref wristPose, false);
+                UpdateJoint(debugDrawJoints, velocityType, originPose, hand.GetJoint(XRHandJointID.Wrist),
+                    ref wristPose);
+                UpdateJoint(debugDrawJoints, velocityType, originPose, hand.GetJoint(XRHandJointID.Palm), ref wristPose,
+                    false);
 
                 for (int fingerIndex = (int)XRHandFingerID.Thumb;
-                    fingerIndex <= (int)XRHandFingerID.Little;
-                    ++fingerIndex)
+                     fingerIndex <= (int)XRHandFingerID.Little;
+                     ++fingerIndex)
                 {
                     var parentPose = wristPose;
                     var fingerId = (XRHandFingerID)fingerIndex;
 
                     int jointIndexBack = fingerId.GetBackJointID().ToIndex();
                     for (int jointIndex = fingerId.GetFrontJointID().ToIndex();
-                        jointIndex <= jointIndexBack;
-                        ++jointIndex)
+                         jointIndex <= jointIndexBack;
+                         ++jointIndex)
                     {
                         if (m_JointXforms[jointIndex] != null)
-                            UpdateJoint(debugDrawJoints, velocityType, originPose, hand.GetJoint(XRHandJointIDUtility.FromIndex(jointIndex)), ref parentPose);
+                            UpdateJoint(debugDrawJoints, velocityType, originPose,
+                                hand.GetJoint(XRHandJointIDUtility.FromIndex(jointIndex)), ref parentPose);
                     }
                 }
             }
@@ -518,7 +527,8 @@ namespace Scripts.HandsLogic
                 if (cacheParentPose)
                     parentPose = pose;
 
-                if (velocityType != VelocityType.None && m_VelocityParents[jointIndex].TryGetComponent<LineRenderer>(out var renderer))
+                if (velocityType != VelocityType.None &&
+                    m_VelocityParents[jointIndex].TryGetComponent<LineRenderer>(out var renderer))
                 {
                     m_VelocityParents[jointIndex].transform.localPosition = Vector3.zero;
                     m_VelocityParents[jointIndex].transform.localRotation = Quaternion.identity;

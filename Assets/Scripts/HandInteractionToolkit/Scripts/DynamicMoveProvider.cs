@@ -30,7 +30,8 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets
 
         [Space, Header("Movement Direction")]
         [SerializeField]
-        [Tooltip("Directs the XR Origin's movement when using the head-relative mode. If not set, will automatically find and use the XR Origin Camera.")]
+        [Tooltip(
+            "Directs the XR Origin's movement when using the head-relative mode. If not set, will automatically find and use the XR Origin Camera.")]
         Transform m_HeadTransform;
 
         /// <summary>
@@ -66,7 +67,8 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets
         }
 
         [SerializeField]
-        [Tooltip("Whether to use the specified head transform or left controller transform to direct the XR Origin's movement for the left hand.")]
+        [Tooltip(
+            "Whether to use the specified head transform or left controller transform to direct the XR Origin's movement for the left hand.")]
         MovementDirection m_LeftHandMovementDirection;
 
         /// <summary>
@@ -80,7 +82,8 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets
         }
 
         [SerializeField]
-        [Tooltip("Whether to use the specified head transform or right controller transform to direct the XR Origin's movement for the right hand.")]
+        [Tooltip(
+            "Whether to use the specified head transform or right controller transform to direct the XR Origin's movement for the right hand.")]
         MovementDirection m_RightHandMovementDirection;
 
         /// <summary>
@@ -179,8 +182,10 @@ namespace UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets
             if (totalSqrMagnitude > Mathf.Epsilon)
                 leftHandBlend = leftHandValue.sqrMagnitude / totalSqrMagnitude;
 
-            var combinedPosition = Vector3.Lerp(m_RightMovementPose.position, m_LeftMovementPose.position, leftHandBlend);
-            var combinedRotation = Quaternion.Slerp(m_RightMovementPose.rotation, m_LeftMovementPose.rotation, leftHandBlend);
+            var combinedPosition =
+                Vector3.Lerp(m_RightMovementPose.position, m_LeftMovementPose.position, leftHandBlend);
+            var combinedRotation =
+                Quaternion.Slerp(m_RightMovementPose.rotation, m_LeftMovementPose.rotation, leftHandBlend);
             m_CombinedTransform.SetPositionAndRotation(combinedPosition, combinedRotation);
 
             return base.ComputeDesiredMove(input);

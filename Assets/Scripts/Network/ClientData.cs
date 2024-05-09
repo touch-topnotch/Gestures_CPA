@@ -8,7 +8,8 @@ namespace Scripts.Network
         MEDIUM,
         PRO
     }
-    public class ClientData: ScriptableObject
+
+    public class ClientData : ScriptableObject
     {
         //public string name;
         public string tag;

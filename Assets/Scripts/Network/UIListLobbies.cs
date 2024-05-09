@@ -8,7 +8,7 @@ namespace Network
     public class UIListLobbies : MonoBehaviour
     {
         public event Action<string> LobbyChosenForConnect;
-        
+
         [SerializeField] private UILobby uILobbyPrefab;
         [SerializeField] private Transform parentTransform;
 
