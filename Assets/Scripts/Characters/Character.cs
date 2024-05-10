@@ -95,7 +95,7 @@ namespace Scripts.Characters
                         _weapons.Add(WEAPON.Key, instance.GetComponent<Weapon>());
                     }
 
-                    _weapons[WEAPON.Key].Initialize(data);
+                    //_weapons[WEAPON.Key].Initialize()
                     spawns.Add(_weapons[WEAPON.Key].NetworkObjectId);
                 }
             }

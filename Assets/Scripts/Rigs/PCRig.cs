@@ -23,9 +23,9 @@ namespace Scripts.PlayerLogic
         private WaitForSeconds _waitUntilNextFrame;
         private GesturesLibrary _library;
 
-        public override void Initialize(PlayerData data)
+        public override void Initialize()
         {
-            base.Initialize(data);
+            base.Initialize();
             hands.OnEnabled();
 
             _waitUntilNextFrame = new WaitForSeconds(handsProperties.delayOnFrame);
@@ -65,8 +65,6 @@ namespace Scripts.PlayerLogic
             }
 
             gestureMenu.SetRings(rings, "Types");
-            Debug.Log("Toggle menu");
-            UpdateEvent.Instance.AddListener(ToggleMenu);
         }
 
         private void SimulateFrameAnClose(string key)
@@ -142,7 +140,15 @@ namespace Scripts.PlayerLogic
             _personController.cameraCanMove = false;
         }
 
+        protected override void Centrize()
+        {
+            
+        }
 
+        private void Update()
+        {
+            ToggleMenu();
+        }
         private void ToggleMenu()
         {
             if (InputExtension.GetKeyWithCtrlOrCmd(KeyCode.G))

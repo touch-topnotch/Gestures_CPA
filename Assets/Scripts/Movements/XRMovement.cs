@@ -1,20 +1,12 @@
-using Scripts.Events;
 using Scripts.PlayerLogic;
-using Telegram.Bot.Types;
-using TMPro;
 using Unity.Mathematics;
-using Unity.XR.CoreUtils;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.UIElements;
-using Zenject;
 
 namespace Scripts.Movements
 {
-    public class XRMovement : MonoBehaviour
+    public class XRMovement : RigComponent
     {
         public bool moveOnAwake;
-        [SerializeField] protected BodyAnchors _rigAnchors;
         [SerializeField] protected CharacterController parentMoveController;
         [SerializeField] protected float gravity;
 
@@ -24,7 +16,7 @@ namespace Scripts.Movements
         [Range(0, 1f)] [SerializeField] protected float moveSpeed;
         [SerializeField] protected Vector2 velocityBoard;
 
-        [SerializeField] protected Transform pivot;
+        [SerializeField] protected Transform xrCameraCenter;
 
         public float XZBoard
         {
@@ -53,7 +45,7 @@ namespace Scripts.Movements
 
         public void Centrize()
         {
-            pivot.position = _rigAnchors.Head.position;
+            xrCameraCenter.position = inherited.anchors.Head.position;
         }
 
         public void StartMove()
@@ -73,8 +65,7 @@ namespace Scripts.Movements
         {
             if (!_isMoved)
                 return;
-
-            _velocity = (HeadManipulations.HeadVelocity(pivot.position, _rigAnchors.Head.position, XZBoard, YBoard,
+            _velocity = (HeadManipulations.HeadVelocity(xrCameraCenter.position, inherited.anchors.Head.position, XZBoard, YBoard,
                 moveSpeed,
                 jumpSpeed) + Vector3.down * gravity) / 10;
 
@@ -88,14 +79,14 @@ namespace Scripts.Movements
             velocity.z = Mathf.Clamp(velocity.z, -velocityBoard.x, velocityBoard.x);
             return velocity;
         }
-#if UNITY_EDITOR
-        public void AddMissingComponents()
-        {
-            var rig = Selection.activeGameObject.GetComponentInChildren<XRRig>();
-            _rigAnchors ??= rig.GetComponent<BodyAnchors>();
-            parentMoveController ??= rig.GetComponentInChildren<CharacterController>();
-        }
 
-#endif
+        protected override bool shouldAddMissingComponents =>
+            !(parentMoveController && xrCameraCenter);
+        
+        public override void AddMissingComponents()
+        {
+            xrCameraCenter ??= inherited.anchors.Root.Find("XR_Camera_Center");
+            parentMoveController ??= inherited.GetComponentInChildren<CharacterController>();
+        }
     }
 }

@@ -180,8 +180,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8d73b03b4ee49a5a73d8feafdfe2a7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects:
+    - {fileID: 4756137236862102026}
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: inherited
+      Entry: 10
+      Data: 0
   moveOnAwake: 0
-  _rigAnchors: {fileID: 2674384774794061123}
   parentMoveController: {fileID: 9221960774847617230}
   gravity: 0.2
   xzBoard: 0.25
@@ -189,7 +201,7 @@ MonoBehaviour:
   jumpSpeed: 0.7
   moveSpeed: 0.7
   velocityBoard: {x: 0.1, y: 0.1}
-  pivot: {fileID: 1819431305198103217}
+  xrCameraCenter: {fileID: 0}
   _velocity: {x: 0, y: 0, z: 0}
   _isMoved: 0
 --- !u!1 &3348824047913912158
@@ -242,6 +254,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2589d1f259d452280184af065088d25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
   Root: {fileID: 6140740505124455658}
   Body: {fileID: 7674236056091807768}
   Head: {fileID: 5514647184582784720}
@@ -286,7 +307,7 @@ GameObject:
   - component: {fileID: 3931524863701617451}
   - component: {fileID: 7664837676458158790}
   m_Layer: 0
-  m_Name: VR Camera
+  m_Name: VR_Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -441,12 +462,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7908877469215107289}
+  - component: {fileID: 4756137236862102026}
   - component: {fileID: 569533767370050912}
   - component: {fileID: 516173306887432583}
   - component: {fileID: 5636858908503025568}
-  - component: {fileID: 4756137236862102026}
   m_Layer: 0
-  m_Name: XR Rig
+  m_Name: XR_Rig
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -470,8 +491,41 @@ Transform:
   - {fileID: 1113759154340438626}
   - {fileID: 8204647765382952868}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4756137236862102026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4771012037733928013}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62e6c4898f634c408d32541421746606, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects:
+    - {fileID: 2674384774794061123}
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: inherited
+      Entry: 6
+      Data: 
+    - Name: anchors
+      Entry: 10
+      Data: 0
+  _recognitionProperties: {fileID: 11400000, guid: 4c90447fe672c4fc594b38980dba4a45,
+    type: 2}
+  _headInteraction: {fileID: 7664837676458158790}
+  _cameraTarget: {fileID: 1113759154340438626}
+  _movement: {fileID: 7111459129692797515}
 --- !u!114 &569533767370050912
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -517,25 +571,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_StartingHoverFilters: []
   m_StartingSelectFilters: []
---- !u!114 &4756137236862102026
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4771012037733928013}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62e6c4898f634c408d32541421746606, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  anchors: {fileID: 2674384774794061123}
-  hands: {fileID: 0}
-  _recognitionProperties: {fileID: 11400000, guid: 4c90447fe672c4fc594b38980dba4a45,
-    type: 2}
-  _headInteraction: {fileID: 7664837676458158790}
-  _cameraTarget: {fileID: 1113759154340438626}
-  _movement: {fileID: 7111459129692797515}
 --- !u!1 &5260984529772944747
 GameObject:
   m_ObjectHideFlags: 0
@@ -547,7 +582,7 @@ GameObject:
   - component: {fileID: 2546477087753044729}
   - component: {fileID: 5748129903150454599}
   m_Layer: 0
-  m_Name: Hand Visualiser
+  m_Name: Hand_Visualiser
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -807,7 +842,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1819431305198103217}
   m_Layer: 0
-  m_Name: XR Camera Center
+  m_Name: XR_Camera_Center
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -894,7 +929,7 @@ PrefabInstance:
     - target: {fileID: 3264864222666173812, guid: c96771d8e1b71454ea812bdc83d9327b,
         type: 3}
       propertyPath: m_Name
-      value: PokeHandInteraction
+      value: Poke_Hand_Interaction
       objectReference: {fileID: 0}
     - target: {fileID: 5831989940874124168, guid: c96771d8e1b71454ea812bdc83d9327b,
         type: 3}

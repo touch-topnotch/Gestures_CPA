@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Scrips.Components;
 using Scripts.Characters;
 using Scripts.Events;
 using Scripts.Gestures;
@@ -35,12 +36,11 @@ namespace Scripts.PlayerLogic
             this.bodyAnchors = bodyAnchors;
             this.hands = hands;
             this.library = library;
-            local = this;
         }
     }
 
 
-    public class Player : MonoBehaviour
+    public class Player : PlayerComponent
     {
         [Header("Runtime Settings")] [SerializeField]
         private bool isLocal;
@@ -87,8 +87,7 @@ namespace Scripts.PlayerLogic
         [Header("Anchors")] [SerializeField] private BodyAnchors _anchors;
 
         [SerializeField] private PlayerHands _hands;
-
-
+        [HideInInspector]
         public PlayerData data;
         public GestureCombiner gestureCombiner => _gestureCombiner;
         public BodyAnchors anchors => _anchors;
@@ -102,58 +101,11 @@ namespace Scripts.PlayerLogic
             _xrRig.gameObject.SetActive(_rigType == RigType.XRRig);
 
             if (_rigType == RigType.PCRig)
-                _pcRig.Initialize(data);
+                _pcRig.Initialize();
 
             if (_rigType == RigType.XRRig)
-                _xrRig.Initialize(data);
+                _xrRig.Initialize();
         }
-
-#if UNITY_EDITOR
-        [Button("Add missing components")]
-        private void AddMissingComponents()
-        {
-            _characterPool = this.GetComponentInChildren<CharacterPool>();
-            _anchors = this.transform.Find("Anchors").GetComponent<BodyAnchors>();
-            _anchors.Body = _anchors.transform.Find("Body");
-            _anchors.Head = _anchors.Body.Find("Head");
-            _hands = _anchors.transform.GetComponentInChildren<PlayerHands>();
-            _pcRig = transform.Find("PC Rig").GetComponent<PCRig>();
-            _pcRig.AddMissingComponents();
-            _xrRig = transform.Find("XR Rig").GetComponent<XRRig>();
-            _xrRig.AddMissingComponents();
-            _gestureCombiner = transform.Find("GestureCombiner").GetComponent<GestureCombiner>();
-
-            if (!isLocal)
-            {
-                Calculations.AddComponentSmart<NetworkPlayerProcessor>(transform);
-
-                List<ClientTransform> transforms = new()
-                {
-                    Calculations.AddComponentSmart<ClientTransform>(anchors.Body),
-                    Calculations.AddComponentSmart<ClientTransform>(anchors.Head),
-                    Calculations.AddComponentSmart<ClientTransform>(_hands.rightHand.points[0]),
-                    Calculations.AddComponentSmart<ClientTransform>(_hands.leftHand.points[0]),
-                };
-
-                foreach (var VARIABLE in transforms)
-                {
-                    VARIABLE.SyncPositionX = true;
-                    VARIABLE.SyncPositionY = true;
-                    VARIABLE.SyncPositionZ = true;
-                    VARIABLE.SyncRotAngleX = true;
-                    VARIABLE.SyncRotAngleY = true;
-                    VARIABLE.SyncRotAngleZ = true;
-                    VARIABLE.SyncScaleX = false;
-                    VARIABLE.SyncScaleY = false;
-                    VARIABLE.SyncScaleZ = false;
-                    VARIABLE.InLocalSpace = true;
-                    VARIABLE.Interpolate = true;
-                    VARIABLE.SlerpPosition = true;
-                }
-            }
-        }
-#endif
-
 
         private void Awake()
         {
@@ -168,7 +120,7 @@ namespace Scripts.PlayerLogic
         public void SetOwner(ulong id)
         {
             InitializeComponents(id);
-
+            PlayerData.local = data;
             if (_rigType == RigType.NoRig)
                 rigType = RigType.PCRig;
 #if UNITY_EDITOR
@@ -217,11 +169,56 @@ namespace Scripts.PlayerLogic
             if (_rigType != RigType.NoRig)
             {
                 // updating 
-                BodyAnchors.EquateAnchors(curRig.Anchors,
+                BodyAnchors.EquateAnchors(curRig.anchors,
                     _anchors); // нельзя прокинуть _anchors в риг напрямую, потому-что в риге находится камера.
             }
 
             BodyAnchors.EquateAnchors(_anchors, character.GetAvatar()?.Anchors);
+        }
+
+        protected override bool shouldAddMissingComponents =>
+            !(_characterPool && _anchors && _hands && _pcRig && _xrRig && _gestureCombiner);
+
+        public override void AddMissingComponents()
+        {
+            _characterPool = GetComponentInChildren<CharacterPool>();
+            _anchors = transform.Find("Anchors").GetComponent<BodyAnchors>();
+            _anchors.AddMissingComponents();
+            _hands = _anchors.transform.GetComponentInChildren<PlayerHands>();
+            _pcRig = transform.Find("PC_Rig").GetComponent<PCRig>();
+            _pcRig.AddMissingComponents();
+            _xrRig = transform.Find("XR_Rig").GetComponent<XRRig>();
+            _xrRig.AddMissingComponents();
+            _gestureCombiner = transform.Find("GestureCombiner").GetComponent<GestureCombiner>();
+
+            if (!isLocal)
+            {
+                Calculations.AddComponentSmart<NetworkPlayerProcessor>(transform);
+
+                List<ClientTransform> transforms = new()
+                {
+                    Calculations.AddComponentSmart<ClientTransform>(anchors.Body),
+                    Calculations.AddComponentSmart<ClientTransform>(anchors.Head),
+                    Calculations.AddComponentSmart<ClientTransform>(_hands.rightHand.points[0]),
+                    Calculations.AddComponentSmart<ClientTransform>(_hands.leftHand.points[0]),
+                };
+
+                foreach (var VARIABLE in transforms)
+                {
+                    VARIABLE.SyncPositionX = true;
+                    VARIABLE.SyncPositionY = true;
+                    VARIABLE.SyncPositionZ = true;
+                    VARIABLE.SyncRotAngleX = true;
+                    VARIABLE.SyncRotAngleY = true;
+                    VARIABLE.SyncRotAngleZ = true;
+                    VARIABLE.SyncScaleX = false;
+                    VARIABLE.SyncScaleY = false;
+                    VARIABLE.SyncScaleZ = false;
+                    VARIABLE.InLocalSpace = true;
+                    VARIABLE.Interpolate = true;
+                    VARIABLE.SlerpPosition = true;
+                }
+            }
         }
     }
 }

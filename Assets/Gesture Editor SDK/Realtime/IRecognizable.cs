@@ -10,7 +10,7 @@ namespace Gesture_Editor_SDK.Realtime
     public interface IRecognizable
     {
         string gestureName { get; }
-        PlayerData playerData {get; set; }
+        PlayerData playerData { get; }
         void OnFrameRecognized(string name);
         void AbilityCalled();
         void AbilityReleased();

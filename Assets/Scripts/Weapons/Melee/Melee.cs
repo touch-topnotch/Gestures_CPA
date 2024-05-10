@@ -56,5 +56,7 @@ namespace Scripts.Weapons
 
             StartShooting();
         }
+
+    
     }
 }

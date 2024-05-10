@@ -1,17 +1,20 @@
 using System;
+using Scrips.Components;
+using Scripts.Components;
 using Scripts.Events;
 using Scripts.HandsLogic;
 using UnityEngine;
 
 namespace Scripts.PlayerLogic
 {
-    public class BodyAnchors : MonoBehaviour
+    public class BodyAnchors : SmartComponent
     {
         public Transform Root;
         public Transform Body;
         public Transform Head;
 
-        private void OnValidate()
+        protected override bool shouldAddMissingComponents => !(Root && Body && Head);
+        public override void AddMissingComponents()
         {
             if (Root == null)
                 Root = transform;

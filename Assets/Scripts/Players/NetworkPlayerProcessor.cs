@@ -47,7 +47,7 @@ namespace Scripts.PlayerLogic
             if (IsPlayer && IsOwner)
             {
                 _player.SetOwner(OwnerClientId);
-                _player.curRig.Anchors.Body.position = new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10));
+                _player.curRig.anchors.Body.position = new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10));
                 Recognizer.onSharedFrameBetweenDevices.AddListener((frame) =>
                 {
                     OnLocalClientFrameRecognizedServerRpc(frame, OwnerClientId);
