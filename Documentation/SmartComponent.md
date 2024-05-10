@@ -21,7 +21,7 @@ To use `SmartComponent`, you must extend it in your own class and implement the 
         For example, here you have complex dependeces of the component
     </div>
     <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-end;">
-        <img src="image-1.png" alt="Description of the image" style="width: 100%; max-width: 200px;">
+        <img src="image-1.png" alt="Description of the image" style="width: 40%; max-width: 200px;">
     </div>
 </div>
 <p></p>
@@ -30,7 +30,7 @@ To use `SmartComponent`, you must extend it in your own class and implement the 
     If any of the dependencies are missing, the <strong>AddMissingComponents</strong>  button is displayed. If you click on it, all dependencies will be added to the component again
     </div>
     <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-end;">
-        <img src="image.png" alt="Description of the image" style="width: 100%; max-width: 200px;">
+        <img src="image.png" alt="Description of the image" style="width: 40%; max-width: 200px;">
     </div>
 </div>
 
