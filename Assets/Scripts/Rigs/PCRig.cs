@@ -83,7 +83,8 @@ namespace Scripts.PlayerLogic
 
         private void SimulateFrame(string key)
         {
-            hands.MoveHands(_library.allAvailableFrames[key], anchors, handsProperties.handSpeed, () => { },
+            // выход - отдавать КОПИЮ фрейма, а не сам фрейм
+            hands.MoveHands(_library.allAvailableFrames[key].ParentedFrame(inherited.anchors.Body), handsProperties.handSpeed, () => { },
                 !InputExtension.CtrlOrCmd());
         }
 
@@ -93,12 +94,11 @@ namespace Scripts.PlayerLogic
             var indexOfName = dynamicName == key ? 0 : GestureMapper.IndexOfName(key);
             var frameName = dynamicName + '_' + indexOfName;
             var nextFrame = dynamicName + '_' + (indexOfName + 1);
-
             if (indexOfName >= _library.characterGestures[dynamicName].frames.Count)
                 return;
 
             Debug.Log("Simulating " + key);
-            hands.MoveHands(_library.allAvailableFrames[frameName], anchors, handsProperties.handSpeed,
+            hands.MoveHands(_library.allAvailableFrames[frameName].ParentedFrame(inherited.anchors.Body), handsProperties.handSpeed,
                 () => { StartCoroutine(WaitUntilNextFrame(nextFrame)); },
                 !InputExtension.CtrlOrCmd());
         }

@@ -20,9 +20,9 @@ namespace Scripts.Databases
     {
         public string Description;
         public string RootFolder;
-        public List<JsonGestureStruct> Gestures;
+        public List<JsonFrameStruct> Gestures;
 
-        public JsonCharacterProperties(string description, string rootFolder, List<JsonGestureStruct> gestures)
+        public JsonCharacterProperties(string description, string rootFolder, List<JsonFrameStruct> gestures)
         {
             Description = description;
             RootFolder = rootFolder;

@@ -2,16 +2,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Characters;
-using Newtonsoft.Json;
 using Scripts.Characters;
 using Scripts.Databases;
 using Scripts.Events;
-using Scripts.PlayerLogic;
 using Scripts.Static;
 using Scripts.Systems;
-using Scripts.Tests;
-using Unity.Services.CloudSave;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Scripts.Gestures
@@ -25,10 +20,10 @@ namespace Scripts.Gestures
 
     public class GesturesLibrary
     {
-        public Dictionary<string, GestureFrame> allAvailableFrames = new();
+        public Dictionary<string, FrameData> allAvailableFrames = new();
         public Dictionary<string, DynamicGesture> characterGestures;
-        public Dictionary<string, GestureFrame> systemGestures = new();
-        public Dictionary<string, GestureFrame> supportiveGestures = new();
+        public Dictionary<string, FrameData> systemGestures = new();
+        public Dictionary<string, FrameData> supportiveGestures = new();
 
         public event Action onLibraryInitialized;
         private readonly RestrictiveDictionary<string, DynamicGesture> allCharacterGestures = new();
@@ -36,7 +31,7 @@ namespace Scripts.Gestures
 
         private CharacterPool _characterPool;
 
-        GestureFrame this[string name]
+        FrameData this[string name]
         {
             get
             {
@@ -68,8 +63,8 @@ namespace Scripts.Gestures
         {
             allCharacterGestures.AddDictionary(await GestureMapper.ReadCharacterGestures(_characterPool.charactersDict));
             characterGestures = allCharacterGestures.openDict;
-            systemGestures = await GestureMapper.ReadGestureFrames("system");
-            supportiveGestures = await GestureMapper.ReadGestureFrames("supportive");
+            systemGestures = await GestureMapper.ReadFrameDatas("system");
+            supportiveGestures = await GestureMapper.ReadFrameDatas("supportive");
             foreach (var dgesture in characterGestures)
             {
                 foreach (var frame in dgesture.Value.frames)
@@ -77,38 +72,38 @@ namespace Scripts.Gestures
                     allAvailableFrames.Add(frame.name, frame);
                 }
             }
-
+            
             foreach (var frame in systemGestures)
             {
                 allAvailableFrames.Add(frame.Key, frame.Value);
             }
-
+            
             foreach (var frame in supportiveGestures)
             {
                 allAvailableFrames.Add(frame.Key, frame.Value);
             }
-
+            
             var log = $"Library has initialized! .\n"
                       + $"   All Parsed Gestures: {Debugger.dictionaryToString(allCharacterGestures.openDict, false, true)}"
                       + $"\n   Character Gestures (Now without limitations): {Debugger.dictionaryToString(characterGestures, false, true)}"
                       + $"\n   System Gestures: {Debugger.dictionaryToString(systemGestures, false, true)}"
                       + $"\n   Supportive Gestures: {Debugger.dictionaryToString(supportiveGestures, false, true)}";
-
+            
             Debug.Log(log);
             onLibraryInitialized?.Invoke();
         }
 
-        private static JsonCharacterProperties AddGestureToChar(string name, HandsStruct hands,
+        private static JsonCharacterProperties AddFrameToChar(FrameData frameData,
             JsonCharacterProperties jsonChar)
         {
-            string dynamicName = GestureMapper.PrefixOfName(name);
+            string dynamicName = GestureMapper.PrefixOfName(frameData.name);
             var gestures = jsonChar.Gestures;
             var hasDynamic = false;
             for (int i = 0; i < gestures.Count; i++)
             {
                 if (gestures[i].key == dynamicName)
                 {
-                    gestures[i] = AddToExistedGesture(name, hands, gestures[i]);
+                    gestures[i] = AddToExistedGesture(frameData.name, frameData, gestures[i]);
                     hasDynamic = true;
                     break;
                 }
@@ -116,7 +111,7 @@ namespace Scripts.Gestures
 
             if (!hasDynamic)
             {
-                gestures.Add(CreateNewGesture(hands, name));
+                gestures.Add(CreateNewFrame(frameData));
             }
 
             return new JsonCharacterProperties()
@@ -127,8 +122,8 @@ namespace Scripts.Gestures
             };
         }
 
-        private static JsonGestureStruct AddToExistedGesture(string name, HandsStruct hands,
-            JsonGestureStruct jsonStruct)
+        private static JsonFrameStruct AddToExistedGesture(string name, FrameData frameData,
+            JsonFrameStruct jsonStruct)
         {
             int index = GestureMapper.IndexOfName(name);
 
@@ -136,7 +131,7 @@ namespace Scripts.Gestures
 
             if (index < frames.Count)
             {
-                frames[index] = GestureMapper.HandsStructToString(hands);
+                frames[index] = GestureMapper.FrameDataToString(frameData);
             }
             else
             {
@@ -145,13 +140,13 @@ namespace Scripts.Gestures
                     frames.Add(null);
                 }
 
-                frames.Add(GestureMapper.HandsStructToString(hands));
+                frames.Add(GestureMapper.FrameDataToString(frameData));
             }
 
-            return new JsonGestureStruct()
+            return new JsonFrameStruct()
             {
                 key = jsonStruct.key,
-                value = new JsonGestureProperty()
+                value = new JsonFrameProperty()
                 {
                     Frames = frames,
                     Type = jsonStruct.value.Type
@@ -159,9 +154,9 @@ namespace Scripts.Gestures
             };
         }
 
-        private static JsonGestureStruct CreateNewGesture(HandsStruct hands, string name)
+        private static JsonFrameStruct CreateNewFrame(FrameData frameData)
         {
-            int index = GestureMapper.IndexOfName(name);
+            int index = GestureMapper.IndexOfName(frameData.name);
             List<string[]> frames = new List<string[]>();
             if (index > 0)
             {
@@ -171,16 +166,16 @@ namespace Scripts.Gestures
                 }
             }
 
-            frames.Add(GestureMapper.HandsStructToString(hands));
+            frames.Add(GestureMapper.FrameDataToString(frameData));
             for (int i = 0; i < frames[0].Length; i++)
             {
                 Debug.Log(frames[0][i]);
             }
 
-            var t = new JsonGestureStruct()
+            var t = new JsonFrameStruct()
             {
-                key = GestureMapper.PrefixOfName(name),
-                value = new JsonGestureProperty()
+                key = GestureMapper.PrefixOfName(frameData.name),
+                value = new JsonFrameProperty()
                 {
                     Frames = frames,
                     Type = (int)GestureType.Weapon
@@ -189,27 +184,26 @@ namespace Scripts.Gestures
             return t;
         }
 
-        public async Task RecordFrame(HandsStruct hands, string name, GestureCollections collection,
+        public async Task RecordFrame(FrameData frame,  GestureCollections collection,
             string characterName = "")
         {
-            var frame = new GestureFrame(name, hands);
             if (collection == GestureCollections.system)
             {
-                if (systemGestures.ContainsKey(name))
-                    systemGestures[name] = frame;
+                if (systemGestures.ContainsKey(frame.name))
+                    systemGestures[frame.name] = frame;
                 else
-                    systemGestures.Add(name, frame);
-                GestureMapper.SendGestureFrame(collection.ToString(), frame);
+                    systemGestures.Add(frame.name, frame);
+                GestureMapper.SendFrameData(collection.ToString(), frame);
                 return;
             }
 
             if (collection == GestureCollections.supportive)
             {
-                if (supportiveGestures.ContainsKey(name))
-                    supportiveGestures[name] = frame;
+                if (supportiveGestures.ContainsKey(frame.name))
+                    supportiveGestures[frame.name] = frame;
                 else
-                    supportiveGestures.Add(name, frame);
-                GestureMapper.SendGestureFrame(collection.ToString(), frame);
+                    supportiveGestures.Add(frame.name, frame);
+                GestureMapper.SendFrameData(collection.ToString(), frame);
                 return;
             }
 
@@ -222,12 +216,12 @@ namespace Scripts.Gestures
                     {
                         Description = characterName + " is cool!",
                         RootFolder = "Resources/Characters/" + characterName,
-                        Gestures = new List<JsonGestureStruct>()
+                        Gestures = new List<JsonFrameStruct>()
                         {
-                            CreateNewGesture(hands, name)
+                            CreateNewFrame(frame)
                         }
                     }
-                    : AddGestureToChar(name, hands, dictionary[characterName]);
+                    : AddFrameToChar(frame, dictionary[characterName]);
                 CharacterMapper.SendCharacterStruct(new JsonCharacterStruct()
                     { key = characterName, value = jsonChar });
             }
@@ -239,7 +233,7 @@ namespace Scripts.Gestures
                    characterGestures.TryGetValue(GestureMapper.PrefixOfName(gesture), out frame);
         }
 
-        public bool TryGetGestureFrame(string name, out GestureFrame frame)
+        public bool TryGetFrameData(string name, out FrameData frame)
         {
             if (characterGestures.ContainsKey(GestureMapper.PrefixOfName(name)))
             {
@@ -251,7 +245,7 @@ namespace Scripts.Gestures
             return false;
         }
 
-        public void SetGestureFrame(GestureFrame frame, string key)
+        public void SetFrameData(FrameData frame, string key)
         {
             switch (key)
             {

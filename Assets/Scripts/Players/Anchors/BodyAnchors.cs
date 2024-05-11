@@ -1,8 +1,4 @@
-using System;
-using Scrips.Components;
 using Scripts.Components;
-using Scripts.Events;
-using Scripts.HandsLogic;
 using UnityEngine;
 
 namespace Scripts.PlayerLogic
@@ -24,7 +20,7 @@ namespace Scripts.PlayerLogic
                 Head = transform.Find("Head");
         }
 
-        public static void EquateAnchors(in BodyAnchors master, BodyAnchors target)
+        public static void EquateAnchors(in BodyAnchors master, ref BodyAnchors target)
         {
             if (!master || !target)
             {

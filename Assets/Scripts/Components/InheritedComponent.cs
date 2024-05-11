@@ -1,5 +1,3 @@
-using System;
-using Scripts.PlayerLogic;
 using Scripts.Weapons;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -10,11 +8,21 @@ namespace Scripts.Components
     where T: MonoBehaviour
     {
         [HideIf("inheritedExists")] [SerializeField]
-        protected T inherited { get; private set; }
+        public T inherited { get; private set; }
         
         protected virtual T GetInherited()
         {
             return gameObject.GetComponentInParent<T>();
+        }
+
+        private void Awake()
+        {
+            inherited ??= GetInherited();
+        }
+
+        private void OnValidate()
+        {
+            inherited ??= GetInherited();
         }
 
         private bool inheritedExists => inherited ??= GetInherited();

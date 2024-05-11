@@ -20,7 +20,7 @@ namespace Scripts.PlayerLogic
 
     public abstract class Rig : PlayerComponent, IMovable
     {
-        [SerializeField] public BodyAnchors anchors { get; private set; }
+        [SerializeField] public BodyAnchors anchors;
         protected Hands hands => inherited.data.hands;
 
         [SerializeField]

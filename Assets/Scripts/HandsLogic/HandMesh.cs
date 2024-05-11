@@ -118,9 +118,6 @@ namespace Scripts.HandsLogic
                 StopMoveHand();
                 return;
             }
-
-            _target.ListenAnchors(PlayerData.local.bodyAnchors);
-
             var dist = Vector3.Distance(points[0].localPosition, _target.rootPos);
             var a1 = Quaternion.Angle(points[0].localRotation, _target.rotations[0]);
             var a2 = Quaternion.Angle(points[13].localRotation, _target.rotations[13]);
@@ -192,8 +189,8 @@ namespace Scripts.HandsLogic
             _target = target;
             _speed = speed;
             _onPlaced = onPlaced;
-            _isPlaced = false;
             _changePosition = changePosition;
+            _isPlaced = false;
             if (!_isMoved)
                 onUpdate.AddListener(MoveHand);
         }

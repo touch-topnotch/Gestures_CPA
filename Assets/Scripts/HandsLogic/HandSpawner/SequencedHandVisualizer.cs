@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Scripts.HandsLogic
 {
-    public class SequencedHandVisualizer : MonoBehaviour, ISequencedVisualizer<HandsStruct>
+    public class SequencedHandVisualizer : MonoBehaviour, ISequencedVisualizer<FrameData>
     {
         public delegate void HandMeshManipulation(HandMesh mesh);
 
@@ -46,9 +46,9 @@ namespace Scripts.HandsLogic
             ManipulateAll(e => e.Hide());
         }
 
-        public void SwitchManipulation(HandsStruct target,
-            HandsStruct.HandManipulation<SequencedVisualizer<BonesData>> manipulate) =>
-            HandsStruct.SwitchManipulation(target, manipulate, leftHandVisualizer, rightHandVisualizer);
+        public void SwitchManipulation(FrameData target,
+            FrameData.HandManipulation<SequencedVisualizer<BonesData>> manipulate) =>
+            FrameData.SwitchManipulation(target, manipulate, leftHandVisualizer, rightHandVisualizer);
 
         public void TwoHandsManipulation(VisualizerManipulation manipulation)
         {
@@ -62,7 +62,7 @@ namespace Scripts.HandsLogic
 
         public void HideAll() => TwoHandsManipulation((e) => { e.HideAll(); });
 
-        public void Spawn(HandsStruct target) =>
+        public void Spawn(FrameData target) =>
             SwitchManipulation(target, (visualizer, data) => { visualizer.Spawn(data); });
 
         public void ShowHands()
@@ -71,13 +71,13 @@ namespace Scripts.HandsLogic
             rightHandVisualizer.Show();
         }
 
-        public void Override(HandsStruct target, int index = 0) =>
+        public void Override(FrameData target, int index = 0) =>
             SwitchManipulation(target, (v, d) => { v.Override(d, index); });
 
-        public void SpawnAndMove(HandsStruct target, float speed, Action onPlaced) =>
+        public void SpawnAndMove(FrameData target, float speed, Action onPlaced) =>
             SwitchManipulation(target, (v, d) => { v.SpawnAndMove(d, speed, onPlaced); });
 
-        public void Move(HandsStruct target, float speed, Action onPlaced, int index = 0)
+        public void Move(FrameData target, float speed, Action onPlaced, int index = 0)
             =>
                 SwitchManipulation(target, (v, d) => { v.Move(d, speed, onPlaced, index); });
 

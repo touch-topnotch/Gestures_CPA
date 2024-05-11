@@ -1,7 +1,3 @@
-using System;
-using JetBrains.Annotations;
-using Scripts.PlayerLogic;
-using Scripts.Static;
 using Scripts.Systems;
 using UnityEngine;
 
@@ -9,28 +5,39 @@ namespace Scripts.HandsLogic
 {
     public class BonesData
     {
-        private Vector3 fixedRootPos;
-        private Quaternion fixedRootRot;
-
-        public Vector3 rootPos;
-        public Quaternion[] rotations = Array.Empty<Quaternion>();
+        public Vector3 rootPos => _isListened ? TransformRoot() : _fixedRootPos;
+        public Quaternion[] rotations => _isListened ? TransformRotations() : _rotations;
         public bool Exists() => rotations != null && rotations.Length != 0;
+        
         public readonly HandType type;
-        private Vector3 nullVector = Vector3.zero;
-
+        
+        private readonly Vector3 _fixedRootPos;
+        private readonly Quaternion _fixedRootRot;
+        private Quaternion[] _rotations;
+        private bool _isListened;
+        private Transform _parent;
         public BonesData(HandType type)
         {
             this.type = type;
         }
 
+        public BonesData(HandType type, BonesData data)
+        {
+            this.type = type;
+            if (data == null)
+                return;
+            _fixedRootPos = data._fixedRootPos;
+            _fixedRootRot = data._fixedRootRot;
+            _rotations = data._rotations;
+        }
+
         public BonesData(in HandType type, in Quaternion[] rotations, Vector3 rootPos = default)
         {
             this.type = type;
-            this.rootPos = rootPos;
-            this.fixedRootPos = rootPos;
-            this.rotations = rotations;
+            _fixedRootPos = rootPos;
+            _rotations = rotations;
             if (rotations != null)
-                fixedRootRot = rotations[0];
+                _fixedRootRot = rotations[0];
         }
 
         public BonesData(in Transform[] points, in HandType type)
@@ -40,25 +47,38 @@ namespace Scripts.HandsLogic
             {
                 rot[i] = points[i].localRotation;
             }
-
             this.type = type;
-            rootPos = points[0].localPosition;
-            fixedRootPos = rootPos;
-            rotations = rot;
+            _fixedRootPos = points[0].localPosition;
+            _rotations = rot;
             if (rotations != null)
-                fixedRootRot = rot[0];
+                _fixedRootRot = rot[0];
         }
 
         public override string ToString()
         {
             return $"Root: {rootPos}, rotations: {Debugger.arrayToString<Quaternion>(rotations)}";
         }
-
-        public void ListenAnchors(in BodyAnchors anchors)
+        public void SetParent(Transform transform) // Listen при любом вызове
         {
-            rootPos = anchors.Body.TransformVector(fixedRootPos);
-            // rotation of object is a rotation of parent * rotation of object
-            rotations[0] = anchors.Body.rotation * this.fixedRootRot;
+            
+            _parent = transform;
+            if (!Exists())
+            { 
+                return;
+            }
+            _isListened = true;
+        }
+
+        public void RemoveParent()
+        {
+            _isListened = false;
+        }
+
+        private Vector3 TransformRoot() => _parent.TransformVector(_fixedRootPos);
+        private ref Quaternion[] TransformRotations()
+        {
+            _rotations[0] = _parent.rotation * _fixedRootRot;
+            return ref _rotations;
         }
     }
 }

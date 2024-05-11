@@ -1,0 +1,453 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Assembly-CSharp</name>
+    </assembly>
+    <members>
+        <member name="T:Scripts.Systems.NetworkObjectPool">
+            <summary>
+            Object Pool for networked objects, used for controlling how objects are spawned by Netcode. Netcode by default
+            will allocate new memory when spawning new objects. With this Networked Pool, we're using the ObjectPool to
+            reuse objects.
+            Boss Room uses this for projectiles. In theory it should use this for imps too, but we wanted to show vanilla spawning vs pooled spawning.
+            Hooks to NetworkManager's prefab handler to intercept object spawning and do custom actions.
+            </summary>
+        </member>
+        <member name="M:Scripts.Systems.NetworkObjectPool.GetNetworkObject(UnityEngine.GameObject,UnityEngine.Vector3,UnityEngine.Quaternion)">
+            <summary>
+            Gets an instance of the given prefab from the pool. The prefab must be registered to the pool.
+            </summary>
+            <remarks>
+            To spawn a NetworkObject from one of the pools, this must be called on the server, then the instance
+            returned from it must be spawned on the server. This method will then also be called on the client by the
+            PooledPrefabInstanceHandler when the client receives a spawn message for a prefab that has been registered
+            here.
+            </remarks>
+            <param name="prefab"></param>
+            <param name="position">The position to spawn the object at.</param>
+            <param name="rotation">The rotation to spawn the object with.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Scripts.Systems.NetworkObjectPool.ReturnNetworkObject(Unity.Netcode.NetworkObject,UnityEngine.GameObject)">
+            <summary>
+            Return an object to the pool (reset objects before returning).
+            </summary>
+        </member>
+        <member name="M:Scripts.Systems.NetworkObjectPool.RegisterPrefabInternal(UnityEngine.GameObject,System.Int32)">
+            <summary>
+            Builds up the cache for a prefab.
+            </summary>
+        </member>
+        <member name="M:Scripts.Systems.ISequencedVisualizer`1.Spawn(`0)">
+            <summary>
+            Method <c>Override</c> take last changed object and replace the <c>T target</c> 
+            </summary>
+        </member>
+        <member name="T:Scripts.Systems.PrefabSerializedMonoBehaviour">
+            <summary>
+            A Unity MonoBehaviour which is serialized by the Mыslant Gыgыsli serialization system.
+            </summary>
+        </member>
+        <member name="M:Scripts.Systems.PrefabSerializedMonoBehaviour.OnAfterDeserialize">
+            <summary>Invoked after deserialization has taken place.</summary>
+        </member>
+        <member name="M:Scripts.Systems.PrefabSerializedMonoBehaviour.OnBeforeSerialize">
+            <summary>Invoked before serialization has taken place.</summary>
+        </member>
+        <member name="T:Scripts.Components.SmartComponent">
+            <summary>
+            This class 
+            </summary>
+        </member>
+        <member name="M:Scripts.Network.ClientTransform.OnIsServerAuthoritative">
+            <summary>
+            Used to determine who can write to this transform. Owner client only.
+            This imposes state to the server. This is putting trust on your clients. Make sure no security-sensitive features use this transform.
+            </summary>
+        </member>
+        <member name="T:Scripts.Tests.CustomDictionary`2">
+            <summary>
+            Unity can't serialize Dictionary so here's a custom wrapper that does. Note that you have to
+            extend it before it can be serialized as Unity won't serialized generic-based types either.
+            </summary>
+            <typeparam name="K">The key type</typeparam>
+            <typeparam name="V">The value</typeparam>
+            <example>
+            public sealed class MyDictionary : SerializedDictionary&lt;KeyType, ValueType&gt; {}
+            </example>
+        </member>
+        <member name="M:Scripts.Tests.CustomDictionary`2.SerializeKey(`0)">
+            <summary>
+            Conversion to serialize a key
+            </summary>
+            <param name="key">The key to serialize</param>
+            <returns>The Key that has been serialized</returns>
+        </member>
+        <member name="M:Scripts.Tests.CustomDictionary`2.SerializeValue(`1)">
+            <summary>
+            Conversion to serialize a value
+            </summary>
+            <param name="val">The value</param>
+            <returns>The value</returns>
+        </member>
+        <member name="M:Scripts.Tests.CustomDictionary`2.DeserializeKey(`0)">
+            <summary>
+            Conversion to serialize a key
+            </summary>
+            <param name="key">The key to serialize</param>
+            <returns>The Key that has been serialized</returns>
+        </member>
+        <member name="M:Scripts.Tests.CustomDictionary`2.DeserializeValue(`1)">
+            <summary>
+            Conversion to serialize a value
+            </summary>
+            <param name="val">The value</param>
+            <returns>The value</returns>
+        </member>
+        <member name="T:Scripts.Tests.CustomDictionary`4">
+            <summary>
+            Dictionary that can serialize keys and values as other types
+            </summary>
+            <typeparam name="K">The key type</typeparam>
+            <typeparam name="V">The value type</typeparam>
+            <typeparam name="SK">The type which the key will be serialized for</typeparam>
+            <typeparam name="SV">The type which the value will be serialized for</typeparam>
+        </member>
+        <member name="M:Scripts.Tests.CustomDictionary`4.SerializeKey(`0)">
+            <summary>
+            From <see cref="!:K"/> to <see cref="!:SK"/>
+            </summary>
+            <param name="key">They key in <see cref="!:K"/></param>
+            <returns>The key in <see cref="!:SK"/></returns>
+        </member>
+        <member name="M:Scripts.Tests.CustomDictionary`4.SerializeValue(`1)">
+            <summary>
+            From <see cref="!:V"/> to <see cref="!:SV"/>
+            </summary>
+            <param name="value">The value in <see cref="!:V"/></param>
+            <returns>The value in <see cref="!:SV"/></returns>
+        </member>
+        <member name="M:Scripts.Tests.CustomDictionary`4.DeserializeKey(`2)">
+            <summary>
+            From <see cref="!:SK"/> to <see cref="!:K"/>
+            </summary>
+            <param name="serializedKey">They key in <see cref="!:SK"/></param>
+            <returns>The key in <see cref="!:K"/></returns>
+        </member>
+        <member name="M:Scripts.Tests.CustomDictionary`4.DeserializeValue(`3)">
+            <summary>
+            From <see cref="!:SV"/> to <see cref="!:V"/>
+            </summary>
+            <param name="serializedValue">The value in <see cref="!:SV"/></param>
+            <returns>The value in <see cref="!:V"/></returns>
+        </member>
+        <member name="M:Scripts.Tests.CustomDictionary`4.OnBeforeSerialize">
+            <summary>
+            OnBeforeSerialize implementation.
+            </summary>
+        </member>
+        <member name="M:Scripts.Tests.CustomDictionary`4.OnAfterDeserialize">
+            <summary>
+            OnAfterDeserialize implementation.
+            </summary>
+        </member>
+        <member name="T:Scripts.Effects.VertexPair">
+            <summary>
+            Vertex Pair maps two verices to each other, used to find the nearest vertex to a given vertex.
+            </summary>
+        </member>
+        <member name="T:Scripts.Effects.Morpher">
+            <summary>
+            Morpher is responsible for morphing between two meshe.
+            It uses the slider value to determine the percentage of the morphing.
+            </summary>
+        </member>
+        <member name="M:Scripts.Effects.Morpher.CreatePairs1">
+            <summary>
+            Create pairs of vertices, each pair contains a vertex from the old mesh and a vertex from the new mesh.
+            Vertices are mapped by the nearest one to each other.
+            </summary>
+        </member>
+        <member name="M:Scripts.Effects.Morpher.CreatePairs2">
+            <summary>
+            Create pairs of vertices, each pair contains a vertex from the new mesh and a vertex from the old mesh.
+            Vertices are mapped by the nearest one to each other.
+            </summary>
+        </member>
+        <member name="M:Scripts.Effects.Morpher.Deform">
+            <summary>
+            Deform the mesh based on the slider value.
+            </summary>
+        </member>
+        <member name="M:UI.KeyboardPack.ArcDrawer.DrawWireArc(UnityEngine.Vector3,UnityEngine.Vector3,System.Single,System.Single,System.Single)">
+            <summary>
+            Draws a wire arc.
+            </summary>
+            <param name="position"></param>
+            <param name="dir">The direction from which the anglesRange is taken into account</param>
+            <param name="anglesRange">The angle range, in degrees.</param>
+            <param name="radius"></param>
+            <param name="maxSteps">How many steps to use to draw the arc.</param>
+        </member>
+        <member name="T:Authentication.ChainAuthManager">
+            <summary>
+            A wrapper class around https://api-crypto.fusedvr.com APIs for authenticating against the blockchain
+            Using a code, email, or magic link sent to a players which can be authenticated at https://link.fusedvr.com
+            </summary>
+        </member>
+        <member name="M:Authentication.ChainAuthManager.#ctor(System.String,System.String)">
+            <summary>
+            Constructor for the Web3 Manager
+            </summary>
+        </member>
+        <member name="M:Authentication.ChainAuthManager.Register(System.String,System.String,System.Boolean)">
+            <summary>
+            Static call to the /fused/register with an appId and a unique id for the client and creates Web3Manager
+            This unique id will be used to reference the player across sessions if the bearer token is still active
+            If the unique id is an email, then an email be sent to the player to allow them to authenticate
+            Tokens are saved between requests. If you would like to ignore this, please set ignoreCache = true
+            </summary>
+        </member>
+        <member name="M:Authentication.ChainAuthManager.Register">
+            <summary>
+            Calls the /fused/register with an appId and a unique id for given Web3Manager object
+            This unique id will be used to reference the player across sessions if the bearer token is still active
+            If the unique id is an email, then an email be sent to the player to allow them to authenticate
+            </summary>
+        </member>
+        <member name="M:Authentication.ChainAuthManager.AwaitLogin">
+            <summary>
+            Called after Calls the /fused/login with an appId and email address
+            Requires a long polling against the API to ensure the user has time to authenticate
+            Timeout is approximately 6 minutes
+            </summary>
+        </member>
+        <member name="M:Authentication.ChainAuthManager.GetMagicLink">
+            <summary>
+            Requires that the Login Function has been called for the user and app
+            Calls the /fused/getMagicLink endpoint to get the link that authenticates the user 
+            This link should be displayed to the user in the application to enable them to authenticate the service
+            </summary>
+        </member>
+        <member name="M:Authentication.ChainAuthManager.GetAddress">
+            <summary>
+            Requires that the user is authenticated
+            Returns the public address that is located within the JWT token
+            Please note you can also call the /account API with the token to get the public address
+            </summary>
+        </member>
+        <member name="M:Authentication.ChainAuthManager.GetNativeBalance(Authentication.ChainAuthManager.CHAIN)">
+            <summary>
+            Requires that the user is authenticated
+            Gets the currency balance for the user on the given chain.
+            i.e. eth, polygon, bsc, ropsten, mumbai
+            </summary>
+        </member>
+        <member name="M:Authentication.ChainAuthManager.GetERC20Tokens(Authentication.ChainAuthManager.CHAIN)">
+            <summary>
+            Requires that the user is authenticated
+            Gets the erc-20 token balances for the user on the given chain.
+            i.e. eth, polygon, bsc, ropsten, mumbai
+            </summary>
+        </member>
+        <member name="M:Authentication.ChainAuthManager.GetNFTTokens(Authentication.ChainAuthManager.CHAIN)">
+            <summary>
+            Requires that the user is authenticated
+            Gets the nft balances for the user on the given chain.
+            i.e. eth, polygon, bsc, ropsten, mumbai
+            </summary>
+        </member>
+        <member name="M:Authentication.ChainAuthManager.GetBearerKey">
+            <summary>
+            Get the Player Prefs Key to lookup the Bearer Token for FusedVR Chain Auth API Requests
+            </summary>
+        </member>
+        <member name="M:Authentication.ChainAuthManager.GetBearerToken">
+            <summary>
+            Get the Bearer Token for FusedVR Chain Auth API Requests
+            </summary>
+        </member>
+        <member name="M:Authentication.ChainAuthManager.ValidToken(System.String)">
+            <summary>
+            Check if the token is valid by validating app Id and expiration
+            </summary>
+        </member>
+        <member name="T:Authentication.UnityWebRequestAwaiter">
+            <summary>
+            Class to enable asynchronous web requests via Unity 
+            </summary>
+        </member>
+        <member name="T:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.DynamicMoveProvider">
+            <summary>
+            A version of action-based continuous movement that automatically controls the frame of reference that
+            determines the forward direction of movement based on user preference for each hand.
+            For example, can configure to use head relative movement for the left hand and controller relative movement for the right hand.
+            </summary>
+        </member>
+        <member name="T:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.DynamicMoveProvider.MovementDirection">
+            <summary>
+            Defines which transform the XR Origin's movement direction is relative to.
+            </summary>
+            <seealso cref="P:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.DynamicMoveProvider.leftHandMovementDirection"/>
+            <seealso cref="P:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.DynamicMoveProvider.rightHandMovementDirection"/>
+        </member>
+        <member name="F:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.DynamicMoveProvider.MovementDirection.HeadRelative">
+            <summary>
+            Use the forward direction of the head (camera) as the forward direction of the XR Origin's movement.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.DynamicMoveProvider.MovementDirection.HandRelative">
+            <summary>
+            Use the forward direction of the hand (controller) as the forward direction of the XR Origin's movement.
+            </summary>
+        </member>
+        <member name="P:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.DynamicMoveProvider.headTransform">
+            <summary>
+            Directs the XR Origin's movement when using the head-relative mode. If not set, will automatically find and use the XR Origin Camera.
+            </summary>
+        </member>
+        <member name="P:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.DynamicMoveProvider.leftControllerTransform">
+            <summary>
+            Directs the XR Origin's movement when using the hand-relative mode with the left hand.
+            </summary>
+        </member>
+        <member name="P:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.DynamicMoveProvider.leftHandMovementDirection">
+            <summary>
+            Whether to use the specified head transform or controller transform to direct the XR Origin's movement for the left hand.
+            </summary>
+            <seealso cref="T:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.DynamicMoveProvider.MovementDirection"/>
+        </member>
+        <member name="P:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.DynamicMoveProvider.rightHandMovementDirection">
+            <summary>
+            Whether to use the specified head transform or controller transform to direct the XR Origin's movement for the right hand.
+            </summary>
+            <seealso cref="T:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.DynamicMoveProvider.MovementDirection"/>
+        </member>
+        <member name="M:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.DynamicMoveProvider.Awake">
+            <inheritdoc />
+        </member>
+        <member name="M:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.DynamicMoveProvider.ComputeDesiredMove(UnityEngine.Vector2)">
+            <inheritdoc />
+        </member>
+        <member name="T:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.GazeInputManager">
+            <summary>
+            Manages input fallback for <see cref="T:UnityEngine.XR.Interaction.Toolkit.XRGazeInteractor"/> when eye tracking is not available.
+            </summary>
+        </member>
+        <member name="P:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.GazeInputManager.fallbackIfEyeTrackingUnavailable">
+            <summary>
+            Enable fallback to head tracking if eye tracking is unavailable.
+            </summary>
+        </member>
+        <member name="M:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.GazeInputManager.Awake">
+            <summary>
+            See <see cref="T:UnityEngine.MonoBehaviour"/>.
+            </summary>
+        </member>
+        <member name="M:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.GazeInputManager.OnDestroy">
+            <summary>
+            See <see cref="T:UnityEngine.MonoBehaviour"/>.
+            </summary>
+        </member>
+        <member name="T:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.IncrementUIText">
+            <summary>
+            Add this component to a GameObject and call the <see cref="M:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.IncrementUIText.IncrementText"/> method
+            in response to a Unity Event to update a text display to count up with each event.
+            </summary>
+        </member>
+        <member name="P:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.IncrementUIText.text">
+            <summary>
+            The Text component this behavior uses to display the incremented value.
+            </summary>
+        </member>
+        <member name="M:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.IncrementUIText.Awake">
+            <summary>
+            See <see cref="T:UnityEngine.MonoBehaviour"/>.
+            </summary>
+        </member>
+        <member name="M:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.IncrementUIText.IncrementText">
+            <summary>
+            Increment the string message of the Text component.
+            </summary>
+        </member>
+        <member name="T:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.ActionBasedControllerManager">
+            <summary>
+            Use this class to mediate the controllers and their associated interactors and input actions under different interaction states.
+            </summary>
+        </member>
+        <member name="F:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.ActionBasedControllerManager.k_UpdateOrder">
+            <summary>
+            Order when instances of type <see cref="T:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.ActionBasedControllerManager"/> are updated.
+            </summary>
+            <remarks>
+            Executes before controller components to ensure input processors can be attached
+            to input actions and/or bindings before the controller component reads the current
+            values of the input actions.
+            </remarks>
+        </member>
+        <member name="F:UnityEngine.XR.Interaction.Toolkit.Samples.StarterAssets.ActionBasedControllerManager.s_GroupMembers">
+            <summary>
+            Temporary scratch list to populate with the group members of the interaction group.
+            </summary>
+        </member>
+        <member name="T:XRInteraction.XRPokeFollowAffordance">
+            <summary>
+            Follow animation affordance for <see cref="T:UnityEngine.XR.Interaction.Toolkit.AffordanceSystem.State.IPokeStateDataProvider"/>, such as <see cref="T:UnityEngine.XR.Interaction.Toolkit.Filtering.XRPokeFilter"/>.
+            Used to animate a pressed transform, such as a button to follow the poke position.
+            </summary>
+        </member>
+        <member name="P:XRInteraction.XRPokeFollowAffordance.pokeFollowTransform">
+            <summary>
+            Transform that will animate along the axis of interaction when this interactable is poked.
+            Note: Must be a direct child GameObject as it moves in local space relative to the poke target's transform.
+            </summary>
+        </member>
+        <member name="P:XRInteraction.XRPokeFollowAffordance.smoothingSpeed">
+            <summary>
+            Multiplies transform position interpolation as a factor of <see cref="P:UnityEngine.Time.deltaTime"/>. If <c>0</c>, no smoothing will be applied.
+            </summary>
+        </member>
+        <member name="P:XRInteraction.XRPokeFollowAffordance.returnToInitialPosition">
+            <summary>
+            When this component is no longer the target of the poke, the <see cref="P:XRInteraction.XRPokeFollowAffordance.pokeFollowTransform"/> returns to the original position.
+            </summary>
+        </member>
+        <member name="P:XRInteraction.XRPokeFollowAffordance.applyIfChildIsTarget">
+            <summary>
+            Whether to apply the follow animation if the target of the poke is a child of this transform.
+            This is useful for UI objects that may have child graphics.
+            </summary>
+        </member>
+        <member name="P:XRInteraction.XRPokeFollowAffordance.clampToMaxDistance">
+            <summary>
+            Whether to keep the <see cref="P:XRInteraction.XRPokeFollowAffordance.pokeFollowTransform"/> from moving past <see cref="P:XRInteraction.XRPokeFollowAffordance.maxDistance"/> from the poke target.
+            </summary>
+        </member>
+        <member name="P:XRInteraction.XRPokeFollowAffordance.maxDistance">
+            <summary>
+            The maximum distance from this transform that the <see cref="P:XRInteraction.XRPokeFollowAffordance.pokeFollowTransform"/> can move when
+            <see cref="P:XRInteraction.XRPokeFollowAffordance.clampToMaxDistance"/> is <see langword="true"/>.
+            </summary>
+        </member>
+        <member name="M:XRInteraction.XRPokeFollowAffordance.Awake">
+            <summary>
+            See <see cref="T:UnityEngine.MonoBehaviour"/>.
+            </summary>
+        </member>
+        <member name="M:XRInteraction.XRPokeFollowAffordance.Start">
+            <summary>
+            See <see cref="T:UnityEngine.MonoBehaviour"/>.
+            </summary>
+        </member>
+        <member name="M:XRInteraction.XRPokeFollowAffordance.OnDestroy">
+            <summary>
+            See <see cref="T:UnityEngine.MonoBehaviour"/>.
+            </summary>
+        </member>
+        <member name="M:XRInteraction.XRPokeFollowAffordance.LateUpdate">
+            <summary>
+            See <see cref="T:UnityEngine.MonoBehaviour"/>.
+            </summary>
+        </member>
+    </members>
+</doc>

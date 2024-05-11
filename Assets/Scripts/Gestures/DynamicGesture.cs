@@ -15,7 +15,7 @@ namespace Scripts.Gestures
 
     public class DynamicGesture // frame + IRecognizable = оружие
     {
-        public List<GestureFrame> frames { get; }
+        public List<FrameData> frames { get; }
         public GestureType gestureType { get; private set; }
         private IRecognizable _recognizable;
 
@@ -37,7 +37,7 @@ namespace Scripts.Gestures
             }
         }
 
-        public DynamicGesture(string name, GestureType type, List<GestureFrame> frames, IRecognizable recognizable)
+        public DynamicGesture(string name, GestureType type, List<FrameData> frames, IRecognizable recognizable)
         {
             Name = name;
             gestureType = type;
@@ -54,14 +54,14 @@ namespace Scripts.Gestures
         public bool HasFrame(string frame) => GestureMapper.PrefixOfName(frame) == Name &&
                                               GestureMapper.IndexOfName(frame) < frames.Count;
 
-        public void AddFrame(GestureFrame frame)
+        public void AddFrame(FrameData frame)
         {
             frames.Add(frame);
         }
 
-        //    public GestureFrame GetGestureFrame() => _currentGesture < frames.Count ? frames[_currentGesture] : null;
+        //    public FrameData GetFrameData() => _currentGesture < frames.Count ? frames[_currentGesture] : null;
 
-        public GestureFrame GetNextFrameOf(GestureFrame frame)
+        public FrameData GetNextFrameOf(FrameData frame)
         {
             if (frame == null)
                 return frames[0];
@@ -87,10 +87,10 @@ namespace Scripts.Gestures
             }
         }
 
-        public bool TryGetGestureFrame(string name, out GestureFrame gestureFrame)
+        public bool TryGetFrameData(string name, out FrameData frameData)
         {
             var id = GestureMapper.IndexOfName(name);
-            gestureFrame = id < frames.Count ? frames[id] : null;
+            frameData = id < frames.Count ? frames[id] : null;
             return id < frames.Count;
         }
 
@@ -105,7 +105,7 @@ namespace Scripts.Gestures
             Debug.Log(log);
         }
 
-        public GestureFrame this[int i]
+        public FrameData this[int i]
         {
             get => frames[i];
         }
