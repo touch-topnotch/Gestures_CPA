@@ -23,3 +23,4 @@ You may have a number of errors after importing. You can deal with them by reins
 It is also possible to see this error. Just ignore it, because it connected with Meta Organization geographic limitations.
 
 The next step is - [Analysis of the project architecture](ProjectArchitecture.md)
+// use Scripts.xml as documentation
