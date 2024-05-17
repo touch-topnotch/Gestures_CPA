@@ -30,18 +30,11 @@
 
 
 
-<pre><code>&lt;style&gt;
-.container {
-    display: flex;
-    align-items: center;
-}
-&lt;/style&gt;
-
-&lt;div class="container"&gt;
-    &lt;div class="left-div"&gt;
-        &lt;p&gt;Находится это добро по пути &lt;strong&gt;Tools -> CharacterCreator&lt;/strong&gt;&lt;/p&gt;
-    &lt;/div&gt;
-    &lt;div class="right-div"&gt;
-        &lt;img src="source/cc_1.png" alt="Description of the image" class="image-container"&gt;
-    &lt;/div&gt;
-&lt;/div&gt;</code></pre>
+<div style="display: flex; align-items: center;">
+    <div style="flex: 1; text-align: center; ">
+        <p>Находится это добро по пути <strong>Tools -> CharacterCreator</strong></p>
+    </div>
+    <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-end;">
+        <img src="source/cc_1.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
+       </div>
+</div>
