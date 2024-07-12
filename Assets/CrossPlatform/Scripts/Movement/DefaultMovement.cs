@@ -11,15 +11,15 @@ namespace CrossPlatform.Movement
         private Transform _parentAnchor;
         private Vector3 _velocity;
         
-        public void StartMove(ref UpdateDelegate updateDelegate)
+        public void StartMove(ref OnUpdate onUpdate)
         {
-            updateDelegate += OnUpdate;
+            onUpdate += UpdateVelocity;
         }
-        public void StopMove(ref UpdateDelegate updateDelegate)
+        public void StopMove(ref OnUpdate onUpdate)
         {
-            updateDelegate -= OnUpdate;
+            onUpdate -= UpdateVelocity;
         }
-        private void OnUpdate()
+        private void UpdateVelocity()
         {
             _velocity = HeadInput.HeadVelocity(_heapAnchor.position, _parentAnchor.position, 0.2f, 1f);
             _parentAnchor.position += _velocity;

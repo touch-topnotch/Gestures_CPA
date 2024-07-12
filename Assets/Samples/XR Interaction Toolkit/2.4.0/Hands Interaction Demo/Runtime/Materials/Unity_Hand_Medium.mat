@@ -23,6 +23,8 @@ Material:
   m_Name: Unity_Hand_Medium
   m_Shader: {fileID: -6465566751694194690, guid: 89a6790c28795dd4987bb267c3d05338,
     type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _BUILTIN_SURFACE_TYPE_TRANSPARENT
   - _SURFACE_TYPE_TRANSPARENT
@@ -35,6 +37,7 @@ Material:
     RenderType: Transparent
   disabledShaderPasses:
   - DepthOnly
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -84,6 +87,7 @@ Material:
     - Vector1_69b40c1ee2e1422cbfcae389f53b36a9: 1
     - Vector1_8671db567d5d4784b29e8ff511bd8f1e: 1
     - _AlphaClip: 0
+    - _AlphaToMask: 0
     - _BUILTIN_AlphaClip: 0
     - _BUILTIN_Blend: 0
     - _BUILTIN_CullMode: 2
@@ -153,14 +157,14 @@ Material:
     - _ColorBottom: {r: 0.12156857, g: 0.12549016, b: 0.12941167, a: 1}
     - _ColorTop: {r: 0.19607836, g: 0.20392147, b: 0.21176466, a: 1}
     - _Color_1: {r: 0, g: 0, b: 0, a: 0.5803922}
-    - _EdgeColor: {r: 0.9, g: 0.9, b: 0.9, a: 0.8}
+    - _EdgeColor: {r: 0.090196066, g: 0.15995726, b: 0.5764706, a: 0.8}
     - _FadeCenter: {r: 0, g: 0, b: 0.15, a: 0}
     - _FadeCenter_1: {r: 1, g: 4, b: 1, a: 0}
     - _FadeScale: {r: 1, g: 4, b: 1, a: 0}
-    - _FingerColor_1: {r: 1, g: 1, b: 1, a: 0}
-    - _FingerColor_2: {r: 1, g: 1, b: 1, a: 0}
-    - _FingerColor_3: {r: 1, g: 1, b: 1, a: 0}
-    - _FingerColor_4: {r: 1, g: 1, b: 1, a: 0}
+    - _FingerColor_1: {r: 0.3254902, g: 0.45490196, b: 1, a: 0.28235295}
+    - _FingerColor_2: {r: 0.3254902, g: 0.45490196, b: 1, a: 0.28235295}
+    - _FingerColor_3: {r: 0.3254902, g: 0.45490196, b: 1, a: 0.28235295}
+    - _FingerColor_4: {r: 0.3254902, g: 0.45490196, b: 1, a: 0.28235295}
     - _FingerGlowColor: {r: 1, g: 1, b: 1, a: 1}
     - _MainColor: {r: 0.1, g: 0.1, b: 0.1, a: 0.65882355}
     - _OutlineColor: {r: 0.53773576, g: 0.53773576, b: 0.53773576, a: 1}
@@ -168,7 +172,7 @@ Material:
     - _PinchColor: {r: 0.95, g: 0.95, b: 0.95, a: 1}
     - _PinchPosition: {r: 0, g: 0, b: 0, a: 0}
     - _Range: {r: 0.1, g: 1, b: 0, a: 0}
-    - _ThumbColor: {r: 1, g: 1, b: 1, a: 0}
+    - _ThumbColor: {r: 0.32549024, g: 0.45491952, b: 1, a: 0.28235295}
     - _Vector2: {r: 0.2, g: 0.88, b: 0, a: 0}
     - _WristLocalOffset: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []

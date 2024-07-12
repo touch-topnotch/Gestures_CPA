@@ -7,7 +7,7 @@ using UnityEngine.Serialization;
 
 namespace CrossPlatform.Scripts
 {
-    public delegate void UpdateDelegate();
+    public delegate void OnUpdate();
 
     public class Initializer : MonoBehaviour
     {
@@ -17,7 +17,7 @@ namespace CrossPlatform.Scripts
         [SerializeField] private GestureFramesRecorder recorder;
         
         private Player _player;
-        private UpdateDelegate _updateDelegate;
+        private OnUpdate _onUpdate;
         
         public void Awake()
         {
@@ -28,12 +28,18 @@ namespace CrossPlatform.Scripts
         public void SpawnPlayers()
         {
             var prefab = GameObject.Instantiate(this.playerPrefab);
+            if (!prefab.GetComponent<Player>())
+            {
+                Debug.LogWarning($"{playerPrefab.name} prefab hasn't Player component!");
+                return;
+            }
+
             _player = prefab.GetComponent<Player>();
             _player.Initialize();
         }
         private void FixedUpdate()
         {
-            _updateDelegate?.Invoke();
+            _onUpdate?.Invoke();
         }
     }
 }

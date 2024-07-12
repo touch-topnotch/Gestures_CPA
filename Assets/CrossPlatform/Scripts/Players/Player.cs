@@ -8,6 +8,7 @@ namespace CrossPlatform.PlayerLogic
         public abstract void Initialize();
         public abstract Vector3[] GetLeftHandPoints();
         public abstract Vector3[] GetRightHandPoints();
+        
     }
 
 }

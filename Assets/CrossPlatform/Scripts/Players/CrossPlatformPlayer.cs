@@ -8,36 +8,38 @@ namespace CrossPlatform.PlayerLogic
 {
     public class CrossPlatformPlayer:Player
     {
-        public XRInteractionGroup leftHand;
-        public XRInteractionGroup rightHand;
-        
-        public XRInputModalityManager inputModalityManager;
-        private bool _isHandsEnabled = false;
+        public XRInputModalityManager inputManager;
+        public HandSkeleton leftHand;
+        public HandSkeleton rightHand;
+        public PointsHandGenerator pointsHandGen;
         public override void Initialize()
-        {
-            inputModalityManager.trackedHandModeStarted.AddListener(OnHandEnabled);
-            inputModalityManager.trackedHandModeEnded.AddListener(OnHandDisabled);
+        { 
+            InitializeHands();
         }
-        public override Vector3[] GetLeftHandPoints()
-        {
-            return null;
-        }
+        public override Vector3[] GetLeftHandPoints() => leftHand.GetBones();
 
-        public override Vector3[] GetRightHandPoints()
+        public override Vector3[] GetRightHandPoints() => rightHand.GetBones();
+
+     
+        private void InitializeHands()
         {
-            return null;
+            if (!leftHand)
+                leftHand = transform.Find("Left Hand").GetComponent<HandSkeleton>();
+            if (!rightHand)
+                rightHand = transform.Find("Right Hand").GetComponent<HandSkeleton>();
+            
+            inputManager.trackedHandModeStarted.AddListener(HandEnabled);
+            inputManager.trackedHandModeStarted.AddListener(leftHand.HandEnabled);
+            inputManager.trackedHandModeStarted.AddListener(rightHand.HandEnabled);
+            inputManager.trackedHandModeStarted.AddListener(pointsHandGen.Initialize);
+            
+            inputManager.trackedHandModeEnded.AddListener(HandDisabled);
+            inputManager.trackedHandModeEnded.AddListener(leftHand.HandDisabled);
+            inputManager.trackedHandModeEnded.AddListener(rightHand.HandDisabled);
             
         }
         
-
-        
-        private void OnHandEnabled()
-        {
-            _isHandsEnabled = true;
-        }
-        private void OnHandDisabled()
-        {
-            _isHandsEnabled = false;
-        }
+        private void HandEnabled(){}
+        private void HandDisabled(){}
     }
 }
