@@ -17,8 +17,10 @@ namespace CrossPlatform.Tests
         public Button newGestureButton;
         public Button continueRecording;
         public TMP_Text gestureName;
+        public GesturesLibrary gesturesLibrary;
         private Player _player;
         private GFramesCompiler compiler = new GFramesCompiler();
+        
         
         private string current_name = "";
         public string Name
@@ -39,7 +41,7 @@ namespace CrossPlatform.Tests
         public void Initialize(Player player)
         {
             _player = player;
-            compiler.Initialize(XRInteractor);
+            compiler.Initialize(XRInteractor, ref gesturesLibrary);
             leftToggle.onValueChanged.AddListener(RecordLeft);
             rightToggle.onValueChanged.AddListener(RecordRight);
             nameInput.onEndEdit.AddListener(RecordName);
@@ -63,25 +65,26 @@ namespace CrossPlatform.Tests
 
         public virtual void NewGestureGroup()
         {
+            _player.SupHandCreator.CreateNewStack(left);
+            _player.SupHandCreator.AddToStack(right);
+            
             SendToCompiler();
             ReloadToggles();
             Name = "";
         }
         public void ContinueRecording()
         {
+            _player.SupHandCreator.AddToStack(left);
+            _player.SupHandCreator.AddToStack(right);
+            if (Name.Split('_').Length == 1)
+                Name += "_0";
             SendToCompiler();
             ReloadToggles();
             AddIndexToName();
         }
-
         private void SendToCompiler()
         {
             compiler.Record(left, right, current_name);
-            if (_player is CrossPlatformPlayer)
-            {
-                _player.GetComponent<CrossPlatformPlayer>().pointsHandGen.ReplaceLeft(left, Color.blue);
-                _player.GetComponent<CrossPlatformPlayer>().pointsHandGen.ReplaceRight(right, Color.red);
-            }
         }
         
         public virtual void RecordName(string name)

@@ -35,22 +35,11 @@ namespace CrossPlatform.Gestures
                 }
             }
         }
-        
-        public static DynamicGesture DynamicGestureByPath(string path)
-        {
-            // names = splited path by '/'
-            return new DynamicGesture();
-        }
 
         public static List<DynamicGesture> PossibleGestures() // change the name!
         {
             // go by path in GestureGraph.json and return all names of this path
             return null;
         }
-
-       
-
     }
-
- 
 }

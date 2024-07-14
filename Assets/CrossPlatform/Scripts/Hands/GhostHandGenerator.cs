@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace CrossPlatform.Gestures
 {
-    public class GhostHandGenerator: MonoBehaviour, IHandVisualiser
+    public class GhostHandGenerator: MonoBehaviour
     {
         public GameObject LeftHand;
         public GameObject RightHand;

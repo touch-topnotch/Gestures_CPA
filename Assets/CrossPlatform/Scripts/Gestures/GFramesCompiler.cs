@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 using CrossPlatform.Static;
 using CrossPlatform.Network;
-
+using Unity.VisualScripting.FullSerializer;
 using HandAtlas =  System.Collections.Generic.Dictionary<string, string[]>;
 
 using PlatformAtlas = System.Collections.Generic.Dictionary<string,
@@ -24,15 +24,15 @@ namespace CrossPlatform.Gestures
     {
         private RuntimeXRInteractor _xrInteractor;
         private readonly string _jsonPath = "Assets/CrossPlatform/Scripts/Gestures/GFramesLibrary.json";
-        private List<GestureFrame> _framesLibrary = new();
-
+        private GesturesLibrary _library;
         private FrameAtlas _framesDict = new();
 
-        public void Initialize(RuntimeXRInteractor interactor)
+        public void Initialize(RuntimeXRInteractor interactor, ref GesturesLibrary library)
         {
             _xrInteractor = interactor;
+            _library = library;
             Read();
-
+          
         }
 
         public void Read()
@@ -41,7 +41,7 @@ namespace CrossPlatform.Gestures
                 JsonConvert.DeserializeObject<FrameAtlas>(DataChanel.Get(_jsonPath));
             if (reddenFrames == null)
                 return;
-            Debug.Log($"Reading gesture dataBase ...");
+            
             _framesDict = reddenFrames;
 
             foreach (KeyValuePair<string, PlatformAtlas> jsonFrame in reddenFrames)
@@ -56,20 +56,25 @@ namespace CrossPlatform.Gestures
                     {
                         foreach (KeyValuePair<string, string[]> handP in jsonPlatform.Value)
                         {
+                            
+                            var convertedPoints =  Vector3Converter.convertToVector3(handP.Value);
                             if (handP.Key == "left")
                             {
-                                frame.LeftPoints = Vector3Converter.convertToVector3(handP.Value);
+
+                                frame.LeftPoints = convertedPoints;
+
                             }
                             else if (handP.Key == "right")
                             {
-                                frame.RightPoints = Vector3Converter.convertToVector3(handP.Value);
+                                frame.RightPoints = convertedPoints;
                             }
+
+                            
                         }
                     }
                 }
 
-                _framesLibrary.Add(frame);
-                Debug.Log($"Added gesture {frame.Name} with type {frame.HandUsed.ToString()}");
+                _library.SetGestureFrame(frame);
             }
 
         }
