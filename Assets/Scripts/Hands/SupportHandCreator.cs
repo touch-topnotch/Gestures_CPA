@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Scripts.Events;
 using Scripts.Gestures;
 using Scripts.PlayerLogic;
+using Scripts.Static;
 using UnityEngine;
 using Zenject;
 
@@ -45,7 +46,7 @@ namespace Scripts.Hands
             ActiveHands[^_hiddenHands].ChangePosition(points, parent);
             ActiveHands[^_hiddenHands].Show();
             _hiddenHands--;
-            
+            l.rl("override prev");
         }
 
         public void AddToStack(HandsStruct hands)
@@ -58,10 +59,29 @@ namespace Scripts.Hands
         {
             if (index >= ActiveHands.Count - _hiddenHands)
             {
-                Debug.LogAssertion("Index out of range");
+                AddToStack(points);
                 return;
             }
-            ActiveHands[index].ChangePosition(points);
+            ActiveHands[index].ChangePosition(points, parent);
+        }
+
+        public void OverrideHands(HandsStruct hands)
+        {
+            if (ActiveHands.Count >= 2)
+            {
+                OverrideHand(hands.LeftPoints, 0);
+                OverrideHand(hands.RightPoints, 1);
+            }
+            else
+            {
+                if (ActiveHands.Count == 1)
+                {
+                    OverrideHand(hands.LeftPoints, 0);
+                    AddToStack(hands.RightPoints);
+                    return;
+                }
+                AddToStack(hands);
+            }
         }
 
         public void MoveHand(Vector3[] points, int index)
@@ -95,6 +115,7 @@ namespace Scripts.Hands
 
         private void SpawnNew(Vector3[] points)
         {
+            l.rl("Spawn new");
             var newHand = GameObject.Instantiate(SupHandPrefab, parent);
             newHand.gameObject.name = newHand.gameObject.name.Replace("(Clone)", $"_{ActiveHands.Count}");
             SupportHandVisualizer hand = newHand.GetComponent<SupportHandVisualizer>();

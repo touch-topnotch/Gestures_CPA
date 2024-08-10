@@ -45,7 +45,7 @@ namespace Scripts.Gestures
             _currentGesture += 1;
         }
 
-        //private void AllFramesDetected() => _currentGesture = 0;
+        public void AllFramesDetected() => _currentGesture = 0;
 
     }
 }

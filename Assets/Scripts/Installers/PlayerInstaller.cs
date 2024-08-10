@@ -20,7 +20,7 @@ namespace Scripts.Installers
         private Player _xrPlayer;
         public override void InstallBindings()
         { 
-            _xrPlayer = Spawner.SpawnPrefab(playerPrefab, Container, spawnPoint).GetComponent<Player>();
+            _xrPlayer = Spawner.SpawnInjectedPrefab(playerPrefab, Container, spawnPoint).GetComponent<Player>();
             Container.Bind<Player>().FromInstance(_xrPlayer).AsSingle().NonLazy();
             Container.Bind<RuntimeXRInteractor>().FromInstance(_xrPlayer.xrInteractor).AsSingle().NonLazy();
             Container.Bind<OnGameStateChanged>().FromInstance(_xrPlayer.GameStateChanged).AsSingle().NonLazy();

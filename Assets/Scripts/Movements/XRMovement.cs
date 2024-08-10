@@ -1,4 +1,5 @@
 using Scripts.Events;
+using Unity.Mathematics;
 using UnityEngine;
 using Zenject;
 
@@ -15,7 +16,18 @@ namespace Scripts.Movements
         
         [SerializeField]
         protected Transform pivot;
-        
+
+        public float XZBoard
+        {
+            get => xzBoard;
+            set => xzBoard = math.clamp(value, 0, 5);
+        }
+
+        public float YBoard
+        {
+            get => yBoard;
+            set => yBoard = math.clamp(value, 0, 5);
+        }
         private Vector3 _velocity;
         
         public override void StartMove()
@@ -26,9 +38,9 @@ namespace Scripts.Movements
 
         protected override void UpdateVelocity()
         {
-            _velocity = HeadManipulations.HeadVelocity(pivot.position, headAnchor.position, xzBoard, yBoard,moveSpeed,
-                jumpSpeed);
-            ParentRigidbody.AddForce(_velocity);
+            _velocity = HeadManipulations.HeadVelocity(pivot.position, headAnchor.position, xzBoard, yBoard, moveSpeed,
+                jumpSpeed) / 10;
+            parentMoveController.Move(_velocity);
         }
 
     }
