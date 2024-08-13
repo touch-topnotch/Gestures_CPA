@@ -47,6 +47,7 @@ namespace Scripts.Design
                 creator.MoveHand(dGesture.Frames[i].Hands.LeftPoints, 0);
                 creator.MoveHand(dGesture.Frames[i].Hands.RightPoints, 1);
                 i += 1;
+                print("try to move");
                 yield return _waitGesture;
             }
             creator.HideHands();
