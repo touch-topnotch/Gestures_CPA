@@ -39,26 +39,16 @@ namespace Scripts.Gestures.GGUI
 
      
     }
-    public class DG_Fire: GUIGesture
+
+    public class DG_Earth : GUIGesture
     {
-        public DG_Fire(ref FrameDetected onFrameDetected) : base(ref onFrameDetected)
+        public DG_Earth(ref FrameDetected onFrameDetected) : base(ref onFrameDetected)
         {
         }
 
-        protected override void ShowEffects(int frameId, GestureFrame frame)
+        protected override void ShowEffects(int frameId, GestureFrame gFrame)
         {
-            switch (frameId)
-            {
-                case 0:
-                    Frame0(frame);
-                    break;
-            }
+            
         }
-
-        private void Frame0(GestureFrame frame)
-        {   
-            Debug.Log("Типо спавню огонь в указательном пальце левой руки: " + frame.Hands.LeftPoints[0]);
-        }
-
     }
 }

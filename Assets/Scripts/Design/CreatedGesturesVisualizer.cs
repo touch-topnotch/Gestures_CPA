@@ -16,12 +16,13 @@ namespace Scripts.Design
         public GameObject togglePrefab;
         public float waitTime;
 
-        [Inject] private GesturesLibrary _library;
+        private GesturesLibrary _library;
         
         private WaitForSeconds _waitGesture;
-
-        private void Awake()
+        [Inject]
+        private void Construct(GesturesLibrary library)
         {
+            _library = library;
             _waitGesture = new WaitForSeconds(waitTime);
         }
 

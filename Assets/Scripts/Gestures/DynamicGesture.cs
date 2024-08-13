@@ -47,6 +47,16 @@ namespace Scripts.Gestures
 
         public void AllFramesDetected() => _currentGesture = 0;
 
+        public void LogFrames()
+        {
+            var log = $"Gesture  {Name} contains: ";
+            for (int i = 0; i < Frames.Count; i++)
+            {
+                log += Frames[i].name + " - base name: "+ Frames[i].baseName + ", ";
+            }
+
+            Debug.Log(log);
+        }
     }
 }
 
