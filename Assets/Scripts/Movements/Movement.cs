@@ -1,6 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 using Scripts.Events;
+using Scripts.PlayerLogic;
 using Scripts.Static;
 using UnityEngine;
 using Zenject;
@@ -11,33 +12,34 @@ namespace Scripts.Movements
     public abstract class Movement : MonoBehaviour
     {
         [SerializeField] protected Transform ParentAnchor;
+        [SerializeField] protected bool moveOnAwake;
         protected CharacterController parentMoveController;
 
-        public UpdateEvent OnUpdate;
-        
-        private bool _isStartedInConstruct = false;
+        private NetworkUser _networkUser;
+        private UpdateEvent _onUpdate;
         private bool _isMoved = false;
         
         [Inject]
-        protected void Construct(UpdateEvent onUpdate)
+        protected virtual void Construct(UpdateEvent onUpdate)
         {
             Spawner.TryGetComponent(ParentAnchor,out parentMoveController);
-            OnUpdate = onUpdate;
-            if(_isStartedInConstruct)
+            _onUpdate = onUpdate;
+            if(moveOnAwake)
                 StartMove();
         }
 
         public virtual void StartMove()
         {
-            if (OnUpdate == null)
+            if (_onUpdate == null)
             {
-                _isStartedInConstruct = true;
+                moveOnAwake = true;
                 return;
             }
 
             if (_isMoved)
                 return;
-            OnUpdate.AddListener(UpdateVelocity);
+            
+            _onUpdate.AddListener(UpdateVelocity);
             _isMoved = true;
             
             Debug.Log("Movement started");
@@ -48,14 +50,17 @@ namespace Scripts.Movements
             if(!_isMoved)
                 return;
             
-            OnUpdate.RemoveListener(UpdateVelocity);
+            _onUpdate.RemoveListener(UpdateVelocity);
             _isMoved = false;
             
             Debug.Log("Movement stopped");
         }
+        
 
         protected virtual void UpdateVelocity()
         {
         }
+
+   
     }
 }

@@ -1,6 +1,3 @@
-using Scripts.Gestures;
-using Scripts.Hands;
-using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit.Inputs;
 
 namespace Scripts.PlayerLogic

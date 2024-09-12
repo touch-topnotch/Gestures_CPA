@@ -1,14 +1,18 @@
 ﻿using Scripts.Events;
+using Scripts.Network;
 using Scripts.Static;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 namespace Scripts.Hands
 {
+    [RequireComponent(typeof(ClientTransform))]
     [RequireComponent(typeof(LineRenderer))]
     public class BoneJoint: MonoBehaviour
     {
-        public Transform Parent;
+        
         public float speed = 4f;
+        [HideInInspector] public Transform parent;
         private LineRenderer _lineRenderer;
         private Vector3 target;
         private UpdateEvent _onUpdate;
@@ -22,7 +26,7 @@ namespace Scripts.Hands
         public void Initialize()
         {
             _lineRenderer = GetComponent<LineRenderer>();
-            if (Parent == null)
+            if (parent == null)
             {
                 _lineRenderer.enabled = false;
             }
@@ -30,11 +34,11 @@ namespace Scripts.Hands
         }
         public void UpdateLine()
         {
-            if (Parent == null)
+            if (parent == null)
                 return;
             
             _lineRenderer.SetPosition(0, transform.position);
-            _lineRenderer.SetPosition(1, Parent.position);
+            _lineRenderer.SetPosition(1, parent.position);
         }
 
         public void SetPositionSmooth(Vector3 position, ref UpdateEvent onUpdate)
@@ -46,12 +50,12 @@ namespace Scripts.Hands
 
 
         public void UpdatePosition()
-        {
+        {  
             if (transform.position == target)
             {
                 _onUpdate.RemoveListener(UpdatePosition);
                 return;
-            }
+            }  
 
             transform.position = Vector3.Lerp(transform.position, target, speed * Time.deltaTime);
             UpdateLine();

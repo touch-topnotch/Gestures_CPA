@@ -31,7 +31,6 @@ namespace Scripts.Gestures
         
         public void RecognizeDynamicGesture(List<DynamicGesture> possibleGestures, ref RecognitionEvent onRecognized)
         {
-            
             _onRecognized = onRecognized;
             _possibleGestures = possibleGestures;
             _possibleFrames = new List<GestureFrame>();
@@ -61,7 +60,7 @@ namespace Scripts.Gestures
             var приблизительныйFrameId = RecognizeFrameПриблизительно();
             if (приблизительныйFrameId != -1)
             {
-                _player.supHandCreator.OverrideHands(_possibleFrames[приблизительныйFrameId].Hands);
+                _player.ownUser.handsVisualiser.OverrideHands(_possibleFrames[приблизительныйFrameId].Hands);
                 l.rl("рисую приблизительный " + _possibleFrames[приблизительныйFrameId].name);
             }
         }
@@ -133,7 +132,7 @@ namespace Scripts.Gestures
 
         public void HideHands()
         {
-            _player.supHandCreator.HideHands();
+            _player.ownUser.handsVisualiser.HideHands();
         }
 
         private void LogPossibleFrames()

@@ -74,6 +74,16 @@ namespace Scripts.Static
             return new Vector3(x, y, z);
         }
 
+        public static Vector3[] TransfToPos(in Transform[] transf)
+        {
+            Vector3[] positions = new Vector3[transf.Length];
+            for (int i = 0; i < transf.Length; i++)
+            {
+                positions[i] = transf[i].position;
+            }
+
+            return positions;
+        }
         public static void LogVec3(Vector3 vec)
         {
             Debug.Log(string.Format("{0:N2}", vec.x) +", "+ string.Format("{0:N2}", vec.y)+", " + string.Format("{0:N2}", vec.z));
