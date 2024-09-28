@@ -60,7 +60,7 @@ namespace Scripts.Gestures
             var приблизительныйFrameId = RecognizeFrameПриблизительно();
             if (приблизительныйFrameId != -1)
             {
-                _player.ownUser.handsVisualiser.OverrideHands(_possibleFrames[приблизительныйFrameId].Hands);
+              //  _player.ownUser.bodyParts.Hands.OverrideHands(_possibleFrames[приблизительныйFrameId].Hands); // fix
                 l.rl("рисую приблизительный " + _possibleFrames[приблизительныйFrameId].name);
             }
         }
@@ -90,13 +90,13 @@ namespace Scripts.Gestures
         {
             for(int i = 0; i < _possibleFrames.Count; i++)
             {
-                if (!_player.playerHands.IsRecognized)
+                if (!_player.bodyAnchors.Hands.IsRecognized)
                 {
                     return -1;
                 }
              
-                if (RecognizeHand(_possibleFrames[i].Hands.LeftPoints, _player.playerHands.LeftSkeleton.GetTransforms(), _player.transform, gQuality, gHandOffset)
-                    && RecognizeHand(_possibleFrames[i].Hands.RightPoints, _player.playerHands.RightSkeleton.GetTransforms(),_player.transform, quality, gHandOffset))
+                if (RecognizeHand(_possibleFrames[i].Hands.LeftBones.Positions, _player.bodyAnchors.Hands.leftHand.points, _player.transform, gQuality, gHandOffset)
+                    && RecognizeHand(_possibleFrames[i].Hands.RightBones.Positions, _player.bodyAnchors.Hands.rightHand.points,_player.transform, quality, gHandOffset))
                 {
                     return i;
                 }
@@ -132,7 +132,7 @@ namespace Scripts.Gestures
 
         public void HideHands()
         {
-            _player.ownUser.handsVisualiser.HideHands();
+           // _player.ownUser.bodyParts.LeftHand.  //fix
         }
 
         private void LogPossibleFrames()

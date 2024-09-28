@@ -25,8 +25,9 @@ namespace Scripts.Installers
             _xrPlayer = SpawnPlayer(Container); // ???
             Container.Bind<Player>().FromInstance(_xrPlayer).AsSingle().NonLazy();
             Container.Bind<RuntimeXRInteractor>().FromInstance(_xrPlayer.xrInteractor).AsSingle();
-            Container.Bind<OnGameStateChanged>().FromInstance(_xrPlayer.GameStateChanged).AsSingle();
-            Container.Bind<UserHands>().FromInstance(_xrPlayer.playerHands).AsSingle();
+            Container.Bind<OnGameStateChanged>().FromInstance(_xrPlayer.gameStateChanged).AsSingle();
+            Container.Bind<UserHands>().FromInstance(_xrPlayer.bodyAnchors.Hands).AsSingle();
+            DontDestroyOnLoad(_xrPlayer.gameObject);
             _xrPlayer.Initialize();
         }
 

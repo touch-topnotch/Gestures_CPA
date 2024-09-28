@@ -6,8 +6,8 @@ namespace Scripts.Hands
 {
     public abstract class UserHands: MonoBehaviour
     {
-        public HandSkeleton LeftSkeleton;
-        public HandSkeleton RightSkeleton;
+        public HandMesh leftHand;
+        public HandMesh rightHand;
         public bool IsRecognized { get; private set; }
 
 

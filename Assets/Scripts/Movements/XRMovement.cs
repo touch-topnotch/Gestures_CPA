@@ -8,7 +8,6 @@ namespace Scripts.Movements
     public class XRMovement : Movement
 
     {
-        [SerializeField] protected Transform headAnchor;
         [Range(0, 3f)] [SerializeField] protected float xzBoard;
         [Range(0, 3f)] [SerializeField] protected float yBoard;
         [Range(0, 10f)] [SerializeField] protected float jumpSpeed;
@@ -32,13 +31,13 @@ namespace Scripts.Movements
         
         public override void StartMove()
         {
-            pivot.position = headAnchor.position;
+            pivot.position = anchors.Head.position;
             base.StartMove();
         }
 
         protected override void UpdateVelocity()
         {
-            _velocity = HeadManipulations.HeadVelocity(pivot.position, headAnchor.position, xzBoard, yBoard, moveSpeed,
+            _velocity = HeadManipulations.HeadVelocity(pivot.position, anchors.Head.position, xzBoard, yBoard, moveSpeed,
                 jumpSpeed) / 10;
             parentMoveController.Move(_velocity);
         }

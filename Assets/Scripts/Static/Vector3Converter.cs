@@ -28,6 +28,26 @@ namespace Scripts.Static
 
             return jArr;
         }
+
+        public static Quaternion[] convertToQuaternion(string[] value)
+        {
+            if (value == null || value.Length == 0)
+            {
+                return null;
+            }
+            Quaternion[] jArr = new Quaternion[value.Length];
+            for (int i = 0; i < value.Length; i++)
+            {
+                var words = value[i].Split(", ");
+                var vec = new Vector3();
+                vec.x = float.Parse(words[0]);
+                vec.y = float.Parse(words[1]);
+                vec.z = float.Parse(words[2]);
+                jArr[i] = Quaternion.Euler(vec);
+            }
+
+            return jArr;
+        }
         public static string[] convertToString(Vector3[] value)
         {
             
@@ -38,6 +58,22 @@ namespace Scripts.Static
             string[] jArr = new string[value.Length];
             for (int i = 0; i < value.Length; i++)
             {
+                jArr[i] = Round(value[i].x) + ", " + Round(value[i].y) + ", " + Round(value[i].z);
+            }
+
+            return jArr;
+        }
+        public static string[] convertToString(Quaternion[] value)
+        {
+            
+            if (value == null || value.Length == 0)
+            {
+                return null;
+            }
+            string[] jArr = new string[value.Length];
+            for (int i = 0; i < value.Length; i++)
+            {
+                var vec = value[i].eulerAngles;
                 jArr[i] = Round(value[i].x) + ", " + Round(value[i].y) + ", " + Round(value[i].z);
             }
 
@@ -79,10 +115,24 @@ namespace Scripts.Static
             Vector3[] positions = new Vector3[transf.Length];
             for (int i = 0; i < transf.Length; i++)
             {
+                if (transf[i] == null) continue;
+                
                 positions[i] = transf[i].position;
-            }
+            } 
 
             return positions;
+        }
+
+        public static Quaternion[] TransfToRot(in Transform[] transf)
+        {
+            Quaternion[] rotations = new Quaternion[transf.Length];
+            for (int i = 0; i < transf.Length; i++)
+            {  
+                if (transf[i] == null) continue;
+                rotations[i] = transf[i].rotation;
+            }
+
+            return rotations;
         }
         public static void LogVec3(Vector3 vec)
         {

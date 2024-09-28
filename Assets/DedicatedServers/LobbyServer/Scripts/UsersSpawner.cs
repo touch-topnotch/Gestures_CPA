@@ -6,6 +6,7 @@ namespace DedicatedServers.LobbyServer
 {
     public class UsersSpawner
     {
+        
         private int _spawnId = 0;
         public void SpawnPlayer(NetworkObject networkPlayer, in Transform[] spawnPoints)
         {

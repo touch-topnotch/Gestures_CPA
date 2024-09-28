@@ -10,8 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7544403133046615746}
   - component: {fileID: 326193638820776165}
+  - component: {fileID: 4533185115395412314}
   m_Layer: 0
-  m_Name: Support Hand Visualizer
+  m_Name: BoneHand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30,8 +31,9 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8853210740213937292}
+  - {fileID: 2411038661545566415}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &326193638820776165
 MonoBehaviour:
@@ -72,6 +74,20 @@ MonoBehaviour:
   - {fileID: 4347822111271190886}
   - {fileID: 8534476028635982839}
   - {fileID: 9065846448248209187}
+--- !u!114 &4533185115395412314
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 783963858647521541}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cb1c22a5dff4429cbc2b9cc3f750018, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  JointRoot: {fileID: 0}
+  RigRoot: {fileID: 0}
 --- !u!1001 &62997087626442610
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -88,7 +104,7 @@ PrefabInstance:
     - target: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
       propertyPath: m_Name
-      value: BoneJoint_18
+      value: Joint_RingProximal
       objectReference: {fileID: 0}
     - target: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
@@ -203,7 +219,7 @@ PrefabInstance:
     - target: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
       propertyPath: m_Name
-      value: BoneJoint_2
+      value: Joint_MiddleMetacarpal
       objectReference: {fileID: 0}
     - target: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
@@ -303,7 +319,7 @@ PrefabInstance:
     - target: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
       propertyPath: m_Name
-      value: BoneJoint_21
+      value: Joint_RingTip
       objectReference: {fileID: 0}
     - target: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
@@ -414,7 +430,7 @@ PrefabInstance:
     - target: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
       propertyPath: m_Name
-      value: BoneJoint_19
+      value: Joint_RingIntermediate
       objectReference: {fileID: 0}
     - target: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
@@ -529,7 +545,7 @@ PrefabInstance:
     - target: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
       propertyPath: m_Name
-      value: BoneJoint_7
+      value: Joint_IndexIntermediate
       objectReference: {fileID: 0}
     - target: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
@@ -639,7 +655,7 @@ PrefabInstance:
     - target: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
       propertyPath: m_Name
-      value: BoneJoint
+      value: Joint_Wrist
       objectReference: {fileID: 0}
     - target: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
@@ -759,7 +775,7 @@ PrefabInstance:
     - target: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
       propertyPath: m_Name
-      value: BoneJoint_15
+      value: Joint_MiddleIntermediate
       objectReference: {fileID: 0}
     - target: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
@@ -874,7 +890,7 @@ PrefabInstance:
     - target: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
       propertyPath: m_Name
-      value: BoneJoint_11
+      value: Joint_LittleIntermediate
       objectReference: {fileID: 0}
     - target: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
@@ -989,7 +1005,7 @@ PrefabInstance:
     - target: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
       propertyPath: m_Name
-      value: BoneJoint_17
+      value: Joint_MiddleTip
       objectReference: {fileID: 0}
     - target: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
@@ -1100,7 +1116,7 @@ PrefabInstance:
     - target: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
       propertyPath: m_Name
-      value: BoneJoint_5
+      value: Joint_ThumbMetacarpal
       objectReference: {fileID: 0}
     - target: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
@@ -1184,6 +1200,249 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2696417261572806014}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &2809968669903636260
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7544403133046615746}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: bf7151579c38e2a44be94ba8773876c1,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: bf7151579c38e2a44be94ba8773876c1,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: bf7151579c38e2a44be94ba8773876c1,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: bf7151579c38e2a44be94ba8773876c1,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: bf7151579c38e2a44be94ba8773876c1,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: bf7151579c38e2a44be94ba8773876c1,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: bf7151579c38e2a44be94ba8773876c1,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: bf7151579c38e2a44be94ba8773876c1,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: bf7151579c38e2a44be94ba8773876c1,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: bf7151579c38e2a44be94ba8773876c1,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: bf7151579c38e2a44be94ba8773876c1,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: bf7151579c38e2a44be94ba8773876c1,
+        type: 3}
+      propertyPath: m_Name
+      value: LeftHand
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: bf7151579c38e2a44be94ba8773876c1,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: bf7151579c38e2a44be94ba8773876c1,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1269177191368091528}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: bf7151579c38e2a44be94ba8773876c1,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1604415731499738504}
+    - targetCorrespondingSourceObject: {fileID: 8885931781525014449, guid: bf7151579c38e2a44be94ba8773876c1,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 998933325993931525}
+    - targetCorrespondingSourceObject: {fileID: -199496765734629115, guid: bf7151579c38e2a44be94ba8773876c1,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6200818920395041959}
+  m_SourcePrefab: {fileID: 100100000, guid: bf7151579c38e2a44be94ba8773876c1, type: 3}
+--- !u!4 &752626549883685266 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -6012624077346500938, guid: bf7151579c38e2a44be94ba8773876c1,
+    type: 3}
+  m_PrefabInstance: {fileID: 2809968669903636260}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1605346195604390832 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -5712721285632293740, guid: bf7151579c38e2a44be94ba8773876c1,
+    type: 3}
+  m_PrefabInstance: {fileID: 2809968669903636260}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2411038661545566415 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: bf7151579c38e2a44be94ba8773876c1,
+    type: 3}
+  m_PrefabInstance: {fileID: 2809968669903636260}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &3043987289636633205 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: bf7151579c38e2a44be94ba8773876c1,
+    type: 3}
+  m_PrefabInstance: {fileID: 2809968669903636260}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &1269177191368091528
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3043987289636633205}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1604415731499738504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3043987289636633205}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fff0960ef4ea6e04eac66b4a7fd2189d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RigLayers:
+  - m_Rig: {fileID: 998933325993931525}
+    m_Active: 1
+  m_Effectors: []
+--- !u!4 &5341818175086540695 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -1378399668587237197, guid: bf7151579c38e2a44be94ba8773876c1,
+    type: 3}
+  m_PrefabInstance: {fileID: 2809968669903636260}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6612477367767602721 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -199496765734629115, guid: bf7151579c38e2a44be94ba8773876c1,
+    type: 3}
+  m_PrefabInstance: {fileID: 2809968669903636260}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6200818920395041959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6612477367767602721}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aeda7bfbf984f2a4da5ab4b8967b115d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Weight: 1
+  m_Data:
+    m_Root: {fileID: 1605346195604390832}
+    m_Mid: {fileID: 752626549883685266}
+    m_Tip: {fileID: 5341818175086540695}
+    m_Target: {fileID: 0}
+    m_Hint: {fileID: 0}
+    m_TargetPositionWeight: 1
+    m_TargetRotationWeight: 1
+    m_HintWeight: 1
+    m_MaintainTargetPositionOffset: 0
+    m_MaintainTargetRotationOffset: 0
+--- !u!1 &6750377413771935893 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8885931781525014449, guid: bf7151579c38e2a44be94ba8773876c1,
+    type: 3}
+  m_PrefabInstance: {fileID: 2809968669903636260}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &998933325993931525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6750377413771935893}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70b342d8ce5c2fd48b8fa3147d48d1d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Weight: 1
+  m_Effectors:
+  - m_Transform: {fileID: 0}
+    m_Style:
+      shape: {fileID: 4300000, guid: 687b70eb9c49243639f9379f6965034f, type: 2}
+      color: {r: 1, g: 0, b: 0, a: 0.5}
+      size: 0.1
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0}
+    m_Visible: 1
+  - m_Transform: {fileID: 0}
+    m_Style:
+      shape: {fileID: 4300000, guid: e050c2b16fe384bd994474655a4b4968, type: 2}
+      color: {r: 1, g: 0, b: 0, a: 0.5}
+      size: 0.1
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0}
+    m_Visible: 1
+  - m_Transform: {fileID: 0}
+    m_Style:
+      shape: {fileID: 4300000, guid: 687b70eb9c49243639f9379f6965034f, type: 2}
+      color: {r: 1, g: 0, b: 0, a: 0.5}
+      size: 0.1
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0}
+    m_Visible: 1
+  - m_Transform: {fileID: 0}
+    m_Style:
+      shape: {fileID: 4300000, guid: e050c2b16fe384bd994474655a4b4968, type: 2}
+      color: {r: 1, g: 0, b: 0, a: 0.5}
+      size: 0.1
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0}
+    m_Visible: 1
 --- !u!1001 &3156022468738212828
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1200,7 +1459,7 @@ PrefabInstance:
     - target: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
       propertyPath: m_Name
-      value: BoneJoint_13
+      value: Joint_LittleTip
       objectReference: {fileID: 0}
     - target: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
@@ -1311,7 +1570,7 @@ PrefabInstance:
     - target: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
       propertyPath: m_Name
-      value: BoneJoint_22
+      value: Joint_ThumbProximal
       objectReference: {fileID: 0}
     - target: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
@@ -1426,7 +1685,7 @@ PrefabInstance:
     - target: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
       propertyPath: m_Name
-      value: BoneJoint
+      value: Joint_IndexMetacarpal
       objectReference: {fileID: 0}
     - target: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
@@ -1490,7 +1749,11 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 263809313675546652}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4288123833826089248}
   m_SourcePrefab: {fileID: 100100000, guid: ddc3729a0a9c77c4e9eee50d140e1312, type: 3}
 --- !u!114 &2372146568474767623 stripped
 MonoBehaviour:
@@ -1498,12 +1761,37 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 3520033933337662595}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 2729426808988646365}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5034b934c9b64edebb493c0408becfbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &2729426808988646365 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
+    type: 3}
+  m_PrefabInstance: {fileID: 3520033933337662595}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4288123833826089248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2729426808988646365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!4 &6797572366517149611 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
@@ -1526,7 +1814,7 @@ PrefabInstance:
     - target: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
       propertyPath: m_Name
-      value: BoneJoint_10
+      value: Joint_LittleProximal
       objectReference: {fileID: 0}
     - target: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
@@ -1641,7 +1929,7 @@ PrefabInstance:
     - target: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
       propertyPath: m_Name
-      value: BoneJoint_14
+      value: Joint_MiddleProximal
       objectReference: {fileID: 0}
     - target: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
@@ -1756,7 +2044,7 @@ PrefabInstance:
     - target: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
       propertyPath: m_Name
-      value: BoneJoint_8
+      value: Joint_IndexDistal
       objectReference: {fileID: 0}
     - target: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
@@ -1871,7 +2159,7 @@ PrefabInstance:
     - target: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
       propertyPath: m_Name
-      value: BoneJoint_20
+      value: Joint_RingDistal
       objectReference: {fileID: 0}
     - target: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
@@ -1986,7 +2274,7 @@ PrefabInstance:
     - target: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
       propertyPath: m_Name
-      value: BoneJoint_4
+      value: Joint_RingMetacarpal
       objectReference: {fileID: 0}
     - target: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
@@ -2086,7 +2374,7 @@ PrefabInstance:
     - target: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
       propertyPath: m_Name
-      value: BoneJoint_23
+      value: Joint_ThumbDistal
       objectReference: {fileID: 0}
     - target: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
@@ -2201,7 +2489,7 @@ PrefabInstance:
     - target: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
       propertyPath: m_Name
-      value: BoneJoint_16
+      value: Joint_MiddleDistal
       objectReference: {fileID: 0}
     - target: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
@@ -2316,7 +2604,7 @@ PrefabInstance:
     - target: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
       propertyPath: m_Name
-      value: BoneJoint_6
+      value: Joint_IndexProximal
       objectReference: {fileID: 0}
     - target: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
@@ -2431,7 +2719,7 @@ PrefabInstance:
     - target: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
       propertyPath: m_Name
-      value: BoneJoint_3
+      value: Joint_Palm
       objectReference: {fileID: 0}
     - target: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
@@ -2527,7 +2815,7 @@ PrefabInstance:
     - target: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
       propertyPath: m_Name
-      value: BoneJoint_24
+      value: Joint_ThumbTip
       objectReference: {fileID: 0}
     - target: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
@@ -2638,7 +2926,7 @@ PrefabInstance:
     - target: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
       propertyPath: m_Name
-      value: BoneJoint_12
+      value: Joint_LittleDistal
       objectReference: {fileID: 0}
     - target: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
@@ -2753,7 +3041,7 @@ PrefabInstance:
     - target: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
       propertyPath: m_Name
-      value: BoneJoint_9
+      value: Joint_IndexTip
       objectReference: {fileID: 0}
     - target: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
@@ -2864,7 +3152,7 @@ PrefabInstance:
     - target: {fileID: 1529380056191446878, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}
       propertyPath: m_Name
-      value: BoneJoint_1
+      value: Joint__LittleMetacarpal
       objectReference: {fileID: 0}
     - target: {fileID: 7965874035721341736, guid: ddc3729a0a9c77c4e9eee50d140e1312,
         type: 3}

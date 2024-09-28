@@ -14,7 +14,8 @@ namespace Scripts.Hands
         public float speed = 4f;
         [HideInInspector] public Transform parent;
         private LineRenderer _lineRenderer;
-        private Vector3 target;
+        private Vector3 targetPos;
+        private Quaternion targetRot;
         private UpdateEvent _onUpdate;
        
         public void SetPosition(in Vector3 position, in Vector3 parentPosition)
@@ -41,9 +42,10 @@ namespace Scripts.Hands
             _lineRenderer.SetPosition(1, parent.position);
         }
 
-        public void SetPositionSmooth(Vector3 position, ref UpdateEvent onUpdate)
+        public void SetPositionSmooth(Vector3 pos, Quaternion rot, ref UpdateEvent onUpdate)
         {
-            target = position;
+            targetPos = pos;
+            targetRot = rot;
             _onUpdate = onUpdate;
             _onUpdate.AddListener(UpdatePosition);
         }
@@ -51,13 +53,14 @@ namespace Scripts.Hands
 
         public void UpdatePosition()
         {  
-            if (transform.position == target)
+            if (transform.position == targetPos)
             {
                 _onUpdate.RemoveListener(UpdatePosition);
                 return;
             }  
 
-            transform.position = Vector3.Lerp(transform.position, target, speed * Time.deltaTime);
+            transform.position = Vector3.Lerp(transform.position, targetPos, speed * Time.deltaTime);
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRot ,speed * Time.deltaTime);
             UpdateLine();
         }
     }

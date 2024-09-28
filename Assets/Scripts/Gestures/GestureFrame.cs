@@ -1,4 +1,4 @@
-using UnityEngine;
+using Scripts.Hands;
 
 namespace Scripts.Gestures
 {
@@ -14,26 +14,28 @@ namespace Scripts.Gestures
     {
         public HandUsedType HandUsed = HandUsedType.NULL;
         
-        private Vector3[] _leftPoints;
-        private Vector3[] _rightPoints;
-        public Vector3[] LeftPoints
+        private BonesData _left;
+        private BonesData _right;
+        public BonesData LeftBones
         {
-            get => GetHandPoints(HandUsedType.LEFT, _leftPoints);
-            set => _leftPoints = SetHandPoints(HandUsedType.LEFT, value);
-        }
-        public Vector3[] RightPoints
-        {
-            get => GetHandPoints(HandUsedType.RIGHT, _rightPoints);
-            set => _rightPoints = SetHandPoints(HandUsedType.RIGHT, value);
-        }
-        private Vector3[] GetHandPoints(HandUsedType handUsed, Vector3[] points)
-        {
-            if (HandUsed == handUsed || HandUsed == HandUsedType.LEFTNRIGHT)
-                return points;
             
-            return null;
+            
+            get => GetHandPoints(HandUsedType.LEFT, _left);
+            set => _left = SetHandPoints(HandUsedType.LEFT, value);
         }
-        private Vector3[] SetHandPoints(HandUsedType handUsed, Vector3[] points)
+        public BonesData RightBones
+        {
+            
+            get => GetHandPoints(HandUsedType.RIGHT, _right);
+            set => _right = SetHandPoints(HandUsedType.RIGHT, value);
+        }
+        private BonesData GetHandPoints(HandUsedType handUsed, BonesData data)
+        {
+            if (HandUsed == HandUsedType.NULL)
+                return null;
+            return data;
+        }
+        private BonesData SetHandPoints(HandUsedType handUsed, BonesData points)
         {
             if (points == null)
             {

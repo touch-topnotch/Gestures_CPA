@@ -1,3 +1,4 @@
+using System;
 using Scripts.Events;
 using Scripts.Gestures;
 using Scripts.Hands;
@@ -8,32 +9,20 @@ using Zenject;
 
 namespace Scripts.PlayerLogic
 {
-    public enum GameState
-    {
-        Menu,
-        Fight,
-    }
-    public enum RuntimeXRInteractor
-    {
-        OpenXR,
-        Debugger,
-    }
+ 
 
     public class OnGameStateChanged: UnityEvent<GameState>{}
-
-    [RequireComponent(typeof(SupportHandCreator))]
-
     public abstract class Player : MonoBehaviour
     {
+        [Header("Game settings")]
         public RuntimeXRInteractor xrInteractor;
+        public OnGameStateChanged gameStateChanged;
 
-        public OnGameStateChanged GameStateChanged;
-
-        public UserHands playerHands;
-
+        [Header("Body parts")] public BodyAnchors bodyAnchors;
+        
+        [Header("Scripts")]
         public Movement movement;
-
-        public NetworkUser ownUser;
+        [HideInInspector] public NetworkUser ownUser;
 
         private GesturesLibrary _library;
         private GameState _currentGameState;
@@ -45,11 +34,10 @@ namespace Scripts.PlayerLogic
             set
             {
                 _currentGameState = value;
-                GameStateChanged?.Invoke(currentGameState);
+                gameStateChanged?.Invoke(currentGameState);
             }
         }
-
-
+        
         [Inject]
         private void Construct(GesturesLibrary library, UpdateEvent onUpdate)
         {
@@ -60,8 +48,8 @@ namespace Scripts.PlayerLogic
         public virtual void Initialize()
         {
             currentGameState = GameState.Menu;
-            playerHands.Initialize();
-            _library.InitializeAllAssets(playerHands);
+            bodyAnchors.Hands.Initialize();
+            _library.InitializeAllAssets(bodyAnchors.Hands);
             Debug.Log($"{xrInteractor} has initialized");
         }
 
@@ -69,8 +57,22 @@ namespace Scripts.PlayerLogic
         {
             ownUser = networkUser;
             transform.position = ownUser.transform.position;
-            ownUser.parenter.SetParent(transform, ref _onUpdate);
-            print($"The {transform.name} connected to {ownUser.transform.name} with id {ownUser.networkObject.OwnerClientId}");
+            ownUser.bodyParts.Body.SetParent(bodyAnchors.Body, ref _onUpdate);
+            ownUser.bodyParts.Head.SetParent(bodyAnchors.Head, ref _onUpdate);
+            movement.StartMove();
+            print(
+                $"The {transform.name} connected to {ownUser.transform.name} with id {ownUser.networkObject.OwnerClientId}");
         }
+    }
+  
+    public enum GameState
+    {
+        Menu,
+        Fight,
+    }
+    public enum RuntimeXRInteractor
+    {
+        OpenXR,
+        Debugger,
     }
 }

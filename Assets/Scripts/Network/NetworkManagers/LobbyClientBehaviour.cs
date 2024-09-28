@@ -27,7 +27,6 @@ namespace Scripts.Network
             print("Client connected!");
             _ownUser = Network.LocalClient.PlayerObject.GetComponent<NetworkUser>();
             _ownPlayer.ConnectToUser(_ownUser);
-  
         }
     }
 }
