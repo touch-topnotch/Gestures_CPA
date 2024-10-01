@@ -2,14 +2,15 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using Scripts.Network;
+using Scripts.Static;
 
 namespace Scripts.Databases
 {
     public static class UserAdmin
     {
         private const string databasePath =
-            "/Users/dmitry057/Projects/UnityProjects/Gestures_CPA/Assets/Resources/Database/UserLibrary.json";
-
+            //  "/Users/dmitry057/Projects/UnityProjects/Gestures_CPA/Assets/Resources/Database/UserLibrary.json";
+            "C:/Unity Projects/Gestures_CPA/Assets/Resources/Database/UserLibrary.json";
         public static void Add(UserData userData)
         {
             // add userData to json by databasePath 
@@ -18,8 +19,9 @@ namespace Scripts.Databases
                 userData.id = userLibrary[-1].id + 1;
             else
                 userData.id = 0;
-            userLibrary.Append(userData);
-            JsonConvert.SerializeObject(userLibrary);
+            userLibrary.Add(userData);
+            l.rl("UserAdmin.Add"+ "userLibrary.Count = " + userLibrary.Count);
+            DataChanel.Send(databasePath, JsonConvert.SerializeObject(userLibrary));
         }
 
         public static void Override(in UserData userData)

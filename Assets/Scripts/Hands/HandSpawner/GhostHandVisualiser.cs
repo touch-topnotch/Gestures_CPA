@@ -81,14 +81,13 @@ namespace Scripts.Hands
 
         private Transform[] SetTransform(Transform[] transf, in BonesData data)
         {
-            var pos = data.Positions;
+            transf[0].position = data.RootPos;
+            
             var rot = data.Rotations;
             for (int i = 0; i < transf.Length; i++)
             {
-                transf[i].position = pos[i];
                 transf[i].rotation = rot[i];
             }
-
             return transf;
         }
 

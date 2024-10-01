@@ -11,6 +11,15 @@ namespace Scripts.Static
     public class Vector3Converter : JsonConverter<Vector3>
     {
         public static int quality = 4;
+        public static Vector3 convertToVector3(string value)
+        {
+            var words = value.Split(", ");
+            Vector3 vec = new Vector3();
+            vec.x = float.Parse(words[0]);
+            vec.y = float.Parse(words[1]);
+            vec.z = float.Parse(words[2]);
+            return vec;
+        }
         public static Vector3[] convertToVector3(string[] value)
         {
             if (value == null || value.Length == 0)
@@ -48,6 +57,18 @@ namespace Scripts.Static
 
             return jArr;
         }
+
+        public static Quaternion[] convertToQuaternion(in Transform[] points)
+        {
+            var jArr = new Quaternion[points.Length];
+            for (int i = 0; i < points.Length; i++)
+            {
+                jArr[i] = points[i].rotation;
+            }
+
+            return jArr;
+        }
+        
         public static string[] convertToString(Vector3[] value)
         {
             
@@ -123,17 +144,7 @@ namespace Scripts.Static
             return positions;
         }
 
-        public static Quaternion[] TransfToRot(in Transform[] transf)
-        {
-            Quaternion[] rotations = new Quaternion[transf.Length];
-            for (int i = 0; i < transf.Length; i++)
-            {  
-                if (transf[i] == null) continue;
-                rotations[i] = transf[i].rotation;
-            }
 
-            return rotations;
-        }
         public static void LogVec3(Vector3 vec)
         {
             Debug.Log(string.Format("{0:N2}", vec.x) +", "+ string.Format("{0:N2}", vec.y)+", " + string.Format("{0:N2}", vec.z));

@@ -4,7 +4,7 @@ namespace Scripts.Gestures
 {
     public static class BonesDistancesRecorder
     {
-        public static UserData RecordDistances(in Transform[] left, in Transform[] right, UserData userData)
+        public static float[,] RecordDistances(in Transform[] left, in Transform[] right)
         {
             //distArray = [[0,1],[2,3]
             float[,] distArray = new float[26,2];
@@ -24,9 +24,8 @@ namespace Scripts.Gestures
                 distArray[i,0] = left_dist;
                 distArray[i,1] = right_dist;
             }
-            // in UserLibrary json find user with userId and override his bonesData with distArray
-            userData.bonesData = distArray;
-            return userData;
+            // in UserLibrary json find user with userId and override his bonesData with distArrayre
+            return distArray;
         }
     }
 }

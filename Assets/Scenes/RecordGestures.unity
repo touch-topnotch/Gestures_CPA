@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 973306113}
-  m_IndirectSpecularColor: {r: 0.17212382, g: 0.20595956, b: 0.24549851, a: 1}
+  m_IndirectSpecularColor: {r: 0.17212418, g: 0.20596007, b: 0.24549955, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -472,7 +472,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _scriptableObjectInstallers: []
   _monoInstallers:
-  - {fileID: 0}
+  - {fileID: 2095706748}
   _installerPrefabs: []
   _autoRun: 1
   OnPreInstall:
@@ -3758,6 +3758,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2095706747}
+  - component: {fileID: 2095706748}
   m_Layer: 0
   m_Name: PlayerInsraller
   m_TagString: Untagged
@@ -3781,6 +3782,18 @@ Transform:
   m_Father: {fileID: 31352691}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2095706748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2095706745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ec9edd787a54c4093534ef10c94e210, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2119107211
 GameObject:
   m_ObjectHideFlags: 0
@@ -4215,6 +4228,18 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6218553777992665129, guid: 22c4beda7a0cb484e9eca5d7f0fb56db,
+        type: 3}
+      propertyPath: LeftHand
+      value: 
+      objectReference: {fileID: 8292619255302506941, guid: 2f0d8515c61584faa88fbb78c9f16499,
+        type: 3}
+    - target: {fileID: 6218553777992665129, guid: 22c4beda7a0cb484e9eca5d7f0fb56db,
+        type: 3}
+      propertyPath: RightHand
+      value: 
+      objectReference: {fileID: 907936121320686010, guid: c21a6935f410b4ccd99ea084a0727bfa,
+        type: 3}
     - target: {fileID: 6335450841492606639, guid: 22c4beda7a0cb484e9eca5d7f0fb56db,
         type: 3}
       propertyPath: m_Name

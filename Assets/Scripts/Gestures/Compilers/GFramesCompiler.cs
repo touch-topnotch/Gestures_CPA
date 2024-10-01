@@ -1,20 +1,13 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Scripts.Databases;
 using UnityEngine;
 using Scripts.Static;
 using Scripts.Network;
 using Scripts.PlayerLogic;
 using Zenject;
 
-using TransfAtlas = System.Collections.Generic.Dictionary<string, string[]>;
-using HandAtlas = System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<string, string[]>>;
-
-using PlatformAtlas = System.Collections.Generic.Dictionary<string,
-    System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<string, string[]>>>;
-
-using FrameAtlas = System.Collections.Generic.Dictionary<string,
-    System.Collections.Generic.Dictionary<string,
-        System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<string, string[]>>>>;
+using FrameAtlas = System.Collections.Generic.Dictionary<string,Scripts.Databases.DBFrameStruct>;
 
 namespace Scripts.Gestures
 {
@@ -24,9 +17,10 @@ namespace Scripts.Gestures
         [Inject]
         private RuntimeXRInteractor _xrInteractor;
         private GesturesLibrary _library;
-        
-        private readonly string _jsonPath = "/Users/dmitry057/Projects/UnityProjects/Gestures_CPA/Assets/Resources/Database/GFramesLibrary.json";
-        
+
+        private readonly string
+            _jsonPath = //"/Users/dmitry057/Projects/UnityProjects/Gestures_CPA/Assets/Resources/Database/GFramesLibrary.json";
+                "C:/Unity Projects/Gestures_CPA/Assets/Resources/Database/GFramesLibrary.json";
         private FrameAtlas _framesDict = new();
         public GFramesCompiler(GesturesLibrary library)
         {
@@ -41,43 +35,17 @@ namespace Scripts.Gestures
             
             _framesDict = reddenFrames;
 
-            foreach (KeyValuePair<string, PlatformAtlas> jsonFrame in reddenFrames)
+            foreach (KeyValuePair<string, DBFrameStruct> jsonFrame in reddenFrames)
             {
                 GestureFrame frame = new GestureFrame
                 {
                     name = jsonFrame.Key
                 };
-                foreach (KeyValuePair<string, HandAtlas> jsonPlatform in jsonFrame.Value)
-                {
-                    if (jsonPlatform.Key == _xrInteractor.ToString())
-                    {
-                        foreach (KeyValuePair<string, TransfAtlas> handP in jsonPlatform.Value)
-                        {
-                            if (handP.Key == "left")
-                            {
-                                foreach (KeyValuePair<string, string[]> transf in handP.Value)
-                                {
-                                    if(transf.Key == "pos")
-                                        frame.Hands.LeftBones.Positions = Vector3Converter.convertToVector3(transf.Value);
-                                    if(transf.Key == "rot")
-                                        frame.Hands.LeftBones.Rotations = Vector3Converter.convertToQuaternion(transf.Value);
-                                }
-                            }
-                            else  if (handP.Key == "right")
-                            {
-                                foreach (KeyValuePair<string, string[]> transf in handP.Value)
-                                {
-                                    if(transf.Key == "pos")
-                                        frame.Hands.RightBones.Positions = Vector3Converter.convertToVector3(transf.Value);
-                                    if(transf.Key == "rot")
-                                        frame.Hands.RightBones.Rotations = Vector3Converter.convertToQuaternion(transf.Value);
-                                }
-                            }
-
-                            
-                        }
-                    }
-                }
+                frame.Hands.LeftBones.Rotations = Vector3Converter.convertToQuaternion(jsonFrame.Value.left_rots);
+                frame.Hands.RightBones.Rotations = Vector3Converter.convertToQuaternion(jsonFrame.Value.right_rots);
+                frame.Hands.LeftBones.RootPos = Vector3Converter.convertToVector3(jsonFrame.Value.left_pos);
+                frame.Hands.RightBones.RootPos = Vector3Converter.convertToVector3(jsonFrame.Value.right_pos);
+                
                 _library.SetGestureFrame(frame);
             }
 
@@ -87,62 +55,23 @@ namespace Scripts.Gestures
         public void Record(HandsStruct hands, string name)
         {
 
-            HandAtlas pointsOnPlatform = new HandAtlas();
+            DBFrameStruct frameStruct = new DBFrameStruct();
 
-            
+
             if (hands.LeftBones != null)
             {
-                TransfAtlas transfAtlas = new TransfAtlas()
-                {
-                    {"pos", Vector3Converter.convertToString(hands.LeftBones.Positions)},
-                    {"rot", Vector3Converter.convertToString(hands.LeftBones.Rotations)},
-                };
-                pointsOnPlatform.Add("left", 
-                    transfAtlas
-                );
+                frameStruct.left_rots = Vector3Converter.convertToString(hands.LeftBones.Rotations);
+                frameStruct.right_pos = hands.LeftBones.RootPos.ToString();
             }
-               
+
 
             if (hands.RightBones != null)
             {
-                TransfAtlas transfAtlas = new TransfAtlas()
-                {
-                    {"pos", Vector3Converter.convertToString(hands.RightBones.Positions)},
-                    {"rot", Vector3Converter.convertToString(hands.RightBones.Rotations)},
-                };
-                pointsOnPlatform.Add("right", 
-                    transfAtlas
-                );
+                frameStruct.right_rots = Vector3Converter.convertToString(hands.RightBones.Rotations);
+                frameStruct.right_pos = hands.RightBones.RootPos.ToString();
             }
+               
             Read();
-
-            if (!_framesDict.ContainsKey(name))
-            {
-                PlatformAtlas platform = new();
-                platform.Add(_xrInteractor.ToString(), pointsOnPlatform);
-                _framesDict.Add(name, platform);
-            }
-            else
-            {
-                bool f = false;
-                foreach (var platformInFrame in _framesDict[name])
-                {
-
-                    if (platformInFrame.Key == _xrInteractor.ToString())
-                    {
-                        
-                        f = true;
-                        _framesDict[name][_xrInteractor.ToString()] = pointsOnPlatform;
-                        break;
-                    }
-                }
-
-                if (!f)
-                {
-                    _framesDict[name].Add(_xrInteractor.ToString(), pointsOnPlatform);
-                }
-
-            }
 
             var jsonString = JsonConvert.SerializeObject(_framesDict, Formatting.Indented);
             Debug.Log(jsonString + " written");

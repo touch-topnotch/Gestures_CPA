@@ -22,9 +22,10 @@ namespace Scripts.Hands
         }
         public void ChangePosition(BonesData data, Transform parent = null)
         {
-            if (data.Positions == null)
+            if (data == null)
                 return;
-            for(int i = 0; i < data.Positions.Length; i++)
+            joints[0].SetPosition(data.RootPos, parent ? parent.position : Vector3.zero);
+            for(int i = 0; i < data.Rotations.Length; i++)
             {
                 joints[i].SetPosition(data.Positions[i] , parent ? parent.position : Vector3.zero);
             }
