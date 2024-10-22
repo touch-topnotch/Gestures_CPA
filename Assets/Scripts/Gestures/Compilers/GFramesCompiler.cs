@@ -15,7 +15,6 @@ namespace Scripts.Gestures
     public class GFramesCompiler
     {
         [Inject]
-        private RuntimeXRInteractor _xrInteractor;
         private GesturesLibrary _library;
 
         private readonly string

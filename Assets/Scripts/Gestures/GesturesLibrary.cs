@@ -21,7 +21,7 @@ namespace Scripts.Gestures
             Debug.Log("Library has initialized:\nDynamic gestures count: " + DynamicGestures.Count + "\nGesture frames count: " + GestureFrames.Count);
         }
 
-        public void InitializeAllAssets(UserHands hands) //do it after initializing Player (it needs playerHands)
+        public void InitializeAllAssets(AvatarHands hands) //do it after initializing Player (it needs playerHands)
         {
             foreach (var gesture in DynamicGestures )
             {

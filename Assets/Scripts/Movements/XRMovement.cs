@@ -31,13 +31,13 @@ namespace Scripts.Movements
         
         public override void StartMove()
         {
-            pivot.position = anchors.Head.position;
+            pivot.position = anchors.GetHead().position;
             base.StartMove();
         }
 
         protected override void UpdateVelocity()
         {
-            _velocity = HeadManipulations.HeadVelocity(pivot.position, anchors.Head.position, xzBoard, yBoard, moveSpeed,
+            _velocity = HeadManipulations.HeadVelocity(pivot.position, anchors.GetHead().position, xzBoard, yBoard, moveSpeed,
                 jumpSpeed) / 10;
             parentMoveController.Move(_velocity);
         }

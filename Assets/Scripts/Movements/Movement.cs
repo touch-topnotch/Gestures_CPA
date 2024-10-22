@@ -2,24 +2,24 @@ using Scripts.Events;
 using Scripts.PlayerLogic;
 using Scripts.Static;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 using Zenject;
 
 namespace Scripts.Movements
 {
     public abstract class Movement : MonoBehaviour
     {
-        [SerializeField] protected BodyAnchors anchors;
+        [SerializeField] protected VRRig anchors;
         [SerializeField] protected bool moveOnAwake;
         protected CharacterController parentMoveController;
-
-        private NetworkUser _networkUser;
+        
         private UpdateEvent _onUpdate;
         private bool _isMoved = false;
         
         [Inject]
         protected virtual void Construct(UpdateEvent onUpdate)
         {
-            parentMoveController = anchors.Body.GetComponent<CharacterController>();
+            parentMoveController = anchors.GetBody().GetComponent<CharacterController>();
             _onUpdate = onUpdate;
             if(moveOnAwake)
                 StartMove();

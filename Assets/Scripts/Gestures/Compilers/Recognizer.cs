@@ -90,16 +90,17 @@ namespace Scripts.Gestures
         {
             for(int i = 0; i < _possibleFrames.Count; i++)
             {
-                if (!_player.bodyAnchors.Hands.IsRecognized)
+                if (!_player.CurAvatar.hands.IsRecognized)
                 {
                     return -1;
                 }
-             
-                if (RecognizeHand(_possibleFrames[i].Hands.LeftBones.Positions, _player.bodyAnchors.Hands.leftHand.points, _player.transform, gQuality, gHandOffset)
-                    && RecognizeHand(_possibleFrames[i].Hands.RightBones.Positions, _player.bodyAnchors.Hands.rightHand.points,_player.transform, quality, gHandOffset))
-                {
-                    return i;
-                }
+                
+                //FIX - equal rotations and rootPose
+                // if (RecognizeHand(_possibleFrames[i].Hands.LeftBones.Positions, _player.bodyAnchors.Hands.leftHand.points, _player.transform, gQuality, gHandOffset)
+                //     && RecognizeHand(_possibleFrames[i].Hands.RightBones.Positions, _player.bodyAnchors.Hands.rightHand.points,_player.transform, quality, gHandOffset))
+                // {
+                //     return i;
+                // }
             }
             return -1;
         }

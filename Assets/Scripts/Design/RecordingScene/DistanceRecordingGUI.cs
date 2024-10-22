@@ -41,19 +41,19 @@ namespace Design
             _player = player;
             leftAnchor.OnEnter += (tag)=> {if(tag == "LeftHandTrigger")
             {
-                _player.bodyAnchors.Hands.leftHand.SetFingersColor(Color.yellow);
+                _player.CurAvatar.hands.leftHand.SetFingersColor(Color.yellow);
                 
                 _leftPrepared = true;
                 CheckOnEntering();
             } };
-            leftAnchor.OnExit += (tag)=> {if(tag == "LeftHandTrigger") {_player.bodyAnchors.Hands.leftHand.SetFingersColor(Color.clear);
+            leftAnchor.OnExit += (tag)=> {if(tag == "LeftHandTrigger") {_player.CurAvatar.hands.leftHand.SetFingersColor(Color.clear);
                 _leftPrepared = false;
             } };
-            rightAnchor.OnEnter += (tag)=> {if(tag == "RightHandTrigger") {_player.bodyAnchors.Hands.rightHand.SetFingersColor(Color.yellow);
+            rightAnchor.OnEnter += (tag)=> {if(tag == "RightHandTrigger") {_player.CurAvatar.hands.rightHand.SetFingersColor(Color.yellow);
                 _rightPrepared = true;
                 CheckOnEntering();
             } };
-            rightAnchor.OnExit += (tag)=> {if(tag == "RightHandTrigger") {_player.bodyAnchors.Hands.rightHand.SetFingersColor(Color.clear);
+            rightAnchor.OnExit += (tag)=> {if(tag == "RightHandTrigger") {_player.CurAvatar.hands.rightHand.SetFingersColor(Color.clear);
                 _rightPrepared = false;
             } };
         }
@@ -79,23 +79,23 @@ namespace Design
                 timerText.text = "BIODATA RECORDING AFTER: " + i.ToString(); 
                 yield return wait1;
             }
-            _player.bodyAnchors.Hands.SetSameColor("_EdgeColor",  Color.red);
-            _player.bodyAnchors.Hands.leftHand.SetFingersColor(Color.red);
-            _player.bodyAnchors.Hands.rightHand.SetFingersColor(Color.red);
-            testUserData.bonesData = BonesDistancesRecorder.RecordDistances(_player.bodyAnchors.Hands.leftHand.points,
-                _player.bodyAnchors.Hands.rightHand.points);
+            _player.CurAvatar.hands.SetSameColor("_EdgeColor",  Color.red);
+            _player.CurAvatar.hands.leftHand.SetFingersColor(Color.red);
+            _player.CurAvatar.hands.rightHand.SetFingersColor(Color.red);
+            testUserData.bonesData = BonesDistancesRecorder.RecordDistances(_player.CurAvatar.hands.leftHand.points,
+                _player.CurAvatar.hands.rightHand.points);
             UserAdmin.Override(testUserData);
             timerText.text = "RECORDING";
             yield return wait1;
             yield return wait1;
-            _player.bodyAnchors.Hands.leftHand.SetFingersColor(Color.clear);
-            _player.bodyAnchors.Hands.rightHand.SetFingersColor(Color.clear);
-            _player.bodyAnchors.Hands.SetSameColor("_EdgeColor",  Color.green);
+            _player.CurAvatar.hands.leftHand.SetFingersColor(Color.clear);
+            _player.CurAvatar.hands.rightHand.SetFingersColor(Color.clear);
+            _player.CurAvatar.hands.SetSameColor("_EdgeColor",  Color.green);
             timerText.text = "COMPLETE!";
             yield return wait1;
             yield return wait1;
             yield return wait1;
-            _player.bodyAnchors.Hands.SetSameColor("_EdgeColor",  Color.clear);
+            _player.CurAvatar.hands.SetSameColor("_EdgeColor",  Color.clear);
 
         }
          
