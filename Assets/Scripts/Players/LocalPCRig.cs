@@ -5,7 +5,7 @@ using UnityEngine.XR;
 
 namespace Scripts.PlayerLogic
 {
-    public class LocalPCRig: VRRig
+    public class LocalPCRig: PlayerRig
     {
         protected BonesData _left = new BonesData(HandType.left);
         protected BonesData _right = new BonesData(HandType.right);

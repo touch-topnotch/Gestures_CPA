@@ -11,7 +11,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: bf7151579c38e2a44be94ba8773876c1,
         type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: bf7151579c38e2a44be94ba8773876c1,
         type: 3}
@@ -65,6 +65,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -7009038412992213568, guid: bf7151579c38e2a44be94ba8773876c1,
         type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -4299625302041532480, guid: a873cf56485752f48860a22ace5a4dbb,
+        type: 3}
+    - target: {fileID: -7009038412992213568, guid: bf7151579c38e2a44be94ba8773876c1,
+        type: 3}
       propertyPath: m_Materials.Array.size
       value: 2
       objectReference: {fileID: 0}
@@ -81,7 +87,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: bf7151579c38e2a44be94ba8773876c1,
         type: 3}
       propertyPath: m_Name
-      value: L_GhostHand Variant
+      value: GhostHand_L
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -158,7 +164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8aa608b0be70471b87f00d2485de8d2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hand: {fileID: 2340536852447091744}
+  rootObject: {fileID: 2340536852447091744}
   material: {fileID: 2100000, guid: 9383f8fc9ae764d94aa2726c2a94816f, type: 2}
   points:
   - {fileID: 8883627351471152935}
@@ -187,6 +193,8 @@ MonoBehaviour:
   - {fileID: 7128291684787814134}
   - {fileID: 1554220654799302695}
   - {fileID: 125193371906555121}
+  handType: 0
+  _defaultMaterial: {fileID: 2100000, guid: 0de93a794d11dbe4ababe9b9fcede3ab, type: 2}
   _speed: 0.3
 --- !u!4 &2527595821431893158 stripped
 Transform:

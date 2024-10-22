@@ -9,7 +9,7 @@ namespace Scripts.Movements
 {
     public abstract class Movement : MonoBehaviour
     {
-        [SerializeField] protected VRRig anchors;
+        [SerializeField] protected PlayerRig anchors;
         [SerializeField] protected bool moveOnAwake;
         protected CharacterController parentMoveController;
         
