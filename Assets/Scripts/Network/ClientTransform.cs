@@ -16,15 +16,5 @@ namespace Scripts.Network
         {
             return false;
         }
-        
-        public void SetPosition(in Vector3 pos)
-        {
-            transform.position = pos;
-        }
-
-        public void SetRotation(in Quaternion rot)
-        {
-            transform.rotation = rot;
-        }
     }
 }

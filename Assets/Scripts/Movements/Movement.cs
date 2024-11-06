@@ -10,29 +10,35 @@ namespace Scripts.Movements
     public abstract class Movement : MonoBehaviour
     {
         [SerializeField] protected PlayerRig anchors;
-        [SerializeField] protected bool moveOnAwake;
+      
         protected CharacterController parentMoveController;
+        [SerializeField] protected float gravity;
         
         private UpdateEvent _onUpdate;
-        private bool _isMoved = false;
         
-        [Inject]
-        protected virtual void Construct(UpdateEvent onUpdate)
+        private bool _isMoved;
+        private bool _waitToConstruct;
+   
+        public void Construct(ref UpdateEvent onUpdate)
         {
-            parentMoveController = anchors.GetBody().GetComponent<CharacterController>();
             _onUpdate = onUpdate;
-            if(moveOnAwake)
+            parentMoveController = anchors.GetBody().GetComponent<CharacterController>();
+            if (_waitToConstruct)
+            {
                 StartMove();
+            }
         }
 
         public virtual void StartMove()
         {
+            Debug.Log("Movement try to start...");
             if (_onUpdate == null)
             {
-                moveOnAwake = true;
+                Debug.Log("Movement can't start. Update Event == null");
+                _waitToConstruct = true;
                 return;
             }
-
+          
             if (_isMoved)
                 return;
             
@@ -54,10 +60,9 @@ namespace Scripts.Movements
         }
         
 
-        protected virtual void UpdateVelocity()
-        {
-        }
 
-   
+        protected abstract void UpdateVelocity();
+
+
     }
 }

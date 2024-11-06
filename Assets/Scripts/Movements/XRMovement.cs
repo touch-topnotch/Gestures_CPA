@@ -1,5 +1,6 @@
 using Scripts.Events;
 using Unity.Mathematics;
+using Unity.XR.CoreUtils;
 using UnityEngine;
 using Zenject;
 
@@ -37,9 +38,11 @@ namespace Scripts.Movements
 
         protected override void UpdateVelocity()
         {
-            _velocity = HeadManipulations.HeadVelocity(pivot.position, anchors.GetHead().position, xzBoard, yBoard, moveSpeed,
-                jumpSpeed) / 10;
+            _velocity =( HeadManipulations.HeadVelocity(pivot.position, anchors.GetHead().position, xzBoard, yBoard,
+                moveSpeed,
+                jumpSpeed) + Vector3.down * 5)/ 10;
             parentMoveController.Move(_velocity);
+            
         }
 
     }

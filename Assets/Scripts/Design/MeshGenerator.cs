@@ -6,8 +6,6 @@ using UnityEngine;
 
 namespace Design
 {
-
-
     public class MeshGenerator : MonoBehaviour
     {
         public Transform[] points;

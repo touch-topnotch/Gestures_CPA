@@ -53,6 +53,28 @@ namespace Scripts.Hands
             material.SetColor("_FingerColor_3", color);
             material.SetColor("_FingerColor_4", color);
         }
-        
+
+        public void SetRotations(in Vector3[] rotations)
+        {
+            if (rotations == null)
+            {
+                return;
+            }
+            for (int i = 0; i < points.Length; i++)
+            {
+                points[i].rotation = Quaternion.Euler(rotations[i]);
+            }
+        }
+
+        public Vector3[] GetRotations()
+        {
+            Vector3[] rots = new Vector3[points.Length];
+            for (int i = 0; i < points.Length; i++)
+            {
+                rots[i] = Quaternion.ToEulerAngles(points[i].rotation);
+            }
+
+            return rots;
+        }
     }
 }
