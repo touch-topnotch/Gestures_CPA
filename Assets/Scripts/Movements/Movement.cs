@@ -18,8 +18,8 @@ namespace Scripts.Movements
         
         private bool _isMoved;
         private bool _waitToConstruct;
-   
-        public void Construct(ref UpdateEvent onUpdate)
+        [Inject]
+        public void Construct(UpdateEvent onUpdate)
         {
             _onUpdate = onUpdate;
             parentMoveController = anchors.GetBody().GetComponent<CharacterController>();

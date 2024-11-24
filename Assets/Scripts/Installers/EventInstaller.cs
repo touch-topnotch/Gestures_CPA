@@ -16,6 +16,7 @@ namespace Scripts.Installers
         }
         private void Update()
         {
+            
             OnFrameUpdated?.Invoke();
         }
     }

@@ -25,9 +25,9 @@ namespace Scripts.Gestures
         {
             Frames.Add(frame);
         }
-
-
+        
         public GestureFrame GetGestureFrame() => _currentGesture < Frames.Count ? Frames[_currentGesture] : null;
+        
         public void FrameRecognized()
         {
             Debug.Log($"{GetGestureFrame().name} recognized!");

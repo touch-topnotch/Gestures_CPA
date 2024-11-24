@@ -8,7 +8,7 @@ namespace Scripts.PlayerLogic
         
         public Transform head;
         public Transform body;
-        public AvatarHands hands;
+        public PlayerHands hands;
         
     }
 }

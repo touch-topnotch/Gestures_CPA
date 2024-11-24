@@ -14,18 +14,16 @@ namespace Scripts.Gestures
         [Range(0, 0.2f)] public float quality = 0.1f;
         public int qualityDecreaser = 10;
         private UpdateEvent _onUpdate;
-        private Player _player;
+        [SerializeField]
+        private PlayerRig _rig;
         
         private RecognitionEvent _onRecognized;
         private List<GestureFrame> _possibleFrames;
         private List<DynamicGesture> _possibleGestures;
         
         private int _curGesture;
-
-        [Inject]
-        private void Construct(Player player, UpdateEvent onUpdate)
+        private void Construct(UpdateEvent onUpdate)
         {
-            _player = player;
             _onUpdate = onUpdate;
         }
         
@@ -90,7 +88,7 @@ namespace Scripts.Gestures
         {
             for(int i = 0; i < _possibleFrames.Count; i++)
             {
-                if (!_player.CurAvatar.hands.IsRecognized)
+                if (!_rig.hands.IsRecognized)
                 {
                     return -1;
                 }

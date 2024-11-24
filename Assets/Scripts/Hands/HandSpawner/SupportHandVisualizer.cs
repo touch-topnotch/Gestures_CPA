@@ -24,8 +24,8 @@ namespace Scripts.Hands
         {
             if (data == null)
                 return;
-            joints[0].SetPosition(data.RootPos, parent ? parent.position : Vector3.zero);
-            for(int i = 0; i < data.Rotations.Length; i++)
+            joints[0].SetPosition(data.rootPos, parent ? parent.position : Vector3.zero);
+            for(int i = 0; i < data.rotations.Length; i++)
             {
             //    joints[i].SetPosition(data.Positions[i] , parent ? parent.position : Vector3.zero); //FIX
             }

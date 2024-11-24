@@ -4,7 +4,8 @@ using UnityEngine;
 
 namespace Scripts.Hands
 {
-    public class AvatarHands: MonoBehaviour
+    
+    public class PlayerHands : MonoBehaviour
     {
         public HandMesh leftHand;
         public HandMesh rightHand;
