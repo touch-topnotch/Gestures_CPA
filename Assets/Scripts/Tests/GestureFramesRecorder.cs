@@ -34,7 +34,7 @@ namespace Scripts.Tests
         }
 
         private HandsStruct _handsPoints = new();
-
+        [Inject]
         private void Construct (GesturesLibrary library)
         {
             _library = library;
@@ -77,6 +77,7 @@ namespace Scripts.Tests
         }
         private void SendToCompiler()
         {
+            l.rl(_handsPoints.ToString());
             _library.Record(_handsPoints, _currentName);
         }
         

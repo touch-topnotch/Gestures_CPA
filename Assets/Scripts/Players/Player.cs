@@ -119,7 +119,7 @@ namespace Scripts.PlayerLogic
         protected void ActivateRig()
         {
             _pcRig.gameObject.SetActive(false);
-            _xrRig.gameObject.SetActive(false);
+//            _xrRig.gameObject.SetActive(false);
             if(_rigType != RigType.NoRig)
                 CurRig.gameObject.SetActive(true);
         }
