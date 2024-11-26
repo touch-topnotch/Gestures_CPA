@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Scripts.Gestures;
+using Scripts.Hands;
 using TMPro;
 using UnityEngine;
 using Zenject;
@@ -26,14 +27,14 @@ namespace Scripts.PlayerLogic
         }
         public void TryGetGestureFrame(string frameName)
         {
-            foreach (var DGesture in _library.DynamicGestures)
+            foreach (var DyGr in _library.DynamicGestures)
             {
 
-                if (frameName == DGesture.Name)
+                if (frameName == DyGr.Name)
                 {
                     _inputField.image.color = Color.green;
                     // play Dynamic Gesture
-                    
+                    StartCoroutine(SimulateDynamicGesture(DyGr));
                     return;
                 }
               
@@ -58,15 +59,19 @@ namespace Scripts.PlayerLogic
             var wait = new WaitForSeconds(_delayBetweenFrames);
             foreach (var frame in gestures.Frames)
             {
-                SimulateGestures(frame);
+                //if HandMesh is PCHandMesh
+                (hands.leftHand as PCHandMesh)?.SetBonesSmooth(frame.Hands.LeftBones);
+                (hands.rightHand as PCHandMesh)?.SetBonesSmooth(frame.Hands.RightBones);
+                
                 yield return wait;
             }
-            _inputField.caretColor = Color.white;
+
+            _inputField.image.color = Color.white;
         }
         public void SimulateGestures(GestureFrame frame)
         {
-            hands.leftHand.SetBonesData(frame.Hands.LeftBones);
-            hands.rightHand.SetBonesData(frame.Hands.RightBones);
+            (hands.leftHand as PCHandMesh)?.SetBonesSmooth(frame.Hands.LeftBones);
+            (hands.rightHand as PCHandMesh)?.SetBonesSmooth(frame.Hands.RightBones);
         }
 
         public void ToggleParentingHands(bool toggle)

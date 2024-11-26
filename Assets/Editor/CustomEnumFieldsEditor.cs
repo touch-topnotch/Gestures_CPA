@@ -12,12 +12,14 @@ public class CustomEnumFieldsEditor : Editor
     SerializedProperty leftHandField;
     SerializedProperty rightHandField;
     SerializedProperty bonesField;
+    SerializedProperty parentField;
     private void OnEnable()
     {
         type = serializedObject.FindProperty("type");
         leftHandField = serializedObject.FindProperty("LeftHand");
         rightHandField = serializedObject.FindProperty("RightHand");
         bonesField = serializedObject.FindProperty("Bones");
+        parentField = serializedObject.FindProperty("Parent");
     }
 
     public override void OnInspectorGUI()
@@ -25,6 +27,7 @@ public class CustomEnumFieldsEditor : Editor
         serializedObject.Update();
 
         EditorGUILayout.PropertyField(type);
+        
 
         if (type.enumValueIndex == 0) // Corresponds to Type.A
         {
@@ -35,7 +38,7 @@ public class CustomEnumFieldsEditor : Editor
         {
             EditorGUILayout.PropertyField(bonesField);
         }
-
+        EditorGUILayout.PropertyField(parentField);
         serializedObject.ApplyModifiedProperties();
     }
 }

@@ -60,7 +60,7 @@ namespace Scripts.Hands
             points = SetTransform(points, data);
         }
     
-        public void ChangePositionSmooth(BonesData data)
+        public void ChangePositionSmooth(BonesData data, Transform parent = null)
         {
             _target = SetTransform(_target, data);
             _onUpdate.AddListener(LerpPoints);

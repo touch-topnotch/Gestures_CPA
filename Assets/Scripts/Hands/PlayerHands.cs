@@ -9,10 +9,20 @@ namespace Scripts.Hands
     {
         public HandMesh leftHand;
         public HandMesh rightHand;
+        public HandsStruct handsStruct { get; private set;}
+
         public bool IsRecognized { get; private set; }
         public void HandEnabled() => IsRecognized = true;
 
         public void HandDisabled() => IsRecognized = false;
+
+        private void OnValidate()
+        {
+            if (leftHand && rightHand)
+            {
+                handsStruct = new HandsStruct(leftHand.points, rightHand.points);
+            }
+        }
 
         public void SetSameColor(string shader_name, Color color)
         {

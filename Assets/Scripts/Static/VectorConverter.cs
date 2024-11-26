@@ -8,10 +8,10 @@ namespace Scripts.Static
 {
 
     
-    public class Vector3Converter : JsonConverter<Vector3>
+    public class VectorConverter : JsonConverter<Vector3>
     {
         public static int quality = 4;
-        public static Vector3 convertToVector3(string value)
+        public static Vector3 ToVector3(string value)
         {
             var words = value.Split(", ");
             Vector3 vec = new Vector3();
@@ -20,7 +20,7 @@ namespace Scripts.Static
             vec.z = float.Parse(words[2]);
             return vec;
         }
-        public static Vector3[] convertToVector3(string[] value)
+        public static Vector3[] ToVector3(string[] value)
         {
             if (value == null || value.Length == 0)
             {
@@ -38,7 +38,7 @@ namespace Scripts.Static
             return jArr;
         }
 
-        public static Quaternion[] convertToQuaternion(string[] value)
+        public static Quaternion[] ToQuaternion(string[] value)
         {
             if (value == null || value.Length == 0)
             {
@@ -58,7 +58,7 @@ namespace Scripts.Static
             return jArr;
         }
 
-        public static Quaternion[] convertToQuaternion(in Transform[] points)
+        public static Quaternion[] ToQuaternion(in Transform[] points)
         {
             var jArr = new Quaternion[points.Length];
             for (int i = 0; i < points.Length; i++)
@@ -68,8 +68,12 @@ namespace Scripts.Static
 
             return jArr;
         }
-        
-        public static string[] convertToString(Vector3[] value)
+
+        public static string ToString(Vector3 value)
+        {
+            return Round(value.x) + ", " + Round(value.y) + ", " + Round(value.z);
+        }
+        public static string[] ToString(Vector3[] value)
         {
             
             if (value == null || value.Length == 0)
@@ -79,12 +83,12 @@ namespace Scripts.Static
             string[] jArr = new string[value.Length];
             for (int i = 0; i < value.Length; i++)
             {
-                jArr[i] = Round(value[i].x) + ", " + Round(value[i].y) + ", " + Round(value[i].z);
+                jArr[i] = ToString(value[i]);
             }
 
             return jArr;
         }
-        public static string[] convertToString(Quaternion[] value)
+        public static string[] ToString(Quaternion[] value)
         {
             
             if (value == null || value.Length == 0)
@@ -94,8 +98,7 @@ namespace Scripts.Static
             string[] jArr = new string[value.Length];
             for (int i = 0; i < value.Length; i++)
             {
-                var vec = value[i].eulerAngles;
-                jArr[i] = Round(value[i].x) + ", " + Round(value[i].y) + ", " + Round(value[i].z);
+                jArr[i] = ToString(value[i].eulerAngles);
             }
 
             return jArr;

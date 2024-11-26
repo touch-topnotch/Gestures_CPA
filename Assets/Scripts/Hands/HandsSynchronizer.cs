@@ -57,7 +57,7 @@ namespace Scripts.Hands
         
         // public static implicit operator HandAnchor(string serialization)
         // {
-        //     var vectors = Vector3Converter.convertToVector3(serialization.Split('\n'));
+        //     var vectors = VectorConverter.convertToVector3(serialization.Split('\n'));
         //     return new HandAnchor()
         //     {
         //         rootPos = vectors[0],

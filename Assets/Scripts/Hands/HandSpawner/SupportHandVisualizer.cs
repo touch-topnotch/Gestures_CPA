@@ -1,5 +1,6 @@
 ﻿using Scripts.Events;
 using UnityEngine;
+using Zenject;
 
 namespace Scripts.Hands
 {
@@ -10,7 +11,7 @@ namespace Scripts.Hands
         protected BoneJoint[] joints;
 
         private UpdateEvent _onUpdate;
-
+        [Inject]
         public virtual void Initialize(ref UpdateEvent onUpdate)
         { 
             for(int i = 0; i < joints.Length; i++)
@@ -33,7 +34,7 @@ namespace Scripts.Hands
 
 
 
-        public void ChangePositionSmooth(BonesData data)
+        public void ChangePositionSmooth(BonesData data, Transform parent = null)
         {
             if (data == null)
             {

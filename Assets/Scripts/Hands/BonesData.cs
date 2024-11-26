@@ -16,9 +16,12 @@ namespace Scripts.Hands
         }
         public BonesData(in Transform[] points, in HandType type)
         {
-            rootPos = points[0].position;
-            rotations = Vector3Converter.convertToQuaternion(points);
             _type = type;
+            if (points == null)
+                return;
+            rootPos = points[0].position;
+            rotations = VectorConverter.ToQuaternion(points);
+            
         }
 
         public HandType Type() => _type;
