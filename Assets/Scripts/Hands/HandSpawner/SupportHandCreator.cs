@@ -126,6 +126,11 @@ namespace Scripts.Hands
 
         private void SpawnNew(BonesData points)
         {
+            if (points == null)
+            {
+                Debug.Log("Cannot Spawn new Support Hand without Bones Data!");
+                return;
+            }
             IHandVisualiser hand = null;
             if (type == VisualizationType.Bones)
             {
