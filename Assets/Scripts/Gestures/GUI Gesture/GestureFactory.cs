@@ -13,6 +13,8 @@ namespace Scripts.Gestures
                 case "Water":
                     gesture.Graphics = new DG_Water(ref gesture.OnFrameDetected);
                     break;
+                case "Fire":
+                    
                 case "Earth":
                     gesture.Graphics = new DG_Earth(ref gesture.OnFrameDetected);
                     break;

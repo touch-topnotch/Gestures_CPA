@@ -8,7 +8,6 @@ namespace Scripts.Gestures.GGUI
     {
         private GameObject _water0Effect;
         private GameObject _water1Effect;
-        
         public DG_Water(ref FrameDetected onFrameDetected) : base(ref onFrameDetected)
         {
         }
@@ -33,6 +32,8 @@ namespace Scripts.Gestures.GGUI
                     break;
             }
         }
+
+       
     }
 
     public class DG_Earth : GUIGesture
@@ -44,6 +45,29 @@ namespace Scripts.Gestures.GGUI
         protected override void ShowEffects(int frameId, GestureFrame gFrame)
         {
             
+        }
+    }
+
+    public class DG_Fire : GUIGesture
+    {
+        private GameObject _sparksEffect;
+        private GameObject _largeFlameEffect;
+
+        public DG_Fire(ref FrameDetected onFrameDetected) : base(ref onFrameDetected)
+        {
+        }
+
+        public override void Construct(PlayerHands hands)
+        {
+            _sparksEffect = LoadAsset(Resources.Load("Effects/Fire/SparksEffect"),
+                hands.leftHand.points[3], new Vector3(0, 0, 0));
+            _largeFlameEffect = LoadAsset(Resources.Load("Effects/Fire/LargeFlameEffect"),
+                hands.rightHand.points[3], new Vector3(0, 0, 0));
+            Debug.Log("Fire assets added!");
+        }
+
+        protected override void ShowEffects(int frameId, GestureFrame gFrame)
+        {
         }
     }
 }
