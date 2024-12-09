@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using ModestTree;
 using Scripts.Events;
 using Scripts.Hands;
 using Scripts.PlayerLogic;
@@ -22,6 +24,7 @@ namespace Scripts.Gestures
         private List<DynamicGesture> _possibleGestures;
         
         private int _curGesture;
+        [Inject]
         private void Construct(UpdateEvent onUpdate)
         {
             _onUpdate = onUpdate;
@@ -90,12 +93,11 @@ namespace Scripts.Gestures
             {
                 if (!_rig.hands.IsRecognized)
                 {
+                    // Debug.Log("Hands not recognized");
                     return -1;
                 }
-                
-                // FIX - equal rotations and rootPose
-                 if (RecognizeHand(_possibleFrames[i].Hands.LeftBones, _rig.hands.leftHand.points,  rotQuality, posQuality)
-                     && RecognizeHand(_possibleFrames[i].Hands.RightBones, _rig.hands.rightHand.points, rotQuality, posQuality))
+                if (RecognizeHand(_possibleFrames[i].Hands.LeftBones, _rig.hands.leftHand.points,  rotQuality, posQuality)
+                    && RecognizeHand(_possibleFrames[i].Hands.RightBones, _rig.hands.rightHand.points, rotQuality, posQuality))
                  {
                      return i;
                  }
@@ -106,24 +108,26 @@ namespace Scripts.Gestures
         private int RecognizeFrameПриблизительно() => RecognizeFrame(rotationQuality * qualityDecreaser, positionQuality * qualityDecreaser);
         private bool RecognizeHand(in BonesData bonesData, in Transform[] handSkeleton, in float rotQuality, in float posQuality)
         {
-            if (bonesData == null)
-            {
+            if (bonesData.rotations?.Length != handSkeleton.Length)
+            { 
                 return true;
             }
 
+           
             if (OptimizedDistance(bonesData.rootPos, handSkeleton[0].localPosition) > posQuality)
             {
-                Debug.Log("Gesture position too far of hand");
                 return false;
             }
             
+            Debug.Log("pos norm");
             for (int i = 0; i < bonesData.rotations.Length; i++)
             {
 
-                float distance = OptimizedDistance( bonesData.rotations[i], handSkeleton[i].rotation);
-                
+                float distance = OptimizedDistance( bonesData.rotations[i], handSkeleton[i].localRotation);
+              
                 if (distance > rotQuality)
                 {
+                    Debug.Log($"{handSkeleton[i].localRotation.eulerAngles} - hand, {bonesData.rotations[i].eulerAngles} - bd, {i} - id");
                     return false;
                 }
             }
@@ -144,11 +148,10 @@ namespace Scripts.Gestures
             }
             Debug.Log(log);
         }
-        private float OptimizedDistance(in Vector3 a, in Vector3 b) =>
+        public static float OptimizedDistance(in Vector3 a, in Vector3 b) =>
             (a.x - b.x) * (a.x - b.x) + (a.y - b.y)* (a.y - b.y) + (a.z - b.z) * (a.z - b.z);
 
-        private float OptimizedDistance(in Quaternion a, in Quaternion b) =>
-            (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z) +
-            (a.w - b.w) * (a.w - b.w);
+        public static float OptimizedDistance(in Quaternion a, in Quaternion b) =>
+            OptimizedDistance(a.eulerAngles, b.eulerAngles);
     }
 }

@@ -1,8 +1,8 @@
-using System;
 using System.Collections;
+using Scripts.Events;
 using Scripts.Gestures;
 using Scripts.Hands;
-using TMPro;
+using Scripts.UI;
 using UnityEngine;
 using Zenject;
 
@@ -11,29 +11,42 @@ namespace Scripts.PlayerLogic
     public class LocalPCRig : PlayerRig
     {
         [SerializeField] [Range(0.01f, 10f)] private float _delayBetweenFrames;
-        [SerializeField] private TMP_InputField _inputField;
+        [SerializeField] protected PCUI ui;
         protected GesturesLibrary _library;
         private Transform _handsParent;
 
-        // [Inject]
-        // private void Construct(GesturesLibrary library)
-        // {
-        private void Start()
+        [Inject]
+        private void Construct(UpdateEvent onUpdate, GesturesLibrary gesturesLibrary, GestureCombiner gestureCombiner)
         {
-            _library = new GesturesLibrary();//library;
-            _handsParent = hands.leftHand.transform.parent;
-            _inputField.image.color = Color.white;
-            movement.StartMove();
+            onUpdate?.AddListener(ToggleMenu);
+            _library = gesturesLibrary;
+            gestureCombiner.AddRecognitionButton("StartRecognizion Button");
         }
+        protected override void Start()
+        {
+            base.Start();
+            
+            _handsParent = hands.leftHand.transform.parent;
+            
+            ui.GetGestureInput().image.color = Color.white;
+            playerStateChangedEvent?.Invoke(_state = PlayerState.ACTIVE);
+            hands.HandEnabled();
+        }
+        
+        //Simulate Gestures
         public void TryGetGestureFrame(string frameName)
         {
+            #if(UNITYEDITOR)
+                return;
+            #endif
             foreach (var DyGr in _library.DynamicGestures)
             {
 
                 if (frameName == DyGr.Name)
                 {
-                    _inputField.image.color = Color.green;
+                    ui.GetGestureInput().image.color = Color.green;
                     // play Dynamic Gesture
+                    StopCoroutine(SimulateDynamicGesture(DyGr));
                     StartCoroutine(SimulateDynamicGesture(DyGr));
                     return;
                 }
@@ -44,16 +57,16 @@ namespace Scripts.PlayerLogic
             {
                 if (frameName == GestureFrame.name)
                 {
-                    _inputField.image.color = Color.yellow;
+                    ui.GetGestureInput().image.color = Color.yellow;
                     // play Gesture Frame
                     SimulateGestures(GestureFrame);
                     return;
                 }
             }
 
-            _inputField.image.color = Color.red;
+            ui.GetGestureInput().image.color = Color.red;
         }
-
+        
         public IEnumerator SimulateDynamicGesture(DynamicGesture gestures)
         {
             var wait = new WaitForSeconds(_delayBetweenFrames);
@@ -66,23 +79,44 @@ namespace Scripts.PlayerLogic
                 yield return wait;
             }
 
-            _inputField.image.color = Color.white;
+            ui.GetGestureInput().image.color = Color.white;
         }
         public void SimulateGestures(GestureFrame frame)
         {
             (hands.leftHand as PCHandMesh)?.SetBonesSmooth(frame.Hands.LeftBones);
             (hands.rightHand as PCHandMesh)?.SetBonesSmooth(frame.Hands.RightBones);
         }
-
+        
+        // Player State
+        protected override void OnPlayerStateChaned(PlayerState state)
+        {
+            switch (state)
+            {
+                case PlayerState.MENU:
+                    movement.StopMove();
+                    ui.Show();
+                    break;
+                case PlayerState.ACTIVE:
+                    movement.StartMove();
+                    ui.Hide();
+                    break;
+            }
+        }
+        private void ToggleMenu()
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                _state = _state == PlayerState.MENU ? PlayerState.ACTIVE : PlayerState.MENU;
+                playerStateChangedEvent?.Invoke(_state);
+            }
+        }
         public void ToggleParentingHands(bool toggle)
-        { 
-            
+        {
+            if (hands == null)
+                return;
             hands.leftHand.transform.SetParent(toggle ? _handsParent : null);
             hands.rightHand.transform.SetParent(toggle ? _handsParent : null);
         }
-        public void ChangePosOfHand()
-        {
-            hands.leftHand.points[0].rotation = new Quaternion(0, hands.leftHand.points[0].rotation.y +0.1f, 0, 0);
-        }
+
     }
 }

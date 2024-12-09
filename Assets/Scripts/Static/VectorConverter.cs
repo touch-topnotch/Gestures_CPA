@@ -13,6 +13,9 @@ namespace Scripts.Static
         public static int quality = 4;
         public static Vector3 ToVector3(string value)
         {
+
+            if (value == null)
+                return new Vector3();
             var words = value.Split(", ");
             Vector3 vec = new Vector3();
             vec.x = float.Parse(words[0]);
@@ -60,10 +63,14 @@ namespace Scripts.Static
 
         public static Quaternion[] ToQuaternion(in Transform[] points)
         {
+            if( points == null || points.Length == 0)
+            {
+                return null;
+            }
             var jArr = new Quaternion[points.Length];
             for (int i = 0; i < points.Length; i++)
             {
-                jArr[i] = points[i].rotation;
+                jArr[i] = points[i].localRotation;
             }
 
             return jArr;
@@ -126,9 +133,9 @@ namespace Scripts.Static
             JObject obj = JObject.Load(reader);
 
             // Extract the x, y, and z values from the JSON object
-            float x = obj.GetValue("x").ToObject<float>();
-            float y = obj.GetValue("y").ToObject<float>();
-            float z = obj.GetValue("z").ToObject<float>();
+            float x = obj.GetValue("x")!.ToObject<float>();
+            float y = obj.GetValue("y")!.ToObject<float>();
+            float z = obj.GetValue("z")!.ToObject<float>();
 
             // Create and return a new Vector3 object with the extracted values
             return new Vector3(x, y, z);
