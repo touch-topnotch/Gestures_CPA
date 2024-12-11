@@ -1,6 +1,6 @@
-using Scripts.Events;
 using Scripts.Hands;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 namespace Scripts.Gestures.GGUI
 {
@@ -8,10 +8,7 @@ namespace Scripts.Gestures.GGUI
     {
         private GameObject _water0Effect;
         private GameObject _water1Effect;
-        public DG_Water(ref FrameDetected onFrameDetected) : base(ref onFrameDetected)
-        {
-        }
-        public override void Construct(PlayerHands hands)
+        protected override void Construct()
         {
             _water0Effect = LoadAsset(Resources.Load("Effects/Water/TestWaterParticle"),
                 hands.leftHand.points[3], new Vector3(0, 0, 0));
@@ -20,7 +17,7 @@ namespace Scripts.Gestures.GGUI
             Debug.Log("Water assets added!");
         }
 
-        protected override void ShowEffects(int frameId, GestureFrame gFrame)
+        public override void ShowEffects(int frameId, GestureFrame gFrame)
         {
             switch (frameId)
             {
@@ -32,19 +29,32 @@ namespace Scripts.Gestures.GGUI
                     break;
             }
         }
-
-       
     }
-
-    public class DG_Earth : GUIGesture
+    
+    public class DG_Katana : GUIGesture
     {
-        public DG_Earth(ref FrameDetected onFrameDetected) : base(ref onFrameDetected)
+        private Transform _katana;
+        protected override void Construct()
         {
+            _katana = LoadAsset(Resources.Load("Effects/Melee/TestKatana"),
+                hands.rightHand.points[3], new Vector3(0, 0, 0)).transform;
+            _katana.gameObject.SetActive(false);
+            Debug.Log("Katana assets added!");
         }
-
-        protected override void ShowEffects(int frameId, GestureFrame gFrame)
+        public override void ShowEffects(int frameId, GestureFrame gFrame)
         {
-            
+            switch (frameId)
+            {
+                case 0:
+                    hands.rightHand.SetColorSmooth(HandShaderProps.EdgeColor, Color.cyan, 3);
+                    break;
+                case 1:
+                    hands.rightHand.SetFingersColor(Color.cyan, true);
+                    break;
+                case 2:
+                    _katana.gameObject.SetActive(true);
+                    break;
+            }
         }
     }
 
@@ -53,11 +63,7 @@ namespace Scripts.Gestures.GGUI
         private GameObject _sparksEffect;
         private GameObject _largeFlameEffect;
 
-        public DG_Fire(ref FrameDetected onFrameDetected) : base(ref onFrameDetected)
-        {
-        }
-
-        public override void Construct(PlayerHands hands)
+        protected override void Construct()
         {
             _sparksEffect = LoadAsset(Resources.Load("Effects/Fire/SparksEffect"),
                 hands.leftHand.points[3], new Vector3(0, 0, 0));
@@ -66,7 +72,7 @@ namespace Scripts.Gestures.GGUI
             Debug.Log("Fire assets added!");
         }
 
-        protected override void ShowEffects(int frameId, GestureFrame gFrame)
+        public override void ShowEffects(int frameId, GestureFrame gFrame)
         {
         }
     }

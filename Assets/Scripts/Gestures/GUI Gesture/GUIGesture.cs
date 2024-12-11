@@ -10,21 +10,22 @@ namespace Scripts.Gestures.GGUI
 
     public abstract class GUIGesture
     {
-        protected PlayerHands PlayerHands;
-        protected abstract void ShowEffects(int frameId, GestureFrame gFrame);
-        protected GUIGesture(ref FrameDetected onFrameDetected)
+        protected PlayerHands hands;
+        protected abstract void Construct();
+        public abstract void ShowEffects(int frameId, GestureFrame gFrame);
+
+        protected GUIGesture()
         {
-            onFrameDetected += ShowEffects;
         }
-        public virtual void Construct(PlayerHands hands)
+
+        public void Construct(PlayerHands Hands)
         {
-            PlayerHands = hands;
+            hands = Hands;
+            Construct();
         }
-        
         protected GameObject LoadAsset(in Object asset,Transform parent)
         {
             var prefab = Spawner.SpawnPrefab(asset as GameObject,parent, true);
-            prefab.SetActive(false);
             return prefab;
         }
         protected GameObject LoadAsset(in Object asset, Transform parent, in Vector3 offset)
@@ -32,7 +33,6 @@ namespace Scripts.Gestures.GGUI
             var transform = parent;
             transform.position += offset;
             var prefab = Spawner.SpawnPrefab(asset as GameObject, transform, true);
-            prefab.SetActive(false);
             return prefab;
         }
         protected GameObject LoadAsset(in Object asset, Transform parent, in Vector3 offset, in Vector3 rotation)
@@ -41,7 +41,6 @@ namespace Scripts.Gestures.GGUI
             transform.position += offset;
             transform.rotation = Quaternion.Euler(rotation.x, rotation.y, rotation.z);
             var prefab = Spawner.SpawnPrefab(asset as GameObject, transform, true);
-            prefab.SetActive(false);
             return prefab;
         }
     }

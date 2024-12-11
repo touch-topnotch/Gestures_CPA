@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Scripts.Events;
 using Scripts.Gestures.GGUI;
-using Scripts.PlayerLogic;
+using Scripts.Hands;
 using UnityEngine;
 
 namespace Scripts.Gestures
@@ -12,9 +12,9 @@ namespace Scripts.Gestures
     {
     
         public readonly string Name;
-        public FrameDetected OnFrameDetected;
-        public List<GestureFrame> Frames = new List<GestureFrame>();
-        public GUIGesture Graphics;
+        public readonly FrameDetected onFrameDetected = new();
+        public List<GestureFrame> Frames = new();
+        public GUIGesture graphics;
         private int _currentGesture = 0;
         public DynamicGesture(string name)
         {
@@ -31,7 +31,7 @@ namespace Scripts.Gestures
         public void FrameRecognized()
         {
             Debug.Log($"{GetGestureFrame().name} recognized!");
-            OnFrameDetected?.Invoke(_currentGesture, GetGestureFrame());
+            onFrameDetected?.Invoke(_currentGesture, GetGestureFrame());
             NextFrame();
         }
 
@@ -57,6 +57,12 @@ namespace Scripts.Gestures
             }
 
             Debug.Log(log);
+        }
+
+        public void AddGraphics(PlayerHands hands)
+        {
+            graphics.Construct(hands);
+            onFrameDetected.AddListener(graphics.ShowEffects);
         }
     }
 }

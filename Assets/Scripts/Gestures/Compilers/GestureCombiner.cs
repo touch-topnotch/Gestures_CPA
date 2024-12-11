@@ -25,6 +25,7 @@ namespace Scripts.Gestures
         _library = library;
         _recognizer = recognizer;
         _onDynamicRecognized.AddListener(GestureRecognized);
+        
     }
 
     public void AddRecognitionButton(string name)
@@ -41,7 +42,7 @@ namespace Scripts.Gestures
     {
         Debug.Log($"Dynamic gesture {gesture.Name} recognized");
         gesture.AllFramesDetected();
-        _recognizer.HideHands();
+
 
         TestRecognitionFunction();
     }

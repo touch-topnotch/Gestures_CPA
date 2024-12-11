@@ -20,14 +20,6 @@ namespace Scripts.Gestures
             ReadFrames();
             Debug.Log("Library has initialized:\nDynamic gestures count: " + DynamicGestures.Count + "\nGesture frames count: " + GestureFrames.Count);
         }
-
-        public void InitializeAllAssets(PlayerHands hands) //do it after initializing Player (it needs playerHands)
-        {
-            foreach (var gesture in DynamicGestures )
-            {
-                gesture.Graphics.Construct(hands);
-            }
-        }
         public void ReadFrames()
         {
             _framesCompiler.Read();
