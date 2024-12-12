@@ -56,7 +56,7 @@ namespace Scripts.Hands
             if (parent != null)
             {
                 //transform.localPosition = parent.position;
-                transform.localRotation = parent.rotation;
+                //transform.localRotation = parent.rotation;
             }
 
             points = SetTransform(points, data);
