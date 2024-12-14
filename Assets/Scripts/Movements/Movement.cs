@@ -1,15 +1,13 @@
 using Scripts.Events;
 using Scripts.PlayerLogic;
-using Scripts.Static;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
 using Zenject;
 
 namespace Scripts.Movements
 {
     public abstract class Movement : MonoBehaviour
     {
-        [SerializeField] protected PlayerRig anchors;
+        [SerializeField] protected Rig anchors;
       
         protected CharacterController parentMoveController;
         [SerializeField] protected float gravity;

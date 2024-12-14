@@ -9,22 +9,15 @@ namespace Scripts.Hands
     {
         public HandMesh leftHand;
         public HandMesh rightHand;
-        public bool haveCreator;
+        
         public SupportHandCreator handCreator;
-       // public HandsStruct handsStruct { get; private set;}
-      
         public bool IsRecognized { get; private set; }
         public void HandEnabled() => IsRecognized = true;
         public void HandDisabled() => IsRecognized = false;
-
+        
         private void OnValidate()
         {
-            // if (leftHand && rightHand)
-            // {
-            //     handsStruct = new HandsStruct(leftHand.points, rightHand.points);
-            // }
-
-            if (haveCreator && handCreator == null &&GetComponent<SupportHandCreator>())
+            if (handCreator == null &&GetComponent<SupportHandCreator>())
             {
                 handCreator = GetComponent<SupportHandCreator>();
             }
