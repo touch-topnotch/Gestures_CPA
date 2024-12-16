@@ -1,4 +1,5 @@
 using Scripts.Events;
+using TMPro;
 using Unity.Mathematics;
 using Unity.XR.CoreUtils;
 using UnityEngine;
@@ -32,13 +33,13 @@ namespace Scripts.Movements
         
         public override void StartMove()
         {
-            pivot.position = anchors.GetHead().position;
+            pivot.position = rig.GetHead.position;
             base.StartMove();
         }
 
         protected override void UpdateVelocity()
         {
-            _velocity =( HeadManipulations.HeadVelocity(pivot.position, anchors.GetHead().position, xzBoard, yBoard,
+            _velocity =( HeadManipulations.HeadVelocity(pivot.position, rig.GetHead.position, xzBoard, yBoard,
                 moveSpeed,
                 jumpSpeed) + Vector3.down * 5)/ 10;
             parentMoveController.Move(_velocity);

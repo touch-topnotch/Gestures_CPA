@@ -7,9 +7,9 @@ namespace Scripts.Movements
 {
     public abstract class Movement : MonoBehaviour
     {
-        [SerializeField] protected Rig anchors;
+        [SerializeField] protected Rig rig;
       
-        protected CharacterController parentMoveController;
+        [SerializeField] protected CharacterController parentMoveController;
         [SerializeField] protected float gravity;
         
         private UpdateEvent _onUpdate;
@@ -20,7 +20,6 @@ namespace Scripts.Movements
         public void Construct(UpdateEvent onUpdate)
         {
             _onUpdate = onUpdate;
-            parentMoveController = anchors.GetBody().GetComponent<CharacterController>();
             if (_waitToConstruct)
             {
                 StartMove();

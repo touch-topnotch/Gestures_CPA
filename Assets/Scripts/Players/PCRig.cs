@@ -16,13 +16,10 @@ namespace Scripts.PlayerLogic
         private Transform _handsParent;
 
         [Inject]
-        private void Construct(UpdateEvent onUpdate, GesturesLibrary gesturesLibrary, GestureCombiner gestureCombiner)
+        private void Construct(UpdateEvent onUpdate, GesturesLibrary gesturesLibrary)
         {
-            if (!gameObject.activeSelf)
-                return;
             onUpdate?.AddListener(ToggleMenu);
             _library = gesturesLibrary;
-            gestureCombiner.AddRecognitionButton("StartRecognizion Button");
         }
         protected override void Start()
         {
@@ -30,16 +27,16 @@ namespace Scripts.PlayerLogic
             
             _handsParent = hands.leftHand.transform.parent;
             ui.GetGestureInput().image.color = Color.white;
-            playerStateChangedEvent?.Invoke(_state = PlayerState.ACTIVE);
+            playerStateChangedEvent?.Invoke(playerState = PlayerState.ACTIVE);
             hands.HandEnabled();
         }
         
         //Simulate Gestures
         public void TryGetGestureFrame(string frameName)
         {
-            #if(UNITYEDITOR)
-                return;
-            #endif
+        //     #if(UNITYEDITOR)
+        //         return;
+        //     #endif
             foreach (var DyGr in _library.DynamicGestures)
             {
 
@@ -105,10 +102,12 @@ namespace Scripts.PlayerLogic
         }
         private void ToggleMenu()
         {
-            if (Input.GetKeyDown(KeyCode.Escape))
+            if ((Input.GetKey(KeyCode.LeftCommand) || Input.GetKey(KeyCode.LeftControl)) &&
+                Input.GetKeyDown(KeyCode.G)) 
             {
-                _state = _state == PlayerState.MENU ? PlayerState.ACTIVE : PlayerState.MENU;
-                playerStateChangedEvent?.Invoke(_state);
+                print("TOGGLE");
+                playerState = playerState == PlayerState.MENU ? PlayerState.ACTIVE : PlayerState.MENU;
+                playerStateChangedEvent?.Invoke(playerState);
             }
         }
         public void ToggleParentingHands(bool toggle)

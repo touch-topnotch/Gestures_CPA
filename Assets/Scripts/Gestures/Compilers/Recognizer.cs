@@ -15,7 +15,6 @@ namespace Scripts.Gestures
         [Range(0, 1)] public float positionQuality = 0.01f;
         [Range(0, 1f)] public float rotationQuality = 0.1f;
         public int qualityDecreaser = 10;
-       
         
         private Rig _rig;
         
@@ -27,8 +26,9 @@ namespace Scripts.Gestures
         
         private int _curGesture;
         private bool wasDrawnПриблизительно = false;
+        
         [Inject]
-        private void Construct(UpdateEvent onUpdate, Rig rig)
+        public void Initialize(UpdateEvent onUpdate, Rig rig)
         {
             _rig = rig;
             _onUpdate = onUpdate;
@@ -73,9 +73,9 @@ namespace Scripts.Gestures
             var приблизительныйFrameId = RecognizeFrameПриблизительно();
             if (приблизительныйFrameId != -1)
             {
-                _rig.hands.handCreator.OverrideHands(_possibleFrames[приблизительныйFrameId].Hands);
+                _rig.GetHands.handCreator.OverrideHands(_possibleFrames[приблизительныйFrameId].Hands);
 
-                foreach (var hand in _rig.hands.handCreator.activeHands)
+                foreach (var hand in _rig.GetHands.handCreator.activeHands)
                 {
                     (hand as HandMesh)?.ChangeColorPinPong(HandShaderProps.EdgeColor, new Color(1,1,1,0.1f), new Color(1,1,1,0.5f), 2);
                 }
@@ -113,11 +113,11 @@ namespace Scripts.Gestures
         {
             for(int i = 0; i < _possibleFrames.Count; i++)
             {
-                if (!_rig.hands.IsRecognized)
+                if (!_rig.GetHands.IsRecognized)
                     return -1;
                 
-                if (RecognizeHand(_possibleFrames[i].Hands.LeftBones, _rig.hands.leftHand.points,  rotQuality, posQuality)
-                    && RecognizeHand(_possibleFrames[i].Hands.RightBones, _rig.hands.rightHand.points, rotQuality, posQuality))
+                if (RecognizeHand(_possibleFrames[i].Hands.LeftBones, _rig.GetHands.leftHand.points,  rotQuality, posQuality)
+                    && RecognizeHand(_possibleFrames[i].Hands.RightBones, _rig.GetHands.rightHand.points, rotQuality, posQuality))
                  {
                      return i;
                  }
@@ -152,7 +152,7 @@ namespace Scripts.Gestures
         public void HideHands()
         {
             Debug.Log("Hide Hands");
-             _rig.hands.handCreator.HideHands();
+             _rig.GetHands.handCreator.HideHands();
             wasDrawnПриблизительно = false;
         }
 

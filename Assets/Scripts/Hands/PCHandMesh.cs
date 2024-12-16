@@ -8,21 +8,16 @@ namespace Scripts.Hands
     public class PCHandMesh: HandMesh
     {
         [SerializeField] private float speed;
-        private UpdateEvent _onUpdate;
         private bool isMoved;
         private BonesData target;
-        [Inject]
-        private void Construct(UpdateEvent onUpdate)
-        {
-            _onUpdate = onUpdate;
-        }
+      
         
         public void SetBonesSmooth(in BonesData data)
         {
 
             target = data;
             if (!isMoved)
-                _onUpdate.AddListener(MoveHand);
+                onUpdate.AddListener(MoveHand);
         }
 
         private void MoveHand()
@@ -36,7 +31,7 @@ namespace Scripts.Hands
                 StopMoveHand();
                 return;
             }
-            
+            print("try to turn");
             points[0].localPosition = Vector3.Lerp(points[0].localPosition, target.rootPos, speed*Time.deltaTime);
             for(int i = 0; i < points.Length; i++)
             {
@@ -45,7 +40,8 @@ namespace Scripts.Hands
         }
         private void StopMoveHand()
         {
-            _onUpdate.RemoveListener(MoveHand);
+            print("Hand movement stopped");
+            onUpdate.RemoveListener(MoveHand);
         }
     }
 }

@@ -1,38 +1,34 @@
+using System;
 using Scripts.Events;
-using Scripts.PlayerLogic;
 using UnityEngine;
-using UnityEngine.Assertions;
 using UnityEngine.UI;
 using Zenject;
 
 namespace Scripts.Gestures
 {
+    
     [RequireComponent(typeof(Recognizer))]
-
-    public class GestureCombiner
-
+    public class GestureCombiner: CustomBehaviour
     {
-    private RecognitionEvent _onDynamicRecognized = new RecognitionEvent();
+        [SerializeField] private Button _button;
+    private RecognitionEvent _onDynamicRecognized = new();
     private GesturesLibrary _library;
     private Recognizer _recognizer;
     private GestureGraph _graph;
     private GestureGraph _currentGraph;
 
-
     [Inject]
-    private void Construct(GesturesLibrary library, Recognizer recognizer)
+    public void Construct(GesturesLibrary library)
     {
         _library = library;
-        _recognizer = recognizer;
         _onDynamicRecognized.AddListener(GestureRecognized);
-        
+        _button.onClick.AddListener(TestRecognitionFunction);
     }
 
-    public void AddRecognitionButton(string name)
+    private void OnValidate()
     {
-        GameObject.Find(name).GetComponent<Button>().onClick.AddListener(TestRecognitionFunction);
+        _recognizer = GetComponent<Recognizer>();
     }
-
     public void TestRecognitionFunction()
     {
         _recognizer.RecognizeDynamicGesture(_library.DynamicGestures, ref _onDynamicRecognized);
