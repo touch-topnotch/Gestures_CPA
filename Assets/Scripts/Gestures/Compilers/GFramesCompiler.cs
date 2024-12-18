@@ -8,7 +8,7 @@ using Scripts.PlayerLogic;
 using Zenject;
 
 using FrameAtlas = System.Collections.Generic.Dictionary<string,Scripts.Databases.DBFrameStruct>;
-
+using OldFrameAtlas = System.Collections.Generic.Dictionary<string,Scripts.Databases.OldDBFrameStruct>;
 namespace Scripts.Gestures
 {
    
@@ -23,6 +23,8 @@ namespace Scripts.Gestures
         {
             _library = library;
         }
+
+       
         public void Read()
         {
             FrameAtlas reddenFrames =
@@ -38,10 +40,10 @@ namespace Scripts.Gestures
                 {
                     name = jsonFrame.Key
                 };
-                frame.Hands.LeftBones.rotations = VectorConverter.ToQuaternion(jsonFrame.Value.left_rots);
-                frame.Hands.RightBones.rotations = VectorConverter.ToQuaternion(jsonFrame.Value.right_rots);
-                frame.Hands.LeftBones.rootPos = VectorConverter.ToVector3(jsonFrame.Value.left_pos);
-                frame.Hands.RightBones.rootPos = VectorConverter.ToVector3(jsonFrame.Value.right_pos);
+                frame.Hands.LeftBones.rotations = VectorConverter.CodeToQuaternionArray(jsonFrame.Value.left_rots);
+                frame.Hands.RightBones.rotations = VectorConverter.CodeToQuaternionArray(jsonFrame.Value.right_rots);
+                frame.Hands.LeftBones.rootPos = VectorConverter.CodeToVec3Pos(jsonFrame.Value.left_pos);
+                frame.Hands.RightBones.rootPos = VectorConverter.CodeToVec3Pos(jsonFrame.Value.right_pos);
                 
                 _library.SetGestureFrame(frame);
             }
@@ -57,15 +59,15 @@ namespace Scripts.Gestures
 
             if (hands.LeftBones != null)
             {
-                frameStruct.left_rots = VectorConverter.ToString(hands.LeftBones.rotations);
-                frameStruct.left_pos = VectorConverter.ToString(hands.LeftBones.rootPos);
+                frameStruct.left_rots = VectorConverter.QuaternionArrayToCode(hands.LeftBones.rotations);
+                frameStruct.left_pos = VectorConverter.VecToCodePos(hands.LeftBones.rootPos);
             }
 
 
             if (hands.RightBones != null)
             {
-                frameStruct.right_rots = VectorConverter.ToString(hands.RightBones.rotations);
-                frameStruct.right_pos =  VectorConverter.ToString(hands.RightBones.rootPos);
+                frameStruct.right_rots = VectorConverter.QuaternionArrayToCode(hands.RightBones.rotations);
+                frameStruct.right_pos =  VectorConverter.VecToCodePos(hands.RightBones.rootPos);
             }
                
             Read();
@@ -87,6 +89,31 @@ namespace Scripts.Gestures
            
             DataChanel.Send(_jsonPath, jsonString);
         }
+        // private void ConvertOldSystemToNew() you can remove it
+        // {
+        //     OldFrameAtlas oldFrames =
+        //         JsonConvert.DeserializeObject<OldFrameAtlas>(DataChanel.Get(_jsonPath));
+        //     
+        //     var generatedFrames = new Dictionary<string, DBFrameStruct>();
+        //     
+        //     foreach (KeyValuePair<string, OldDBFrameStruct> jsonFrame in oldFrames)
+        //     {
+        //         DBFrameStruct frameStruct = new DBFrameStruct();
+        //         frameStruct.left_rots =
+        //             VectorConverter.QuaternionArrayToCode(
+        //                 VectorConverter.OldCodeToQuat(jsonFrame.Value.left_rots));
+        //         frameStruct.right_rots =
+        //             VectorConverter.QuaternionArrayToCode(
+        //                 VectorConverter.OldCodeToQuat(jsonFrame.Value.right_rots));
+        //         frameStruct.left_pos = VectorConverter.VecToCodePos(
+        //             VectorConverter.OldCodeToVec(jsonFrame.Value.left_pos));
+        //         frameStruct.right_pos = VectorConverter.VecToCodePos(
+        //             VectorConverter.OldCodeToVec(jsonFrame.Value.right_pos));
+        //         generatedFrames.Add(jsonFrame.Key, frameStruct);
+        //     }
+        //     var jsonString = JsonConvert.SerializeObject(generatedFrames, Formatting.Indented);
+        //     DataChanel.Send(_jsonPath, jsonString);
+        // }
     }
 
 }
