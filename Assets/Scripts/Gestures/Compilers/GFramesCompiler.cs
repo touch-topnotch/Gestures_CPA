@@ -8,7 +8,6 @@ using Scripts.PlayerLogic;
 using Zenject;
 
 using FrameAtlas = System.Collections.Generic.Dictionary<string,Scripts.Databases.DBFrameStruct>;
-using OldFrameAtlas = System.Collections.Generic.Dictionary<string,Scripts.Databases.OldDBFrameStruct>;
 namespace Scripts.Gestures
 {
    
@@ -67,16 +66,16 @@ namespace Scripts.Gestures
             if (hands.RightBones != null)
             {
                 frameStruct.right_rots = VectorConverter.QuaternionArrayToCode(hands.RightBones.rotations);
-                frameStruct.right_pos =  VectorConverter.VecToCodePos(hands.RightBones.rootPos);
+                frameStruct.right_pos = VectorConverter.VecToCodePos(hands.RightBones.rootPos);
             }
-               
+
             Read();
 
             if (_framesDict.ContainsKey(name))
             {
                 _framesDict[name] = frameStruct;
                 Debug.Log($"{name} overrided");
-                
+
             }
 
             else
@@ -86,34 +85,9 @@ namespace Scripts.Gestures
             }
 
             var jsonString = JsonConvert.SerializeObject(_framesDict, Formatting.Indented);
-           
+
             DataChanel.Send(_jsonPath, jsonString);
         }
-        // private void ConvertOldSystemToNew() you can remove it
-        // {
-        //     OldFrameAtlas oldFrames =
-        //         JsonConvert.DeserializeObject<OldFrameAtlas>(DataChanel.Get(_jsonPath));
-        //     
-        //     var generatedFrames = new Dictionary<string, DBFrameStruct>();
-        //     
-        //     foreach (KeyValuePair<string, OldDBFrameStruct> jsonFrame in oldFrames)
-        //     {
-        //         DBFrameStruct frameStruct = new DBFrameStruct();
-        //         frameStruct.left_rots =
-        //             VectorConverter.QuaternionArrayToCode(
-        //                 VectorConverter.OldCodeToQuat(jsonFrame.Value.left_rots));
-        //         frameStruct.right_rots =
-        //             VectorConverter.QuaternionArrayToCode(
-        //                 VectorConverter.OldCodeToQuat(jsonFrame.Value.right_rots));
-        //         frameStruct.left_pos = VectorConverter.VecToCodePos(
-        //             VectorConverter.OldCodeToVec(jsonFrame.Value.left_pos));
-        //         frameStruct.right_pos = VectorConverter.VecToCodePos(
-        //             VectorConverter.OldCodeToVec(jsonFrame.Value.right_pos));
-        //         generatedFrames.Add(jsonFrame.Key, frameStruct);
-        //     }
-        //     var jsonString = JsonConvert.SerializeObject(generatedFrames, Formatting.Indented);
-        //     DataChanel.Send(_jsonPath, jsonString);
-        // }
     }
 
 }
