@@ -31,7 +31,7 @@ namespace Scripts.Hands
                 StopMoveHand();
                 return;
             }
-            print("try to turn");
+            
             points[0].localPosition = Vector3.Lerp(points[0].localPosition, target.rootPos, speed*Time.deltaTime);
             for(int i = 0; i < points.Length; i++)
             {
@@ -40,7 +40,6 @@ namespace Scripts.Hands
         }
         private void StopMoveHand()
         {
-            print("Hand movement stopped");
             onUpdate.RemoveListener(MoveHand);
         }
     }

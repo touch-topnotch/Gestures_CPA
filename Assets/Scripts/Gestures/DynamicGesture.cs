@@ -19,6 +19,7 @@ namespace Scripts.Gestures
         public DynamicGesture(string name)
         {
             Name = name;
+            graphics = GestureFactory.SetDynamicGesture(name);
         }
         
         public void AddFrame(GestureFrame frame)
@@ -59,7 +60,7 @@ namespace Scripts.Gestures
             Debug.Log(log);
         }
 
-        public void AddGraphics(PlayerHands hands)
+        public void AddGraphicsToRigHands(PlayerHands hands)
         {
             if (graphics == null)
                 return;
