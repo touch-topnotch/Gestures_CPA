@@ -4,10 +4,11 @@ using UnityEngine.PlayerLoop;
 
 namespace Scripts.Gestures.GGUI
 {
-    public class DG_Water: GUIGesture
+    public class DG_Water : GUIGesture
     {
         private GameObject _water0Effect;
         private GameObject _water1Effect;
+
         protected override void Construct()
         {
             _water0Effect = LoadAsset(Resources.Load("Effects/Water/TestWaterParticle"),
@@ -30,17 +31,21 @@ namespace Scripts.Gestures.GGUI
             }
         }
     }
-    
+
     public class DG_Katana : GUIGesture
     {
         private Transform _katana;
+
         protected override void Construct()
         {
-            _katana = LoadAsset(Resources.Load("Effects/Melee/TestKatana"),
+            _katana = LoadAsset(Resources.Load("Effects/Melee/Katana/KatanaPrefab"),
                 hands.rightHand.points[3], new Vector3(0, 0, 0)).transform;
-            _katana.gameObject.SetActive(false);
+            _katana.gameObject.SetActive(true);
+            //_katana.localPosition  = new Vector3(-0.04f,-0.032f,-0.025f);
+            _katana.eulerAngles = new Vector3(0, -90, 0);
             Debug.Log("Katana assets added!");
         }
+
         public override void ShowEffects(int frameId, GestureFrame gFrame)
         {
             switch (frameId)
@@ -50,9 +55,10 @@ namespace Scripts.Gestures.GGUI
                     break;
                 case 1:
                     hands.rightHand.SetFingersColor(Color.cyan, true);
+                    _katana.gameObject.SetActive(true);
                     break;
                 case 2:
-                    _katana.gameObject.SetActive(true);
+                
                     break;
             }
         }
