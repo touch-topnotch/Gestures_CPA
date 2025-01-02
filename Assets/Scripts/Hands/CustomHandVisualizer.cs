@@ -113,7 +113,7 @@ namespace Scripts.Hands
             }
         }
 
-        protected void Update()
+        protected void FixedUpdate()
         {
             if (m_Subsystem != null)
                 return;
