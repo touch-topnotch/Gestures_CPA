@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Scripts.Events;
 using Scripts.Gestures;
-using Scripts.Static;
-using Unity.VisualScripting;
 using UnityEngine;
 using Zenject;
+using Timer = Scripts.Static.Timer;
 
 namespace Scripts.Hands
 {
@@ -17,18 +15,98 @@ namespace Scripts.Hands
     }
     public class HandMesh : MonoBehaviour
     {
-        public Material material;
-        public Transform[] points;
-        [SerializeField] private Material _defaultMaterial;
-        public Color selectedFingerColor;
-        public Color selectedEdgeColor;
-        private readonly List<TargetProp> _targets = new ();
-        private readonly List<PinPongProp> _pinPongs = new ();
-        protected UpdateEvent onUpdate;
-
-        private void OnValidate()
+        private enum HandMaterialType
         {
-            ResetMaterial();
+            Player,
+            Ghost
+        }
+        [Header("Types")]
+        [SerializeField] private HandMaterialType _handMaterialType;
+        [SerializeField] private HandType _handType;
+        [Space]
+        [Header("Transforms")]
+        public Transform[] points;
+        [Space]
+        [Header("Materials")]
+        public Material material;
+        [SerializeField] private Material _defaultMaterial;
+        
+        private readonly List<TargetProp> _targets = new ();
+        
+        private readonly List<PinPongProp> _pinPongs = new ();
+        
+        protected UpdateEvent onUpdate;
+        
+        private Action _onPlaced;
+        private float _speed;
+        private bool _isMoved;
+        private BonesData _target;
+
+        
+        public void RefreshProperties()
+        {
+            if (name.Contains("Player"))
+            {
+                _handMaterialType = HandMaterialType.Player;
+            }
+            else
+            {
+                _handMaterialType = HandMaterialType.Ghost;
+            }
+        
+            _handType = name[^1] == 'L' ? HandType.left : HandType.right;
+           
+            if(_defaultMaterial != null &&material != null)
+                ResetMaterial();
+            else
+            {
+                material = Resources.Load("Materials/Hands/Runtime/Runtime " + _handMaterialType.ToString() + "HandMat_" + char.ToUpper(_handType.ToString()[0])) as Material;
+                _defaultMaterial = Resources.Load("Materials/Hands/" + _handMaterialType.ToString() + "HandMat_" + char.ToUpper(_handType.ToString()[0])) as Material;
+            }
+            if (points == null ||points.Length == 0)
+            {
+                points = new Transform[26];
+                for (int i = 0; i < transform.childCount; i++)
+                {
+                    if (transform.GetChild(i).name.Contains("Wrist"))
+                    {
+                        AddAllChildren(transform.GetChild(i));
+                        break;
+                    }
+                }
+            }
+        }
+
+        private int AddAllChildren(Transform parent, int id=0)
+        {
+            if (id == 26)
+                return 0;
+            points[id] = parent;
+            id++;
+            
+            for (int i = 0; i < parent.childCount; i++)
+            {
+               
+                id = AddAllChildren(parent.GetChild(i), id);
+            }
+
+            return id;
+        }
+        public void SetRotations(in Vector3[] rotations)
+        {
+            if (rotations == null)
+            {
+                return;
+            }
+            for (int i = 0; i < points.Length; i++)
+            {
+                points[i].rotation = Quaternion.Euler(rotations[i]);
+            }
+        }
+        
+        public void Initialize(ref UpdateEvent _onUpdate)
+        {
+            Construct(_onUpdate);
         }
 
         [Inject]
@@ -37,12 +115,88 @@ namespace Scripts.Hands
             onUpdate = updateEvent;
             onUpdate.AddListener(UpdateProperties);
         }
+        
         private void Start()
         {
             if(_defaultMaterial != null)
                 ResetMaterial();
         }
+        
+        public void ChangePosition(BonesData data)
+        {
+            if (!data.Exists())
+            {
+                Hide();
+                return;
+            }
 
+            Show();
+
+            points[0].localPosition = data.rootPos;
+            for (int i = 0; i < data.rotations.Length; i++)
+            {
+                points[i].localRotation = data.rotations[i];
+            }
+        }
+
+        public void ChangePositionSmooth(in BonesData data, in float speed, in Action onPlaced = null)
+        {
+            _target = data;
+            _speed = speed;
+            _onPlaced = onPlaced;
+            if (!_isMoved)
+                onUpdate.AddListener(MoveHand);
+        }
+
+        
+        private void MoveHand()
+        {  if (_target == null || _target.rotations == null)
+            {
+                _onPlaced = null;
+                StopMoveHand();
+                return;
+            }
+            if(Vector3.Distance(points[0].localPosition, _target.rootPos) < 0.05f &&
+               Quaternion.Angle(points[0].localRotation, _target.rotations[0]) < 0.05f&&
+                Quaternion.Angle(points[13].localRotation, _target.rotations[13]) < 0.05f
+               
+               )
+            {
+                StopMoveHand();
+                return;
+            }
+            
+            points[0].localPosition = Vector3.Lerp(points[0].localPosition, _target.rootPos, _speed*Time.deltaTime);
+            for(int i = 0; i < points.Length; i++)
+            {
+                points[i].localRotation = Quaternion.Lerp(points[i].localRotation, _target.rotations[i], _speed*Time.deltaTime);
+            }
+        }
+        
+        private void StopMoveHand()
+        {
+            _onPlaced?.Invoke();
+            onUpdate.RemoveListener(MoveHand);
+        }
+        
+        public void Show()
+        {
+            StopPinPongAll();
+            gameObject.SetActive(true);
+            ResetMaterial();
+        }
+
+        public void Hide()
+        {
+            StopPinPongAll();
+            SetColorSmooth(HandShaderProps.EdgeColor, Color.clear);
+            SetFingersColor(Color.clear, true);
+            var timer = new Timer(0.4f, () =>
+            {
+                gameObject.SetActive(false);
+            },onUpdate);
+        }
+        
         public void ResetMaterial()
         {
             
@@ -85,27 +239,7 @@ namespace Scripts.Hands
             }
             _targets.Add(new TargetProp(property, color, speed));
         }
-
-        public void SetSelectedStyle()
-        {
-            ResetMaterial();
-            material.SetColor(
-                HandShaderProps.EdgeColor, selectedEdgeColor);
-            material.SetColor(HandShaderProps.FingerColor1, selectedFingerColor);
-        }
         
-        public void SetRotations(in Vector3[] rotations)
-        {
-            if (rotations == null)
-            {
-                return;
-            }
-            for (int i = 0; i < points.Length; i++)
-            {
-                points[i].rotation = Quaternion.Euler(rotations[i]);
-            }
-        }
-
         public void ChangeColorPinPong(in int id, in Color a, in Color b, in float speed)
         {
             _pinPongs.Add(new PinPongProp(id, a, b, speed));
@@ -124,6 +258,7 @@ namespace Scripts.Hands
         {
             _pinPongs.Clear();
         }
+        
         private void UpdateProperties()
         {
             if (_targets.Count != 0)
@@ -161,6 +296,11 @@ namespace Scripts.Hands
         {
             ResetMaterial();
         }
+        
+        // public Transform[] GetTransforms()
+        // {
+        //     throw new NotImplementedException();
+        // }
     }
 
     struct TargetProp
@@ -192,7 +332,9 @@ namespace Scripts.Hands
         {
             target = a.value == target.value ? b : a;
         }
+        
     }
+    
 
     public static class HandShaderProps
     { 

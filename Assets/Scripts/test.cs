@@ -12,8 +12,15 @@ public class test : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log(hand_root.localRotation.eulerAngles);
-       // Debug.Log(Recognizer.OptimizedDistance(db_transform.rotation, hand_root.rotation) + " rotation distance");
-       // Debug.Log(Recognizer.OptimizedDistance(db_transform.position, hand_root.position) + " position distance");
+
+        var a = db_transform.localRotation;
+        var b = hand_root.localRotation;
+        var c = 0f;
+        // c = distance(a, b);
+        c = Quaternion.Dot(a, b);
+        print(c);
+        
+        // Debug.Log(Recognizer.OptimizedDistance(db_transform.rotation, hand_root.rotation) + " rotation distance");
+        // Debug.Log(Recognizer.OptimizedDistance(db_transform.position, hand_root.position) + " position distance");
     }
 }

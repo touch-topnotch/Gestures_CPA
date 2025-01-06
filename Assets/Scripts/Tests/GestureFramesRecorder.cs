@@ -19,7 +19,7 @@ namespace Scripts.Tests
         public Button continueRecording;
         public TMP_Text gestureName;
         private Rig _rig;
-        private SupportHandCreator _supportHdCreator;
+        private SupportHandVisualiser _supportHdCreator;
         private GesturesLibrary _library;
         
         private string _currentName = "";
@@ -34,13 +34,13 @@ namespace Scripts.Tests
             }
         }
 
-        private HandsStruct _recordedHandStruct= new();
+        private HandsStruct _recordedHandStruct = new();
         [Inject]
         private void Construct (GesturesLibrary library, Rig rig)
         {
             _library = library;
             _rig = rig;
-            _supportHdCreator = _rig.GetHands.handCreator;
+            _supportHdCreator = _rig.GetHands.handVisualiser;
             
             leftToggle.onValueChanged.AddListener(RecordLeft);
             rightToggle.onValueChanged.AddListener(RecordRight);

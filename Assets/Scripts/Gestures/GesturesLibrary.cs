@@ -56,8 +56,6 @@ namespace Scripts.Gestures
                             rots += " " + frame.Hands.LeftBones?.rotations?[k];
                             rots += " " + frame.Hands.RightBones?.rotations?[k];
                         }
-
-                        l.rl("Add " + frame.name + " to " + dynamicGesture.Name + rots);
                         dynamicGesture.AddFrame(frame);
                         return;
                     }

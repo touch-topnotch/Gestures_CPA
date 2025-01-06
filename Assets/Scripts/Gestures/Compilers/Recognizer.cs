@@ -10,12 +10,18 @@ using Zenject;
 
 namespace Scripts.Gestures
 {
+  
     public class Recognizer: MonoBehaviour
     {
-        [Range(0, 1)] public float positionQuality = 0.01f;
-        [Range(0, 1f)] public float rotationQuality = 0.1f;
-        public int qualityDecreaser = 10;
-        
+        [Serializable] private struct RecognizerProperties
+        {
+            [Range(0, 1f)] public float positionQuality; // 1 - tutelka v tutelky, 0 - authomaticaly recongize
+            [Range(0, 1f)] public float rotationQuality; // 1 - tutelka v tutelky, 0 - authomaticaly recongize
+        }
+
+        [SerializeField] private RecognizerProperties playerProperties;
+        [SerializeField] private RecognizerProperties supportiveProperties;
+    
         private Rig _rig;
         
         private RecognitionEvent _onRecognized;
@@ -36,29 +42,34 @@ namespace Scripts.Gestures
         
         public void RecognizeDynamicGesture(List<DynamicGesture> possibleGestures, ref RecognitionEvent onRecognized)
         {
+            
+            Debug.Log("Start to recognize dynamic gesture...");
+           
             _onRecognized = onRecognized;
             _possibleGestures = possibleGestures;
             _possibleFrames = new List<GestureFrame>();
             for (int i = 0; i < possibleGestures.Count; i++)
             {
                 _possibleFrames.Add(possibleGestures[i].GetGestureFrame());
-                possibleGestures[i].LogFrames();
+                //possibleGestures[i].LogFrames();
             }
+            LogPossibleFrames();
+            
             _onUpdate.AddListener(FindStartOfDynamicGesture);
         }
         private void FindStartOfDynamicGesture()
         {
-            LogPossibleFrames();
-            DrawПриблизетльныйGesture();
             
-            var frameId = RecognizeFrame(rotationQuality, positionQuality);
+            DrawПриблизетльныйGesture();
+
+            var frameId = RecognizeFrame(playerProperties);
             if (frameId != -1)
             {     
-                _curGesture = frameId;
-     
+                _onUpdate.RemoveListener(FindStartOfDynamicGesture);
+                _curGesture = frameId; 
                 _possibleGestures[_curGesture].FrameRecognized();
                 
-                _onUpdate.RemoveListener(FindStartOfDynamicGesture);
+               
                 HideHands();
                 RecognizeInOneGesture();
                 
@@ -69,13 +80,13 @@ namespace Scripts.Gestures
         {
             if (wasDrawnПриблизительно)
                 return;
-            
-            var приблизительныйFrameId = RecognizeFrameПриблизительно();
+
+            var приблизительныйFrameId = RecognizeFrame(supportiveProperties);
             if (приблизительныйFrameId != -1)
             {
-                _rig.GetHands.handCreator.OverrideHands(_possibleFrames[приблизительныйFrameId].Hands);
+                _rig.GetHands.handVisualiser.OverrideHands(_possibleFrames[приблизительныйFrameId].Hands);
 
-                foreach (var hand in _rig.GetHands.handCreator.activeHands)
+                foreach (var hand in _rig.GetHands.handVisualiser.activeHands)
                 {
                     (hand as HandMesh)?.ChangeColorPinPong(HandShaderProps.EdgeColor, new Color(1,1,1,0.1f), new Color(1,1,1,0.5f), 2);
                 }
@@ -86,8 +97,9 @@ namespace Scripts.Gestures
         }
         private void GoByOneGesture()
         {
+            
             DrawПриблизетльныйGesture();
-            var frameId = RecognizeFrame(rotationQuality, positionQuality);
+            var frameId = RecognizeFrame(playerProperties);
             if (frameId != -1)
             {
                 HideHands();
@@ -109,40 +121,42 @@ namespace Scripts.Gestures
             _possibleFrames.Add(_possibleGestures[_curGesture].GetGestureFrame());
             _onUpdate.AddListener(GoByOneGesture);
         }
-        private int RecognizeFrame(in float rotQuality, in float posQuality)
+        private int RecognizeFrame(RecognizerProperties props)
         {
             for(int i = 0; i < _possibleFrames.Count; i++)
             {
                 if (!_rig.GetHands.IsRecognized)
                     return -1;
                 
-                if (RecognizeHand(_possibleFrames[i].Hands.LeftBones, _rig.GetHands.leftHand.points,  rotQuality, posQuality)
-                    && RecognizeHand(_possibleFrames[i].Hands.RightBones, _rig.GetHands.rightHand.points, rotQuality, posQuality))
+                if (RecognizeHand(_possibleFrames[i].Hands.LeftBones, _rig.GetHands.leftHand.points, playerProperties)
+                    && RecognizeHand(_possibleFrames[i].Hands.RightBones, _rig.GetHands.rightHand.points, playerProperties))
                  {
                      return i;
                  }
             }
             return -1;
         }
-
-        private int RecognizeFrameПриблизительно() => RecognizeFrame(rotationQuality * qualityDecreaser, positionQuality * qualityDecreaser);
-        private bool RecognizeHand(in BonesData bonesData, in Transform[] handSkeleton, in float rotQuality, in float posQuality)
+        private bool RecognizeHand(in BonesData bonesData, in Transform[] handSkeleton, in RecognizerProperties props)
         {
             if (bonesData.rotations?.Length != handSkeleton.Length)
                 return true;
 
 
-            if (OptimizedDistance(bonesData.rootPos, handSkeleton[0].localPosition) > posQuality)
+            var dist = OptimizedDistance(bonesData.rootPos, handSkeleton[0].localPosition);
+         
+            if (1 - dist < props.positionQuality)
+            {
+                //  l.rl("Canceled, because position: " + OptimizedDistance(bonesData.rootPos, handSkeleton[0].localPosition) + " > " + posQuality);
                 return false;
+            }
             
             for (int i = 0; i < bonesData.rotations.Length; i++)
             {
-
                 float distance = OptimizedDistance( bonesData.rotations[i], handSkeleton[i].localRotation);
               
-                if (distance > rotQuality)
+                if (distance < props.rotationQuality) // 0 - bad, 1 - good, 0.9 - ok
                 {
-                    //Debug.Log($"{handSkeleton[i].localRotation.eulerAngles} - hand, {bonesData.rotations[i].eulerAngles} - bd, {i} - id");
+              //      l.rl("Canceled, because rotation: " + distance + " < " + rotQuality);
                     return false;
                 }
             }
@@ -152,7 +166,7 @@ namespace Scripts.Gestures
         public void HideHands()
         {
             Debug.Log("Hide Hands");
-             _rig.GetHands.handCreator.HideHands();
+             _rig.GetHands.handVisualiser.HideHands();
             wasDrawnПриблизительно = false;
         }
 
@@ -170,7 +184,7 @@ namespace Scripts.Gestures
         public static float OptimizedDistance(in Vector4 a, in Vector4 b) =>
             (a.x - b.x) * (a.x - b.x) + (a.y - b.y)* (a.y - b.y) + (a.z - b.z) * (a.z - b.z) + (a.w - b.w) * (a.w - b.w);
         public static float OptimizedDistance(in Quaternion a, in Quaternion b) =>
-            OptimizedDistance(a.eulerAngles, b.eulerAngles);
+            Math.Abs(Quaternion.Dot(a, b));
 
         public static float OptimizedDistance(in Color a, in Color b) =>
             OptimizedDistance(new Vector4(a.r, a.g, a.b, a.a), new Vector4(b.r, b.g, b.b, b.a));

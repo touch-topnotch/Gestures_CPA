@@ -9,16 +9,16 @@ using Zenject;
 namespace Scripts.Hands
 {
     public enum VisualizationType {Mesh, Bones}
-    public class SupportHandCreator: MonoBehaviour
+    public class SupportHandVisualiser: MonoBehaviour
     {
         public VisualizationType type;
         public GameObject LeftHand;
         public GameObject RightHand;
         public GameObject Bones;
         public Transform Parent;
-        
-        public List<IHandVisualiser> activeHands = new List<IHandVisualiser>();
-        public List<IHandVisualiser> hiddenHands = new List<IHandVisualiser>();
+        public float speed;
+        public List<HandMesh> activeHands = new List<HandMesh>();
+        public List<HandMesh> hiddenHands = new List<HandMesh>();
         private UpdateEvent _onUpdate;
 
         private void OnValidate()
@@ -51,6 +51,9 @@ namespace Scripts.Hands
         
         public void AddToStack(BonesData data)
         {
+            if (!data.Exists())
+                return;
+            
             if (hiddenHands.Count == 0)
             {
                 SpawnNew(data);
@@ -63,7 +66,7 @@ namespace Scripts.Hands
                 activeHands.Add(hiddenHands[0]);
                 hiddenHands.RemoveAt(0);
                 activeHands[^1].Show();
-                activeHands[^1].ChangePosition(data, Parent);
+                activeHands[^1].ChangePosition(data);
             }
         }
 
@@ -86,7 +89,7 @@ namespace Scripts.Hands
             {
                 index = activeHands.Count - 1;
             }
-            activeHands[index].ChangePosition(data, Parent);
+            activeHands[index].ChangePosition(data);
         }
 
         public void OverrideHands(HandsStruct hands)
@@ -121,7 +124,7 @@ namespace Scripts.Hands
                 index = activeHands.Count - 1;
             }
             
-            activeHands[index].ChangePositionSmooth(data);
+            activeHands[index].ChangePositionSmooth(data, speed, ()=>{});
         }
 
         // public void RefreshLinesPosition()
@@ -136,7 +139,7 @@ namespace Scripts.Hands
             if(activeHands.Count == 0)
                 return;
             
-            foreach (IHandVisualiser hand in activeHands)
+            foreach (HandMesh hand in activeHands)
             {
                 hand.Hide();
             }
@@ -151,12 +154,12 @@ namespace Scripts.Hands
                 Debug.Log("Cannot Spawn new Support Hand without Bones Data!");
                 return;
             }
-            IHandVisualiser hand = null;
+            HandMesh hand = null;
             if (type == VisualizationType.Bones)
             {
                 var newHand = GameObject.Instantiate(Bones, Parent);
                 newHand.gameObject.name = newHand.gameObject.name.Replace("(Clone)", $"_{activeHands.Count}");
-                hand = newHand.GetComponent<SupportHandVisualizer>();
+                hand = newHand.GetComponent<HandMesh>();
             }
             else
             {
@@ -164,19 +167,19 @@ namespace Scripts.Hands
                 {
                     var newHand = GameObject.Instantiate(LeftHand, Parent);
                     newHand.gameObject.name = newHand.gameObject.name.Replace("(Clone)", $"_{activeHands.Count}");
-                    hand = newHand.GetComponent<GhostHandVisualiser>();
+                    hand = newHand.GetComponent<HandMesh>();
                 }
                 else
                 {
                     var newHand = GameObject.Instantiate(RightHand, Parent);
                     newHand.gameObject.name = newHand.gameObject.name.Replace("(Clone)", $"_{activeHands.Count}");
-                    hand = newHand.GetComponent<GhostHandVisualiser>();
+                    hand = newHand.GetComponent<HandMesh>();
                 }
                   
             }
           
             hand.Initialize(ref _onUpdate);
-            hand.ChangePosition(points, Parent);
+            hand.ChangePosition(points);
             hand.Show();
             activeHands.Add(hand);
         }

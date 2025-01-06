@@ -27,8 +27,8 @@ namespace Scripts.Gestures
             
             if(activateOnAwake)
                 TestRecognitionFunction();
-            else
-                button.onClick.AddListener(TestRecognitionFunction);
+            // else
+            //     button.onClick.AddListener(TestRecognitionFunction);
         }
 
         private void OnValidate()
@@ -43,8 +43,8 @@ namespace Scripts.Gestures
         public void GestureRecognized(DynamicGesture gesture)
         {
             Debug.Log($"Dynamic gesture {gesture.Name} recognized");
+            
             gesture.AllFramesDetected();
-
 
             TestRecognitionFunction();
         }

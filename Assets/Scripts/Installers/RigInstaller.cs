@@ -54,15 +54,15 @@ namespace Scripts.Installers
             Debug.Log("LOADING XR RIG PREFAB");
             return Resources.Load("Players/XR Rig") as GameObject;
             
-            if (XRGeneralSettings.Instance.Manager.activeLoader)
-            {
-                return Resources.Load("Players/XR Rig") as GameObject;
-            }
-            else
-            {
-                print("Open XR is not supported on your platform. Initializing PC rig..");
-                return Resources.Load("Players/PC Rig") as GameObject;
-            }
+            // if (XRGeneralSettings.Instance.Manager.activeLoader)
+            // {
+            //     return Resources.Load("Players/XR Rig") as GameObject;
+            // }
+            // else
+            // {
+            //     print("Open XR is not supported on your platform. Initializing PC rig..");
+            //     return Resources.Load("Players/PC Rig") as GameObject;
+            // }
         }
     }
 }

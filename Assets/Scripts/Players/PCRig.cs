@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Scripts.Events;
 using Scripts.Gestures;
@@ -10,15 +11,27 @@ namespace Scripts.PlayerLogic
 {
     public class PCRig : Rig
     {
-        [SerializeField] [Range(0.01f, 10f)] private float _delayBetweenFrames;
+        [Serializable] private struct PCHandsProperties
+        {
+            [Range(0.01f, 10f)] public float delayOnFrame;
+            [Range(0.01f, 6f)] public float handSpeed;
+        }
+        
+        [SerializeField]  private PCHandsProperties handsProperties;
+        
         [SerializeField] protected PCUI ui;
+        [SerializeField] protected Palette _palette;
+        
         protected GesturesLibrary _library;
+        private WaitForSeconds _waitUntilNextFrame;
         private Transform _handsParent;
-
+        
+        private GestureFrame _targetFrame;
         [Inject]
         private void Construct(UpdateEvent onUpdate, GesturesLibrary gesturesLibrary)
         {
             onUpdate?.AddListener(ToggleMenu);
+            _waitUntilNextFrame= new WaitForSeconds(handsProperties.delayOnFrame);
             _library = gesturesLibrary;
         }
         protected override void Start()
@@ -26,7 +39,7 @@ namespace Scripts.PlayerLogic
             base.Start();
             
             _handsParent = hands.leftHand.transform.parent;
-            ui.GetGestureInput().image.color = Color.white;
+            ui.gestureInput.image.color = _palette.clear;
             playerStateChangedEvent?.Invoke(playerState = PlayerState.ACTIVE);
             hands.HandEnabled();
         }
@@ -34,55 +47,55 @@ namespace Scripts.PlayerLogic
         //Simulate Gestures
         public void TryGetGestureFrame(string frameName)
         {
-        //     #if(UNITYEDITOR)
-        //         return;
-        //     #endif
             foreach (var DyGr in _library.DynamicGestures)
             {
-
                 if (frameName == DyGr.Name)
                 {
-                    ui.GetGestureInput().image.color = Color.green;
+                    ui.gestureInput.image.color = _palette.active;
                     // play Dynamic Gesture
-                    StopCoroutine(SimulateDynamicGesture(DyGr));
-                    StartCoroutine(SimulateDynamicGesture(DyGr));
+                    _targetFrame = DyGr.GetGestureFrame();
+                    SimulateDynamicGesture();
                     return;
                 }
               
             }
-
-            foreach (var GestureFrame in _library.GestureFrames)
+            
+            foreach (var gestureFrame in _library.GestureFrames)
             {
-                if (frameName == GestureFrame.name)
+                if (frameName == gestureFrame.name)
                 {
-                    ui.GetGestureInput().image.color = Color.yellow;
+                    ui.gestureInput.image.color = _palette.enabled;
                     // play Gesture Frame
-                    SimulateGestures(GestureFrame);
+                    hands.MoveHands(gestureFrame, handsProperties.handSpeed, () =>
+                    {
+                        ui.gestureInput.image.color = _palette.clear;
+                    });
                     return;
                 }
             }
 
-            ui.GetGestureInput().image.color = Color.red;
+            ui.gestureInput.image.color = _palette.wrong;
         }
         
-        public IEnumerator SimulateDynamicGesture(DynamicGesture gestures)
+        public void SimulateDynamicGesture()
         {
-            var wait = new WaitForSeconds(_delayBetweenFrames);
-            foreach (var frame in gestures.Frames)
+            StopCoroutine(WaitUntilNextFrame());
+            if (_targetFrame == null)
             {
-                //if HandMesh is PCHandMesh
-                (hands.leftHand as PCHandMesh)?.SetBonesSmooth(frame.Hands.LeftBones);
-                (hands.rightHand as PCHandMesh)?.SetBonesSmooth(frame.Hands.RightBones);
-                
-                yield return wait;
+                ui.gestureInput.image.color = _palette.clear;
+                return;
             }
 
-            ui.GetGestureInput().image.color = Color.white;
+            var dynamic = _library.GetDynamicGesture(_targetFrame.baseName);
+            
+            hands.MoveHands(_targetFrame, handsProperties.handSpeed, ()=>{StartCoroutine(WaitUntilNextFrame());});
+            
+            _targetFrame = dynamic.GetNextFrameOf(_targetFrame);
         }
-        public void SimulateGestures(GestureFrame frame)
+        private IEnumerator WaitUntilNextFrame()
         {
-            (hands.leftHand as PCHandMesh)?.SetBonesSmooth(frame.Hands.LeftBones);
-            (hands.rightHand as PCHandMesh)?.SetBonesSmooth(frame.Hands.RightBones);
+            yield return _waitUntilNextFrame;
+            SimulateDynamicGesture();
         }
         
         // Player State
@@ -105,7 +118,6 @@ namespace Scripts.PlayerLogic
             if ((Input.GetKey(KeyCode.LeftCommand) || Input.GetKey(KeyCode.LeftControl)) &&
                 Input.GetKeyDown(KeyCode.G)) 
             {
-                print("TOGGLE");
                 playerState = playerState == PlayerState.MENU ? PlayerState.ACTIVE : PlayerState.MENU;
                 playerStateChangedEvent?.Invoke(playerState);
             }
@@ -117,6 +129,5 @@ namespace Scripts.PlayerLogic
             hands.leftHand.transform.SetParent(toggle ? _handsParent : null);
             hands.rightHand.transform.SetParent(toggle ? _handsParent : null);
         }
-
     }
 }
