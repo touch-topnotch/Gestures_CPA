@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Unity.VisualScripting;
 
 namespace Scripts.Static
 {
@@ -12,5 +13,8 @@ namespace Scripts.Static
             return new string(Enumerable.Repeat(chars, length)
                 .Select(s => s[random.Next(s.Length)]).ToArray());
         }
+
+        public static bool fEqual(float a, float b, float quality = 0.001f) =>
+            Math.Abs(a - b) < quality;
     }
 }
