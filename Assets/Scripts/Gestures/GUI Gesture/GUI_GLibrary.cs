@@ -8,33 +8,33 @@ using Timer = Scripts.Static.Timer;
 
 namespace Scripts.Gestures.GGUI
 {
-    public class DG_Water : GUIGesture
-    {
-        private GameObject _water0Effect;
-        private GameObject _water1Effect;
-
-        protected override void Construct()
-        {
-            _water0Effect = LoadAsset(Resources.Load("Effects/Water/TestWaterParticle"),
-                hands.leftHand.points[3], new Vector3(0, 0, 0));
-            _water1Effect = LoadAsset(Resources.Load("Effects/Water/TestWaterRedParticle Variant"),
-                hands.rightHand.points[3], new Vector3(0, 0, 0));
-            Debug.Log("Water assets added!");
-        }
-
-        public override void ShowEffects(int frameId, GestureFrame gFrame)
-        {
-            switch (frameId)
-            {
-                case 0:
-                    _water0Effect.SetActive(true);
-                    break;
-                case 1:
-                    _water1Effect.SetActive(true);
-                    break;
-            }
-        }
-    }
+    // public class DG_Water : GUIGesture
+    // {
+    //     private GameObject _water0Effect;
+    //     private GameObject _water1Effect;
+    //
+    //     protected override void Construct()
+    //     {
+    //         _water0Effect = LoadAsset(Resources.Load("Effects/Water/TestWaterParticle"),
+    //             hands.leftHand.points[3], new Vector3(0, 0, 0));
+    //         _water1Effect = LoadAsset(Resources.Load("Effects/Water/TestWaterRedParticle Variant"),
+    //             hands.rightHand.points[3], new Vector3(0, 0, 0));
+    //         Debug.Log("Water assets added!");
+    //     }
+    //
+    //     public override void ShowEffects(int frameId, GestureFrame gFrame)
+    //     {
+    //         switch (frameId)
+    //         {
+    //             case 0:
+    //                 _water0Effect.SetActive(true);
+    //                 break;
+    //             case 1:
+    //                 _water1Effect.SetActive(true);
+    //                 break;
+    //         }
+    //     }
+    // }
 
     public class DG_Katana : GUIGesture
     {
@@ -77,32 +77,36 @@ namespace Scripts.Gestures.GGUI
                     break;
                 case 5:
                     _dissolveSlider.UpdateDisolveValue(0f);
-                    new Timer(5, () =>
-                    {
-                        _dissolveSlider.UpdateDisolveValue(0f);
-                        
-                    }, onUpdate);
                     break;
             }
         }
-    }
 
-    public class DG_Fire : GUIGesture
-    {
-        private GameObject _sparksEffect;
-        private GameObject _largeFlameEffect;
-
-        protected override void Construct()
+        protected override void OnDestroyed()
         {
-            _sparksEffect = LoadAsset(Resources.Load("Effects/Fire/SparksEffect"),
-                hands.leftHand.points[3], new Vector3(0, 0, 0));
-            _largeFlameEffect = LoadAsset(Resources.Load("Effects/Fire/LargeFlameEffect"),
-                hands.rightHand.points[3], new Vector3(0, 0, 0));
-            Debug.Log("Fire assets added!");
-        }
-
-        public override void ShowEffects(int frameId, GestureFrame gFrame)
-        {
+            _dissolveSlider.UpdateDisolveValue(1f);
+            new Timer(1, () =>
+            {
+                _katana.gameObject.SetActive(false);
+            }, onUpdate);
         }
     }
+
+    // public class DG_Fire : GUIGesture
+    // {
+    //     private GameObject _sparksEffect;
+    //     private GameObject _largeFlameEffect;
+    //
+    //     protected override void Construct()
+    //     {
+    //         _sparksEffect = LoadAsset(Resources.Load("Effects/Fire/SparksEffect"),
+    //             hands.leftHand.points[3], new Vector3(0, 0, 0));
+    //         _largeFlameEffect = LoadAsset(Resources.Load("Effects/Fire/LargeFlameEffect"),
+    //             hands.rightHand.points[3], new Vector3(0, 0, 0));
+    //         Debug.Log("Fire assets added!");
+    //     }
+    //
+    //     public override void ShowEffects(int frameId, GestureFrame gFrame)
+    //     {
+    //     }
+    // }
 }

@@ -3,6 +3,7 @@ using Scripts.Events;
 using Scripts.Hands;
 using Scripts.Static;
 using UnityEngine;
+using UnityEngine.Events;
 using Zenject;
 
 namespace Scripts.Gestures.GGUI
@@ -13,16 +14,13 @@ namespace Scripts.Gestures.GGUI
         protected PlayerHands hands;
         protected abstract void Construct();
         public abstract void ShowEffects(int frameId, GestureFrame gFrame);
-
-        protected GUIGesture()
-        {
-        }
-
+        protected abstract void OnDestroyed();
         public void Construct(PlayerHands Hands)
         {
             hands = Hands;
             Construct();
         }
+        
         protected GameObject LoadAsset(in Object asset,Transform parent)
         {
             var prefab = Spawner.SpawnPrefab(asset as GameObject,parent, true);
@@ -43,5 +41,8 @@ namespace Scripts.Gestures.GGUI
             var prefab = Spawner.SpawnPrefab(asset as GameObject, transform, true);
             return prefab;
         }
+
+       
+        
     }
 }

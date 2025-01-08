@@ -11,7 +11,7 @@ namespace Scripts.Gestures
     public class GestureCombiner: CustomBehaviour
     {
         [SerializeField] private bool activateOnAwake;
-        [SerializeField] private Button button;
+        
         
         private RecognitionEvent _onDynamicRecognized = new();
         private GesturesLibrary _library;
