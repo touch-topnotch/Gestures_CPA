@@ -47,23 +47,17 @@ namespace Scripts.PlayerLogic
         //Simulate Gestures
         public void TryGetGestureFrame(string frameName)
         {
-            foreach (var DyGr in _library.DynamicGestures)
+            if(_library.DynamicGestures.TryGetValue(frameName, out var dynamicGesture))
             {
-                if (frameName == DyGr.Name)
-                {
-                    ui.gestureInput.image.color = _palette.active;
-                    // play Dynamic Gesture
-                    _targetFrame = DyGr.GetGestureFrame();
-                    SimulateDynamicGesture();
-                    return;
-                }
-              
+                ui.gestureInput.image.color = _palette.active;
+                // play Dynamic Gesture
+                _targetFrame =  dynamicGesture.GetGestureFrame();
+                SimulateDynamicGesture();
+                return;
             }
-            
-            foreach (var gestureFrame in _library.GestureFrames)
+            if(_library.DynamicGestures.TryGetValue(GestureMapper.PrefixOfName(frameName), out dynamicGesture))
             {
-                if (frameName == gestureFrame.name)
-                {
+                if(dynamicGesture.TryGetGestureFrame(frameName, out var gestureFrame))
                     ui.gestureInput.image.color = _palette.enabled;
                     // play Gesture Frame
                     hands.MoveHands(gestureFrame, handsProperties.handSpeed, () =>
@@ -71,9 +65,7 @@ namespace Scripts.PlayerLogic
                         ui.gestureInput.image.color = _palette.clear;
                     });
                     return;
-                }
             }
-
             ui.gestureInput.image.color = _palette.wrong;
         }
         
@@ -86,7 +78,7 @@ namespace Scripts.PlayerLogic
                 return;
             }
 
-            var dynamic = _library.GetDynamicGesture(_targetFrame.baseName);
+            var dynamic = _library.DynamicGestures[_targetFrame.baseName];
             
             hands.MoveHands(_targetFrame, handsProperties.handSpeed, ()=>{StartCoroutine(WaitUntilNextFrame());});
             

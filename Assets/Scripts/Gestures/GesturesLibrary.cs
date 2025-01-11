@@ -1,98 +1,59 @@
 ﻿using System.Collections.Generic;
-using Scripts.Hands;
-using Scripts.PlayerLogic;
-using Scripts.Static;
+using Scripts.Tests;
 using UnityEngine;
-using Zenject;
 
 namespace Scripts.Gestures
 {
     public class GesturesLibrary
     {
-        public List<GestureFrame> GestureFrames { get;} = new ();
-        public List<DynamicGesture> DynamicGestures { get;} = new ();
 
-        private GFramesCompiler _framesCompiler;
+        private Dictionary<string, DynamicGesture> _dynamicGestures = new();
+
+        public Dictionary<string, DynamicGesture> DynamicGestures => _dynamicGestures; // словарь, потому что поиск за 
+        // O(1), а не O(n) как в листе
+
+        
         
         public GesturesLibrary()
         {
-            _framesCompiler = new GFramesCompiler(this);
-            ReadFrames();
-            Debug.Log("Library has initialized:\nDynamic gestures count: " + DynamicGestures.Count + "\nGesture frames count: " + GestureFrames.Count);
+            //GestureMapper.ReplaceCharacters();
+            ReadGestures();
+            Debug.Log("Library has initialized:\nDynamic gestures count: " + DynamicGestures.Count);
         }
 
-       
-        public void ReadFrames()
-        {
-            _framesCompiler.Read();
-        }
-
-        public void Record(HandsStruct hands, string name)
-        {
-            _framesCompiler.Record(hands, name);
-        }
         
-        public void SetGestureFrame(GestureFrame frame)
+      
+        public void ReadGestures()
         {
-            GestureFrames.Add(frame);
-            
-            if (frame.name != frame.baseName)
-            {
-                if (DynamicGestures.Count == 0)
-                {
-                    AddDGesturesToLibrary(frame);
-                    return;
-                }
+            _dynamicGestures = GestureMapper.ReadDynamicGestures();
+        }
 
-                bool f = false;
-                foreach (DynamicGesture dynamicGesture in DynamicGestures)
+        public void RecordFrame(HandsStruct hands, string name)
+        {
+            SetGestureFrame(new GestureFrame(name, hands));
+            GestureMapper.UpdateDynamicGesture(DynamicGestures[GestureMapper.PrefixOfName(name)]);
+        }
+
+        private void SetGestureFrame(GestureFrame frame)
+        {
+            if (DynamicGestures.ContainsKey(frame.baseName))
+            {
+                if (DynamicGestures[frame.baseName].frames.Count <= GestureMapper.IndexOfName(frame.name))
                 {
-                    
-                    if (dynamicGesture.Name == frame.baseName)
+                    for(int i = DynamicGestures[frame.baseName].frames.Count; i <= GestureMapper.IndexOfName(frame.name); i++)
                     {
-                        var rots = "";
-                        for (int k = 0; k < 26; k++)
-                        {
-                            rots += " " + frame.Hands.LeftBones?.rotations?[k];
-                            rots += " " + frame.Hands.RightBones?.rotations?[k];
-                        }
-                        dynamicGesture.AddFrame(frame);
-                        return;
+                        DynamicGestures[frame.baseName].frames.Add(null);
                     }
                 }
-
-                if (!f)
-                {
-                  AddDGesturesToLibrary(frame);
-                }
+                DynamicGestures[frame.baseName].frames[GestureMapper.IndexOfName(frame.name)] = frame;
             }
-        }
-
-        private void AddDGesturesToLibrary(GestureFrame frame)
-        {
-      
-            DynamicGestures.Add(     new DynamicGesture(frame.baseName));
-            DynamicGestures[^1].AddFrame(frame);
-        }
-        public DynamicGesture GetDynamicGesture(string name)
-        {
-            foreach (var frame in DynamicGestures)
+            else
             {
-                if(frame.Name == name)
-                    return frame;
+                throw new System.Exception("No dynamic gesture with this name: " + frame.baseName);
             }
-            throw new System.Exception("No gesture with this name");
         }
-        
-        public GestureFrame GetGestureFrame(string name)
-        {
-            foreach (var frame in GestureFrames)
-            {
-                if(frame.name == name)
-                    return frame;
-            }
+       
 
-            return null;
-        }
+
     }
 }
