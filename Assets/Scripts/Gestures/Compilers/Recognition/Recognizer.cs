@@ -75,9 +75,9 @@ namespace Scripts.Gestures
             var приблизительныйFrameId = RecognizeFrame(rigConfig.SupportiveProperties);
             if (приблизительныйFrameId != -1)
             {
-                _rig.GetHands.handVisualiser.OverrideHands(_possibleFrames[приблизительныйFrameId].Hands);
+                _rig.Hands.handVisualiser.OverrideHands(_possibleFrames[приблизительныйFrameId].Hands);
 
-                foreach (var hand in _rig.GetHands.handVisualiser.activeHands)
+                foreach (var hand in _rig.Hands.handVisualiser.activeHands)
                 {
                     hand.ChangeColorPinPong(HandShaderProps.EdgeColor, new Color(1,1,1,0.1f), new Color(1,1,1,0.5f), 2);
                 }
@@ -116,11 +116,11 @@ namespace Scripts.Gestures
         {
             for(int i = 0; i < _possibleFrames.Count; i++)
             {
-                if (!_rig.GetHands.IsRecognized)
+                if (!_rig.Hands.IsRecognized)
                     return -1;
                 
-                if (RecognizeHand(_possibleFrames[i].Hands.LeftBones, _rig.GetHands.leftHand.points, props)
-                    && RecognizeHand(_possibleFrames[i].Hands.RightBones, _rig.GetHands.rightHand.points, props))
+                if (RecognizeHand(_possibleFrames[i].Hands.LeftBones, _rig.Hands.leftHand.points, props)
+                    && RecognizeHand(_possibleFrames[i].Hands.RightBones, _rig.Hands.rightHand.points, props))
                  {
                      return i;
                  }
@@ -156,7 +156,7 @@ namespace Scripts.Gestures
         public void HideHands()
         {
             Debug.Log("Hide Hands");
-             _rig.GetHands.handVisualiser.HideHands();
+             _rig.Hands.handVisualiser.HideHands();
             wasDrawnПриблизительно = false;
         }
 

@@ -34,8 +34,7 @@ namespace Scripts.GameControllers
         private void ClientConnected(ulong clientId)
         {
             if (!_networkManager.IsServer)
-            {
-                _networkManager.LocalClient.PlayerObject.GetComponent<Player>().Construct(_onUpdate); 
+            { 
                 l.rl(_networkManager.LocalClient.PlayerObject.name + " constructed!");
             }
             
