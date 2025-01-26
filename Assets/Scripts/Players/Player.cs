@@ -134,6 +134,7 @@ namespace Scripts.PlayerLogic
         {
             Debug.Log("NETWORK SPAWN");
             transform.name = $"Player {OwnerClientId}";
+            
             if (IsClient && !IsOwner)
             {
                 RigType = RigType.NoRig;
@@ -156,7 +157,6 @@ namespace Scripts.PlayerLogic
         
         private void Start()
         {
-
             if (_rigType != RigType.NoRig)
             {
                 _curRig.StartMove();

@@ -1,25 +1,22 @@
 using System.Collections.Generic;
-using Scripts.Gestures;
 
 namespace Scripts.Databases
 {
     public struct JsonGestureStruct
     {
-        public GestureType Type;
         public List<List<string>> Frames;
-        public JsonGUI GUI;
+        public JsonAsset Asset;
     }
+    // на данном этапе мы рассматриваем только ресурсы, находящиеся в папке Resources, соответсвенно делаем с рут обьектом
 
     public struct JsonGUI
     {
         public List<JsonAsset> Assets;
-        public List<string> FrameLogic;
     }
 
     public struct JsonAsset
     {
-        public string Type;
+        public int Type; //  = static, object
         public string Path;
-        public string SpawnPoint;
     }
 }

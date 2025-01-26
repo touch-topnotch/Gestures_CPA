@@ -1,6 +1,6 @@
 using System.Collections.Generic;
+using Gesture_Editor_SDK.Realtime;
 using Scripts.Events;
-using Scripts.Gestures.Classes;
 using Scripts.Gestures.GGUI;
 using Scripts.Hands;
 using Scripts.Static;
@@ -19,14 +19,10 @@ namespace Scripts.Gestures
     public class DynamicGesture
     {
         public List<GestureFrame> frames{ get;}
-        public GestureType gestureType { get; }
+        
         private readonly FrameDetected onFrameDetected = new();
-        
-        
-        private GUIGesture _gui;
-        private GestureCall _gestureCall;
-        
-       
+        private IRecognizable _recognizable;
+
         private string _name;
         private int _currentGesture = 0;
         public string Name
@@ -43,26 +39,18 @@ namespace Scripts.Gestures
                 _name = value ?? Calculations.RandomString(5);
             }
         }
-        public DynamicGesture(string name, List<GestureFrame> frames, GestureType gestureType, GUIGesture guiGesture, GestureCall gestureCall)
+        public DynamicGesture(string name, List<GestureFrame> frames, IRecognizable recognizable)
         {
             Name = name;
-            
-            this.gestureType = gestureType;
             this.frames = frames;
-            
-            _gui = guiGesture;
-            _gestureCall = gestureCall;
+
+            _recognizable = recognizable;
         }
 
         public DynamicGesture(string name)
         {
             Name = name;
-            
             frames = new();
-            gestureType = GestureType.HIT;
-
-            _gui = GestureFactory.SetDynamicGesture(name);
-            _gestureCall = new Melee();
         }
         
         public void AddFrame(GestureFrame frame)
@@ -86,6 +74,8 @@ namespace Scripts.Gestures
         public void FrameRecognized()
         {
             Debug.Log($"Frame {GetGestureFrame().name} recognized!");
+            
+            
             onFrameDetected?.Invoke(_currentGesture, GetGestureFrame());
             NextFrame();
         }
@@ -103,8 +93,13 @@ namespace Scripts.Gestures
 
         public void AllFramesDetected()
         {
+            _recognizable.AbilityCalled();
+            _recognizable.OnAbilityReleased.AddListener(() =>
+            {
+                // Start to recognize next gesture
+            });
             _currentGesture = 0;
-            _gestureCall.Start();
+            
         }
 
         public void LogFrames()
@@ -120,10 +115,11 @@ namespace Scripts.Gestures
 
         public void AddGraphicsToRigHands(PlayerHands hands)
         {
-            if (_gui == null)
-                return;
-            _gui.Construct(hands);
-            onFrameDetected.AddListener(_gui.ShowEffects);
+            // CHANGE IT TO NEW SYSTEM WITH RECOGNIZABLE
+            // if (_gui == null)
+            //     return;
+            // _gui.Construct(hands);
+            onFrameDetected.AddListener(_recognizable.OnFrameRecognized);
         }
         public bool TryGetGestureFrame(string name, out GestureFrame gestureFrame)
         {

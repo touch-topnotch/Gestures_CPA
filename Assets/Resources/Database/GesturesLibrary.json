@@ -1,7 +1,6 @@
 {
 
   "Katana": {
-    "Type": 0,
     "Frames": [
       [
         "",
@@ -40,15 +39,9 @@
         "轌뵒翾"
       ]
     ],
-    "GUI": {
-      "Assets": [
-        {
-          "Type": "Resource",
-          "Path": "Effects/Melee/Katana/Slices",
-          "SpawnPoint": ""
-        }
-      ],
-      "FrameLogic": []
+    "Asset": {
+      "Type" : 0,
+      "Path": "Effects/Katana/KatanaPrefab"
     }
   },
   "Guns": {
@@ -91,9 +84,9 @@
         "觮땺笕"
       ]
     ],
-    "GUI": {
-      "Assets": [],
-      "FrameLogic": []
+    "Asset": {
+      "Type" : 0,
+      "Path": "Effects/Guns/GunsPrefab"
     }
   },
   "Water": {
@@ -136,9 +129,9 @@
         "薅뮢衰"
       ]
     ],
-    "GUI": {
-      "Assets": [],
-      "FrameLogic": []
+    "Asset": {
+      "Type" : 0,
+      "Path": "Effects/Water/WaterPrefab"
     }
   }
 }

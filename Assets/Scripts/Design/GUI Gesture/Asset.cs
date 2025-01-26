@@ -10,16 +10,10 @@ namespace Design.GUI_Gesture
     {
         private AssetType type;
         private string path;
-        private string spawnPoint;
-        public Asset(AssetType type, string path, string spawnPoint)
+        public Asset(AssetType type, string path)
         {
             this.type = type;
             this.path = path;
-            this.spawnPoint = spawnPoint;
-        }
-        public void Disable()
-        {
-            
         }
     }
 }

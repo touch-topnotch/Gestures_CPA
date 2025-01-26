@@ -1,18 +1,12 @@
-using System;
 using System.Collections.Generic;
-using Design.GUI_Gesture;
-using JetBrains.Annotations;
+using Gesture_Editor_SDK.Realtime;
 using Newtonsoft.Json;
 using Scripts.Databases;
-using Scripts.Gestures.Classes;
 using Scripts.Hands;
 using UnityEngine;
 using Scripts.Static;
 using Scripts.Network;
-using Scripts.PlayerLogic;
 using Unity.VisualScripting;
-using Zenject;
-
 using FrameAtlas = System.Collections.Generic.Dictionary<string,Scripts.Databases.DBFrameStruct>;
 using GestureAtlas =  System.Collections.Generic.Dictionary<string,Scripts.Databases.JsonGestureStruct>;
 namespace Scripts.Gestures
@@ -20,6 +14,8 @@ namespace Scripts.Gestures
 
     public static class GestureMapper
     {
+        private const bool isDebug = true;
+        private static string _emptyRecognizablePath = "Effects/Empty/EmptyPrefab";
         private static readonly string _jsonPath = Application.dataPath + "/Resources/Database/GesturesLibrary.json";
 
         public static Dictionary<string, JsonGestureStruct> GetJsonGesturesStruct =>
@@ -86,29 +82,40 @@ namespace Scripts.Gestures
                     );
                 }
 
-                List<Asset> assets = new();
-                foreach (var asset in jsonGesture.Value.GUI.Assets)
-                {
-                    if (!Enum.TryParse<AssetType>(asset.Type, out var assetType)) assetType = AssetType.RESOURCE;
+                var asset = jsonGesture.Value.Asset;
 
-                    assets.Add(
-                        new Asset(
-                            assetType,
-                            asset.Path,
-                            asset.SpawnPoint
-                        )
-                    );
+                var res = Resources.Load(asset.Path) as GameObject;
+           
+                if (!res) // нет в папке Resources
+                {
+                    Debug.Log("Resource not found by path: " + asset.Path);
+                    if (!isDebug)
+                        continue;
+                    else
+                        res = Resources.Load(_emptyRecognizablePath) as GameObject;
+                }
+                
+                var recognizable = res.GetComponent(typeof(IRecognizable)) as IRecognizable;
+                
+                if (recognizable == null) // на текущем обьекте нет IRecognizable
+                {
+                    Debug.Log("Resource has no IRecognizable component");
+                    if(!isDebug)
+                        continue;
+                    else
+                    {
+                        Debug.Log("Empty Recognizable added"); // берем пустой
+                        res = Resources.Load(_emptyRecognizablePath) as GameObject;
+                    }
                 }
 
+                if(asset.Type == 0)
+                    res = Spawner.SpawnPooledPrefab(res, null, true);
+                
                 dynamicGestures.Add(jsonGesture.Key, new DynamicGesture(
                     jsonGesture.Key,
                     frames,
-                    GestureType.HIT,
-                    new ParsedGUI(
-                        assets,
-                        jsonGesture.Value.GUI.FrameLogic
-                    ),
-                    new Melee()
+                    res.GetComponent(typeof(IRecognizable)) as IRecognizable
                 ));
             }
 
@@ -122,12 +129,11 @@ namespace Scripts.Gestures
             var jsonGesture = new JsonGestureStruct
             {
                 Frames = gesture.frames.ConvertAll(frame => HandsStructToString(frame.Hands)),
-                GUI = new JsonGUI
+                Asset = new JsonAsset
                 {
-                    Assets = new List<JsonAsset>(),
-                    FrameLogic = new List<string>()
-                },
-                Type = gesture.gestureType
+                    Type = 0,
+                    Path = "Prefabs/Effects/" + name + "/" + name + "Prefab"
+                }
             };
 
             var _gestureDict = GetJsonGesturesStruct;
@@ -174,7 +180,7 @@ namespace Scripts.Gestures
         }
 
         public static string PrefixOfName(string name) => name.Substring(0,
-            name.Length - name.Split('_')[^1].Length);
+            name.Length - name.Split('_')[^1].Length - 1);
 
         public static int IndexOfName(string name) => int.Parse(name.Split('_')[^1]);
     }
