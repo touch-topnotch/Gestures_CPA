@@ -10,9 +10,9 @@ namespace Gesture_Editor_SDK.Realtime
         {
             OnAbilityReleased = new UnityEvent();
         }
-        public void OnFrameRecognized(int frameId, GestureFrame frame)
+        public void OnFrameRecognized(string name)
         {
-            Debug.Log("Executed empty gesture on frame: " + frame);
+            Debug.Log("Executed empty gesture on frame: " + name);
         }
 
         public void AbilityCalled()

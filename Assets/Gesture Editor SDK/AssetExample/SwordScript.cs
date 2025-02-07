@@ -1,25 +1,29 @@
 using Gesture_Editor_SDK.Realtime;
 using Scripts.Gestures;
 
-public class SwordScript : Sword
+namespace Gesture_Editor_SDK.AssetExample
 {
-    public override void OnFrameRecognized(int frameId, GestureFrame frame)
+    public class SwordScript : Sword
     {
-        throw new System.NotImplementedException();
-    }
+    
+        public override void OnFrameRecognized(string name)
+        {
+            throw new System.NotImplementedException();
+        }
 
-    public override void AbilityCalled()
-    {
-        throw new System.NotImplementedException();
-    }
+        public override void AbilityCalled()
+        {
+            throw new System.NotImplementedException();
+        }
 
-    protected override void OnAbilityReleased()
-    {
-        throw new System.NotImplementedException();
-    }
+        protected override void OnAbilityReleased()
+        {
+            throw new System.NotImplementedException();
+        }
 
-    protected override void OnHit()
-    {
-        throw new System.NotImplementedException();
+        protected override void OnHit()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

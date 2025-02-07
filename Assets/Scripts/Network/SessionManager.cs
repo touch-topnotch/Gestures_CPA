@@ -17,17 +17,25 @@ namespace Scripts.Network
             {
                 switch (args[i])
                 {
+                    
                     case "-lobby-server":
                         // /Users/dmitry057/Projects/UnityProjects/Gestures_CPA/Builds/NetworkTest.app/Contents/MacOS/Gesture -lobby-server -logfile -
-
                         networkManager.StartServer();
                         break;
-                    case "-client":
+                    
+                    case "-game-server":
                         // /Users/dmitry057/Projects/UnityProjects/Gestures_CPA/Builds/NetworkTest.app/Contents/MacOS/Gesture -lobby-client -logfile- & /Users/dmitry057/Projects/UnityProjects/Gestures_CPA/Builds/NetworkTest.app/Contents/MacOS/Gesture -lobby-client -logfile -
                         
+                      //  LoadScene
+                        break;
+                    
+                    case "-client":
+                        // /Users/dmitry057/Projects/UnityProjects/Gestures_CPA/Builds/NetworkTest.app/Contents/MacOS/Gesture -lobby-client -logfile- & /Users/dmitry057/Projects/UnityProjects/Gestures_CPA/Builds/NetworkTest.app/Contents/MacOS/Gesture -lobby-client -logfile -
                         networkManager.StartClient();
                         break;
                     
+                 
+
                 }
             }
             #if UNITY_EDITOR

@@ -1,19 +1,19 @@
-using Scripts.Gestures;
-using Scripts.PlayerLogic;
 using UnityEngine;
-using Zenject;
 
-public class FightSceneController : MonoBehaviour
+namespace Scripts.GameControllers
 {
-    
-    private Player _player;
-    private GestureCombiner _gestureCombiner;
-    
-    [Inject]
-    private void Construct(Player player, GestureCombiner gestureCombiner)
+    public class FightSceneController : MonoBehaviour
     {
-        _player = player;
-        _gestureCombiner = gestureCombiner;
-    }
+    
+        // private NetworkPlayer _networkPlayer;
+        // private GestureCombiner _gestureCombiner;
+        //
+        // [Inject]
+        // private void Construct(NetworkPlayer networkPlayer, GestureCombiner gestureCombiner)
+        // {
+        //     _networkPlayer = networkPlayer;
+        //     _gestureCombiner = gestureCombiner;
+        // }
 
+    }
 }

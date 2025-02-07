@@ -1,54 +1,43 @@
-using System;
 using Scripts.Events;
+using Scripts.PlayerLogic;
 using UnityEngine;
-using UnityEngine.UI;
-using Zenject;
 
 namespace Scripts.Gestures
 {
-    
-    [RequireComponent(typeof(Recognizer))]
-    public class GestureCombiner: CustomBehaviour
+    public class GestureCombiner
     {
-        [SerializeField] private bool activateOnAwake;
-        
-        
-        private RecognitionEvent _onDynamicRecognized = new();
-        private GesturesLibrary _library;
-        private Recognizer _recognizer;
         private GestureGraph _graph;
-        private GestureGraph _currentGraph;
+        private GestureGraph _currentGraph; 
+        private Recognizer _recognizer;
 
-        [Inject]
-        public void Construct(GesturesLibrary library)
+        public FrameRecognized OnFrameRecognized => _recognizer.onFrameRecognized;
+        public GestureRecognized OnGestureRecognized => _recognizer.onGestureRecognized;
+        
+        public void Initialize(Rig rig, bool debugMode)
         {
-            _library = library;
-            _onDynamicRecognized.AddListener(GestureRecognized);
-            
-            if(activateOnAwake)
-                TestRecognitionFunction();
-            // else
-            //     button.onClick.AddListener(TestRecognitionFunction);
+            _recognizer = new Recognizer(rig.Hands, rig.RecognitionPropertiesConfig);
+            if(debugMode)
+                RecognizeWithAllGestures();
         }
-
-        private void OnValidate()
+        private void RecognizeWithAllGestures()
         {
-            _recognizer = GetComponent<Recognizer>();
-        }
-        public void TestRecognitionFunction()
-        {
-            _recognizer.RecognizeDynamicGesture(_library.DynamicGestures, ref _onDynamicRecognized);
-        }
+            _recognizer.RecognizeDynamicGesture(GesturesLibrary.Instance.DynamicGestures);
+        } 
 
         public void GestureRecognized(DynamicGesture gesture)
         {
             Debug.Log($"Dynamic gesture {gesture.Name} recognized");
             
-            gesture.AllFramesDetected();
-
-            TestRecognitionFunction();
+            gesture.AllFramesDetected(OnTheEndOfGestureCall);
         }
 
+        public void OnTheEndOfGestureCall()
+        {
+            RecognizeWithAllGestures();
+        }
+
+        
+        // in Network Player [ServerRpc]
         private void CreateCombination()
         {
             // if (state != GameState.Fight)
@@ -56,7 +45,7 @@ namespace Scripts.Gestures
             //     return;
             // }
 
-            GestureGraphManager.InitializeGestureGraph(_library.DynamicGestures);
+            GestureGraphManager.InitializeGestureGraph(GesturesLibrary.Instance.DynamicGestures);
 
         }
     }

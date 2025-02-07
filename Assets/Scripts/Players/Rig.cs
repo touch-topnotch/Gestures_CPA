@@ -2,9 +2,7 @@ using Scripts.Events;
 using Scripts.Gestures;
 using Scripts.Hands;
 using Scripts.Movements;
-using Scripts.Static;
 using UnityEngine;
-using Zenject;
 
 namespace Scripts.PlayerLogic
 {
@@ -19,30 +17,23 @@ namespace Scripts.PlayerLogic
     {
         
         [SerializeField] protected PlayerHands hands;
-        public PlayerHands Hands => hands;
-        public BodyAnchors anchors;
-        
-        [Header("Properties")]
-        [Space]
+        [SerializeField] protected BodyAnchors anchors;
         [SerializeField] private RecognitionPropertiesConfig recognitionProperties;
-        public RecognitionPropertiesConfig RecognitionProperties => recognitionProperties;
         
         protected PlayerStateChangedEvent playerStateChangedEvent;
         protected PlayerState playerState;
+        public PlayerHands Hands => hands;
+        public BodyAnchors Anchors => anchors;
+        public RecognitionPropertiesConfig RecognitionPropertiesConfig => recognitionProperties;
+    
+ 
 
-        [Inject]
-        private void Construct(GesturesLibrary library)
-        {
-            if (!transform.gameObject.activeSelf)
-                return;
-      
-            foreach (var gesture in library.DynamicGestures.Values)
-            {
-                gesture.AddGraphicsToRigHands(hands);
-            }
-        }
         protected virtual void Start()
         {
+            
+            if (!transform.gameObject.activeSelf)
+                return;
+            
             playerStateChangedEvent = new PlayerStateChangedEvent();
             playerStateChangedEvent.AddListener(OnPlayerStateChaned);
         }

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Scripts.Databases
+﻿namespace Scripts.Databases
 {
     public struct DBFrameStruct
     {

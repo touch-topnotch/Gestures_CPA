@@ -10,7 +10,7 @@ namespace Scripts.Network
     }
     public class ClientData: ScriptableObject
     {
-        public string name;
+        //public string name;
         public string tag;
         public string iconPath;
         public Skill skill;

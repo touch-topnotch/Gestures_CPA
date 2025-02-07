@@ -6,10 +6,9 @@ namespace Gesture_Editor_SDK.Realtime
 {
     public interface IRecognizable
     {
-        void OnFrameRecognized(int frameId, GestureFrame frame);
+        void OnFrameRecognized(string name);
         void AbilityCalled();
         void AbilityReleased();
-        
         UnityEvent OnAbilityReleased { get; }
     }
 }

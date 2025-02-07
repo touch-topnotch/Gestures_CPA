@@ -1,12 +1,12 @@
-using System.Timers;
+using Scripts.Effects;
 using Scripts.Events;
+using Scripts.Gestures;
 using Scripts.Hands;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 using Zenject;
 using Timer = Scripts.Static.Timer;
 
-namespace Scripts.Gestures.GGUI
+namespace Scripts.Design.GUI_Gesture
 {
     // public class DG_Water : GUIGesture
     // {

@@ -3,10 +3,8 @@ using System.Collections;
 using Gesture_Editor_SDK.Realtime;
 using Scripts.Events;
 using Scripts.Gestures;
-using Scripts.Hands;
 using Scripts.UI;
 using UnityEngine;
-using Zenject;
 
 namespace Scripts.PlayerLogic
 {
@@ -20,10 +18,10 @@ namespace Scripts.PlayerLogic
         
         [SerializeField]  private PCHandsProperties handsProperties;
         
-        [SerializeField] protected PCUI ui;
+        [SerializeField] protected PCUI _ui;
         [SerializeField] protected Palette _palette;
         [SerializeField] protected FirstPersonController _personController;
-        
+
         protected GesturesLibrary _library;
         
         private WaitForSeconds _waitUntilNextFrame;
@@ -31,58 +29,54 @@ namespace Scripts.PlayerLogic
         
         private GestureFrame _targetFrame;
         
-        
-        [Inject]
-        private void Construct(UpdateEvent onUpdate, GesturesLibrary gesturesLibrary)
-        {
-            onUpdate?.AddListener(ToggleMenu);
-            _waitUntilNextFrame= new WaitForSeconds(handsProperties.delayOnFrame);
-            _library = gesturesLibrary;
-            Engine.Instance().stats.hands = hands;
-            Engine.Instance().stats.bodyAnchors = anchors;
-
-        }
         protected override void Start()
         {
             base.Start();
             
+            UpdateEvent.Instance?.AddListener(ToggleMenu);
+            UpdateEvent.Instance?.AddListener(SimulateHit);
+            _waitUntilNextFrame= new WaitForSeconds(handsProperties.delayOnFrame);
+            _library = GesturesLibrary.Instance;
+    
+            Engine.Instance().stats.hands = hands;
+            Engine.Instance().stats.bodyAnchors = anchors;
+            
             _handsParent = hands.leftHand.transform.parent;
-            ui.gestureInput.image.color = _palette.clear;
+            _ui.gestureInput.image.color = _palette.clear;
             
             playerStateChangedEvent.AddListener((state) =>
-            {
-                Cursor.visible = state == PlayerState.MENU;
+            { 
+                //Cursor.visible = state == PlayerState.MENU;
             });
             playerStateChangedEvent?.Invoke(playerState = PlayerState.ACTIVE);
             hands.OnEnabled();
         }
-        
+
         //Simulate Gestures
         public void TryGetGestureFrame(string frameName)
         {
             if(_library.DynamicGestures.TryGetValue(frameName, out var dynamicGesture))
             {
-                ui.gestureInput.image.color = _palette.active;
+                _ui.gestureInput.image.color = _palette.active;
                 // play Dynamic Gesture
-                _targetFrame =  dynamicGesture.GetGestureFrame();
+                _targetFrame = dynamicGesture.frames[0];
                 SimulateDynamicGesture();
                 return;
             }
             
-            print("TryGetGestureFrame: " + GestureMapper.PrefixOfName(frameName));
             if(_library.DynamicGestures.TryGetValue(GestureMapper.PrefixOfName(frameName), out dynamicGesture))
             {
                 if (dynamicGesture.TryGetGestureFrame(frameName, out var gestureFrame))
                 {
-                    print(gestureFrame.name);
-                    ui.gestureInput.image.color = _palette.enabled;
+//                    print(gestureFrame.name);
+                    _ui.gestureInput.image.color = _palette.enabled;
                     // play Gesture Frame
                     hands.MoveHands(gestureFrame, handsProperties.handSpeed,
-                        () => { ui.gestureInput.image.color = _palette.clear; });
+                        () => { _ui.gestureInput.image.color = _palette.clear; });
                     return;
                 }
             }
-            ui.gestureInput.image.color = _palette.wrong;
+            _ui.gestureInput.image.color = _palette.wrong;
         }
         
         public void SimulateDynamicGesture()
@@ -90,7 +84,7 @@ namespace Scripts.PlayerLogic
             StopCoroutine(WaitUntilNextFrame());
             if (_targetFrame == null)
             {
-                ui.gestureInput.image.color = _palette.clear;
+                _ui.gestureInput.image.color = _palette.clear;
                 return;
             }
 
@@ -113,11 +107,11 @@ namespace Scripts.PlayerLogic
             {
                 case PlayerState.MENU:
                     StopMove();
-                    ui.Show();
+                    _ui.Show();
                     break;
                 case PlayerState.ACTIVE:
                     StartMove();
-                    ui.Hide();
+                    _ui.Hide();
                     break;
             }
         }
@@ -154,6 +148,51 @@ namespace Scripts.PlayerLogic
             if (hands == null)
                 return;
             hands.transform.SetParent(toggle ? _handsParent : null);
+        }
+
+        public void SimulateHit()
+        {
+            if (Input.GetKeyDown(KeyCode.H))
+            {
+                StartCoroutine(HitCoroutine());
+            }
+        }
+
+        private IEnumerator HitCoroutine()
+        {
+            var p = hands.rightHand.points[0];
+            Vector3 previousPos = p.localPosition;
+            Quaternion previousRot = p.localRotation;
+            Vector3 targetPos = new Vector3(0.078f, 1.712f, 0.056f);
+            Quaternion targetRot = Quaternion.Euler(new Vector3(290.106018f, 121.231873f, 212.849854f));
+            var frameTime = new WaitForFixedUpdate();
+            while (Vector3.Distance(targetPos, p.localPosition) > 0.04f)
+            {
+                p.localPosition = Vector3.Lerp(p.localPosition, targetPos, Time.deltaTime * 1f);
+                p.localRotation = Quaternion.Lerp(p.localRotation, targetRot, Time.deltaTime * 1f);
+                yield return frameTime;
+            }
+
+            targetPos = new Vector3(0.187000006f, 1.63600004f, 0.197999999f);
+            targetRot = Quaternion.Euler(new Vector3(27.9578094f,360 - 334.099945f,169.45488f));
+           
+            while (Vector3.Distance(targetPos, p.localPosition) > 0.0001f)
+            {
+                p.localPosition = Vector3.Lerp(p.localPosition, targetPos, Time.deltaTime * 5f);
+                p.localRotation = Quaternion.Lerp(p.localRotation, targetRot, Time.deltaTime * 6f);
+                yield return frameTime;
+            }
+
+            targetPos = previousPos;
+            targetRot = previousRot;
+            
+            while (Vector3.Distance(targetPos, p.localPosition) > 0.04f)
+            {
+                p.localPosition = Vector3.Lerp(p.localPosition, targetPos, Time.deltaTime * 1f);
+                p.localRotation = Quaternion.Lerp(p.localRotation, targetRot, Time.deltaTime * 2f);
+                yield return frameTime;
+            }
+            
         }
     }
 }

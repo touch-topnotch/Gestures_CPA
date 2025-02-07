@@ -3,18 +3,16 @@ using Gesture_Editor_SDK.Realtime;
 using Newtonsoft.Json;
 using Scripts.Databases;
 using Scripts.Hands;
+using Scripts.Network;
 using UnityEngine;
 using Scripts.Static;
-using Scripts.Network;
-using Unity.VisualScripting;
 using FrameAtlas = System.Collections.Generic.Dictionary<string,Scripts.Databases.DBFrameStruct>;
 using GestureAtlas =  System.Collections.Generic.Dictionary<string,Scripts.Databases.JsonGestureStruct>;
 namespace Scripts.Gestures
 {
-
     public static class GestureMapper
     {
-        private const bool isDebug = true;
+        private static readonly bool isDebug = true;
         private static string _emptyRecognizablePath = "Effects/Empty/EmptyPrefab";
         private static readonly string _jsonPath = Application.dataPath + "/Resources/Database/GesturesLibrary.json";
 
@@ -27,7 +25,6 @@ namespace Scripts.Gestures
              JsonConvert.SerializeObject(structs, Formatting.Indented)
              );
         
-
         public static void ReplaceCharacters()
         {
             var jsonStruct = GetJsonGesturesStruct;

@@ -7,7 +7,7 @@ namespace Gesture_Editor_SDK.Realtime
     public abstract class RecognizableObject : MonoBehaviour, IRecognizable
     {
         private UnityEvent _onAbilityReleased = new UnityEvent();
-        public abstract void OnFrameRecognized(int frameId, GestureFrame frame);
+        public abstract void OnFrameRecognized(string name);
 
         public abstract void AbilityCalled();
         protected abstract void OnAbilityReleased();

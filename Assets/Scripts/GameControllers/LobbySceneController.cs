@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using DedicatedServers.LobbyServer;
 using Scripts.Events;
 using Scripts.Network;
 using Scripts.PlayerLogic;
@@ -12,23 +11,17 @@ namespace Scripts.GameControllers
 {
     public class LobbySceneController : NetworkBehaviour
     {
-        private List<Player> _players = new List<Player>();
+        private List<NetworkPlayerProcessor> _players = new List<NetworkPlayerProcessor>();
         public NetworkManager _networkManager;
         public Transform[] spawnPoints;
         private UsersSpawner _usersSpawner = new();
-        private UpdateEvent _onUpdate;
+        private UpdateEvent _onUpdate = UpdateEvent.Instance;
         public void Awake()
         {
             SessionManager.Connect(_networkManager);
             
             _networkManager.OnClientConnectedCallback += ClientConnected;
             _networkManager.OnClientDisconnectCallback += ClientDisconnected;
-        }
-        [Inject]
-        private void Construct(UpdateEvent onUpdate)
-        {
-            _onUpdate = onUpdate;
-            l.rl("LobbySceneController Constructed");
         }
 
         private void ClientConnected(ulong clientId)
@@ -40,8 +33,8 @@ namespace Scripts.GameControllers
             
             if (_networkManager.IsServer)
             {
-                var client = _networkManager.ConnectedClients[clientId];
-                var player = client.PlayerObject.GetComponent<Player>();
+                var client = _networkManager.ConnectedClients[clientId]; 
+                var player = client.PlayerObject.GetComponent<NetworkPlayerProcessor>();
                 
                //Random position by x and z
                 client.PlayerObject.transform.position = new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10));
@@ -57,7 +50,7 @@ namespace Scripts.GameControllers
             {
                 var client = _networkManager.ConnectedClients[clientId];
 
-                _players.Remove(client.PlayerObject.GetComponent<Player>());
+                _players.Remove(client.PlayerObject.GetComponent<NetworkPlayerProcessor>());
                 l.rl(client.PlayerObject.name + " disconnected!");
             }
         }

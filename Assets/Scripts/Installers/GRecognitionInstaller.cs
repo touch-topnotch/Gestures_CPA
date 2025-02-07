@@ -1,5 +1,4 @@
 using Scripts.Gestures;
-using Scripts.Static;
 using UnityEngine;
 using Zenject;
 

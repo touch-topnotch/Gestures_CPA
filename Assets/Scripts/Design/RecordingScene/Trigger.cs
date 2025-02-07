@@ -3,7 +3,7 @@ using Scripts.Events;
 using UnityEngine;
 using Zenject;
 
-namespace Design
+namespace Scripts.Design
 {
     [RequireComponent(typeof(Rigidbody))]
     public class Trigger: MonoBehaviour

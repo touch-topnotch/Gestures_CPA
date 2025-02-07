@@ -9,6 +9,8 @@ namespace Gesture_Editor_SDK.Realtime
         [Range(0,1)]
         private float _endurance = 1;
         private readonly float _damage = 0.1f;
+
+        private Quaternion lastDirection;
         public void OnTriggerEnter(Collider other)
         {
             if(other.gameObject.TryGetComponent(out Enemy enemy))
@@ -18,7 +20,7 @@ namespace Gesture_Editor_SDK.Realtime
             Hit();
         }
 
-        internal void Hit() // called if collision of sword and object detected
+        protected void Hit() // called if collision of sword and object detected
         {
             _endurance -= 0.1f;
             if (_endurance > 0)
@@ -29,6 +31,12 @@ namespace Gesture_Editor_SDK.Realtime
             {
                 AbilityReleased();
             }
+        }
+
+        protected void SwordVelocity()
+        {
+            var newDirection = transform.rotation;
+            
         }
         protected abstract void OnHit();
         public override void AbilityCalled()

@@ -1,6 +1,6 @@
-using Scripts.Events;
-using Scripts.Hands;
-using Unity.Netcode;
+using System;
+using Scripts.Characters;
+using Scripts.Gestures;
 using UnityEngine;
 
 namespace Scripts.PlayerLogic
@@ -11,37 +11,28 @@ namespace Scripts.PlayerLogic
         XRRig,
         NoRig,
     }
-    public enum AvatarType
-    {
-        LocalAvatar,
-        EnemyAvatar
-    }
 
-    public class Player : NetworkBehaviour
+ 
+
+    public class Player : MonoBehaviour
     {
-        [Header("Runtime Settings")]
-        
+        [Header("Runtime Settings")] 
         [SerializeField] private RigType _rigType;
-        [SerializeField] private AvatarType _avatarType;
         
-        [Header("Avatars")]
+        [SerializeField] private CharacterPool _characterPool;
+
+        [SerializeField] private bool isLocal;
         
-        [SerializeField] private Avatar _localAvatar;
-        [SerializeField] private Avatar _enemyAvatar;
-        private Avatar _curAvatar;
-        
-        [Header("Rigs")]
-        
-        [SerializeField] private Rig _pcRig;
+        private GestureCombiner _gestureCombiner = new();
+
+        [Header("Rigs")] [SerializeField] private Rig _pcRig;
         [SerializeField] private Rig _xrRig;
         private Rig _curRig;
 
-        [Header("Anchors")] 
-        
-        [SerializeField] private BodyAnchors _anchors;
-
-       // private UpdateEvent _onUpdate;
-       private bool _isSynchronized;
+        [Header("Anchors")] [SerializeField] private BodyAnchors _anchors;
+        public BodyAnchors Anchors => _anchors;
+        public Character Character => _characterPool.GetCharacter();
+        public CharacterPool CharacterPool => _characterPool;
         public RigType RigType
         {
             get => _rigType;
@@ -53,45 +44,14 @@ namespace Scripts.PlayerLogic
             }
 
         }
-        public AvatarType AvatarType
-        {
-            get => _avatarType;
-            set
-            {
-                _avatarType = value;
-                CurAvatar = GetAvatar();
-                ActivateAvatar();
-            }
-        }
-        public BodyAnchors Anchors => _anchors;
+
         private Rig CurRig
         {
-            get=>_curRig;
+            get => _curRig;
             set
             {
                 _curRig = value;
-                ActivateRig();
-            }
-        }
-        public Avatar CurAvatar 
-        {
-            get=>_curAvatar;
-            set
-            {
-                _curAvatar = value;
-                ActivateAvatar();
-            }
-        }
-        private Avatar GetAvatar()
-        {
-            switch (_avatarType)
-            {
-                case AvatarType.LocalAvatar:
-                    return _localAvatar;
-                case AvatarType.EnemyAvatar:
-                    return _enemyAvatar;
-                default:
-                    return _localAvatar;
+                if(_curRig != null) ActivateRig();
             }
         }
         private Rig GetRig()
@@ -108,96 +68,66 @@ namespace Scripts.PlayerLogic
                     return _pcRig;
             }
         }
-        protected void ActivateAvatar()
+
+        private void ActivateRig()
         {
-            _localAvatar.gameObject.SetActive(false);
-            _enemyAvatar.gameObject.SetActive(false);
-            CurAvatar.gameObject.SetActive(true);
-        }
-    
-        protected void ActivateRig()
-        {
-            _pcRig.gameObject.SetActive(false);
-//            _xrRig.gameObject.SetActive(false);
-            if(_rigType != RigType.NoRig)
-                CurRig.gameObject.SetActive(true);
+            _pcRig.gameObject.SetActive(_rigType == RigType.PCRig);
+            _xrRig.gameObject.SetActive(_rigType == RigType.XRRig);
         }
         
-        
+
+
         protected void OnValidate()
         {
+            if (isAnyNull())
+                return;
             CurRig = GetRig();
-            CurAvatar = GetAvatar();
-            ActivateAvatar();
-        }
-        public override void OnNetworkSpawn()
-        {
-            Debug.Log("NETWORK SPAWN");
-            transform.name = $"Player {OwnerClientId}";
-            
-            if (IsClient && !IsOwner)
-            {
-                RigType = RigType.NoRig;
-                AvatarType = AvatarType.EnemyAvatar;
-            }
-
-            if (IsClient && IsOwner)
-            {
-                RigType = RigType.PCRig;
-                AvatarType = AvatarType.LocalAvatar;
-            }
-
-            if (IsServer)
-            {
-                RigType = RigType.NoRig;
-                AvatarType = AvatarType.LocalAvatar;
-            }
         }
 
-        
+
         private void Start()
         {
-            if (_rigType != RigType.NoRig)
-            {
-                _curRig.StartMove();
-            }
-        
-            StartWatch();
-        }
-        
-        public void StartWatch()
-        {
-            _isSynchronized = true;
-            // _onUpdate?.AddListener(UpdateTransforms);
-        }
-        public void StopWatch()
-        {
-            _isSynchronized = false;
-            // _onUpdate?.RemoveListener(UpdateTransforms);
+            if(isLocal) 
+                Initialize();
+          
         }
 
-        private void Update()
+        public void Initialize()
         {
-            if (_isSynchronized)
-            {
-                UpdateTransforms();
+            if (_rigType != RigType.NoRig)
+            { 
+              _gestureCombiner.Initialize(_curRig, true);
+              _anchors.HandsInformation.OnFrameRecognized = _gestureCombiner.OnFrameRecognized;
+              _curRig.StartMove();
             }
         }
 
-        private void UpdateTransforms()
+        private bool isAnyNull()
+        {
+            if (_pcRig == null || _xrRig == null)
+            {
+                Debug.Log("Please, add all avatars and rigs to player " + name);
+                return true;
+            }
+
+            return false;
+        }
+
+        private Transform leftRoot => CurRig.Hands.leftHand.points[0];
+        private Transform rightRoot => CurRig.Hands.rightHand.points[0];
+        protected void UpdateAnchors()
         {
             if (_rigType != RigType.NoRig)
             {
-                _anchors.Head.position = CurRig.anchors.Head.position;
-                _anchors.Head.rotation = CurRig.anchors.Head.rotation;
-                _anchors.Body.position = CurRig.anchors.Body.position;
-                _anchors.Body.rotation = CurRig.anchors.Body.rotation;
+                _anchors.Head.position = CurRig.Anchors.Head.position;
+                _anchors.Head.rotation = CurRig.Anchors.Head.rotation;
+                _anchors.Body.position = CurRig.Anchors.Body.position;
+                _anchors.Body.rotation = CurRig.Anchors.Body.rotation;
+                _anchors.HandsInformation.left.rootPosition = leftRoot.position;
+                _anchors.HandsInformation.left.rootRotation = leftRoot.rotation;
+                _anchors.HandsInformation.right.rootPosition = rightRoot.position;
+                _anchors.HandsInformation.right.rootRotation = rightRoot.rotation;
             }
-            
-            CurAvatar.head.position = _anchors.Head.position;
-            CurAvatar.head.rotation = _anchors.Head.rotation;
-            CurAvatar.body.position = _anchors.Body.position;
-            CurAvatar.body.rotation = _anchors.Body.rotation;
         }
     }
 }

@@ -1,8 +1,3 @@
-using Scripts.Events;
-using Scripts.PlayerLogic;
-using UnityEngine;
-using Zenject;
-
 namespace Scripts.Movements
 {
     public interface IMovable

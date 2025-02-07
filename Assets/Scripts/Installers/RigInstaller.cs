@@ -1,11 +1,8 @@
-using System;
+
 using Scripts.PlayerLogic;
 using Scripts.Static;
 using UnityEngine;
-using UnityEngine.InputSystem.XR;
-using UnityEngine.XR.Management;
 using Zenject;
-using static UnityEngine.XR.Management.XRGeneralSettings;
 
 namespace Scripts.Installers
 {

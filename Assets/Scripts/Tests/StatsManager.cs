@@ -1,4 +1,3 @@
-using System;
 using Scripts.Events;
 using Scripts.PlayerLogic;
 using Scripts.Static;
@@ -8,13 +7,14 @@ using Zenject;
 
 namespace Scripts.Tests
 {
-    public class StatsManager: CustomBehaviour
+    public class StatsManager: MonoBehaviour
     {
         [SerializeField] private GameObject statsPanel;
         [SerializeField] private TMP_Text speedText;
         [Inject] private Rig rig;
         private bool isActive = true;
         private Vector3 lastPostion;
+        private UpdateEvent onUpdate => UpdateEvent.Instance;
         private void Start()
         {
             onUpdate.AddListener(WaitCommand);
@@ -23,7 +23,7 @@ namespace Scripts.Tests
         
         private void ToggleStats()
         {
-            isActive = !isActive;
+            isActive = !isActive; 
             statsPanel.SetActive(isActive);
             if (isActive)
                 onUpdate.AddListener(UpdateProps);
@@ -34,7 +34,7 @@ namespace Scripts.Tests
 
         private void UpdateProps()
         {
-            var position = rig.anchors.Body.position;
+            var position = rig.Anchors.Body.position;
             speedText.text = "Speed: " + (Vector3.Distance(position, lastPostion) / Time.deltaTime) +
                              " units/sec";
             lastPostion = position;

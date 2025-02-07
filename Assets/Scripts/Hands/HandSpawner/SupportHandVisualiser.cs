@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Gesture_Editor_SDK.EditorAttributes.SerializeByTypeAttribute;
 using Scripts.Events;
 using Scripts.Gestures;
 using Scripts.Static;
@@ -11,15 +12,20 @@ namespace Scripts.Hands
     public enum VisualizationType {Mesh, Bones}
     public class SupportHandVisualiser: MonoBehaviour
     {
-        public VisualizationType type;
+        public VisualizationType visualizationType;
+        [SerializeByType("Scripts.Hands.VisualizationType",0)]
         public GameObject LeftHand;
+        [SerializeByType("Scripts.Hands.VisualizationType","Mesh")]
         public GameObject RightHand;
-        public GameObject Bones;
-        public Transform Parent;
-        public float speed;
+        [SerializeByType("Scripts.Hands.VisualizationType","Bones")]
+        public GameObject Bones; 
+        public Transform Parent; 
+        public float speed; 
+        [HideInInspector]
         public List<HandMesh> activeHands = new List<HandMesh>();
+        [HideInInspector]
         public List<HandMesh> hiddenHands = new List<HandMesh>();
-        private UpdateEvent _onUpdate;
+        private UpdateEvent _onUpdate => UpdateEvent.Instance;
 
         private void OnValidate()
         {
@@ -27,12 +33,6 @@ namespace Scripts.Hands
             {
                 Parent = transform;
             }
-        }
-
-        [Inject]
-        private void Construct(UpdateEvent onUpdate)
-        {
-            _onUpdate = onUpdate;
         }
 
         public void CreateNewStack(BonesData data)
@@ -155,7 +155,7 @@ namespace Scripts.Hands
                 return;
             }
             HandMesh hand = null;
-            if (type == VisualizationType.Bones)
+            if (visualizationType == VisualizationType.Bones)
             {
                 var newHand = GameObject.Instantiate(Bones, Parent);
                 newHand.gameObject.name = newHand.gameObject.name.Replace("(Clone)", $"_{activeHands.Count}");
@@ -177,8 +177,7 @@ namespace Scripts.Hands
                 }
                   
             }
-          
-            hand.Initialize(ref _onUpdate);
+            
             hand.ChangePosition(points);
             hand.Show();
             activeHands.Add(hand);

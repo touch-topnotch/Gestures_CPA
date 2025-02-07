@@ -2,7 +2,7 @@ using Scripts.Static;
 using UnityEngine;
 using Zenject;
 
-namespace Scripts.Movements
+namespace Movements
 {
     public class PCMovement{// MovementSetup, IMovable
     // {
