@@ -1,5 +1,5 @@
 using Scripts.Gestures;
-using Scripts.Hands;
+using Scripts.HandsLogic;
 using Scripts.Static;
 using UnityEngine;
 

@@ -1,74 +1,107 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Gesture_Editor_SDK.EditorAttributes.InspectorButtonAttribute;
 using Gesture_Editor_SDK.ReadOnly;
+using Scripts.Design;
+using Scripts.HandsLogic;
+using Scripts.PlayerLogic;
+using Scripts.Tests;
+using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace Scripts.Characters
 {
-    
-    public class CharacterPool: MonoBehaviour
+
+    public class CharacterPool : MonoBehaviour
     {
-        [SerializeField] [ReadOnlyInInspector] 
-        private List<Character> characters = new();
-
-        [Header("Current Character")] [SerializeField]
-        private string _currentName = "";
-        
         [Header("Properties")]
-        [SerializeField] private string assetPath;
-        private Dictionary<string, Character> charactersDict = new ();
-        [Header("Events")]
-        public UnityEvent<string> OnCharacterChanged;
+        [SerializeField] private string _currentCharacterName = "";
+
+        [EnumToggleButtons]
+        [SerializeField] private AvatarType _currentType;
         
+        [BoxGroup("Object pool")]
+        [SerializeField] private CustomDictionary<string, Character> charactersDict = new();
+        
+        [BoxGroup("Object pool")]
+        [SerializeField] private List<MaterialPair> _materials = new List<MaterialPair>();
+        
+        [FolderPath]
+        [SerializeField] private string _assetPath;
+        
+        [SerializeField] private Hands _hands;
 
-        public string CurrentName
+        [Header("Events")] public UnityEvent<string> OnCharacterChanged = new();
+
+        public void LogCharacter(string name)
         {
-            get => _currentName;
-            
-            set
+            Debug.Log("Character " + transform.parent.name + " changed on "+ name + ", "+ _currentCharacterName);
+        }
+        private void OnValidate()
+        {
+            SetCharacter(_currentCharacterName);
+            SetAvatarType(_currentType);
+        }
+
+        public void SetMaterialPair(MaterialPair pair)
+        {
+            _hands.HandMaterialPair = pair;
+            CurrentCharacter?.ChangeMaterials(_hands.HandMaterialPair);
+        }
+
+        public void SetAvatarType(AvatarType type)
+        {
+            _currentType = type;
+            CurrentCharacter?.ChangeAvatarType(type, _hands);
+        }
+
+        public void SetCharacter(string name)
+        {
+            if (name == _currentCharacterName)
             {
-                if (value == _currentName)
-                    return;
-                
-              
-                if(charactersDict.ContainsKey(value))
-                {
-                    _currentName = value;
-                }
-                else
-                {
-                    _currentName = characters[0].name;
-                    Debug.LogWarning("There is no character with name: " + CurrentName);
-                }
-                
-                OnCharacterChanged?.Invoke(_currentName);
+                ReactivateCharacters();
+                return;
             }
+            
+            if (charactersDict.ContainsKey(name))
+            {
+                _currentCharacterName = name;
+            }
+            else
+            {
+                Debug.LogWarning("There is no character with name: " + _currentCharacterName);
+                return;
+            }
+            ReactivateCharacters();
+
+            OnCharacterChanged?.Invoke(_currentCharacterName);
         }
 
-        public void Log(string onChE)
+        public void SetCharAndId(int id, string name)
         {
-            Debug.Log(onChE + "changed");
+            _hands.HandMaterialPair = _materials[id% _materials.Count];
+            SetCharacter(name);
         }
 
-        public Character GetCharacter()
+        public void SetMaterialId(int id)
         {
-            if (characters.Count == 0 || charactersDict.Keys.Count == 0)
-                RefreshDictionary();
-            return charactersDict[CurrentName];
+            _hands.HandMaterialPair = _materials[id% _materials.Count];
         }
 
-
+        public Character CurrentCharacter => charactersDict.ContainsKey(_currentCharacterName) ? charactersDict[_currentCharacterName] : null;
+        
+        
 #if UNITY_EDITOR
-        [InspectorButton("Update Characters", space:4)]
+        [InspectorButton("Update Characters", space: 4)]
         public void UpdateCharacters()
         {
             RefreshDictionary();
             // for all folders in the asset path
             // find object with name, which contains "_character", spawn it and add to the pool
-            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(assetPath);
+            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(_assetPath);
             System.IO.DirectoryInfo[] subDirs = dir.GetDirectories();
             foreach (var subDir in subDirs)
             {
@@ -81,13 +114,15 @@ namespace Scripts.Characters
                         //Debug.LogWarning("File " + file + " doesn't contain _Character");
                         continue;
                     }
+
                     // if file path contains .../Resources/other_path, change it to other_path
                     var res_path = file;
                     if (file.Contains("Resources"))
                     {
-                        res_path = file.Substring(file.IndexOf("Resources")+10);
+                        res_path = file.Substring(file.IndexOf("Resources") + 10);
                         res_path = res_path.Replace(".prefab", "");
                     }
+
                     var resourceObject = Resources.Load(res_path) as GameObject;
 
                     if (!resourceObject)
@@ -107,16 +142,17 @@ namespace Scripts.Characters
                     {
                         continue;
                     }
-                    
+
                     foreach (var VARIABLE in charactersDict.Keys)
                     {
                         Debug.Log(VARIABLE);
                     }
+
                     Debug.Log(charactersDict.Keys + charName);
-                
-                    
+
+
                     var spawnedObject = PrefabUtility.InstantiatePrefab(resourceObject) as GameObject;
-            
+
                     if (!spawnedObject)
                     {
                         Debug.LogWarning("Can't spawn resource Object");
@@ -124,40 +160,47 @@ namespace Scripts.Characters
                     }
 
                     spawnedObject.transform.SetParent(transform);
-                    
+
                     Debug.Log("Trying to add character " + charName + "... ");
                     var character = spawnedObject.GetComponent<Character>();
-                    charactersDict.Add(charName, character);
-                    characters.Add(character);
+                
+                    charactersDict.SmartAdd(charName,character);
                     Debug.Log("Character " + charName + " added to Object Pool");
                 }
             }
-            
         }
-        #endif
+
+        [InspectorButton("Generate new Character (by current name)")]
+        public void GenerateCharacter()
+        {
+            GameObject characterPrefab = new();
+            var character = characterPrefab.AddComponent<Character>();
+            var modelPath = $"Assets/Models/Characters/{_currentCharacterName}_Model.prefab";
+            var characterPath = $"Assets/Resources/Characters/{_currentCharacterName}/{_currentCharacterName}.prefab";
+            var source = AssetDatabase.LoadAssetAtPath<GameObject>(modelPath);
+            if (source == null)
+            {
+                Debug.LogWarning(
+                    $"There is no {_currentCharacterName} by path: Assets/Models/Characters/{_currentCharacterName}_Model.prefab");
+                return;
+            }
+
+            character.SetSource(source);
+
+            character.GenerateAvatars();
+            DestroyImmediate(characterPrefab);
+        }
+#endif
         private void RefreshDictionary()
         {
-            characters = new List<Character>();
-            charactersDict = new Dictionary<string, Character>();
-            var res = "";
-            for (int i = 0; i < transform.childCount; i++)
+            foreach (var VARIABLE in transform.GetComponentsInChildren<Character>())
             {
-                
-                if (transform.GetChild(i).TryGetComponent<Character>(out var character))
-                {
-                    
-                    if (!charactersDict.ContainsKey(character.name))
-                    {
-                        characters.Add(character);
-                        charactersDict.Add(character.name, character);
-                        res += res == "" ? character.name : ", " + character.name;
-                    }
-                }
+                if (!string.IsNullOrEmpty(VARIABLE.name) && !charactersDict.ContainsKey(VARIABLE.name))
+                    charactersDict.Add(VARIABLE.name, VARIABLE);
             }
-            Debug.Log(res + " have been added to Character Pool");
-            if (characters.Count > 0)
+        
+            if (charactersDict.Count > 0)
             {
-                _currentName = characters[0].name;
                 ReactivateCharacters();
             }
             else
@@ -168,15 +211,21 @@ namespace Scripts.Characters
 
         private void ReactivateCharacters()
         {
-            foreach (var VARIABLE in charactersDict.Keys)
+            foreach (var VARIABLE in charactersDict)
             {
-                charactersDict[VARIABLE].gameObject.SetActive(VARIABLE == CurrentName);
+                if(VARIABLE.Value)
+                    VARIABLE.Value.gameObject.SetActive(VARIABLE.Key == _currentCharacterName);
             }
+
+            if (_hands && CurrentCharacter)
+                CurrentCharacter.ChangeMaterials(_hands.HandMaterialPair, _currentType);
         }
 
         private void Start()
         {
-            RefreshDictionary();
+            OnCharacterChanged.AddListener(LogCharacter);
+            //ReactivateCharacters();
         }
+   
     }
 }

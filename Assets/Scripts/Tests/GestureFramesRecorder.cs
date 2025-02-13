@@ -1,6 +1,6 @@
 using Scripts.PlayerLogic;
 using Scripts.Gestures;
-using Scripts.Hands;
+using Scripts.HandsLogic;
 using Scripts.Static;
 using TMPro;
 using UnityEngine;
@@ -18,7 +18,7 @@ namespace Scripts.Tests
         public Button newGestureButton;
         public Button continueRecording;
         public TMP_Text gestureName;
-        private Rig _rig;
+        private Player _player;
         private SupportHandVisualiser _supportHdCreator;
         private GesturesLibrary _library;
         
@@ -36,11 +36,11 @@ namespace Scripts.Tests
 
         private HandsStruct _recordedHandStruct = new();
         [Inject]
-        private void Construct (GesturesLibrary library, Rig rig)
+        private void Construct (GesturesLibrary library, Player rig)
         {
             _library = library;
-            _rig = rig;
-            _supportHdCreator = _rig.Hands.handVisualiser;
+            //_rig = rig;
+            _supportHdCreator = _player.data.hands.handVisualiser;
             
             leftToggle.onValueChanged.AddListener(RecordLeft);
             rightToggle.onValueChanged.AddListener(RecordRight);
@@ -113,7 +113,7 @@ namespace Scripts.Tests
 
         public virtual void RecordLeft(bool isOn)
         {
-            _recordedHandStruct.LeftBones = isOn ? new BonesData(_rig.Hands.leftHand.points, HandType.left) : null;
+            _recordedHandStruct.LeftBones = isOn ? new BonesData(_player.data.hands.leftHand.points, HandType.left) : null;
             if (isOn)
             {
                 _supportHdCreator.AddToStack(_recordedHandStruct.LeftBones);
@@ -127,7 +127,7 @@ namespace Scripts.Tests
 
         public virtual void RecordRight(bool isOn)
         {
-            _recordedHandStruct.RightBones = isOn ? new BonesData(_rig.Hands.rightHand.points, HandType.right) : null;
+            _recordedHandStruct.RightBones = isOn ? new BonesData(_player.data.hands.rightHand.points, HandType.right) : null;
             if (isOn)
             {
                 _supportHdCreator.AddToStack(_recordedHandStruct.RightBones);

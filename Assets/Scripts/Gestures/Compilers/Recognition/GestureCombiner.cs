@@ -7,21 +7,30 @@ namespace Scripts.Gestures
     public class GestureCombiner
     {
         private GestureGraph _graph;
+        
         private GestureGraph _currentGraph; 
+        
         private Recognizer _recognizer;
 
+        public readonly GesturesLibrary library;
         public FrameRecognized OnFrameRecognized => _recognizer.onFrameRecognized;
         public GestureRecognized OnGestureRecognized => _recognizer.onGestureRecognized;
-        
-        public void Initialize(Rig rig, bool debugMode)
+        private PlayerData _data;
+        public GestureCombiner(PlayerData data)
         {
-            _recognizer = new Recognizer(rig.Hands, rig.RecognitionPropertiesConfig);
-            if(debugMode)
+            _data = data;
+            library = new GesturesLibrary(data);
+        }
+        public void CreateRecognizer(RecognitionPropertiesConfig config, bool isDebug = true)
+        {
+            _recognizer = new Recognizer(_data.hands, config);
+            
+            if(isDebug)
                 RecognizeWithAllGestures();
         }
         private void RecognizeWithAllGestures()
         {
-            _recognizer.RecognizeDynamicGesture(GesturesLibrary.Instance.DynamicGestures);
+            _recognizer.RecognizeDynamicGesture(library.DynamicGestures);
         } 
 
         public void GestureRecognized(DynamicGesture gesture)
@@ -31,6 +40,28 @@ namespace Scripts.Gestures
             gesture.AllFramesDetected(OnTheEndOfGestureCall);
         }
 
+        public void SimulateFrame(string name)
+        {
+            
+            if(library.TryGetDynamicGesture(name,out var gesture))
+            {
+                gesture.FrameRecognized(name);
+                
+                if(gesture.TryGetGestureFrame(name, out var frame))
+                {
+                    Debug.Log("Move hands");
+                    _data.hands.MoveHands(frame, 4, () => { Debug.Log("Frame Simulated!"); });
+                }
+            }
+        }
+
+        public void SimulateGesture(string name)
+        {
+            if(library.TryGetDynamicGesture(name,out var gesture))
+            {
+                gesture.AllFramesDetected(()=>{});
+            }
+        }
         public void OnTheEndOfGestureCall()
         {
             RecognizeWithAllGestures();
@@ -45,7 +76,7 @@ namespace Scripts.Gestures
             //     return;
             // }
 
-            GestureGraphManager.InitializeGestureGraph(GesturesLibrary.Instance.DynamicGestures);
+            GestureGraphManager.InitializeGestureGraph(library.DynamicGestures);
 
         }
     }

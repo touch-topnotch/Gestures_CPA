@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Gesture_Editor_SDK.Realtime;
-using Scripts.Hands;
+using Scripts.HandsLogic;
 using Scripts.Static;
 using UnityEngine;
 
@@ -49,6 +49,8 @@ namespace Scripts.Gestures
             Name = name;
             frames = new();
         }
+
+        public bool HasFrame(string frame) => GestureMapper.PrefixOfName(frame) == Name&& GestureMapper.IndexOfName(frame) < frames.Count;
         
         public void AddFrame(GestureFrame frame)
         {

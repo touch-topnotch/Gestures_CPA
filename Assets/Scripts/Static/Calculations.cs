@@ -1,5 +1,9 @@
 ﻿using System;
 using System.Linq;
+using Scripts.Network;
+using Unity.VisualScripting;
+using UnityEngine;
+using Random = System.Random;
 
 namespace Scripts.Static
 {
@@ -38,6 +42,13 @@ namespace Scripts.Static
                 // If the "Resources" keyword is not found in the original path
                 throw new ArgumentException("The original path does not contain the keyword 'Resources'.");
             }
+        }
+        public static T AddComponentSmart<T>(Transform transf)
+        where T : Component
+        {
+            if (transf.TryGetComponent<T>(out var temp))
+                return temp;
+            return transf.AddComponent<T>();
         }
     }
 }

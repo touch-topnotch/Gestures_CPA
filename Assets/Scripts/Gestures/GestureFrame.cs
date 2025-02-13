@@ -1,5 +1,5 @@
 using JetBrains.Annotations;
-using Scripts.Hands;
+using Scripts.HandsLogic;
 using UnityEngine;
 using UnityEngine.XR;
 
