@@ -48,7 +48,7 @@ namespace Scripts.PlayerLogic
 
         [Header("Rigs")] [SerializeField] private PCRig _pcRig;
         [SerializeField] private XRRig _xrRig;
-        private Rig _curRig;
+        [SerializeField] private Rig _curRig;
         
 
         [Header("Anchors")] 
@@ -118,9 +118,6 @@ namespace Scripts.PlayerLogic
             _pcRig = transform.Find("PC Rig").GetComponent<PCRig>();
             _xrRig = transform.Find("XR Rig").GetComponent<XRRig>();
             
-            if (isAnyNull())
-                return;
-            
             CurRig = GetRig();
             
             if (!isLocal)
@@ -168,8 +165,10 @@ namespace Scripts.PlayerLogic
 
         public void Initialize()
         {
+            
             if (_rigType != RigType.NoRig)
             {
+                
                 if (!_pcRig)
                     _pcRig = GetComponentInChildren<PCRig>();
                 if (!_xrRig)
@@ -177,9 +176,10 @@ namespace Scripts.PlayerLogic
 
                 if (_rigType == RigType.PCRig)
                     _pcRig.library = _gestureCombiner.library;
+                
                 _gestureCombiner.CreateRecognizer(_curRig.RecognitionPropertiesConfig);
                 
-                _curRig.StartMove();
+             //   _curRig.StartMove();
               
             }
             UpdateEvent.Instance.AddListener(UpdateAnchors); 
