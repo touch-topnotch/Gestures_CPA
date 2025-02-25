@@ -57,93 +57,40 @@ namespace Scripts.Design
     public class HandAppearance: MonoBehaviour
     {
        
-        [SerializeField] private CustomDictionary<string, HandStageProps> appearancesDict = new CustomDictionary<string, HandStageProps>();
+        [SerializeField] private CustomDictionary<AvatarType, HandStageProps> appearancesDict = new CustomDictionary<AvatarType, HandStageProps>();
         private string default_stage;
         private string local_stage;
         private string enemy_stage;
         [Space]
-        [SerializeField] private string debugStage;
+        [SerializeField] private AvatarType debugStage;
         [SerializeField] private MaterialPair debugPair;
-
-        public void ChangeMaterialPair(MaterialPair pair, string stage = "")
-        {
-            if (string.IsNullOrEmpty(stage))
-            {
-                if (string.IsNullOrEmpty(default_stage))
-                {
-                    FindStages();
-
-                    if (string.IsNullOrEmpty(default_stage))
-                    {
-                       
-                        return;
-                    }
-                    stage = default_stage;
-                }
-            }
-            RefreshProps(pair, stage);
-        }
-
+        
         public void ChangeMaterialPair(MaterialPair pair, AvatarType type)
         {
-            switch (type)
-            {
-                case AvatarType.Local:
-                    ChangeMaterialPair(pair, local_stage);
-                    return;
-                case AvatarType.Enemy:
-                    ChangeMaterialPair(pair, enemy_stage);
-                    return;
-            }
+           RefreshProps(pair, type);
         }
-
-        private void OnValidate()
+        private void RefreshProps(MaterialPair pair, AvatarType type)
         {
-            FindStages();
+            RefreshProps(pair.Left, type);
+            RefreshProps(pair.Right, type);
+            // var isL = stage.Contains("_L");
+            // if (isL || stage.Contains("_R"))
+            // {
+            //     RefreshProps(isL ? pair.Left : pair.Right, stage);
+            // }
+            // else
+            // {
+            //     RefreshProps(pair.Left, stage);
+            //     RefreshProps(pair.Right, stage);
+            // }
         }
 
-        private void FindStages()
-        {  
-            foreach (var VARIABLE in appearancesDict.Keys)
-            {
-                if (VARIABLE.Contains("default"))
-                {
-                    default_stage = VARIABLE;
-                }
-                if (VARIABLE.Contains("local"))
-                {
-                    local_stage = VARIABLE;
-              
-                }
-                if (VARIABLE.Contains("enemy"))
-                {
-                    enemy_stage = VARIABLE;
-         
-                }
-            }
-
-        }
-        private void RefreshProps(MaterialPair pair, string stage)
+        private void RefreshProps(Material mat, AvatarType type)
         {
-            
-            var isL = stage.Contains("_L");
-            if (isL || stage.Contains("_R"))
+            if (appearancesDict.ContainsKey(type) && mat)
             {
-                RefreshProps(isL ? pair.Left : pair.Right, stage);
-            }
-            else
-            {
-                RefreshProps(pair.Left, stage);
-                RefreshProps(pair.Right, stage);
-            }
-        }
-
-        private void RefreshProps(Material mat, string stage)
-        {
-            if (appearancesDict.ContainsKey(stage) && mat)
-            {
-                Debug.Log("Set Props Material: "+  mat.name + " to stage " + stage);
-                var props = appearancesDict[stage];
+//                Debug.Log("Set Props Material: "+  mat.name + " to stage " + stage);
+                var props = appearancesDict[type];
                 mat.SetColor(HandShaderProps.MainColor, props.MainColor);                             
                 mat.SetColor(HandShaderProps.EdgeColor, props.EdgeColor);
                 mat.SetFloat(HandShaderProps.EdgeHighlightPower, props.EdgeHighlightPower);
@@ -164,8 +111,6 @@ namespace Scripts.Design
         [Button("Check stage on material")]
         private void CheckStage()
         {
-            if (debugStage == "")
-                debugStage = default_stage;
             ChangeMaterialPair(debugPair, debugStage);
         }
         [Button("Set default values to debugStage")]
@@ -188,6 +133,12 @@ namespace Scripts.Design
             appearancesDict[debugStage] = props;
 
         }
-        #endif
+        
+        [Button("Duplicate first settings to last")]
+        private void DuplicateSettings()
+        {   
+            appearancesDict[appearancesDict.Keys.Last()] = appearancesDict.Values.First();
+        }
+    #endif
     }
 }

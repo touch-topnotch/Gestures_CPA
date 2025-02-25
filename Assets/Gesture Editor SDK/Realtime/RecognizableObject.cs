@@ -1,15 +1,11 @@
-using Scripts.Gestures;
-using Scripts.HandsLogic;
+using System;
 using Scripts.PlayerLogic;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Gesture_Editor_SDK.Realtime
 {
-    public abstract class RecognizableObject : MonoBehaviour, IRecognizable
+    public abstract class RecognizableBehaviour : MonoBehaviour, IRecognizable
     {
-
-        private UnityEvent _onAbilityReleased = new UnityEvent();
         public PlayerData playerData { get; set; }
         public abstract void OnFrameRecognized(string name);
 
@@ -19,10 +15,9 @@ namespace Gesture_Editor_SDK.Realtime
         public void AbilityReleased()
         {
             OnAbilityReleased();
-            _onAbilityReleased?.Invoke();
+            onAbilityReleased?.Invoke();
             // do functions and destroy it;
         }
-
         protected void ChangeParent(Transform obj, Transform parent, bool adjustTransform = true)
         {
             obj.SetParent(parent);
@@ -33,7 +28,7 @@ namespace Gesture_Editor_SDK.Realtime
             }
         }
 
-        UnityEvent IRecognizable.OnAbilityReleased => _onAbilityReleased;
+        public event Action onAbilityReleased;
     }
     //recognizable object ALWAYS should know information about player.
 }

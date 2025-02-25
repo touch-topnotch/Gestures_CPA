@@ -6,7 +6,7 @@ using UnityEngine.Events;
 
 namespace Gesture_Editor_SDK.Realtime
 {
-    public class EmptyRecognizable: RecognizableObject
+    public class EmptyRecognizable: RecognizableBehaviour
     {
         public override void OnFrameRecognized(string name)
         {

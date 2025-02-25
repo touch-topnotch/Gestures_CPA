@@ -1,4 +1,5 @@
 
+using System;
 using Scripts.Gestures;
 using Scripts.HandsLogic;
 using Scripts.PlayerLogic;
@@ -8,10 +9,10 @@ namespace Gesture_Editor_SDK.Realtime
 {
     public interface IRecognizable
     {
-        public PlayerData playerData {get; set; }
+        PlayerData playerData {get; set; }
         void OnFrameRecognized(string name);
         void AbilityCalled();
         void AbilityReleased();
-        UnityEvent OnAbilityReleased { get; }
+        event Action onAbilityReleased;
     }
 }

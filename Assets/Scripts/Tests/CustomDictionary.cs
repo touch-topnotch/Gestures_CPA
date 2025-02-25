@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Scripts.Tests
@@ -29,6 +30,21 @@ namespace Scripts.Tests
         /// <param name="val">The value</param>
         /// <returns>The value</returns>
         public override V SerializeValue(V val) => val;
+        
+
+        public override V SerializeValue(List<V> value)
+        {
+            List<object> serializedList = new List<object>();
+
+            foreach (var item in value)
+            {
+                serializedList.Add(SerializeValue(item));
+            }
+
+            return (V)(object)serializedList;
+        }
+        
+
 
         /// <summary>
         /// Conversion to serialize a key
@@ -57,7 +73,7 @@ namespace Scripts.Tests
         }
         
     }
-
+    
     /// <summary>
     /// Dictionary that can serialize keys and values as other types
     /// </summary>
@@ -73,7 +89,7 @@ namespace Scripts.Tests
 
         [SerializeField]
         List<SV> m_Values = new List<SV>();
-
+        
         /// <summary>
         /// From <see cref="K"/> to <see cref="SK"/>
         /// </summary>
@@ -88,7 +104,8 @@ namespace Scripts.Tests
         /// <returns>The value in <see cref="SV"/></returns>
         public abstract SV SerializeValue(V value);
 
-
+        public abstract SV SerializeValue(List<V> value);
+        
         /// <summary>
         /// From <see cref="SK"/> to <see cref="K"/>
         /// </summary>
@@ -109,32 +126,44 @@ namespace Scripts.Tests
         /// </summary>
         public void OnBeforeSerialize()
         {
+            if (Application.isPlaying)
+            {
+                Debug.Log("Забыли обо всем, заново");
+                Debug.Log("Сейчас у нас " + Keys.Count +" ключей и "+ Values.Count + " вещей");
+            }
             m_Keys.Clear();
             m_Values.Clear();
-
             foreach (var kvp in this)
             {
                 m_Keys.Add(SerializeKey(kvp.Key));
+                if(Application.isPlaying)
+                    Debug.Log("Такс, получается сейчас в m_Values "+  m_Values.Count + " элементов, у kvp Value " + (kvp.Value as List<AudioClip>).Count + " sounds");
                 m_Values.Add(SerializeValue(kvp.Value));
+                if (Application.isPlaying)
+                    Debug.Log("теперь в m_Values " + m_Values.Count + " элементов");
+
             }
         }
-
         /// <summary>
         /// OnAfterDeserialize implementation.
         /// </summary>
         public void OnAfterDeserialize()
         {
-
             for (int i = 0; i < m_Keys.Count; i++)
             {
                 var key = DeserializeKey(m_Keys[i]);
+                
+                Debug.Log("Deserialized value: " + m_Values[i]);
+              
+                if(m_Values.Count < i)
+                    continue;
                 if (ContainsKey(key))
                 {
                     this[key] = DeserializeValue(m_Values[i]);
                 }
                 else
                 {
-                    Add(DeserializeKey(m_Keys[i]),DeserializeValue(m_Values[i]));
+                    Add(key, DeserializeValue(m_Values[i]));
                 }
             }
             
@@ -142,4 +171,6 @@ namespace Scripts.Tests
             m_Values.Clear();
         }
     }
+    
+    
 }
