@@ -111,7 +111,7 @@ namespace Scripts.Gestures
                     return null;
                 
                 if(asset.Type == 0)
-                    res = Spawner.SpawnPooledPrefab(res, data.transform, true);
+                    res = Spawner.SpawnPooledPrefab(res, data.playerTransform, true);
 
                 recognizable = res.GetComponent(typeof(IRecognizable)) as IRecognizable;
                 recognizable.playerData = data;
