@@ -215,9 +215,9 @@ namespace Components
                     if (!item || item.name.Split("_").Length < 3)
                         continue;
                     
-                    var name = item.name.Split("_")[2]; 
-                    
-                    var folder = "Assets/Resources/" + GetTypeByPrefix(item.name.Split("_")[0]) +  "/" + name;
+                    var name = item.name.Split("_")[2];
+
+                    var folder = "Assets/Resources/Weapons/" + name + "/" + GetTypeByPrefix(item.name.Split("_")[0]);
 
                     if (!Directory.Exists(folder))
                     {

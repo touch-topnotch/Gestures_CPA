@@ -14,7 +14,7 @@ namespace Scripts.Gestures
     public static class GestureMapper
     {
         private static readonly bool isDebug = true;
-        private static string _emptyRecognizablePath = "Effects/Empty/EmptyPrefab";
+        private static string _emptyRecognizablePath = "Weapons/Empty/EmptyPrefab";
         private static readonly string _jsonPath = Application.dataPath + "/Resources/Database/GesturesLibrary.json";
 
         public static Dictionary<string, JsonGestureStruct> GetJsonGesturesStruct(ulong id)=>
