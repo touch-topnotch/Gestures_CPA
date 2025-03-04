@@ -6,6 +6,7 @@ namespace Gesture_Editor_SDK.Realtime
 {
     public abstract class RecognizableBehaviour : MonoBehaviour, IRecognizable
     {
+        public string gestureName => this.transform.name;
         public PlayerData playerData { get; set; }
         public abstract void OnFrameRecognized(string name);
 
@@ -15,7 +16,7 @@ namespace Gesture_Editor_SDK.Realtime
         public void AbilityReleased()
         {
             OnAbilityReleased();
-            onAbilityReleased?.Invoke();
+            AbilityReleasedEvent?.Invoke();
             // do functions and destroy it;
         }
         protected void ChangeParent(Transform obj, Transform parent, bool adjustTransform = true)
@@ -28,7 +29,7 @@ namespace Gesture_Editor_SDK.Realtime
             }
         }
 
-        public event Action onAbilityReleased;
+        public event Action AbilityReleasedEvent;
     }
     //recognizable object ALWAYS should know information about player.
 }

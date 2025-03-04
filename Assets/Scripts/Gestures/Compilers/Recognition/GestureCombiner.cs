@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Scripts.Characters;
 using Scripts.Events;
 using Scripts.PlayerLogic;
 using UnityEngine;
@@ -16,10 +18,10 @@ namespace Scripts.Gestures
         public FrameRecognized OnFrameRecognized => _recognizer.onFrameRecognized;
         public GestureRecognized OnGestureRecognized => _recognizer.onGestureRecognized;
         private PlayerData _data;
-        public GestureCombiner(PlayerData data)
+        public GestureCombiner(PlayerData data, Dictionary<string, Character> chars)
         {
             _data = data;
-            library = new GesturesLibrary(data);
+            library = new GesturesLibrary(data, chars);
         }
         public void CreateRecognizer(RecognitionPropertiesConfig config, bool isDebug = true)
         {

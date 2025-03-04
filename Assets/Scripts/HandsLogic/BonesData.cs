@@ -31,10 +31,10 @@ namespace Scripts.HandsLogic
             if (points == null || points.Length == 0)
                 return;
             rootPos = points[0].localPosition;
-            rotations = new Quaternion[points.Length - 1];
-            for (int i = 1; i < points.Length; i++)
+            rotations = new Quaternion[points.Length];
+            for (int i = 0; i < points.Length; i++)
             {
-                rotations[i - 1] = points[i].localRotation;
+                rotations[i] = points[i].localRotation;
             }
         }
         public HandType Type() => _type;

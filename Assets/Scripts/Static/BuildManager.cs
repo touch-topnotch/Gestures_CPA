@@ -28,7 +28,7 @@ public class BuildManager: IPreprocessBuildWithReport
     public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject)
     {
         Debug.Log("Running commands:");
-        RunSCC();
+      //  RunSCC();
     }
     [MenuItem("Testing/RunSCC")]
     static void RunSCC()

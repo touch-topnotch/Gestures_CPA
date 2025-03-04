@@ -1,9 +1,10 @@
 using Scripts.PlayerLogic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Components
 {
-    public abstract class WeaponDesign: MonoBehaviour
+    public abstract class WeaponDesign: SerializedMonoBehaviour
     {
         public AudioProcessor audioProcessor;
         public VFXProcessor vfxProcessor;

@@ -44,7 +44,7 @@ namespace Scripts.Gestures
         }
         private BonesData SetHandPoints(BonesData points, HandUsedType handUsed)
         {
-            if (points.Exists())
+            if (points != null && points.Exists())
                 AddToEnum(handUsed);
             else 
                 RemoveFrEnum(handUsed);

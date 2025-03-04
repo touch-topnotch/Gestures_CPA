@@ -10,12 +10,13 @@ namespace Components
         {
             
         }
-
+#if UNITY_EDITOR
         protected override void AddMissingResources()
         {
             base.AddMissingResources();
             PoolAllObjects();
         }
+#endif
 
         public void DisableAllObjects()
         {

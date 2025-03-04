@@ -23,14 +23,7 @@ namespace Components
         protected Dictionary<string, T> itemsDict = new();
         [BoxGroup("Resources")][SerializeField]
         protected Dictionary<string, List<T>> listOfItemsDict = new();
-    
-        private void OnValidate()
-        {
-            if (string.IsNullOrEmpty(_folderPath))
-                _folderPath = "Assets/Resources/";
-            if (string.IsNullOrEmpty(_telegramResourcesFolderPath))
-                _telegramResourcesFolderPath = "Assets/TelegramResources/";
-        }
+        
         private T LoadResource(string resourceName)
         {
             if (itemsDict.ContainsKey(resourceName))
@@ -101,7 +94,7 @@ namespace Components
 
 
         #region Authomatization
-
+    
         #if UNITY_EDITOR
         [BoxGroup("Add missing resources")] [FolderPath] [SerializeField]
         protected string _folderPath;
@@ -147,7 +140,7 @@ namespace Components
                                 {
                                     listOfItemsDict.Add(name, new List<T>());
                                 }
-
+    
                                 if (listOfItemsDict[name].Count > index)
                                 {
                                     listOfItemsDict[name][index] = item;
@@ -159,7 +152,7 @@ namespace Components
                                     {
                                         listOfItemsDict[name].Add(item);
                                     }
-
+    
                                     //_audioClipLists[name]
                                     listOfItemsDict[name].Add(item);
                                 }
@@ -182,11 +175,11 @@ namespace Components
                 }
             }
         }
-
-
+    
+    
         [BoxGroup("Sorting")][SerializeField] [FolderPath]
         private string _telegramResourcesFolderPath;
-
+    
         // [BoxGroup("Sorting")][SerializeField]
         // private ResourceType _type;
         
@@ -210,20 +203,20 @@ namespace Components
                 {
                     if (file.Contains(".meta"))
                         AssetDatabase.DeleteAsset(file);
-
+    
                     var item = (T)AssetDatabase.LoadAssetAtPath(file, typeof(T));
                     if (!item || item.name.Split("_").Length < 3)
                         continue;
                     
                     var name = item.name.Split("_")[2];
-
+    
                     var folder = "Assets/Resources/Weapons/" + name + "/" + GetTypeByPrefix(item.name.Split("_")[0]);
-
+    
                     if (!Directory.Exists(folder))
                     {
                         Directory.CreateDirectory(folder);
                     }
-
+    
                     string fullPath = folder + "/" + item.name + Path.GetExtension(file);
                     AssetDatabase.MoveAsset(file, fullPath);
                     
@@ -232,7 +225,7 @@ namespace Components
                 }
             }
         }
-
+    
         protected void PoolObject(string list, int id = -1)
         {
             
@@ -250,7 +243,7 @@ namespace Components
                     Debug.LogWarning("Can't pool object, because item is not a GameObject");
                     return;
                 }
-
+    
                 if (GameObject.Find(itemsDict[list].name))
                 {
                     Debug.LogWarning("This object already exists");
@@ -265,7 +258,7 @@ namespace Components
                     Debug.LogWarning("Can't pool object, because list of items dict not contains " + list);
                     return;
                 }
-
+    
                 if (listOfItemsDict[list].Count <= id)
                 {
                     Debug.LogWarning("Can't pool object, because index is more than count of items");
@@ -284,7 +277,7 @@ namespace Components
                 listOfItemsDict[list][id] = PrefabUtility.InstantiatePrefab(listOfItemsDict[list][id] as GameObject, this.transform) as T;
             }
         }
-
+    
         protected void PoolAllObjects()
         {
             foreach (var VARIABLE in listOfItemsDict.Keys)
@@ -294,7 +287,7 @@ namespace Components
                     PoolObject(VARIABLE, i);
                 }
             }
-
+    
             foreach (var VARIABLE in itemsDict.Keys)
             {
                 PoolObject(VARIABLE);

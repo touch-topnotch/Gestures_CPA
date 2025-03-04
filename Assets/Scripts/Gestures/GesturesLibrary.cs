@@ -1,5 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Characters;
+using Scripts.Characters;
+using Scripts.Databases;
 using Scripts.PlayerLogic;
+using Scripts.Static;
 using Scripts.Tests;
 using UnityEngine;
 
@@ -8,28 +13,138 @@ namespace Scripts.Gestures
     
     public class GesturesLibrary
     {
-        private Dictionary<string, DynamicGesture> _dynamicGestures = new();
-        public Dictionary<string, DynamicGesture> DynamicGestures => _dynamicGestures; // словарь, потому что поиск за
-        private readonly PlayerData _playerData;                                                                        // O(1), а не O(n) как в листe
-        public GesturesLibrary(PlayerData data)
+        public readonly Restrictive<string, DynamicGesture> gestures = new();
+        
+        private readonly PlayerData _playerData;
+
+        private Dictionary<string, DynamicGesture> allGestures => gestures.GetOpenDict();
+        public Dictionary<string, DynamicGesture> DynamicGestures => gestures.GetLimitedDict();
+        private Dictionary<string, Character> _characters;
+        public GesturesLibrary(PlayerData data, Dictionary<string, Character> characters)
         {
             _playerData = data;
-            //GestureMapper.ReplaceCharacters();
-            _dynamicGestures = GestureMapper.ReadDynamicGestures(data);
-
+            _characters = characters;
+            
+            gestures.AddDictionary(GestureMapper.ReadDynamicGestures(characters));
+            
             var log = "Library has initialized for player: " + data.id +". Mapped gestures: ";
-            foreach (var VARIABLE in DynamicGestures)
+            foreach (var VARIABLE in allGestures)
             {
                 log += VARIABLE.Key + ", ";
             }
             Debug.Log(log);
         }
 
-        public void RecordFrame(HandsStruct hands, string name)
+        private static JsonCharacterStruct AddGestureToChar(string name,  HandsStruct hands,  JsonCharacterStruct jsonChar)
         {
-            SetGestureFrame(new GestureFrame(name, hands));
-            GestureMapper.UpdateDynamicGesture(DynamicGestures[GestureMapper.PrefixOfName(name)], _playerData.id);
+            string dynamicName = GestureMapper.PrefixOfName(name);
+            var gestures = jsonChar.Gestures;
+            var hasDynamic = false;
+            for (int i = 0; i < gestures.Count; i++)
+            {
+                if (gestures[i].Name == dynamicName)
+                {
+                    gestures[i] = AddToExistedGesutre(name, hands, gestures[i]);
+                    hasDynamic = true;
+                    break;
+                }
+            }
+
+            if (!hasDynamic)
+            {
+                gestures.Add(CreateNewGesture(hands, name));
+            }
+
+            return new JsonCharacterStruct()
+            {
+                Name = jsonChar.Name,
+                Description = jsonChar.Description,
+                RootFolder = jsonChar.RootFolder,
+                Gestures = gestures,
+            };
         }
+        private static JsonGestureStruct AddToExistedGesutre(string name, HandsStruct hands, JsonGestureStruct jsonStruct)
+        {
+            int index = GestureMapper.IndexOfName(name);
+            
+            List<List<string>> frames = jsonStruct.Frames;
+            
+            if (index < frames.Count)
+            {
+                frames[index] = GestureMapper.HandsStructToString(hands);
+            }
+            else
+            {
+                for (int i = frames.Count; i < index; i++)
+                {
+                    frames.Add(null);
+                }
+                
+                frames.Add(GestureMapper.HandsStructToString(hands));
+            }
+            
+            return new JsonGestureStruct()
+            {
+                Name = jsonStruct.Name,
+                Frames = frames,
+                Type = jsonStruct.Type
+            };
+        }
+        private static JsonGestureStruct CreateNewGesture(HandsStruct hands, string name)
+        {
+            int index = GestureMapper.IndexOfName(name);
+            List<List<string>> frames = new List<List<string>>();
+            if (index > 0)
+            {
+                for (int i = 0; i < index - 1; i++)
+                {
+                    frames.Add(null);
+                }
+            }
+            frames.Add(GestureMapper.HandsStructToString(hands));
+            return new JsonGestureStruct()
+            {
+                Name = GestureMapper.PrefixOfName(name),
+                Frames = frames,
+                Type = (int)GestureType.Weapon
+            };
+        }
+        public void RecordFrame(HandsStruct hands, string name, string characterName)
+        {
+
+            var jsonCharacterStructs = CharacterMapper.GetCharacterStruct();
+            if (jsonCharacterStructs == null)
+            {
+                jsonCharacterStructs = new List<JsonCharacterStruct>();
+            }
+            var charId = -1;
+         
+            for (int i = 0; i < jsonCharacterStructs.Count; i++)
+            {
+                if (jsonCharacterStructs[i].Name == characterName)
+                {
+                    charId = i;
+                    break;
+                }
+            }
+
+            if (charId == -1)
+            {
+                jsonCharacterStructs.Add(new JsonCharacterStruct()
+                {
+                    Name = characterName,
+                    Description = characterName + " is cool!",
+                    RootFolder = "Resources/Characters/"+ characterName,
+                    Gestures = new List<JsonGestureStruct>(){CreateNewGesture(hands, name)}
+                });
+            }
+            else // there is a character
+            {
+                jsonCharacterStructs[charId] = AddGestureToChar(name, hands, jsonCharacterStructs[charId]);
+            }
+            CharacterMapper.SendCharacterStruct(jsonCharacterStructs);
+        }
+        
         public bool TryGetDynamicGesture(string gesture, out DynamicGesture frame)
         {
             return DynamicGestures.TryGetValue(gesture, out frame) ||
@@ -60,8 +175,8 @@ namespace Scripts.Gestures
                 DynamicGestures[frame.baseName].frames[GestureMapper.IndexOfName(frame.name)] = frame;
             }
             else
-            {
-                throw new System.Exception("No dynamic gesture with this name: " + frame.baseName);
+            { //gestures
+                throw new Exception("There is no gestures with name " + frame);
             }
         }
 
