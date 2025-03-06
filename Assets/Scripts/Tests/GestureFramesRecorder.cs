@@ -8,6 +8,7 @@ using Scripts.Network;
 using Scripts.Static;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
+using Telegram.Bot.Types;
 using TMPro;
 using UI.KeyboardPack;
 using UnityEngine;
@@ -50,38 +51,37 @@ namespace Scripts.Tests
         private HandsStruct _recordedHandStruct = new();
 
         private bool taskCompleted = false;
-        private void OnMessageReceived(string text)
+        private void OnMessageReceived(Message message)
         {
-            Debug.Log(text);
+            var text = message.Text;
+            if (text == null)
+                return;
+            
             if(text.Contains("Char"))
             {
-                string characterName = text.Split(' ')[1];
+                string characterName =
+                    text.Split(' ').Length > 0 ? text.Split(' ')[1] : Calculations.RandomString(6);
                 characterNameInput.inputString = characterName;
                 _curCharacterName = characterName;
+                TelegramBotProcessor.SendTextToTelegram("Принято, теперь перса зовут " + characterName);
             }
 
             if (text.Contains("Gest"))
             {
-                string gestureName = text.Split(' ')[1];
+                string gestureName = text.Split(' ').Length > 0 ? text.Split(' ')[1] : Calculations.RandomString(8);
                 nameInput.inputString = gestureName;
                 Name = gestureName;
+                TelegramBotProcessor.SendTextToTelegram("Принято, теперь жест называется " + gestureName);
             }
-            TelegramBotProcessor.StartReceiving();
         }
 
         void Awake()
         {
+            TelegramBotProcessor.StartReceiving();
             TelegramBotProcessor.onMessageReceived += OnMessageReceived;
-            StartCoroutine(InitializeTelegramBotProcessor());
         }
 
-        IEnumerator InitializeTelegramBotProcessor()
-        {
-            // Здесь может быть дополнительная инициализация или проверка
-            yield return new WaitForSeconds(2);
-            TelegramBotProcessor.StartReceiving();
-            yield return null; // Дожидаемся следующего кадра
-        }
+    
 
         private void Start ()
         {
@@ -97,7 +97,7 @@ namespace Scripts.Tests
             newGestureButton.onClick.AddListener(NewGestureGroup);
             continueRecording.onClick.AddListener(ContinueRecording);
                 
-            nameInput.inputString = Calculations.RandomString(6);
+            Name = Calculations.RandomString(6)+ "_0";
             characterNameInput.inputString = Calculations.RandomString(8);
         }
 
@@ -133,8 +133,6 @@ namespace Scripts.Tests
         }
         private void SendToCompiler()
         {
-
-            Debug.Log(_recordedHandStruct.LeftBones.rotations.Length);
             _player.gestureCombiner.library.RecordFrame(_recordedHandStruct, _currentName, characterLabelText.text);
         }
         
@@ -161,12 +159,11 @@ namespace Scripts.Tests
 
         public virtual void RecordLeft(bool isOn)
         {
-           Debug.Log(_player.data.hands.leftHand.points.Length);
             _recordedHandStruct.LeftBones = isOn ? new BonesData(_player.data.hands.leftHand.points, HandType.left) : null;
             if (isOn)
             {
                 _supportHdCreator.AddToStack(_recordedHandStruct.LeftBones);
-                Debug.Log("Left Ghost Hand Spawned");
+//                Debug.Log("Left Ghost Hand Spawned");
             }
             else
             {

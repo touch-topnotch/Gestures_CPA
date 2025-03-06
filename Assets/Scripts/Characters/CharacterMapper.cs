@@ -22,8 +22,10 @@ namespace Characters
         public static void SendCharacterStruct(List<JsonCharacterStruct> characterStruct)
         {
             jsonStruct = characterStruct;
-            DataChanel.Send(Application.dataPath + "/Resources/Database/CharacterLibrary.json",
+            DataChanel.WriteAndSendFile(Application.dataPath + "/Resources/Database/CharacterLibrary.json",
                 JsonConvert.SerializeObject(characterStruct, Formatting.Indented));
+
+
         }
 
     }

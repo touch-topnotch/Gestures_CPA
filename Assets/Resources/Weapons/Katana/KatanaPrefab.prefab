@@ -47,6 +47,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdc18a9b1935d4bc6bfac8d4a4618fe3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: playerData
+      Entry: 7
+      Data: Scripts.PlayerLogic.PlayerData, Assembly-CSharp
+    - Name: id
+      Entry: 3
+      Data: 0
+    - Name: playerTransform
+      Entry: 6
+      Data: 
+    - Name: hands
+      Entry: 6
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
   audioProcessor: {fileID: 3997520258127646880}
   vfxProcessor: {fileID: 162652935199822761}
 --- !u!114 &-1042689388355162538
@@ -142,9 +166,7 @@ MonoBehaviour:
     - {fileID: 4339981692726720972}
     - {fileID: 1271376774865823968}
     - {fileID: 4288481937844596306}
-    - {fileID: 912915761469875060}
     - {fileID: 4390042001031033258}
-    - {fileID: 2488993574119689079}
     - {fileID: 6385249159744511049}
     SerializedBytesString: 
     Prefab: {fileID: 0}
@@ -205,7 +227,7 @@ MonoBehaviour:
         mscorlib
     - Name: 
       Entry: 12
-      Data: 6
+      Data: 4
     - Name: 
       Entry: 10
       Data: 1
@@ -218,12 +240,6 @@ MonoBehaviour:
     - Name: 
       Entry: 10
       Data: 4
-    - Name: 
-      Entry: 10
-      Data: 5
-    - Name: 
-      Entry: 10
-      Data: 6
     - Name: 
       Entry: 13
       Data: 
@@ -732,12 +748,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8279773a09c144d2cbe022d53026f997, type: 3}
---- !u!1 &912915761469875060 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2479501331932242506, guid: 8279773a09c144d2cbe022d53026f997,
-    type: 3}
-  m_PrefabInstance: {fileID: 3369714377034400062}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1524880165466341958 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4317499799281632120, guid: 8279773a09c144d2cbe022d53026f997,
@@ -987,12 +997,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b9db2642d684b4c92a5815ff813c6ea8, type: 3}
---- !u!1 &2488993574119689079 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8563557851848779126, guid: b9db2642d684b4c92a5815ff813c6ea8,
-    type: 3}
-  m_PrefabInstance: {fileID: 6079138257945652737}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7315568919999010773 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3592587333053692372, guid: b9db2642d684b4c92a5815ff813c6ea8,

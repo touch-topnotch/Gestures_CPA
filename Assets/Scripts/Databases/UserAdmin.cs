@@ -21,7 +21,7 @@ namespace Scripts.Databases
                 userData.id = 0;
             userLibrary.Add(userData);
             l.rl("UserAdmin.Add"+ "userLibrary.Count = " + userLibrary.Count);
-            DataChanel.Send(databasePath, JsonConvert.SerializeObject(userLibrary));
+            DataChanel.WriteAndSendFile(databasePath, JsonConvert.SerializeObject(userLibrary));
         }
 
         public static void Override(in UserData userData)
