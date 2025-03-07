@@ -8,9 +8,6 @@ namespace Scripts.PlayerLogic
         [SerializeField] private Transform cameraTarget;
         
         [SerializeField] private XRMovement _movement;
-        
-        [Range(0, 10)] [SerializeField] private float bodyPositionSpeed;
-        [Range(0, 10)] [SerializeField] private float bodyRotationSpeed;
      
         public override bool isMoved() => _movement.isMoved();
 
@@ -36,6 +33,7 @@ namespace Scripts.PlayerLogic
                 //     new Vector3(localPosition.x, localPosition.y - 1.6f, localPosition.z), Time.deltaTime*bodyPositionSpeed);
                 // anchors.Body.localPosition = position;
             }
+            
             // Quaternion.Lerp( anchors.Body.localRotation,
             //     Quaternion.Euler(new Vector3(0, anchors.Head.localEulerAngles.y, 0)),
             //     Time.deltaTime*bodyRotationSpeed );

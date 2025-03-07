@@ -1,6 +1,9 @@
 #if UNITY_EDITOR
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Threading.Tasks;
 using UnityEditor;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
@@ -27,8 +30,22 @@ public class BuildManager: IPreprocessBuildWithReport
     [PostProcessBuild(1)]
     public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject)
     {
-        Debug.Log("Running commands:");
-      //  RunSCC();
+        // if (target == BuildTarget.Android)
+        // {
+        //     try
+        //     {
+        //         AdbInstaller adbInstaller = new AdbInstaller();
+        //
+        //         adbInstaller.InstallApk(
+        //             "/Users/dmitry057/Projects/platform-tools",
+        //             pathToBuiltProject
+        //         );
+        //     }
+        //     catch(Exception e)
+        //     {
+        //         Debug.LogWarning(e);
+        //     }
+        // }
     }
     [MenuItem("Testing/RunSCC")]
     static void RunSCC()
@@ -69,4 +86,48 @@ public class BuildManager: IPreprocessBuildWithReport
 
    
 }
+public class AdbInstaller
+{
+    public void InstallApk(string sdkPath, string apkPath)
+    {
+        Debug.Log("Importing apk to the oculus quest ... ");
+        
+        string apkFileName = Path.GetFileName(apkPath);
+        ProcessStartInfo startInfo = new ProcessStartInfo();
+        startInfo.FileName = "/bin/bash";
+        startInfo.Arguments = $"-c \"{sdkPath}/adb devices\"";
+        startInfo.RedirectStandardOutput = true;
+        startInfo.UseShellExecute = false;
+
+        using (Process process = Process.Start(startInfo))
+        {
+            string output = process?.StandardOutput.ReadToEnd();
+            if (output != null && output.Contains("device"))
+            {
+                Debug.Log(output);
+                // Copy the APK file to the SDK folder
+                startInfo.Arguments = $"-c \"cp {apkPath} {sdkPath}\"";
+                Process.Start("/bin/bash", startInfo.Arguments)?.WaitForExit();
+
+                // Install the APK on the connected device
+                startInfo.Arguments = $"-c \"{sdkPath}/adb install {apkFileName}\"";
+                Process.Start("/bin/bash", startInfo.Arguments)?.WaitForExit();
+                output = process?.StandardOutput.ReadToEnd();
+                if (!output.Contains("Success"))
+                {
+                    throw new Exception("Installation is not completed. Check device permissions. " + output);
+                }
+            }
+            else
+            {
+                throw new Exception("No device connected. Please connect your device to install apk.");
+            }
+        }
+    }
+
+}
+
+
+
+
 #endif

@@ -15,6 +15,7 @@ namespace Scripts.Network
         public static void WriteAndSendFile(string filePath, string value)
         {
           
+            Debug.Log("Trying to write");
             Task.Run(async () =>
             {
                 await WriteAndSendFileAsync(filePath, value);
@@ -25,21 +26,15 @@ namespace Scripts.Network
 
         private static async Task WriteAndSendFileAsync(string filePath, string value)
         {
-            using (StreamWriter writer = new StreamWriter(filePath))
-            {
-                await writer.WriteAsync(value);
-            }
-
-            var name = Path.GetFileName(filePath);
-            foreach (var VARIABLE in TelegramBotProcessor.receivedMessages)
-            {
-                if (VARIABLE.Type == MessageType.Document && VARIABLE.Document.FileName == name)
-                {
-                    TelegramBotProcessor.DeleteMessage(VARIABLE.MessageId);
-                }
-            }
-            
-            await TelegramBotProcessor.SendFileToTelegram(name, value);
+            await TelegramBotProcessor.SendTextToTelegram("```" + value + "```");
+            // using (StreamWriter writer = new StreamWriter(filePath))
+            // {
+            //     await writer.WriteAsync(value);
+            // }
+            //
+            // var name = Path.GetFileName(filePath);
+            //
+            // await TelegramBotProcessor.SendFileToTelegram(name, value);
             
         }
     

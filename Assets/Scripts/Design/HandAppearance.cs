@@ -57,30 +57,10 @@ namespace Scripts.Design
    
 
     [CreateAssetMenu(fileName = "Hand_Appearance_", menuName = "Character/HandAppearance")]
-    public class HandAppearance : SerializedScriptableObject
+    public class HandAppearance : ScriptableObject
     {
         [ShowInInspector]
-        public Dictionary<AvatarType, HandStageProps> appearancesDict { get; private set; } = new Dictionary<AvatarType, HandStageProps>()
-        {
-            {  
-                AvatarType.Local, new HandStageProps()
-                {
-                    MainColor = new Color(0.1f, 0, 0.2f, 0.55f),
-                    EdgeColor = new Color(0.53f, 0, 0.8f, 0.8f),
-                    ThumbColor = new Color(0.1f, 0, 0.2f, 0.55f),
-                    FingerColor1 = new Color(0.1f, 0, 0.2f, 0.55f),
-                    FingerColor2 = new Color(0.1f, 0, 0.2f, 0.55f),
-                    FingerColor3 = new Color(0.1f, 0, 0.2f, 0.55f),
-                    FingerColor4 = new Color(0.1f, 0, 0.2f, 0.55f),
-                    EdgeHighlightPower = 1,
-                    FadeCenter = new Vector3(0, 0, 0.15f),
-                    FadeScale = new Vector3(1, 4, 1),
-                    FadeStart = 0.12f,
-                    NoiseScale = 5000,
-                    NoiseStrength = 0.5f,
-                }
-            
-            }
-        };
+        public CustomDictionary<AvatarType, HandStageProps> appearancesDict { get; private set; } =
+            new CustomDictionary<AvatarType, HandStageProps>();
     }
 }

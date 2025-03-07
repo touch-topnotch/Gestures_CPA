@@ -130,7 +130,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Materials.Array.data[1]
       value: 
-      objectReference: {fileID: 2100000, guid: db5bfd7500880cd4ab4fe0b24f065c02, type: 2}
+      objectReference: {fileID: 2100000, guid: 706fe7c96a1284fdb95940a6a1762bd6, type: 2}
     - target: {fileID: 919132149155446097, guid: bf7151579c38e2a44be94ba8773876c1,
         type: 3}
       propertyPath: m_Name
@@ -275,6 +275,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 9211027369607034092}
   m_PrefabAsset: {fileID: 0}
+--- !u!137 &7020760137574644012 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7009038412992213568, guid: bf7151579c38e2a44be94ba8773876c1,
+    type: 3}
+  m_PrefabInstance: {fileID: 9211027369607034092}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7904203235543305693 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1325600225764489521, guid: bf7151579c38e2a44be94ba8773876c1,
@@ -340,8 +346,8 @@ MonoBehaviour:
   - {fileID: 3567637184794782571}
   - {fileID: 5116018707015673274}
   - {fileID: 5968054756423641452}
-  material: {fileID: 2100000, guid: db5bfd7500880cd4ab4fe0b24f065c02, type: 2}
-  _defaultMaterial: {fileID: 2100000, guid: 48bbe7f2934e49a479d414abbbffd4f3, type: 2}
+  _materials: []
+  _meshRenderer: {fileID: 7020760137574644012}
 --- !u!4 &8993961051257482867 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 217531209976470175, guid: bf7151579c38e2a44be94ba8773876c1,

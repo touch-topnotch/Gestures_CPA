@@ -73,6 +73,24 @@ namespace Scripts.Tests
                 Name = gestureName;
                 TelegramBotProcessor.SendTextToTelegram("Принято, теперь жест называется " + gestureName);
             }
+
+            if (text.Contains("Continue"))
+            {
+                ContinueRecording();
+                TelegramBotProcessor.SendTextToTelegram("Nessun problema, caro amico!");
+            }
+            
+            if (text.Contains("Left"))
+            {
+                leftToggle.isOn = true;
+                TelegramBotProcessor.SendTextToTelegram("Nessun problema, caro amico!");
+            }
+
+            if (text.Contains("Right"))
+            {
+                rightToggle.isOn = true;
+                TelegramBotProcessor.SendTextToTelegram("Nessun problema, caro amico!");
+            }
         }
 
         void Awake()

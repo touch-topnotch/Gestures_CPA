@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Scripts.Design
 {
-    public class HandAppearanceProcessor: SerializedMonoBehaviour
+    public class HandAppearanceProcessor: MonoBehaviour
     {
         // This class is used to process the appearance of the hand
         [ShowInInspector] [InlineEditor()] public HandAppearance handAppearanceConfig;
@@ -26,7 +26,7 @@ namespace Scripts.Design
             if (handAppearanceConfig.appearancesDict.ContainsKey(type) && mat)
             {
 //                Debug.Log("Set Props Material: "+  mat.name + " to stage " + stage);
-                var props =handAppearanceConfig.appearancesDict[type];
+                var props = handAppearanceConfig.appearancesDict[type];
                 mat.SetColor(HandShaderProps.MainColor, props.MainColor);                             
                 mat.SetColor(HandShaderProps.EdgeColor, props.EdgeColor);
                 mat.SetFloat(HandShaderProps.EdgeHighlightPower, props.EdgeHighlightPower);
@@ -52,8 +52,7 @@ namespace Scripts.Design
         [Button("Set default values to debugStage")]
         private void SetDefaultValuesToFirstStage()
         {
-        
-
+            SetDefaultValues(ref handAppearanceConfig, AvatarType.Local);
         }
 
         public static void SetDefaultValues(ref HandAppearance appearance, AvatarType type)

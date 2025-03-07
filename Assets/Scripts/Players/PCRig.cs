@@ -56,7 +56,6 @@ namespace Scripts.PlayerLogic
         //Simulate Gestures
         public void TryGetGestureFrame(string frameName)
         {
-            Debug.Log(frameName + " - testing");
             if (library.DynamicGestures.TryGetValue(frameName, out var dynamicGesture))
             {
                 _ui.gestureInput.image.color = _palette.active;
@@ -160,10 +159,10 @@ namespace Scripts.PlayerLogic
 
         public void SimulateHit()
         {
-            if (Input.GetKeyDown(KeyCode.H))
-            {
-                StartCoroutine(HitCoroutine());
-            }
+            // if (Input.GetKeyDown(KeyCode.H))
+            // {
+            //     StartCoroutine(HitCoroutine());
+            // }
         }
 
         private IEnumerator HitCoroutine()

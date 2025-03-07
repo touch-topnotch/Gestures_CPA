@@ -42,6 +42,8 @@ namespace Scripts.Network
     
             try
             {
+                await SendTextToTelegram("Fratello, presto invierò json con gesti");
+                
                 byte[] utf16Bytes = System.Text.Encoding.Unicode.GetBytes(value);
 
                 using (FileStream fs = new FileStream(fileName, FileMode.Create))
@@ -82,18 +84,38 @@ namespace Scripts.Network
         }
         public static void StartReceiving()
         {
-            startTime = DateTime.UtcNow;
-            
-            cts.Cancel();
+            Debug.Log("Starting to receive updates...");
+
+            // Cancel any ongoing polling
+            if (cts is { IsCancellationRequested: false })
+            {
+                Debug.Log("Cancelling previous polling...");
+                cts.Cancel();
+            }
+
+            // Create a new CancellationTokenSource for the new polling
             cts = new CancellationTokenSource();
+
+            // Start receiving updates
             bot.StartReceiving<MyUpdateHandler>(
-                new ReceiverOptions { AllowedUpdates = new[] { UpdateType.Message } },cts.Token);
+                new ReceiverOptions { AllowedUpdates = new[] { UpdateType.Message } }, cts.Token);
+
+            Debug.Log("Polling started.");
         }
 
         public static void StopReceiving()
         {
-            cts.Cancel();
+            Debug.Log("Stopping updates...");
+
+            // Cancel the current polling
+            if (cts is { IsCancellationRequested: false })
+            {
+                cts.Cancel();
+            }
+
+            Debug.Log("Updates stopped.");
         }
+
 
         
         private class MyUpdateHandler : IUpdateHandler
