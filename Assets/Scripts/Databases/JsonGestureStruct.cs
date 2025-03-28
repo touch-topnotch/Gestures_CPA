@@ -6,7 +6,7 @@ namespace Scripts.Databases
     {
         public string Name;
         public int Type;
-        public List<List<string>> Frames;
+        public List<string[]> Frames;
     }
     // на данном этапе мы рассматриваем только ресурсы, находящиеся в папке Resources, соответсвенно делаем с рут обьектом
 }

@@ -1,0 +1,1242 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 31a6b9796d1c0440eba061ace5e9dff6, type: 3}
+  m_Name: the butler in VR glasses
+  m_EditorClassIdentifier: 
+  assetsData:
+  - rid: 1145285977202491442
+  - rid: 1145285977202491450
+  - rid: 1145285977202491457
+  - rid: 1145285977202491464
+  - rid: 1145285977202491471
+  - rid: 1145285977202491478
+  - rid: 1145285977202491485
+  - rid: 1145285977202491492
+  - rid: 1145285977202491499
+  - rid: 1145285977202491506
+  - rid: 1145285977202491513
+  - rid: 1145285977202491520
+  currentMode: TextToSprite
+  m_Data:
+  - rid: 1145285977202491430
+  - rid: 1145285977202491431
+  - rid: 1145285977202491432
+  - rid: 1145285977202491433
+  - rid: 1145285977202491434
+  - rid: 1145285977202491435
+  - rid: 1145285977202491443
+  preRefinedArtifact:
+    rid: -2
+  refinedArtifact:
+    rid: -2
+  selectedArtifact:
+    rid: 1145285977202491442
+  m_Operators:
+  - rid: 1145285977202491436
+  - rid: 1145285977202491437
+  - rid: 1145285977202491438
+  - rid: 1145285977202491439
+  - rid: 1145285977202491440
+  - rid: 1145285977202491441
+  m_PreRefineOperators: []
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
+    - rid: 1145285977202491430
+      type: {class: FeedbackManager, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_Liked:
+          m_Values: []
+        m_Disliked:
+          m_Values: []
+    - rid: 1145285977202491431
+      type: {class: DefaultStyleData, ns: Unity.Muse.Sprite.Data, asm: Unity.Muse.Sprite}
+    - rid: 1145285977202491432
+      type: {class: GenerateButtonData, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+    - rid: 1145285977202491433
+      type: {class: MainUI/UISize, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_NodeListWidth: 300
+        m_NodeListRefineWidth: 300
+        m_AssetListRefineWidth: 200
+    - rid: 1145285977202491434
+      type: {class: SessionData, ns: Unity.Muse.Sprite.Data, asm: Unity.Muse.Sprite}
+      data:
+        m_SessionId: d3c12f7f-85de-41bc-8f06-b45c7085920e
+        sessionLoaded: 
+    - rid: 1145285977202491435
+      type: {class: BookmarkManager, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_BookmarkedArtifacts:
+          m_Values: []
+        m_IsFilterEnabled: 0
+    - rid: 1145285977202491436
+      type: {class: GenerateOperator, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_OperatorData:
+          type: GenerateOperator
+          version: 0.0.1
+          settings:
+          - TextToSprite
+          - 4
+          enabled: 1
+          assembly: 
+    - rid: 1145285977202491437
+      type: {class: PromptOperator, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_OperatorData:
+          type: PromptOperator
+          version: 0.0.2
+          settings:
+          - the butler in VR glasses, gesticulating, with a tray
+          - 
+          enabled: 1
+          assembly: 
+    - rid: 1145285977202491438
+      type: {class: SpriteGeneratorSettingsOperator, ns: Unity.Muse.Sprite.Operators,
+        asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.SpriteGeneratorSettingsOperator
+          version: 0.0.1
+          settings:
+          - 
+          - 
+          - 0.32
+          - 512
+          - 512
+          - 1
+          - 0
+          - 50683
+          - 0
+          - 0
+          - 5cc104e0-423a-473e-8034-b9d346cb2357
+          - 0
+          - 0
+          - 
+          - 
+          - 
+          enabled: 1
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491439
+      type: {class: KeyImageOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.KeyImageOperator
+          version: 0.0.1
+          settings:
+          - 
+          - 
+          - True
+          - 512
+          - 512
+          - 0.5
+          enabled: 1
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491440
+      type: {class: SpriteRefiningMaskOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+    - rid: 1145285977202491441
+      type: {class: SessionOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.SessionOperator
+          version: 0.0.1
+          settings:
+          - d3c12f7f-85de-41bc-8f06-b45c7085920e
+          enabled: 0
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491442
+      type: {class: SpriteMuseArtifact, ns: Unity.Muse.Sprite.Artifacts, asm: Unity.Muse.Sprite}
+      data:
+        Guid: a78a06dc-1b84-4125-a3dc-463771eef3ac
+        Seed: 27686
+        m_Operators:
+        - rid: 1145285977202491444
+        - rid: 1145285977202491445
+        - rid: 1145285977202491446
+        - rid: 1145285977202491447
+        - rid: 1145285977202491448
+        - rid: 1145285977202491449
+        history:
+        - rid: 1145285977202491442
+        m_UnsafeContent: 0
+    - rid: 1145285977202491443
+      type: {class: GenerateCountData, ns: Unity.Muse.Sprite.Data, asm: Unity.Muse.Sprite}
+      data:
+        m_Counter: 0
+    - rid: 1145285977202491444
+      type: {class: GenerateOperator, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_OperatorData:
+          type: GenerateOperator
+          version: 0.0.1
+          settings:
+          - TextToSprite
+          - 4
+          enabled: 1
+          assembly: 
+    - rid: 1145285977202491445
+      type: {class: PromptOperator, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_OperatorData:
+          type: PromptOperator
+          version: 0.0.2
+          settings:
+          - the butler in VR glasses
+          - 
+          enabled: 1
+          assembly: 
+    - rid: 1145285977202491446
+      type: {class: SpriteGeneratorSettingsOperator, ns: Unity.Muse.Sprite.Operators,
+        asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.SpriteGeneratorSettingsOperator
+          version: 0.0.1
+          settings:
+          - 
+          - 
+          - 0.32
+          - 512
+          - 512
+          - 1
+          - 0
+          - 28366
+          - a78a06dc-1b84-4125-a3dc-463771eef3ac
+          - 0
+          - 00000000-0000-0000-0000-000000000000
+          - 0
+          - 00000000-0000-0000-0000-000000000000
+          - Default
+          - Default style.
+          - 
+          enabled: 1
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491447
+      type: {class: KeyImageOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.KeyImageOperator
+          version: 0.0.1
+          settings:
+          - 
+          - 
+          - True
+          - 512
+          - 512
+          - 0.5
+          enabled: 1
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491448
+      type: {class: SpriteRefiningMaskOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+    - rid: 1145285977202491449
+      type: {class: SessionOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.SessionOperator
+          version: 0.0.1
+          settings:
+          - d3c12f7f-85de-41bc-8f06-b45c7085920e
+          enabled: 0
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491450
+      type: {class: SpriteMuseArtifact, ns: Unity.Muse.Sprite.Artifacts, asm: Unity.Muse.Sprite}
+      data:
+        Guid: 240bffca-0fda-46b4-a7b9-347c23c2bdb3
+        Seed: 3552
+        m_Operators:
+        - rid: 1145285977202491451
+        - rid: 1145285977202491452
+        - rid: 1145285977202491453
+        - rid: 1145285977202491454
+        - rid: 1145285977202491455
+        - rid: 1145285977202491456
+        history:
+        - rid: 1145285977202491450
+        m_UnsafeContent: 0
+    - rid: 1145285977202491451
+      type: {class: GenerateOperator, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_OperatorData:
+          type: GenerateOperator
+          version: 0.0.1
+          settings:
+          - TextToSprite
+          - 4
+          enabled: 1
+          assembly: 
+    - rid: 1145285977202491452
+      type: {class: PromptOperator, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_OperatorData:
+          type: PromptOperator
+          version: 0.0.2
+          settings:
+          - the butler in VR glasses
+          - 
+          enabled: 1
+          assembly: 
+    - rid: 1145285977202491453
+      type: {class: SpriteGeneratorSettingsOperator, ns: Unity.Muse.Sprite.Operators,
+        asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.SpriteGeneratorSettingsOperator
+          version: 0.0.1
+          settings:
+          - 
+          - 
+          - 0.32
+          - 512
+          - 512
+          - 1
+          - 0
+          - 63874
+          - 240bffca-0fda-46b4-a7b9-347c23c2bdb3
+          - 0
+          - 00000000-0000-0000-0000-000000000000
+          - 0
+          - 00000000-0000-0000-0000-000000000000
+          - Default
+          - Default style.
+          - 
+          enabled: 1
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491454
+      type: {class: KeyImageOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.KeyImageOperator
+          version: 0.0.1
+          settings:
+          - 
+          - 
+          - True
+          - 512
+          - 512
+          - 0.5
+          enabled: 1
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491455
+      type: {class: SpriteRefiningMaskOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+    - rid: 1145285977202491456
+      type: {class: SessionOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.SessionOperator
+          version: 0.0.1
+          settings:
+          - d3c12f7f-85de-41bc-8f06-b45c7085920e
+          enabled: 0
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491457
+      type: {class: SpriteMuseArtifact, ns: Unity.Muse.Sprite.Artifacts, asm: Unity.Muse.Sprite}
+      data:
+        Guid: cd656ae0-9d51-4106-b05f-6295e5633281
+        Seed: 53810
+        m_Operators:
+        - rid: 1145285977202491458
+        - rid: 1145285977202491459
+        - rid: 1145285977202491460
+        - rid: 1145285977202491461
+        - rid: 1145285977202491462
+        - rid: 1145285977202491463
+        history:
+        - rid: 1145285977202491457
+        m_UnsafeContent: 0
+    - rid: 1145285977202491458
+      type: {class: GenerateOperator, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_OperatorData:
+          type: GenerateOperator
+          version: 0.0.1
+          settings:
+          - TextToSprite
+          - 4
+          enabled: 1
+          assembly: 
+    - rid: 1145285977202491459
+      type: {class: PromptOperator, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_OperatorData:
+          type: PromptOperator
+          version: 0.0.2
+          settings:
+          - the butler in VR glasses
+          - 
+          enabled: 1
+          assembly: 
+    - rid: 1145285977202491460
+      type: {class: SpriteGeneratorSettingsOperator, ns: Unity.Muse.Sprite.Operators,
+        asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.SpriteGeneratorSettingsOperator
+          version: 0.0.1
+          settings:
+          - 
+          - 
+          - 0.32
+          - 512
+          - 512
+          - 1
+          - 0
+          - 53810
+          - cd656ae0-9d51-4106-b05f-6295e5633281
+          - 0
+          - 00000000-0000-0000-0000-000000000000
+          - 0
+          - 00000000-0000-0000-0000-000000000000
+          - Default
+          - Default style.
+          - 
+          enabled: 1
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491461
+      type: {class: KeyImageOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.KeyImageOperator
+          version: 0.0.1
+          settings:
+          - 
+          - 
+          - True
+          - 512
+          - 512
+          - 0.5
+          enabled: 1
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491462
+      type: {class: SpriteRefiningMaskOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+    - rid: 1145285977202491463
+      type: {class: SessionOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.SessionOperator
+          version: 0.0.1
+          settings:
+          - d3c12f7f-85de-41bc-8f06-b45c7085920e
+          enabled: 0
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491464
+      type: {class: SpriteMuseArtifact, ns: Unity.Muse.Sprite.Artifacts, asm: Unity.Muse.Sprite}
+      data:
+        Guid: 7b47a6aa-5c22-4992-b9ea-f7fb3ecaaaa4
+        Seed: 17335
+        m_Operators:
+        - rid: 1145285977202491465
+        - rid: 1145285977202491466
+        - rid: 1145285977202491467
+        - rid: 1145285977202491468
+        - rid: 1145285977202491469
+        - rid: 1145285977202491470
+        history:
+        - rid: 1145285977202491464
+        m_UnsafeContent: 0
+    - rid: 1145285977202491465
+      type: {class: GenerateOperator, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_OperatorData:
+          type: GenerateOperator
+          version: 0.0.1
+          settings:
+          - TextToSprite
+          - 4
+          enabled: 1
+          assembly: 
+    - rid: 1145285977202491466
+      type: {class: PromptOperator, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_OperatorData:
+          type: PromptOperator
+          version: 0.0.2
+          settings:
+          - the butler in VR glasses
+          - 
+          enabled: 1
+          assembly: 
+    - rid: 1145285977202491467
+      type: {class: SpriteGeneratorSettingsOperator, ns: Unity.Muse.Sprite.Operators,
+        asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.SpriteGeneratorSettingsOperator
+          version: 0.0.1
+          settings:
+          - 
+          - 
+          - 0.32
+          - 512
+          - 512
+          - 1
+          - 0
+          - 17335
+          - 7b47a6aa-5c22-4992-b9ea-f7fb3ecaaaa4
+          - 0
+          - 00000000-0000-0000-0000-000000000000
+          - 0
+          - 00000000-0000-0000-0000-000000000000
+          - Default
+          - Default style.
+          - 
+          enabled: 1
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491468
+      type: {class: KeyImageOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.KeyImageOperator
+          version: 0.0.1
+          settings:
+          - 
+          - 
+          - True
+          - 512
+          - 512
+          - 0.5
+          enabled: 1
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491469
+      type: {class: SpriteRefiningMaskOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+    - rid: 1145285977202491470
+      type: {class: SessionOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.SessionOperator
+          version: 0.0.1
+          settings:
+          - d3c12f7f-85de-41bc-8f06-b45c7085920e
+          enabled: 0
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491471
+      type: {class: SpriteMuseArtifact, ns: Unity.Muse.Sprite.Artifacts, asm: Unity.Muse.Sprite}
+      data:
+        Guid: b289aaf3-2c15-4d46-8f79-743a3559bad4
+        Seed: 34275
+        m_Operators:
+        - rid: 1145285977202491472
+        - rid: 1145285977202491473
+        - rid: 1145285977202491474
+        - rid: 1145285977202491475
+        - rid: 1145285977202491476
+        - rid: 1145285977202491477
+        history:
+        - rid: 1145285977202491471
+        m_UnsafeContent: 0
+    - rid: 1145285977202491472
+      type: {class: GenerateOperator, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_OperatorData:
+          type: GenerateOperator
+          version: 0.0.1
+          settings:
+          - TextToSprite
+          - 4
+          enabled: 1
+          assembly: 
+    - rid: 1145285977202491473
+      type: {class: PromptOperator, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_OperatorData:
+          type: PromptOperator
+          version: 0.0.2
+          settings:
+          - the butler in VR glasses, gesticulating
+          - 
+          enabled: 1
+          assembly: 
+    - rid: 1145285977202491474
+      type: {class: SpriteGeneratorSettingsOperator, ns: Unity.Muse.Sprite.Operators,
+        asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.SpriteGeneratorSettingsOperator
+          version: 0.0.1
+          settings:
+          - 
+          - 
+          - 0.32
+          - 512
+          - 512
+          - 1
+          - 0
+          - 34275
+          - b289aaf3-2c15-4d46-8f79-743a3559bad4
+          - 0
+          - 00000000-0000-0000-0000-000000000000
+          - 0
+          - 00000000-0000-0000-0000-000000000000
+          - Default
+          - Default style.
+          - 
+          enabled: 1
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491475
+      type: {class: KeyImageOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.KeyImageOperator
+          version: 0.0.1
+          settings:
+          - 
+          - 
+          - True
+          - 512
+          - 512
+          - 0.5
+          enabled: 1
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491476
+      type: {class: SpriteRefiningMaskOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+    - rid: 1145285977202491477
+      type: {class: SessionOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.SessionOperator
+          version: 0.0.1
+          settings:
+          - d3c12f7f-85de-41bc-8f06-b45c7085920e
+          enabled: 0
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491478
+      type: {class: SpriteMuseArtifact, ns: Unity.Muse.Sprite.Artifacts, asm: Unity.Muse.Sprite}
+      data:
+        Guid: 61d126b4-0408-4d9c-a4fc-9d4c5c0b1d38
+        Seed: 20225
+        m_Operators:
+        - rid: 1145285977202491479
+        - rid: 1145285977202491480
+        - rid: 1145285977202491481
+        - rid: 1145285977202491482
+        - rid: 1145285977202491483
+        - rid: 1145285977202491484
+        history:
+        - rid: 1145285977202491478
+        m_UnsafeContent: 0
+    - rid: 1145285977202491479
+      type: {class: GenerateOperator, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_OperatorData:
+          type: GenerateOperator
+          version: 0.0.1
+          settings:
+          - TextToSprite
+          - 4
+          enabled: 1
+          assembly: 
+    - rid: 1145285977202491480
+      type: {class: PromptOperator, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_OperatorData:
+          type: PromptOperator
+          version: 0.0.2
+          settings:
+          - the butler in VR glasses, gesticulating
+          - 
+          enabled: 1
+          assembly: 
+    - rid: 1145285977202491481
+      type: {class: SpriteGeneratorSettingsOperator, ns: Unity.Muse.Sprite.Operators,
+        asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.SpriteGeneratorSettingsOperator
+          version: 0.0.1
+          settings:
+          - 
+          - 
+          - 0.32
+          - 512
+          - 512
+          - 1
+          - 0
+          - 20225
+          - 61d126b4-0408-4d9c-a4fc-9d4c5c0b1d38
+          - 0
+          - 00000000-0000-0000-0000-000000000000
+          - 0
+          - 00000000-0000-0000-0000-000000000000
+          - Default
+          - Default style.
+          - 
+          enabled: 1
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491482
+      type: {class: KeyImageOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.KeyImageOperator
+          version: 0.0.1
+          settings:
+          - 
+          - 
+          - True
+          - 512
+          - 512
+          - 0.5
+          enabled: 1
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491483
+      type: {class: SpriteRefiningMaskOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+    - rid: 1145285977202491484
+      type: {class: SessionOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.SessionOperator
+          version: 0.0.1
+          settings:
+          - d3c12f7f-85de-41bc-8f06-b45c7085920e
+          enabled: 0
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491485
+      type: {class: SpriteMuseArtifact, ns: Unity.Muse.Sprite.Artifacts, asm: Unity.Muse.Sprite}
+      data:
+        Guid: 29109307-6d1b-4c80-8e4c-2607b40b3acd
+        Seed: 24759
+        m_Operators:
+        - rid: 1145285977202491486
+        - rid: 1145285977202491487
+        - rid: 1145285977202491488
+        - rid: 1145285977202491489
+        - rid: 1145285977202491490
+        - rid: 1145285977202491491
+        history:
+        - rid: 1145285977202491485
+        m_UnsafeContent: 0
+    - rid: 1145285977202491486
+      type: {class: GenerateOperator, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_OperatorData:
+          type: GenerateOperator
+          version: 0.0.1
+          settings:
+          - TextToSprite
+          - 4
+          enabled: 1
+          assembly: 
+    - rid: 1145285977202491487
+      type: {class: PromptOperator, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_OperatorData:
+          type: PromptOperator
+          version: 0.0.2
+          settings:
+          - the butler in VR glasses, gesticulating
+          - 
+          enabled: 1
+          assembly: 
+    - rid: 1145285977202491488
+      type: {class: SpriteGeneratorSettingsOperator, ns: Unity.Muse.Sprite.Operators,
+        asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.SpriteGeneratorSettingsOperator
+          version: 0.0.1
+          settings:
+          - 
+          - 
+          - 0.32
+          - 512
+          - 512
+          - 1
+          - 0
+          - 24759
+          - 29109307-6d1b-4c80-8e4c-2607b40b3acd
+          - 0
+          - 00000000-0000-0000-0000-000000000000
+          - 0
+          - 00000000-0000-0000-0000-000000000000
+          - Default
+          - Default style.
+          - 
+          enabled: 1
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491489
+      type: {class: KeyImageOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.KeyImageOperator
+          version: 0.0.1
+          settings:
+          - 
+          - 
+          - True
+          - 512
+          - 512
+          - 0.5
+          enabled: 1
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491490
+      type: {class: SpriteRefiningMaskOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+    - rid: 1145285977202491491
+      type: {class: SessionOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.SessionOperator
+          version: 0.0.1
+          settings:
+          - d3c12f7f-85de-41bc-8f06-b45c7085920e
+          enabled: 0
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491492
+      type: {class: SpriteMuseArtifact, ns: Unity.Muse.Sprite.Artifacts, asm: Unity.Muse.Sprite}
+      data:
+        Guid: ba3ae7b3-edbd-4ddb-ae69-b13331d3919c
+        Seed: 45288
+        m_Operators:
+        - rid: 1145285977202491493
+        - rid: 1145285977202491494
+        - rid: 1145285977202491495
+        - rid: 1145285977202491496
+        - rid: 1145285977202491497
+        - rid: 1145285977202491498
+        history:
+        - rid: 1145285977202491492
+        m_UnsafeContent: 0
+    - rid: 1145285977202491493
+      type: {class: GenerateOperator, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_OperatorData:
+          type: GenerateOperator
+          version: 0.0.1
+          settings:
+          - TextToSprite
+          - 4
+          enabled: 1
+          assembly: 
+    - rid: 1145285977202491494
+      type: {class: PromptOperator, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_OperatorData:
+          type: PromptOperator
+          version: 0.0.2
+          settings:
+          - the butler in VR glasses, gesticulating
+          - 
+          enabled: 1
+          assembly: 
+    - rid: 1145285977202491495
+      type: {class: SpriteGeneratorSettingsOperator, ns: Unity.Muse.Sprite.Operators,
+        asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.SpriteGeneratorSettingsOperator
+          version: 0.0.1
+          settings:
+          - 
+          - 
+          - 0.32
+          - 512
+          - 512
+          - 1
+          - 0
+          - 45288
+          - ba3ae7b3-edbd-4ddb-ae69-b13331d3919c
+          - 0
+          - 00000000-0000-0000-0000-000000000000
+          - 0
+          - 00000000-0000-0000-0000-000000000000
+          - Default
+          - Default style.
+          - 
+          enabled: 1
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491496
+      type: {class: KeyImageOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.KeyImageOperator
+          version: 0.0.1
+          settings:
+          - 
+          - 
+          - True
+          - 512
+          - 512
+          - 0.5
+          enabled: 1
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491497
+      type: {class: SpriteRefiningMaskOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+    - rid: 1145285977202491498
+      type: {class: SessionOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.SessionOperator
+          version: 0.0.1
+          settings:
+          - d3c12f7f-85de-41bc-8f06-b45c7085920e
+          enabled: 0
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491499
+      type: {class: SpriteMuseArtifact, ns: Unity.Muse.Sprite.Artifacts, asm: Unity.Muse.Sprite}
+      data:
+        Guid: 22ca24d5-f877-4706-b289-8debb5019b6d
+        Seed: 12550
+        m_Operators:
+        - rid: 1145285977202491500
+        - rid: 1145285977202491501
+        - rid: 1145285977202491502
+        - rid: 1145285977202491503
+        - rid: 1145285977202491504
+        - rid: 1145285977202491505
+        history:
+        - rid: 1145285977202491499
+        m_UnsafeContent: 0
+    - rid: 1145285977202491500
+      type: {class: GenerateOperator, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_OperatorData:
+          type: GenerateOperator
+          version: 0.0.1
+          settings:
+          - TextToSprite
+          - 4
+          enabled: 1
+          assembly: 
+    - rid: 1145285977202491501
+      type: {class: PromptOperator, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_OperatorData:
+          type: PromptOperator
+          version: 0.0.2
+          settings:
+          - the butler in VR glasses, gesticulating, with a tray
+          - 
+          enabled: 1
+          assembly: 
+    - rid: 1145285977202491502
+      type: {class: SpriteGeneratorSettingsOperator, ns: Unity.Muse.Sprite.Operators,
+        asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.SpriteGeneratorSettingsOperator
+          version: 0.0.1
+          settings:
+          - 
+          - 
+          - 0.32
+          - 512
+          - 512
+          - 1
+          - 0
+          - 12550
+          - 22ca24d5-f877-4706-b289-8debb5019b6d
+          - 0
+          - 00000000-0000-0000-0000-000000000000
+          - 0
+          - 00000000-0000-0000-0000-000000000000
+          - Default
+          - Default style.
+          - 
+          enabled: 1
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491503
+      type: {class: KeyImageOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.KeyImageOperator
+          version: 0.0.1
+          settings:
+          - 
+          - 
+          - True
+          - 512
+          - 512
+          - 0.5
+          enabled: 1
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491504
+      type: {class: SpriteRefiningMaskOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+    - rid: 1145285977202491505
+      type: {class: SessionOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.SessionOperator
+          version: 0.0.1
+          settings:
+          - d3c12f7f-85de-41bc-8f06-b45c7085920e
+          enabled: 0
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491506
+      type: {class: SpriteMuseArtifact, ns: Unity.Muse.Sprite.Artifacts, asm: Unity.Muse.Sprite}
+      data:
+        Guid: ced17dce-9420-4d68-8cf6-996f0890ea9d
+        Seed: 16382
+        m_Operators:
+        - rid: 1145285977202491507
+        - rid: 1145285977202491508
+        - rid: 1145285977202491509
+        - rid: 1145285977202491510
+        - rid: 1145285977202491511
+        - rid: 1145285977202491512
+        history:
+        - rid: 1145285977202491506
+        m_UnsafeContent: 0
+    - rid: 1145285977202491507
+      type: {class: GenerateOperator, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_OperatorData:
+          type: GenerateOperator
+          version: 0.0.1
+          settings:
+          - TextToSprite
+          - 4
+          enabled: 1
+          assembly: 
+    - rid: 1145285977202491508
+      type: {class: PromptOperator, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_OperatorData:
+          type: PromptOperator
+          version: 0.0.2
+          settings:
+          - the butler in VR glasses, gesticulating, with a tray
+          - 
+          enabled: 1
+          assembly: 
+    - rid: 1145285977202491509
+      type: {class: SpriteGeneratorSettingsOperator, ns: Unity.Muse.Sprite.Operators,
+        asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.SpriteGeneratorSettingsOperator
+          version: 0.0.1
+          settings:
+          - 
+          - 
+          - 0.32
+          - 512
+          - 512
+          - 1
+          - 0
+          - 16382
+          - ced17dce-9420-4d68-8cf6-996f0890ea9d
+          - 0
+          - 00000000-0000-0000-0000-000000000000
+          - 0
+          - 00000000-0000-0000-0000-000000000000
+          - Default
+          - Default style.
+          - 
+          enabled: 1
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491510
+      type: {class: KeyImageOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.KeyImageOperator
+          version: 0.0.1
+          settings:
+          - 
+          - 
+          - True
+          - 512
+          - 512
+          - 0.5
+          enabled: 1
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491511
+      type: {class: SpriteRefiningMaskOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+    - rid: 1145285977202491512
+      type: {class: SessionOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.SessionOperator
+          version: 0.0.1
+          settings:
+          - d3c12f7f-85de-41bc-8f06-b45c7085920e
+          enabled: 0
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491513
+      type: {class: SpriteMuseArtifact, ns: Unity.Muse.Sprite.Artifacts, asm: Unity.Muse.Sprite}
+      data:
+        Guid: 33032e61-2f51-4bf8-b1a4-8ede08f87a45
+        Seed: 5651
+        m_Operators:
+        - rid: 1145285977202491514
+        - rid: 1145285977202491515
+        - rid: 1145285977202491516
+        - rid: 1145285977202491517
+        - rid: 1145285977202491518
+        - rid: 1145285977202491519
+        history:
+        - rid: 1145285977202491513
+        m_UnsafeContent: 0
+    - rid: 1145285977202491514
+      type: {class: GenerateOperator, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_OperatorData:
+          type: GenerateOperator
+          version: 0.0.1
+          settings:
+          - TextToSprite
+          - 4
+          enabled: 1
+          assembly: 
+    - rid: 1145285977202491515
+      type: {class: PromptOperator, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_OperatorData:
+          type: PromptOperator
+          version: 0.0.2
+          settings:
+          - the butler in VR glasses, gesticulating, with a tray
+          - 
+          enabled: 1
+          assembly: 
+    - rid: 1145285977202491516
+      type: {class: SpriteGeneratorSettingsOperator, ns: Unity.Muse.Sprite.Operators,
+        asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.SpriteGeneratorSettingsOperator
+          version: 0.0.1
+          settings:
+          - 
+          - 
+          - 0.32
+          - 512
+          - 512
+          - 1
+          - 0
+          - 5651
+          - 33032e61-2f51-4bf8-b1a4-8ede08f87a45
+          - 0
+          - 00000000-0000-0000-0000-000000000000
+          - 0
+          - 00000000-0000-0000-0000-000000000000
+          - Default
+          - Default style.
+          - 
+          enabled: 1
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491517
+      type: {class: KeyImageOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.KeyImageOperator
+          version: 0.0.1
+          settings:
+          - 
+          - 
+          - True
+          - 512
+          - 512
+          - 0.5
+          enabled: 1
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491518
+      type: {class: SpriteRefiningMaskOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+    - rid: 1145285977202491519
+      type: {class: SessionOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.SessionOperator
+          version: 0.0.1
+          settings:
+          - d3c12f7f-85de-41bc-8f06-b45c7085920e
+          enabled: 0
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491520
+      type: {class: SpriteMuseArtifact, ns: Unity.Muse.Sprite.Artifacts, asm: Unity.Muse.Sprite}
+      data:
+        Guid: 325968d2-65d7-4d5d-9325-3c76c55610a3
+        Seed: 57928
+        m_Operators:
+        - rid: 1145285977202491521
+        - rid: 1145285977202491522
+        - rid: 1145285977202491523
+        - rid: 1145285977202491524
+        - rid: 1145285977202491525
+        - rid: 1145285977202491526
+        history:
+        - rid: 1145285977202491520
+        m_UnsafeContent: 0
+    - rid: 1145285977202491521
+      type: {class: GenerateOperator, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_OperatorData:
+          type: GenerateOperator
+          version: 0.0.1
+          settings:
+          - TextToSprite
+          - 4
+          enabled: 1
+          assembly: 
+    - rid: 1145285977202491522
+      type: {class: PromptOperator, ns: Unity.Muse.Common, asm: Unity.Muse.Common}
+      data:
+        m_OperatorData:
+          type: PromptOperator
+          version: 0.0.2
+          settings:
+          - the butler in VR glasses, gesticulating, with a tray
+          - 
+          enabled: 1
+          assembly: 
+    - rid: 1145285977202491523
+      type: {class: SpriteGeneratorSettingsOperator, ns: Unity.Muse.Sprite.Operators,
+        asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.SpriteGeneratorSettingsOperator
+          version: 0.0.1
+          settings:
+          - 
+          - 
+          - 0.32
+          - 512
+          - 512
+          - 1
+          - 0
+          - 57928
+          - 325968d2-65d7-4d5d-9325-3c76c55610a3
+          - 0
+          - 00000000-0000-0000-0000-000000000000
+          - 0
+          - 00000000-0000-0000-0000-000000000000
+          - Default
+          - Default style.
+          - 
+          enabled: 1
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491524
+      type: {class: KeyImageOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.KeyImageOperator
+          version: 0.0.1
+          settings:
+          - 
+          - 
+          - True
+          - 512
+          - 512
+          - 0.5
+          enabled: 1
+          assembly: Unity.Muse.Sprite
+    - rid: 1145285977202491525
+      type: {class: SpriteRefiningMaskOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+    - rid: 1145285977202491526
+      type: {class: SessionOperator, ns: Unity.Muse.Sprite.Operators, asm: Unity.Muse.Sprite}
+      data:
+        m_OperatorData:
+          type: Unity.Muse.Sprite.Operators.SessionOperator
+          version: 0.0.1
+          settings:
+          - d3c12f7f-85de-41bc-8f06-b45c7085920e
+          enabled: 0
+          assembly: Unity.Muse.Sprite

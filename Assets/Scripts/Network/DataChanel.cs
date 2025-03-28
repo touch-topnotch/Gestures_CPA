@@ -1,11 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using File = System.IO.File;
 using Scripts.Static;
 using Telegram.Bot.Types.Enums;
+using UnityEngine.Networking;
 
 namespace Scripts.Network
 {
@@ -16,6 +19,7 @@ namespace Scripts.Network
         {
           
             Debug.Log("Trying to write");
+           
             Task.Run(async () =>
             {
                 await WriteAndSendFileAsync(filePath, value);
@@ -26,15 +30,13 @@ namespace Scripts.Network
 
         private static async Task WriteAndSendFileAsync(string filePath, string value)
         {
-            await TelegramBotProcessor.SendTextToTelegram("```" + value + "```");
-            // using (StreamWriter writer = new StreamWriter(filePath))
-            // {
-            //     await writer.WriteAsync(value);
-            // }
+            
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                await writer.WriteAsync(value);
+            }
             //
-            // var name = Path.GetFileName(filePath);
-            //
-            // await TelegramBotProcessor.SendFileToTelegram(name, value);
+            var name = Path.GetFileName(filePath);
             
         }
     
@@ -51,6 +53,73 @@ namespace Scripts.Network
         {
             return "";
         }
+        
+        public static IEnumerator Get(string url, RequestHeader[] headers,
+            KeyValuePair<string, object> keyValuePair, Action<string> callback)
+        {
+            using (UnityWebRequest www = new UnityWebRequest(url, "GET"))
+            {
+
+                byte[] bodyRaw = Encoding.UTF8.GetBytes(JsonUtility.ToJson(keyValuePair));
+                www.uploadHandler = new UploadHandlerRaw(bodyRaw);
+                www.downloadHandler = new DownloadHandlerBuffer();
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    www.SetRequestHeader(headers[i].name, headers[i].value);
+                }
+                yield return www.SendWebRequest();
+
+                if (www.result == UnityWebRequest.Result.ConnectionError ||
+                    www.result == UnityWebRequest.Result.ProtocolError)
+                {
+                    Debug.LogError(www.error);
+                }
+                else
+                {
+                    callback(www.downloadHandler.text);
+                    Debug.Log("Data sent successfully: " + www.downloadHandler.text);
+                }
+            }
+        }
+        
+        public static IEnumerator Post(string url, RequestHeader[] headers,
+            KeyValuePair<string, object> keyValuePair, Action<string> callback)
+        {
+            using (UnityWebRequest www = new UnityWebRequest(url, "POST"))
+            {
+
+                byte[] bodyRaw = Encoding.UTF8.GetBytes(JsonUtility.ToJson(keyValuePair));
+                www.uploadHandler = new UploadHandlerRaw(bodyRaw);
+                www.downloadHandler = new DownloadHandlerBuffer();
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    www.SetRequestHeader(headers[i].name, headers[i].value);
+                }
+                yield return www.SendWebRequest();
+
+                if (www.result == UnityWebRequest.Result.ConnectionError ||
+                    www.result == UnityWebRequest.Result.ProtocolError)
+                {
+                    Debug.LogError(www.error);
+                }
+                else
+                {
+                    callback(www.downloadHandler.text);
+                    Debug.Log("Data sent successfully: " + www.downloadHandler.text);
+                }
+            }
+        }
+    }
     
+    public struct RequestHeader
+    {
+        public string name;
+        public string value;
+
+        public RequestHeader(string name, string value)
+        {
+            this.name = name;
+            this.value = value;
+        }
     }
 }

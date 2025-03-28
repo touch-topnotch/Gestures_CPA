@@ -1,9 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using Scripts.Static;
+using Scripts.Systems;
+using Scripts.Tests;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;
 
@@ -16,13 +21,13 @@ namespace Components
         Models,
         Other
     }
-    public abstract class ResourcesProcessor<T> : SerializedMonoBehaviour
+    public abstract class ResourcesProcessor<T> : PrefabSerializedMonoBehaviour
     where T: Object
     {
         [BoxGroup("Resources")][SerializeField]
-        protected Dictionary<string, T> itemsDict = new();
+        protected readonly Dictionary<string, T> itemsDict = new();
         [BoxGroup("Resources")][SerializeField]
-        protected Dictionary<string, List<T>> listOfItemsDict = new();
+        protected readonly Dictionary<string, List<T>> listOfItemsDict = new();
         
         private T LoadResource(string resourceName)
         {
@@ -89,15 +94,12 @@ namespace Components
                 manipulation(LoadSequencedResource(listName, id));
             }
         }
-
-      
-
-
+        
         #region Authomatization
     
         #if UNITY_EDITOR
-        [BoxGroup("Add missing resources")] [FolderPath] [SerializeField]
-        protected string _folderPath;
+        [BoxGroup("Add missing resources")] [ShowInInspector]
+        protected string _folderPath => "Resources/Weapons/" + name.Split('_')[0];
         [BoxGroup("Add missing resources")]
         [Button("Add missing resources")]
         protected virtual void AddMissingResources()
@@ -106,6 +108,7 @@ namespace Components
             // add all audio clips in folder to tempClips, if it contains S_ prefix
             // if clip contains S_R_ prefix, add it to _audioClipLists with name S_name_of_clip_without_prefix
             // else add it to _audioClips with name S_name_of_clip_without_prefix
+            Debug.Log("Trying to find assets in folder " + _folderPath + ". If there is no resources, please add it by sorting resources folder or add руками");
             if (Directory.Exists(_folderPath))
             {
                 var files = Directory.GetFiles(_folderPath);
@@ -116,10 +119,11 @@ namespace Components
                     
                     if(!item)
                            continue;
-                    
+                   
                     if (item.name.Contains("_R_"))
                     {
                         var name = item.name.Split("_")[2];
+                        Debug.Log("Found resource with name " + item.name + ". Added to list of items dictionary");
                         if (listOfItemsDict.ContainsKey(name))
                         {
                             listOfItemsDict[name].Add(item);
@@ -136,6 +140,7 @@ namespace Components
                             var name = "Frame";
                             if (int.TryParse(item.name.Split("_")[4], out int index))
                             {
+                                Debug.Log("Found resource with name " + item.name + ". Added to calling into frame");
                                 if (!listOfItemsDict.ContainsKey(name))
                                 {
                                     listOfItemsDict.Add(name, new List<T>());
@@ -165,6 +170,7 @@ namespace Components
                         else
                         {
                             var name = item.name.Split("_")[2];
+                            Debug.Log("Found resource with name " + item.name + ". Added to simple fx");
                             if (itemsDict.ContainsKey(name))
                                 itemsDict[name] = item;
                             else
@@ -174,31 +180,31 @@ namespace Components
                     
                 }
             }
+            else
+            {
+                Debug.Log("Unfortunately, there is no assets(");
+            }
         }
-    
-    
-        [BoxGroup("Sorting")][SerializeField] [FolderPath]
-        private string _telegramResourcesFolderPath;
-    
+
         // [BoxGroup("Sorting")][SerializeField]
         // private ResourceType _type;
         
-        [BoxGroup("Sorting")]
+        [BoxGroup("Add missing resources")]
         [Button("Sort Telegram resources to folders")]
-        
         private void SortResources()
         {
-            if (!_telegramResourcesFolderPath.Contains("Telegram"))
+            if (!CustomPaths.TelegramResources.Contains("Telegram"))
             {
                 Debug.LogError("Wrong folder selected. Please select folder, which name contains 'Telegram'!");
                 return;
             }
-                
+
+            var found = false;
             Debug.Log("Importing resources to folders ...");
             // search all files with S_ in folder , find name = fileName.Split("_")[1] and move them to folder Assets/Sounds/name
-            if (Directory.Exists(_telegramResourcesFolderPath))
+            if (Directory.Exists(CustomPaths.TelegramResources))
             {
-                var files = Directory.GetFiles(_telegramResourcesFolderPath);
+                var files = Directory.GetFiles(CustomPaths.TelegramResources);
                 foreach (var file in files)
                 {
                     if (file.Contains(".meta"))
@@ -219,11 +225,13 @@ namespace Components
     
                     string fullPath = folder + "/" + item.name + Path.GetExtension(file);
                     AssetDatabase.MoveAsset(file, fullPath);
-                    
+                    found = true;
                     Debug.Log("Imported " +fullPath);
                     
                 }
             }
+            if(!found)
+                Debug.Log("There is no resources( ");
         }
     
         protected void PoolObject(string list, int id = -1)

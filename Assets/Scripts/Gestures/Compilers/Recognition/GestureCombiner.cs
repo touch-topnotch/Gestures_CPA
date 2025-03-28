@@ -23,12 +23,12 @@ namespace Scripts.Gestures
             _data = data;
             library = new GesturesLibrary(data, chars);
         }
-        public void CreateRecognizer(RecognitionPropertiesConfig config, bool isDebug = true)
+        public void CreateRecognizer(RecognitionPropertiesConfig config, bool isDebug = false)
         {
             _recognizer = new Recognizer(_data.hands, config);
             
             if(isDebug)
-                RecognizeWithAllGestures();
+                  RecognizeWithAllGestures();
         }
         private void RecognizeWithAllGestures()
         {

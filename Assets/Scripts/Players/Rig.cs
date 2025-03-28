@@ -2,6 +2,7 @@ using Scripts.Events;
 using Scripts.Gestures;
 using Scripts.HandsLogic;
 using Scripts.Movements;
+using Scripts.Systems;
 using UnityEngine;
 
 namespace Scripts.PlayerLogic
@@ -15,14 +16,19 @@ namespace Scripts.PlayerLogic
     }
     public abstract class Rig : MonoBehaviour, IMovable
     {
+     
         [SerializeField] protected BodyAnchors anchors;
-        [SerializeField] private RecognitionPropertiesConfig recognitionProperties;
+        [SerializeField] protected Hands hands;
         
+        [SerializeField] private RecognitionPropertiesConfig _recognitionProperties;
+        [SerializeField] private HeadInteraction _headInteraction;
+ 
         protected PlayerStateChangedEvent playerStateChangedEvent;
         protected PlayerState playerState;
+        public HeadInteraction headInteraction => _headInteraction;
         public BodyAnchors Anchors => anchors;
-        [SerializeField] protected Hands hands;
-        public RecognitionPropertiesConfig RecognitionPropertiesConfig => recognitionProperties;
+
+        public RecognitionPropertiesConfig RecognitionPropertiesConfig => _recognitionProperties;
         protected virtual void Start()
         {
             
@@ -31,6 +37,10 @@ namespace Scripts.PlayerLogic
             
             playerStateChangedEvent = new PlayerStateChangedEvent();
             playerStateChangedEvent.AddListener(OnPlayerStateChaned);
+            headInteraction.onHeadInteraction += (headInteractionType) =>
+            {
+                Debug.Log("Recognized " + headInteractionType);
+            };
         }
 
         protected virtual void OnPlayerStateChaned(PlayerState state)

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Characters;
+using Newtonsoft.Json;
 using Scripts.Characters;
 using Scripts.Databases;
+using Scripts.Events;
 using Scripts.PlayerLogic;
 using Scripts.Static;
 using Scripts.Tests;
@@ -20,14 +23,22 @@ namespace Scripts.Gestures
         private Dictionary<string, DynamicGesture> allGestures => gestures.GetOpenDict();
         public Dictionary<string, DynamicGesture> DynamicGestures => gestures.GetOpenDict();
         private Dictionary<string, Character> _characters;
+        
         public GesturesLibrary(PlayerData data, Dictionary<string, Character> characters)
         {
             _playerData = data;
             _characters = characters;
-            
-            gestures.AddDictionary(GestureMapper.ReadDynamicGestures(characters));
-            
-            var log = "Library has initialized for player: " + data.id +". Mapped gestures: ";
+           EventInitializer.Instance.onServicesInitilalised += ()=>
+           {
+               AddDictionary(data);
+           };
+        }
+
+        private async void AddDictionary(PlayerData data)
+        {
+            var d = await GestureMapper.ReadDynamicGestures(_characters);
+            gestures.AddDictionary(d);
+            var log = "Library has initialized for player: " + data.id  +". Mapped gestures: ";
             foreach (var VARIABLE in allGestures)
             {
                 log += VARIABLE.Key + ", ";
@@ -35,7 +46,7 @@ namespace Scripts.Gestures
             Debug.Log(log);
         }
 
-        private static JsonCharacterStruct AddGestureToChar(string name,  HandsStruct hands,  JsonCharacterStruct jsonChar)
+        private static JsonCharacterProperties AddGestureToChar(string name,  HandsStruct hands,  JsonCharacterProperties jsonChar)
         {
             string dynamicName = GestureMapper.PrefixOfName(name);
             var gestures = jsonChar.Gestures;
@@ -55,19 +66,19 @@ namespace Scripts.Gestures
                 gestures.Add(CreateNewGesture(hands, name));
             }
 
-            return new JsonCharacterStruct()
+            return new JsonCharacterProperties()
             {
-                Name = jsonChar.Name,
                 Description = jsonChar.Description,
                 RootFolder = jsonChar.RootFolder,
-                Gestures = gestures,
+                Gestures = gestures
+                
             };
         }
         private static JsonGestureStruct AddToExistedGesutre(string name, HandsStruct hands, JsonGestureStruct jsonStruct)
         {
             int index = GestureMapper.IndexOfName(name);
             
-            List<List<string>> frames = jsonStruct.Frames;
+            List<string[]> frames = jsonStruct.Frames;
             
             if (index < frames.Count)
             {
@@ -93,7 +104,7 @@ namespace Scripts.Gestures
         private static JsonGestureStruct CreateNewGesture(HandsStruct hands, string name)
         {
             int index = GestureMapper.IndexOfName(name);
-            List<List<string>> frames = new List<List<string>>();
+            List<string[]> frames = new List<string[]>();
             if (index > 0)
             {
                 for (int i = 0; i < index - 1; i++)
@@ -102,48 +113,33 @@ namespace Scripts.Gestures
                 }
             }
             frames.Add(GestureMapper.HandsStructToString(hands));
-            return new JsonGestureStruct()
+            for (int i = 0; i < frames[0].Length; i++)
+            {
+                Debug.Log(frames[0][i]);
+            }
+            var t = new JsonGestureStruct()
             {
                 Name = GestureMapper.PrefixOfName(name),
                 Frames = frames,
                 Type = (int)GestureType.Weapon
             };
+            return t;
         }
-        public void RecordFrame(HandsStruct hands, string name, string characterName)
+        public async Task RecordFrame(HandsStruct hands, string name, string characterName)
         {
-
-            Debug.Log("Recording frame: " +name);
-            var jsonCharacterStructs = CharacterMapper.GetCharacterStruct();
-            if (jsonCharacterStructs == null)
-            {
-                jsonCharacterStructs = new List<JsonCharacterStruct>();
-            }
-            var charId = -1;
-         
-            for (int i = 0; i < jsonCharacterStructs.Count; i++)
-            {
-                if (jsonCharacterStructs[i].Name == characterName)
+            var dictionary = await CharacterMapper.GetAvailableCharactersStruct(new HashSet<string>(){characterName});
+            var jsonChar = (dictionary == null || dictionary.Keys.Count == 0)
+                ? new JsonCharacterProperties()
                 {
-                    charId = i;
-                    break;
-                }
-            }
-
-            if (charId == -1)
-            {
-                jsonCharacterStructs.Add(new JsonCharacterStruct()
-                {
-                    Name = characterName,
                     Description = characterName + " is cool!",
-                    RootFolder = "Resources/Characters/"+ characterName,
-                    Gestures = new List<JsonGestureStruct>(){CreateNewGesture(hands, name)}
-                });
-            }
-            else // there is a character
-            {
-                jsonCharacterStructs[charId] = AddGestureToChar(name, hands, jsonCharacterStructs[charId]);
-            }
-            CharacterMapper.SendCharacterStruct(jsonCharacterStructs);
+                    RootFolder = "Resources/Characters/" + characterName,
+                    Gestures = new List<JsonGestureStruct>()
+                    {
+                        CreateNewGesture(hands, name)
+                    }
+                }
+                : AddGestureToChar(name, hands, dictionary[characterName]);
+            CharacterMapper.SendCharacterStruct(new JsonCharacterStruct(){key = characterName,value = jsonChar});
         }
         
         public bool TryGetDynamicGesture(string gesture, out DynamicGesture frame)

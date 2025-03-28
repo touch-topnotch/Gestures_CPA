@@ -160,7 +160,7 @@ namespace Scripts.Gestures
         }
         private bool RecognizeHand(in BonesData bonesData, in Transform[] handSkeleton, in RecognitionProperties props)
         {
-            if (bonesData.rotations?.Length != handSkeleton.Length)
+            if (bonesData == null || bonesData.rotations?.Length != handSkeleton.Length)
                 return true;
 
 

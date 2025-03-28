@@ -9,12 +9,12 @@ namespace Components
         
         private void OnValidate()
         {
-            if (_audioSource == null)
-            {
-                _audioSource = GetComponent<AudioSource>();
-                _audioSource.playOnAwake = false;
-                _audioSource.loop = false;
-            }
+            // if (_audioSource == null)
+            // {
+            //     _audioSource = GetComponent<AudioSource>();
+            //     _audioSource.playOnAwake = false;
+            //     _audioSource.loop = false;
+            // }
         }
 
         protected override void ManipulateResource(AudioClip resource)

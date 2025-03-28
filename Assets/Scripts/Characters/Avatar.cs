@@ -22,7 +22,11 @@ namespace Scripts.PlayerLogic
 
         private void Start()
         {
-            startHeight = Anchors.Head.position.y;
+            startHeight = 1.8f;
+            if (Physics.Raycast(Anchors.Head.position, Vector3.down, out var hit, 100, layerMask:7))
+            {
+                startHeight = hit.distance;
+            }
             currentHeight = startHeight;
         }
         private void Update()
@@ -35,7 +39,7 @@ namespace Scripts.PlayerLogic
                     currentHeight = hit.distance;
                     var scale = Anchors.Body.localScale;
                     var difference = hit.distance / startHeight;
-                    Anchors.Body.localScale = new Vector3(scale.x,difference , scale.z);
+                    Anchors.Body.localScale = new Vector3(scale.x,difference, scale.z);
                 }
 
             }

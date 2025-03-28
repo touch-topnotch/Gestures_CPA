@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -12,31 +13,44 @@ using File = System.IO.File;
 
 namespace Scripts.Network
 {
-    public static class TelegramBotProcessor
+    public class TelegramBotProcessor: MonoBehaviour
     {
         public static Action<Message> onMessageReceived;
         private const string botToken = "7086788178:AAEmDpBcXwSh9QEZZ5MyLBtNg62mVjZ6PMg";
-        private const string chatId = "1042330275";
+        private const string chatId = "-1002122572874";
         
         private static CancellationTokenSource cts = new CancellationTokenSource();
         private static readonly TelegramBotClient bot = new TelegramBotClient(botToken);
-        private static readonly SynchronizationContext
+        private static SynchronizationContext
             unityMainThreadContext; // Контекст синхронизации для основного потока Unity
     
         private static DateTime startTime;
         public static List<Message> receivedMessages = new List<Message>();
-        static TelegramBotProcessor()
+        public static TelegramBotProcessor Instance { get; private set; }
+        
+        private void Awake()
         {
+            if (Instance == null)
+                Instance = this;
+            else
+                Destroy(gameObject);
+            
             unityMainThreadContext = SynchronizationContext.Current; // Инициализация контекста синхронизации
+            SendReady();
         }
 
-        public static void DeleteMessage(int messageId)
+        private async void SendReady()
+        {
+            await SendTextToTelegram("I'm ready to listen your commands");
+        }
+
+        public void DeleteMessage(int messageId)
         {
             bot.DeleteMessageAsync(TelegramBotProcessor.chatId, messageId);
         }
 
        
-        public static async Task SendFileToTelegram(string fileName, string value)
+        public async Task SendFileToTelegram(string fileName, string value)
         {
             Debug.Log("Trying to send...");
     
@@ -64,8 +78,30 @@ namespace Scripts.Network
                 throw;
             }
         }
+        public void SendTextToTelegramFunc(string text)
+        {
+            StartCoroutine(SendTextToTelegramCoroutine(text));
+        }
 
-        public static async Task SendTextToTelegram(string text)
+        public IEnumerator SendTextToTelegramCoroutine(string text)
+        {
+            var tcs = new TaskCompletionSource<bool>();
+            unityMainThreadContext.Post( async _ =>
+            {
+                try
+                {  
+                   await  bot.SendTextMessageAsync(chatId, text);
+                    tcs.SetResult(true); // Сигнал об успешном выполнении
+                }
+                catch (Exception ex)
+                {
+                    tcs.SetException(ex); // Сигнал об ошибке
+                }
+            }, null);// Ожидание завершения асинхронной операции
+            yield return new WaitUntil(() => tcs.Task.IsCompleted);
+        }
+
+        private async Task SendTextToTelegram(string text)
         {
             var tcs = new TaskCompletionSource<bool>();
             unityMainThreadContext.Post(async _ =>
@@ -82,7 +118,7 @@ namespace Scripts.Network
             }, null);// Ожидание завершения асинхронной операции
             await tcs.Task;
         }
-        public static void StartReceiving()
+        public void StartReceiving()
         {
             Debug.Log("Starting to receive updates...");
 
@@ -103,7 +139,7 @@ namespace Scripts.Network
             Debug.Log("Polling started.");
         }
 
-        public static void StopReceiving()
+        public void StopReceiving()
         {
             Debug.Log("Stopping updates...");
 
@@ -122,12 +158,13 @@ namespace Scripts.Network
         {
             private void SendUnityTask(Message message)
             {
-                receivedMessages.Add(message);
-                onMessageReceived?.Invoke(message);
+                Debug.Log($"Received message: {message.Text}");
+                 receivedMessages.Add(message);
+                 onMessageReceived?.Invoke(message);
             }
 
           
-            public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update,
+            public Task HandleUpdateAsync(ITelegramBotClient botClient, Update update,
                 CancellationToken cancellationToken)
             {
                 if (update.Type == UpdateType.Message && update.Message?.Text != null && update.Message.Date > startTime )
@@ -135,12 +172,14 @@ namespace Scripts.Network
                 
                     unityMainThreadContext.Post(_ => SendUnityTask(message: update.Message), null);
                 }
+
+                return Task.CompletedTask;
             }
 
             public Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception,
                 CancellationToken cancellationToken)
             {
-                unityMainThreadContext.Post(_ => Debug.Log(exception), null);
+                unityMainThreadContext.Post(_ => Debug.LogError(exception), null);
                 return Task.CompletedTask;
             }
         }

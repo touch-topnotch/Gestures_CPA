@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Design.RecordingScene;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
@@ -9,8 +11,8 @@ namespace UI.KeyboardPack
 {
     public class XRInputField: MonoBehaviour
     {
-        [SerializeField] private Text inputText;
-        [SerializeField] private Text supportiveText;
+        [SerializeField] private TMP_Text inputText;
+        [SerializeField] private TMP_Text supportiveText;
 
         private string _inputString;
         public string inputString
@@ -26,7 +28,7 @@ namespace UI.KeyboardPack
         [SerializeField] private XRInputField[] otherInputFields;
         public void Awake()
         {
-            GetComponent<Toggle>().onValueChanged.AddListener(ToggleKeyboard);
+            GetComponent<BubbleToggle>().onValueChanged.AddListener(ToggleKeyboard);
             otherInputFields = FindObjectsOfType<XRInputField>();
             OnExit.AddListener((e) =>
             {
@@ -40,9 +42,9 @@ namespace UI.KeyboardPack
             {
                 if(otherInputFields[i] == this)
                     continue;
-                if(otherInputFields[i].GetComponent<Toggle>().isOn)
+                if(otherInputFields[i].GetComponent<BubbleToggle>().isOn)
                 {
-                    otherInputFields[i].GetComponent<Toggle>().isOn = false;
+                    otherInputFields[i].GetComponent<BubbleToggle>().isOn = false;
                 }
             }
         }
@@ -54,7 +56,8 @@ namespace UI.KeyboardPack
                 OffOthers();
                 Link();
                 OnStartEdit.Invoke();
-                supportiveText.gameObject.SetActive(false);
+                if(supportiveText)
+                    supportiveText.gameObject.SetActive(false);
                 inputText.gameObject.SetActive(true);
             }
 
@@ -86,7 +89,7 @@ namespace UI.KeyboardPack
         public void OnEnterClick()
         {
             ToggleKeyboard(false);
-            GetComponent<Toggle>().isOn = false;
+            GetComponent<BubbleToggle>().isOn = false;
             UnLink();
             XRKeyboard.instance.gameObject.SetActive(false);
         }
