@@ -18,7 +18,7 @@ namespace Scripts.GameControllers
         private const string keyId = "1a49ee8c-66a4-4a3d-a208-e1e286f2cbd5";
         private const string keySecret = "8bGE6xx28AM1YBwGwSFc3U17GLxC8mDV";
     
-        public void ConnectToServer()
+        public static void ConnectToServer()
         {
             #if DEDICATED_SERVER
                 return;

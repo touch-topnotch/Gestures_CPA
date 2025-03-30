@@ -40,7 +40,13 @@ namespace Scripts.PlayerLogic
             headInteraction.onHeadInteraction += (headInteractionType) =>
             {
                 Debug.Log("Recognized " + headInteractionType);
+
+                if (headInteractionType == HeadInteractionType.LookingUp)
+                {
+                    Centrize();
+                }
             };
+            
         }
 
         protected virtual void OnPlayerStateChaned(PlayerState state)
@@ -51,5 +57,15 @@ namespace Scripts.PlayerLogic
         public abstract bool isMoved();
         public abstract void StartMove();
         public abstract void StopMove();
+
+        protected virtual void Centrize()
+        {
+            Debug.Log("Centrizing player");
+            var position = Anchors.Root.position;
+            Anchors.Head.position = new Vector3
+            (position.x,
+                Anchors.Head.position.y,
+                position.z);
+        }
     }
 }

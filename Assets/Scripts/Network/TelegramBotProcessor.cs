@@ -5,9 +5,11 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
+using UnityEditor;
 using UnityEngine;
 using File = System.IO.File;
 
@@ -27,7 +29,7 @@ namespace Scripts.Network
         private static DateTime startTime;
         public static List<Message> receivedMessages = new List<Message>();
         public static TelegramBotProcessor Instance { get; private set; }
-        
+        private bool useBot;
         private void Awake()
         {
             if (Instance == null)
@@ -35,6 +37,12 @@ namespace Scripts.Network
             else
                 Destroy(gameObject);
             
+#if UNITY_EDITOR
+            useBot = EditorUtility.DisplayDialog("Confirm Action", 
+                "Are you sure you want to check telegram bot functions?", "Yes", "No");
+            if(!useBot)
+                return;
+#endif
             unityMainThreadContext = SynchronizationContext.Current; // Инициализация контекста синхронизации
             SendReady();
         }
@@ -120,6 +128,10 @@ namespace Scripts.Network
         }
         public void StartReceiving()
         {
+            #if UNITY_EDITOR
+            if(!useBot)
+                return;
+            #endif
             Debug.Log("Starting to receive updates...");
 
             // Cancel any ongoing polling

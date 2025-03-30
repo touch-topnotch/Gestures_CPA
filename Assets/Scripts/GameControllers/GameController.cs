@@ -1,14 +1,15 @@
-using System;
 using System.Collections.Generic;
 using Scripts.Events;
 using Scripts.Network;
 using Scripts.PlayerLogic;
 using Scripts.Static;
 using Unity.Netcode;
-using Unity.Netcode.Transports.UTP;
-using Unity.Services.Core;
-using Unity.Services.Multiplay;
 using UnityEngine;
+
+#if DEDICATED_SERVER
+using Unity.Netcode.Transports.UTP;
+using Unity.Services.Multiplay;
+#endif
 
 namespace Scripts.GameControllers
 {
@@ -27,16 +28,13 @@ namespace Scripts.GameControllers
 
         [SerializeField] private NetworkManager _networkManager;
         public Dictionary<ulong, NetworkPlayerProcessor> PlayersDict => _playersDict;
+                    
+#if DEDICATED_SERVER
 
         private IServerQueryHandler _serverQueryHandler;
-
-
-     
-
         private async void ListenServerEvents()
         {
-            
-#if DEDICATED_SERVER
+
                     Debug.Log("Unity Services initialized");
 
                 MultiplayEventCallbacks multiplayEventCallbacks = new MultiplayEventCallbacks();
@@ -48,7 +46,7 @@ namespace Scripts.GameControllers
                 _serverQueryHandler =
                     await MultiplayService.Instance.StartServerQueryHandlerAsync(10, "gesture_competitive", "classic",
                         "test_build", "classic");
-#endif
+
         }
         private void MultiplayEventCallbacks_Allocate(MultiplayAllocation args)
         {
@@ -96,6 +94,7 @@ namespace Scripts.GameControllers
         {
             Debug.Log($" Subscription state changed to {state}");
         }
+#endif
 
         private void Awake()
         {
@@ -112,10 +111,11 @@ namespace Scripts.GameControllers
             Application.targetFrameRate = targetFPS;
             
             SessionManager.ReadCommandArgs(_networkManager);
-            
+            #if DEDICATED_SERVER
             EventInitializer.Instance.onServicesInitilalised += ListenServerEvents;
-            
+            #endif
             #if !DEDICATED_SERVER
+         
                 ServerBrowser.ConnectToServer();
             #endif
             

@@ -1,20 +1,15 @@
-namespace Design.RecordingScene
-{
-using System;
-using Scripts.HandsLogic;
-using UnityEditor.Search;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.XR.Interaction.Toolkit;
 
 namespace Design.RecordingScene
 {
-    [RequireComponent(typeof(XRSimpleInteractable), typeof(MeshRenderer))]
+    [RequireComponent(typeof(XRPokeInteractor), typeof(MeshRenderer))]
     public class BubbleButton : MonoBehaviour
     {
         public Color colorEnabled;
         public Color colorDisabled;
-        private XRSimpleInteractable _xrSimpleInteractable;
+        private XRPokeInteractor _xrSimpleInteractable;
 
         private Material _mat;
         private float _defaultSize;
@@ -43,13 +38,8 @@ namespace Design.RecordingScene
         }
         private void OnValidate()
         {
-            _xrSimpleInteractable = GetComponent<XRSimpleInteractable>();
             _mat = GetComponent<MeshRenderer>().sharedMaterial;
-            
-            if (_xrSimpleInteractable.colliders.Count == 0)
-                _xrSimpleInteractable.colliders.Add(GetComponent<SphereCollider>());
-            else
-                _xrSimpleInteractable.colliders[0] = GetComponent<SphereCollider>();
+            _xrSimpleInteractable = GetComponent<XRPokeInteractor>();
         }
 
  
@@ -143,6 +133,4 @@ namespace Design.RecordingScene
             }
         }
     }
-}
-
 }

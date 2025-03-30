@@ -1,6 +1,5 @@
 using System.Threading.Tasks;
 using Design.RecordingScene;
-using Design.RecordingScene.Design.RecordingScene;
 using Scripts.PlayerLogic;
 using Scripts.Gestures;
 using Scripts.HandsLogic;
