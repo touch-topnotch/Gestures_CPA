@@ -176,7 +176,7 @@ namespace Scripts.PlayerLogic
                 //   _curRig.StartMove();
             }
          
-            _characterPool.SetCharacter("Grief");
+            _characterPool.SetCharacter("Fear");
             _characterPool.SetAvatarType(AvatarType.Local);
             
 
