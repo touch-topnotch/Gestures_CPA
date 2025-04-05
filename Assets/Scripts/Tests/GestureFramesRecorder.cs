@@ -126,8 +126,8 @@ namespace Scripts.Tests
             newGestureButton.onClick.AddListener(NewGestureGroup);
             continueRecording.onClick.AddListener(ContinueRecording);
                 
-            Name = Calculations.RandomString(6)+ "_0";
-            characterNameInput.inputString = Calculations.RandomString(8);
+          //  Name = Calculations.RandomString(6)+ "_0";
+          //   characterNameInput.inputString = Calculations.RandomString(8);
         }
 
         private void ReloadToggles()
