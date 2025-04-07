@@ -54,6 +54,20 @@ namespace Scripts.Gestures
             Debug.Log("Dynamic Gesture " + name + " recognized");
         }
 
+        public bool RecognizeFrame(RecognitionProperties properties, GestureFrame frame)
+        {
+
+            if (!_hands.IsRecognized)
+                return false;
+            
+            if (RecognizeHand(frame.Hands.LeftBones, _hands.leftHand.points, properties)
+                && RecognizeHand(frame.Hands.RightBones, _hands.rightHand.points, properties))
+            {
+                return true;
+            }
+            
+            return false;
+        }
         
         public void RecognizeDynamicGesture(Dictionary<string, DynamicGesture> possibleGestures)
         {
@@ -137,6 +151,7 @@ namespace Scripts.Gestures
                 onGestureRecognized.Invoke(_possibleGestures[_curGesture].Name);
             }
         }
+        
         private void RecognizeInOneGesture()
         {
             _possibleFrames = new List<GestureFrame> { _possibleGestures[_curGesture].frames[_curFrameId] };
@@ -147,18 +162,14 @@ namespace Scripts.Gestures
         {
             for(int i = 0; i < _possibleFrames.Count; i++)
             {
-                if (!_hands.IsRecognized)
-                    return -1;
-                
-                if (RecognizeHand(_possibleFrames[i].Hands.LeftBones, _hands.leftHand.points, props)
-                    && RecognizeHand(_possibleFrames[i].Hands.RightBones, _hands.rightHand.points, props))
-                 {
-                     return i;
-                 }
+                if (RecognizeFrame(props, _possibleFrames[i]))
+                    return i;
             }
             return -1;
         }
-        private bool RecognizeHand(in BonesData bonesData, in Transform[] handSkeleton, in RecognitionProperties props)
+        
+        
+        private static bool RecognizeHand(in BonesData bonesData, in Transform[] handSkeleton, in RecognitionProperties props)
         {
             if (bonesData == null || bonesData.rotations?.Length != handSkeleton.Length)
                 return true;
@@ -174,8 +185,8 @@ namespace Scripts.Gestures
             for (int i = 0; i < bonesData.rotations.Length; i++)
             {
                 float distance = OptimizedDistance( bonesData.rotations[i], handSkeleton[i].localRotation);
-              
-                if (distance < props.rotationQuality) // 0 - bad, 1 - good, 0.9 - ok
+                var quality = i == 0 ? props.rootRotationQuality : props.rotationQuality;
+                if (distance < quality) // 0 - bad, 1 - good, 0.9 - ok
                 {
                     //l.rl("Canceled, because rotation: " + distance + " < " + props.rotationQuality);
                     return false;
@@ -210,4 +221,5 @@ namespace Scripts.Gestures
         public static float OptimizedDistance(in Color a, in Color b) =>
             OptimizedDistance(new Vector4(a.r, a.g, a.b, a.a), new Vector4(b.r, b.g, b.b, b.a));
     }
+    
 }

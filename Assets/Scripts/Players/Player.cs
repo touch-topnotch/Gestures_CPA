@@ -25,11 +25,15 @@ namespace Scripts.PlayerLogic
         public readonly ulong id;
         public readonly Transform playerTransform;
         public readonly PlayerHands hands;
-        public PlayerData(ulong id, Transform transform, PlayerHands hands)
+        public readonly Recognizer recognizer;
+        public readonly GesturesLibrary library;
+        public PlayerData(ulong id, Transform transform, PlayerHands hands, Recognizer recognizer, GesturesLibrary library)
         {
             this.id = id;
             this.playerTransform = transform;
             this.hands = hands;
+            this.recognizer = recognizer;
+            this.library = library;
         }
     }
 
@@ -148,14 +152,15 @@ namespace Scripts.PlayerLogic
             #else
             rigType = _rigType;
             #endif
-            data = new PlayerData(0, transform, _hands);
       
         }
         
         private void Start()
         {      
             _gestureCombiner = new GestureCombiner(data, _characterPool.charactersDict);
+
             if(isLocal) Initialize();
+            data = new PlayerData(0, transform, _hands, _gestureCombiner.recognizer, _gestureCombiner.library);
         }
 
         public void Initialize()

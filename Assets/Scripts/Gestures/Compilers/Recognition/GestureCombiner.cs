@@ -18,6 +18,7 @@ namespace Scripts.Gestures
         public FrameRecognized OnFrameRecognized => _recognizer.onFrameRecognized;
         public GestureRecognized OnGestureRecognized => _recognizer.onGestureRecognized;
         private PlayerData _data;
+        public Recognizer recognizer => _recognizer;
         public GestureCombiner(PlayerData data, Dictionary<string, Character> chars)
         {
             _data = data;
@@ -32,7 +33,7 @@ namespace Scripts.Gestures
         }
         private void RecognizeWithAllGestures()
         {
-            _recognizer.RecognizeDynamicGesture(library.DynamicGestures);
+            _recognizer.RecognizeDynamicGesture(library.dynamicGestures);
         } 
 
         public void GestureRecognized(DynamicGesture gesture)
@@ -78,7 +79,7 @@ namespace Scripts.Gestures
             //     return;
             // }
 
-            GestureGraphManager.InitializeGestureGraph(library.DynamicGestures);
+            GestureGraphManager.InitializeGestureGraph(library.dynamicGestures);
 
         }
     }

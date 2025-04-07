@@ -88,7 +88,7 @@ namespace Scripts.Gestures
             gestureFrame = id < frames.Count ? frames[id] : null;
             return id < frames.Count;
         }
-        
+
         public void LogFrames()
         {
             var log = $"Gesture {Name} contains: ";
@@ -98,6 +98,10 @@ namespace Scripts.Gestures
             }
 
             Debug.Log(log);
+        }
+        public GestureFrame this[int i]
+        {
+            get => frames[i];
         }
 
     }
