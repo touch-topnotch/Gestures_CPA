@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Lobbies;
@@ -11,44 +11,18 @@ namespace Network
 {
     public class LobbyConnector : MonoBehaviour
     {
-        private Lobby _hostLobby;
         private Lobby _currentLobby;
         private float _heartbeatTimer = 0;
         private const float HEART_BEAT_TIMER_MAX = 15f;
-        private const int MAX_PLAYERS = 4;
-        public event Action LobbyConnectingStarted;
-        public event Action<string> LobbyConnectingCompleted;
-        public bool IsLobbyHost => _hostLobby == _currentLobby;
-       
+        private const string RELAY_CODE_KEY =  "RelayCode"; 
+        public string CurrentLobbyID { get; private set; }
 
-        public async Task Initialize()
-        {
-            await UnityServices.InitializeAsync();
-
-            AuthenticationService.Instance.SignedIn += () =>
-            {
-                Debug.Log("Signed in " + AuthenticationService.Instance.PlayerId);
-            };
-
-            await AuthenticationService.Instance.SignInAnonymouslyAsync();
-        }
+        public event Action<string> LobbyConnected;
+        public event Action<string> LobbyConnectedAsHost;
 
         private void Update()
         {
             HandleLobbyHeartbeat();
-        }
-
-        public async Task<string> CheckData()
-        {
-            _currentLobby = await LobbyService.Instance.GetLobbyAsync(_currentLobby.Id);
-            if (_currentLobby.Data == null)
-                return "";
-
-            if (!_currentLobby.Data.ContainsKey("relayCode"))
-                return "";
-
-            var joinCode = _currentLobby.Data["relayCode"];
-            return joinCode.Value;
         }
 
         private async void HandleLobbyHeartbeat()
@@ -67,57 +41,53 @@ namespace Network
 
         private async void OnApplicationQuit()
         {
-            await LobbyService.Instance.RemovePlayerAsync(_currentLobby.Id, AuthenticationService.Instance.PlayerId);
+            if (_currentLobby != null)
+                await LobbyService.Instance.RemovePlayerAsync(_currentLobby.Id,
+                    AuthenticationService.Instance.PlayerId);
         }
 
-        public async void SendRelayCode(string code)
+        public async UniTask ConnectLobby(string id)
         {
-            var data = new Dictionary<string, DataObject>
+            if (_currentLobby != null)
             {
-                ["relayCode"] = new(DataObject.VisibilityOptions.Member, code)
-            };
-            await LobbyService.Instance.UpdateLobbyAsync(_hostLobby.Id, new UpdateLobbyOptions()
-            {
-                Data = data
-            });
+                string playerId = AuthenticationService.Instance.PlayerId;
+                await LobbyService.Instance.RemovePlayerAsync(_currentLobby.Id, playerId);
+            }
+
+            _currentLobby = await LobbyService.Instance.JoinLobbyByIdAsync(id);
+            Debug.Log($"connected Lobby {_currentLobby.Name} {_currentLobby.Players.Count}/{_currentLobby.MaxPlayers}");
+            CurrentLobbyID = _currentLobby.Id;
+            LobbyConnected?.Invoke(CurrentLobbyID);
         }
 
-        public async Task ConnectOrCreateLobby()
+        public async UniTask ConnectOrCreateLobby(int maxPlayers)
         {
             if (_currentLobby != null)
                 return;
-
-            LobbyConnectingStarted?.Invoke();
 
             var availableLobbies = await ListLobbies();
 
             if (availableLobbies.Count > 0)
             {
-                Debug.Log(availableLobbies[0].Name);
                 await QuickJoinLobby();
             }
             else
             {
-                await CreateLobby();
+                await CreateLobby(maxPlayers);
             }
-
-            if (_currentLobby != null) LobbyConnectingCompleted?.Invoke(_currentLobby.Id);
         }
 
-        public void OnLobbyChanged()
-        {
-            
-        }
 
-        private async Task CreateLobby()
+        public async UniTask CreateLobby(int maxPlayers)
         {
             try
             {
-                var lobbyName = "MyLobby" + AuthenticationService.Instance.PlayerId;
-                var lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, MAX_PLAYERS).ConfigureAwait(false);
-                Debug.Log("created Lobby" + lobby.Name + lobby.MaxPlayers);
-                _hostLobby = lobby;
+                var lobbyName = $"MyLobby{AuthenticationService.Instance.PlayerId}";
+                var lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers).ConfigureAwait(false);
+                Debug.Log($"created Lobby {lobby.Name} {lobby.MaxPlayers}");
                 _currentLobby = lobby;
+                CurrentLobbyID = _currentLobby.Id;
+                LobbyConnectedAsHost?.Invoke(CurrentLobbyID);
             }
             catch (LobbyServiceException e)
             {
@@ -125,7 +95,7 @@ namespace Network
             }
         }
 
-        private async Task<List<Lobby>> ListLobbies()
+        public async UniTask<List<Lobby>> ListLobbies()
         {
             try
             {
@@ -153,7 +123,7 @@ namespace Network
             }
         }
 
-        private async Task QuickJoinLobby()
+        private async UniTask QuickJoinLobby()
         {
             try
             {
@@ -165,6 +135,16 @@ namespace Network
             {
                 Debug.LogError(e);
             }
+        }
+
+        public void SetCodeAsRelayCode(string code)
+        {
+            var newData = new Dictionary<string, DataObject>();
+            newData.Add(RELAY_CODE_KEY, new DataObject(DataObject.VisibilityOptions.Member, code));
+            LobbyService.Instance.UpdateLobbyAsync(CurrentLobbyID, new UpdateLobbyOptions()
+            {
+                Data = newData
+            });
         }
     }
 }

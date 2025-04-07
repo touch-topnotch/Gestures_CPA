@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using Scripts.Events;
 using Scripts.Hands;
 using Unity.Netcode;
@@ -156,9 +157,9 @@ namespace Scripts.PlayerLogic
         
         private void Start()
         {
-
             if (_rigType != RigType.NoRig)
             {
+                Debug.Log(_rigType);
                 _curRig.StartMove();
             }
         

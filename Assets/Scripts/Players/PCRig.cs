@@ -110,7 +110,11 @@ namespace Scripts.PlayerLogic
 
         
         public override bool isMoved() => _personController.enabled;
-        public override void StartMove() => _personController.enabled = true;
+        public override void StartMove()
+        { 
+            Debug.Log(_personController==null);
+            _personController.enabled = true;
+        }
         public override void StopMove() => _personController.enabled = false;
         
 
