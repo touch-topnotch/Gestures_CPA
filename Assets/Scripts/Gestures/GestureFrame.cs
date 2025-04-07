@@ -104,6 +104,12 @@ namespace Scripts.Gestures
         }
 
         public HandsStruct Hands;
+
+        public override string ToString()
+        {
+            return
+                $"GestureFrame {name} has {Hands.HandUsed},\n leftBones = {Hands.LeftBones?.ToString()}, \n rightBones = {Hands.RightBones?.ToString()}";
+        }
     }
 }
 

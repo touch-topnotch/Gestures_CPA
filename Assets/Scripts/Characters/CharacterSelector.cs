@@ -13,7 +13,7 @@ namespace Characters
         {
             Anger,
             Grief,
-            Fearlessness
+            Bravery
         }
         [SerializeField] private DebugCharacters currentCharacter;
         [SerializeField] private CharacterPool _characterPool;

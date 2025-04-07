@@ -50,5 +50,14 @@ namespace Scripts.Static
                 return temp;
             return transf.AddComponent<T>();
         }
+
+        public static Vector3 Rotate(Vector3 vec, float yAngle)
+        {
+            float radian = yAngle * Mathf.Deg2Rad;
+            float newX = vec.x * Mathf.Cos(radian) - vec.z * Mathf.Sin(radian);
+            float newZ = vec.x * Mathf.Sin(radian) + vec.z * Mathf.Cos(radian);
+    
+            return new Vector3(newX, vec.y, newZ);
+        }
     }
 }

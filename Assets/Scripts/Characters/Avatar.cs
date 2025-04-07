@@ -1,5 +1,6 @@
 
 using System;
+using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
 
@@ -16,14 +17,15 @@ namespace Scripts.PlayerLogic
         public AvatarType type;
         [Space]
         public BodyAnchors Anchors;
-        private float startHeight;
-        [SerializeField]
-        private float currentHeight;
+        [DisableInPlayMode]
+        [SerializeField] private float startHeight;
+        [SerializeField] private float currentHeight;
+        private float maxScale = 1f;
 
         private void Start()
         {
             startHeight = 1.8f;
-            if (Physics.Raycast(Anchors.Head.position, Vector3.down, out var hit, 100, layerMask:7))
+            if (Physics.Raycast(Anchors.Head.position, Vector3.down, out var hit, 100, layerMask:~0 & (1 << 9)))
             {
                 startHeight = hit.distance;
             }
@@ -34,11 +36,12 @@ namespace Scripts.PlayerLogic
             if (Anchors.Head && Anchors.Body)
             {
                 
-                if (Physics.Raycast(Anchors.Head.position, Vector3.down, out var hit, 100, layerMask:7))
+                if (Physics.Raycast(Anchors.Head.position, Vector3.down, out var hit, 100, layerMask:~0 & (1 << 9)))
                 {
                     currentHeight = hit.distance;
                     var scale = Anchors.Body.localScale;
-                    var difference = hit.distance / startHeight;
+                   
+                    var difference = Mathf.Clamp(hit.distance / startHeight, 0.2f, maxScale);
                     Anchors.Body.localScale = new Vector3(scale.x,difference, scale.z);
                 }
 

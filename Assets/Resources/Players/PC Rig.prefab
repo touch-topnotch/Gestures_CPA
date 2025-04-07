@@ -297,7 +297,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -1430,9 +1430,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   anchors: {fileID: 372722643100421405}
-  recognitionProperties: {fileID: 11400000, guid: 5dd9888e091be49049a3d33d417ea57e,
-    type: 2}
   hands: {fileID: 0}
+  _recognitionProperties: {fileID: 0}
+  _headInteraction: {fileID: 0}
   handsProperties:
     delayOnFrame: 1.2
     handSpeed: 2.29
@@ -1560,6 +1560,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2589d1f259d452280184af065088d25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Root: {fileID: 1208917844900822806}
   Body: {fileID: 1208917844900822806}
   Head: {fileID: 4532246721276544345}
 --- !u!1 &7489632410429456621

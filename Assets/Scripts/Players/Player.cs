@@ -37,10 +37,9 @@ namespace Scripts.PlayerLogic
 
     public class Player : MonoBehaviour
     {
-        [Header("Runtime Settings")] 
-       private RigType _rigType;
-
-        [ShowInInspector]
+        [Header("Runtime Settings")]
+        [InspectorName("Debug Rig")]
+        [SerializeField] private RigType _rigType;
         public RigType rigType
         {
             get => _rigType;
@@ -142,7 +141,13 @@ namespace Scripts.PlayerLogic
 
         private void Awake()
         {
-            rigType = Application.platform == RuntimePlatform.Android ? RigType.XRRig : RigType.PCRig;
+            #if UNITY_EDITOR
+            rigType = _rigType;
+            #elif PLATFORM_ANDROID
+            rigType = RigType.XRRig;
+            #else
+            rigType = _rigType;
+            #endif
             data = new PlayerData(0, transform, _hands);
       
         }
