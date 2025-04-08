@@ -72,7 +72,7 @@ namespace Scripts.Gestures
                       + $"   All Parsed Gestures: {Debugger.dictionaryToString(allCharacterGestures.openDict, false, true)}"
                       + $"\n   Character Gestures (Now without limitations): {Debugger.dictionaryToString(characterGestures, false, true)}"
                       + $"\n   System Gestures: {Debugger.dictionaryToString(systemGestures, false, true)}"
-                      + $"\n   Supportive Gestures: {Debugger.dictionaryToString(systemGestures, false, true)}";
+                      + $"\n   Supportive Gestures: {Debugger.dictionaryToString(supportiveGestures, false, true)}";
           
             Debug.Log(log);
         }
