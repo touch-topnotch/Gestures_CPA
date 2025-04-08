@@ -25,11 +25,15 @@ namespace Scripts.PlayerLogic
         public readonly ulong id;
         public readonly Transform playerTransform;
         public readonly PlayerHands hands;
-        public PlayerData(ulong id, Transform transform, PlayerHands hands)
+        public readonly Recognizer recognizer;
+        public readonly GesturesLibrary library;
+        public PlayerData(ulong id, Transform transform, PlayerHands hands, Recognizer recognizer, GesturesLibrary library)
         {
             this.id = id;
             this.playerTransform = transform;
             this.hands = hands;
+            this.recognizer = recognizer;
+            this.library = library;
         }
     }
 
@@ -37,10 +41,9 @@ namespace Scripts.PlayerLogic
 
     public class Player : MonoBehaviour
     {
-        [Header("Runtime Settings")] 
-       private RigType _rigType;
-
-        [ShowInInspector]
+        [Header("Runtime Settings")]
+        [InspectorName("Debug Rig")]
+        [SerializeField] private RigType _rigType;
         public RigType rigType
         {
             get => _rigType;
@@ -142,15 +145,22 @@ namespace Scripts.PlayerLogic
 
         private void Awake()
         {
-            rigType = Application.platform == RuntimePlatform.Android ? RigType.XRRig : RigType.PCRig;
-            data = new PlayerData(0, transform, _hands);
+            #if UNITY_EDITOR
+            rigType = _rigType;
+            #elif PLATFORM_ANDROID
+            rigType = RigType.XRRig;
+            #else
+            rigType = _rigType;
+            #endif
       
         }
         
         private void Start()
         {      
-            _gestureCombiner = new GestureCombiner(data, _characterPool.charactersDict);
+            _gestureCombiner = new GestureCombiner(data, _characterPool);
+
             if(isLocal) Initialize();
+            data = new PlayerData(0, transform, _hands, _gestureCombiner.recognizer, _gestureCombiner.library);
         }
 
         public void Initialize()
@@ -175,8 +185,6 @@ namespace Scripts.PlayerLogic
                
                 //   _curRig.StartMove();
             }
-         
-            _characterPool.SetCharacter("Fear");
             _characterPool.SetAvatarType(AvatarType.Local);
             
 

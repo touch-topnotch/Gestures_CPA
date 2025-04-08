@@ -87,15 +87,17 @@ namespace Scripts.Characters
         public void ChangeAvatarType(AvatarType type, Hands hands)
         {
             _currentType = type;
-
-            foreach (Avatar avatar in _avatarsDictionary.Values)
-            {
-               // Debug.Log(avatar.gameObject.name + "  " + (avatar.type == type).ToString());
-                avatar.gameObject.SetActive(avatar.type == type);
-            }
-            
+            RefreshAvatars();
             if(hands != null)
                 ChangeMaterials(hands.HandMaterialPair, _currentType);
+        }
+
+        public void RefreshAvatars()
+        {
+            foreach (Avatar avatar in _avatarsDictionary.Values)
+            {
+                avatar.gameObject.SetActive(avatar.type == _currentType);
+            }
         }
         public void ChangeMaterials(MaterialPair materialPair)
         {
@@ -105,5 +107,6 @@ namespace Scripts.Characters
         {
             _handAppearanceProcessor?.ChangeMaterialPair(materialPair, type);
         }
+        
     }
 }
