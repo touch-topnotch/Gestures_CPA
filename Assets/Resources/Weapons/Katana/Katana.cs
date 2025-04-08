@@ -90,7 +90,6 @@ using UnityEngine;
 
         public override void OnAbilityReleased()
         {
-            
         }
     }
 

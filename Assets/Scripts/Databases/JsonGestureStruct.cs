@@ -4,7 +4,12 @@ namespace Scripts.Databases
 {
     public struct JsonGestureStruct
     {
-        public string Name;
+        public string key;
+        public JsonGestureProperty value;
+    }
+
+    public struct JsonGestureProperty
+    {
         public int Type;
         public List<string[]> Frames;
     }

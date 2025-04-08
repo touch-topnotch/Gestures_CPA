@@ -23,18 +23,20 @@ namespace Scripts.Gestures
         public static readonly string _jsonPath = Application.dataPath + "/Resources/Database/CharacterLibrary.json";
 
         public static GestureFrame JsonGestureToGestureFrame(JsonGestureStruct jsonStruct, int index = 0)=>new GestureFrame(
-                jsonStruct.Name, StringToHandsStruct(jsonStruct.Frames[index]));
+                jsonStruct.key, StringToHandsStruct(jsonStruct.value.Frames[index]));
         public static void SendGestureFrame(string collectionKey, GestureFrame frame)
         {
             var jsonStruct = new JsonGestureStruct
             {
-                Name = frame.name,
+                key = frame.name,
+                value = new JsonGestureProperty(){
                 Type = 0,
                 Frames = new List<string[]> {HandsStructToString(frame.Hands)}
+                }
             };
             CloudSaveProcessor.SetItemToCloud(JsonConvert.SerializeObject(jsonStruct), collectionKey, (e) =>
             {
-                Debug.Log( collectionKey +": " + jsonStruct.Name + " was sent to cloud");
+                Debug.Log( collectionKey +": " + jsonStruct.key + " was sent to cloud");
             });
         }
         public static string ReplaceCharacters(string input)
@@ -67,7 +69,7 @@ namespace Scripts.Gestures
 
             foreach (var gestureName in recognizables.Keys)
             {
-                if (gestureName == jsonStruct.Name)
+                if (gestureName == jsonStruct.key)
                 {
                     recognizableObject = recognizables[gestureName];
                     break;
@@ -81,19 +83,19 @@ namespace Scripts.Gestures
 
             List<GestureFrame> frames = new();
 
-            foreach (var frame in jsonStruct.Frames)
+            foreach (var frame in jsonStruct.value.Frames)
             {
                     frames.Add(
                         new GestureFrame(
-                            jsonStruct.Name + "_" + frames.Count,
+                            jsonStruct.key + "_" + frames.Count,
                             StringToHandsStruct(frame)
                         )
                     );
             }
 
 
-            gesture = new DynamicGesture(jsonStruct.Name,
-                (GestureType)jsonStruct.Type,
+            gesture = new DynamicGesture(jsonStruct.key,
+                (GestureType)jsonStruct.value.Type,
                 frames,
                 recognizableObject);
 
@@ -156,21 +158,21 @@ namespace Scripts.Gestures
                 {
                     for(int j = 0; j < _jsonCharacters[key].Gestures.Count; j ++)
                     {
-                        if (_jsonCharacters[key].Gestures[j].Name == jsonGesture.Name)
+                        if (_jsonCharacters[key].Gestures[j].key == jsonGesture.key)
                         {
                          
                             _jsonCharacters[key].Gestures[j] = jsonGesture;
                             
                             CharacterMapper.SendCharacterStruct(new JsonCharacterStruct(key, _jsonCharacters[key]));
                             
-                            Debug.Log($"{jsonGesture.Name} overrided in Json");
+                            Debug.Log($"{jsonGesture.key} overrided in Json");
                             return;
                         }
                     }
                     
                     _jsonCharacters[key].Gestures.Add(jsonGesture);
                     CharacterMapper.SendCharacterStruct(new JsonCharacterStruct(key, _jsonCharacters[key]));
-                    Debug.Log($"{jsonGesture.Name} created in Character " + characterName);
+                    Debug.Log($"{jsonGesture.key} created in Character " + characterName);
                     return;
                 }
             }
@@ -184,17 +186,19 @@ namespace Scripts.Gestures
                         jsonGesture,
                     })));
             
-            Debug.Log($"Gesture {jsonGesture.Name} and character " + characterName + " created");
+            Debug.Log($"Gesture {jsonGesture.key} and character " + characterName + " created");
         }
         public static void UpdateDynamicGesture(string characterName, DynamicGesture gesture)
         {
 
             var jsonGesture = new JsonGestureStruct
             {
-                Name = gesture.Name,
+                key = gesture.Name,
+                value = new JsonGestureProperty(){
                 Type = (int)gesture.gestureType,
-                Frames = gesture.frames.ConvertAll(frame => HandsStructToString(frame.Hands)),
-            };
+                Frames = gesture.frames.ConvertAll(frame => HandsStructToString(frame.Hands)),}
+                };
+                
             UpdateDynamicGesture(characterName, jsonGesture);
          
         }
