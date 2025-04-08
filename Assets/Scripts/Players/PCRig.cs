@@ -56,7 +56,7 @@ namespace Scripts.PlayerLogic
         //Simulate Gestures
         public void TryGetGestureFrame(string frameName)
         {
-            if (library.dynamicGestures.TryGetValue(frameName, out var dynamicGesture))
+            if (library.characterGestures.TryGetValue(frameName, out var dynamicGesture))
             {
                 _ui.gestureInput.image.color = _palette.active;
                 // play Dynamic Gesture
@@ -64,19 +64,17 @@ namespace Scripts.PlayerLogic
                 SimulateDynamicGesture();
                 return;
             }
-
-            if(library.dynamicGestures.TryGetValue(GestureMapper.PrefixOfName(frameName), out dynamicGesture))
+    
+            if(library.allAvailableFrames.TryGetValue(frameName, out var frame))
             {
-                if (dynamicGesture.TryGetGestureFrame(frameName, out var gestureFrame))
-                {
 //                    print(gestureFrame.name);
                     _ui.gestureInput.image.color = _palette.enabled;
                     // play Gesture Frame
                     
-                    hands.MoveHands(gestureFrame, handsProperties.handSpeed,
+                    hands.MoveHands(frame, handsProperties.handSpeed,
                         () => { _ui.gestureInput.image.color = _palette.clear; });
                     return;
-                }
+                
             }
             _ui.gestureInput.image.color = _palette.wrong;
         }
@@ -92,7 +90,7 @@ namespace Scripts.PlayerLogic
                 return;
             }
 
-            var dynamic = library.dynamicGestures[_targetFrame.baseName];
+            var dynamic = library.characterGestures[_targetFrame.baseName];
             
             hands.MoveHands(_targetFrame, handsProperties.handSpeed, ()=>{StartCoroutine(WaitUntilNextFrame());});
             

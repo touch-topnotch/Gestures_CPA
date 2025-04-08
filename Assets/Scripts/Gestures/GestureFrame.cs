@@ -99,7 +99,7 @@ namespace Scripts.Gestures
             set
             {
                 _name = value;
-                baseName = value.Split('_')[0];
+                baseName = value.Split('_')?[0];
             }
         }
 

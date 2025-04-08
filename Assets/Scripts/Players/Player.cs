@@ -157,7 +157,7 @@ namespace Scripts.PlayerLogic
         
         private void Start()
         {      
-            _gestureCombiner = new GestureCombiner(data, _characterPool.charactersDict);
+            _gestureCombiner = new GestureCombiner(data, _characterPool);
 
             if(isLocal) Initialize();
             data = new PlayerData(0, transform, _hands, _gestureCombiner.recognizer, _gestureCombiner.library);
