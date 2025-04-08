@@ -9,11 +9,12 @@ namespace Scripts.Weapons
         [SerializeField] private Transform bladePoint;
 
         [ReadOnlyInInspector]
-        [SerializeField] private float _speed;
+        [SerializeField] private Vector3 _speed;
 
         private Vector3 _prevPosition;
 
-        public float speed => _speed;
+        public float speed => _speed.magnitude;
+        public Vector3 speedVec => _speed;
         private bool lastTrigger = false;
         private string lastName = "";
         
@@ -25,7 +26,7 @@ namespace Scripts.Weapons
         private void Update()
         {
             var position = bladePoint.position;
-            _speed = (position - _prevPosition).magnitude / Time.deltaTime;
+            _speed = (position - _prevPosition) / Time.deltaTime;
             _prevPosition = position;
         }
 

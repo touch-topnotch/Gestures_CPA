@@ -9,8 +9,8 @@ namespace Scripts.Weapons
     {
         
         [Header("Melee components")]
-        [SerializeField] private float _bladeMinSpeed;
-        [SerializeField] private Blade _blade;
+        [SerializeField] protected float _bladeMinSpeed;
+        [SerializeField] protected Blade _blade;
 
         [ShowInInspector]
         public int capacity
