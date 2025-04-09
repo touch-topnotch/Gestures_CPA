@@ -10,11 +10,16 @@ public class StabMelee : Melee
     [SerializeField] private Transform _weaponPoint;
     [SerializeField] private Transform _bladePoint;
 
-    private Vector3 WeaponStabDirection => _bladePoint.position - _weaponPoint.position;
+    private Vector3 WeaponStabDirection => (_bladePoint.position - _weaponPoint.position).normalized;
+
+    private void Start()
+    {
+        StartShooting();
+    }
 
     private float GetBladeSpeedAlongStabDirection(Vector3 bladeSpeedVec)
     {
-        return Vector3.Dot(WeaponStabDirection, bladeSpeedVec) / bladeSpeedVec.magnitude;
+        return Vector3.Dot(WeaponStabDirection, bladeSpeedVec);
     }
     
     protected override bool HitCallCondition() => GetBladeSpeedAlongStabDirection(_blade.speedVec) > _bladeMinSpeed;
