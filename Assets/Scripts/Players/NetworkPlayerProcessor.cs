@@ -31,40 +31,39 @@ namespace Scripts.PlayerLogic
         
         public override void OnNetworkSpawn()
         {
-       
+        
             
             Debug.Log("NETWORK SPAWN");
             transform.name = $"Player {OwnerClientId}";
             
+            
+            
             _player.characterPool.SetMaterialId((int)OwnerClientId); 
             _player.characterPool.SetCharacter((int)OwnerClientId % 2 == 0 ? "Anger" : "Grief");
             
-            if (IsClient && !IsOwner)
+            if ((IsClient || IsHost ) && !IsOwner)
             { 
                 _player.rigType = RigType.NoRig;
                 _player.characterPool.SetAvatarType(AvatarType.Enemy);
 
             }
 
-            if (IsClient && IsOwner)
+            if (IsOwner && (IsHost || IsClient))
             {
                 _player.rigType = RigType.PCRig;
+                _player.InitializeLocally(); 
+                
                 _player.characterPool.SetAvatarType(AvatarType.Local);
                 _player.curRig.Anchors.Body.position = new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10));
+             
+                _player.gestureCombiner.OnFrameRecognized.AddListener(
+                    (frame) => { OnLocalClientFrameRecognizedServerRpc(frame, OwnerClientId); });
             }
-
-            if (IsServer)
+            
+            if (IsServer && !IsHost)
             {
                 _player.rigType = RigType.NoRig;
                 _player.characterPool.SetAvatarType(AvatarType.None);
-            }
-         
-            _player.Initialize();
-
-            if (IsClient && IsOwner)
-            {
-                _player.gestureCombiner.OnFrameRecognized.AddListener(
-                    (frame) => { OnLocalClientFrameRecognizedServerRpc(frame, OwnerClientId); });
             }
         }
         

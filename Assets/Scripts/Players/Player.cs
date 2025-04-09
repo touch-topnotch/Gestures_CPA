@@ -145,50 +145,41 @@ namespace Scripts.PlayerLogic
 
         private void Awake()
         {
-            #if UNITY_EDITOR
-            rigType = _rigType;
-            #elif PLATFORM_ANDROID
-            rigType = RigType.XRRig;
-            #else
-            rigType = _rigType;
-            #endif
-      
-        }
-        
-        private void Start()
-        {      
-            _gestureCombiner = new GestureCombiner(data, _characterPool);
-
-            if(isLocal) Initialize();
-            data = new PlayerData(0, transform, _hands, _gestureCombiner.recognizer, _gestureCombiner.library);
-        }
-
-        public void Initialize()
-        {
-            
-            if (_rigType != RigType.NoRig)
+            if (isLocal)
             {
-                if (_rigType == RigType.PCRig)
-                    _pcRig.library = _gestureCombiner.library;
-                
-                _gestureCombiner.CreateRecognizer(curRig.RecognitionPropertiesConfig);
-                _characterPool.characterChangedEvent.AddListener((e) =>
-                {
-                    // List<string> gestureNames = new();
-                    // for (int i = 0; i < _characterPool.currentCharacter.recognizables.Count; i++)
-                    // {
-                    //     gestureNames.Add(_characterPool.currentCharacter.recognizables[i].gestureName);
-                    // }
-                    // Debug.Log("Change directed recognition on " + gestureNames + gestureNames[0]);
-                    // _gestureCombiner.library.gestures.ChangeActiveKeys(gestureNames);
-                });
-               
-                //   _curRig.StartMove();
+#if UNITY_EDITOR
+                rigType = _rigType;
+#elif PLATFORM_ANDROID
+            rigType = RigType.XRRig;
+#else
+            rigType = _rigType;
+#endif
             }
-            _characterPool.SetAvatarType(AvatarType.Local);
-            
-
+            _gestureCombiner = new GestureCombiner(data, _characterPool);
+            data = new PlayerData(0, transform, _hands, _gestureCombiner.recognizer, _gestureCombiner.library);
             UpdateEvent.Instance.AddListener(UpdateAnchors); 
+        }
+
+        public void InitializeLocally()
+        {
+            if (_rigType == RigType.PCRig)
+                _pcRig.library = _gestureCombiner.library;
+            
+            _gestureCombiner.CreateRecognizer(curRig.RecognitionPropertiesConfig);
+            _characterPool.characterChangedEvent.AddListener((e) =>
+            {
+                // List<string> gestureNames = new();
+                // for (int i = 0; i < _characterPool.currentCharacter.recognizables.Count; i++)
+                // {
+                //     gestureNames.Add(_characterPool.currentCharacter.recognizables[i].gestureName);
+                // }
+                // Debug.Log("Change directed recognition on " + gestureNames + gestureNames[0]);
+                // _gestureCombiner.library.gestures.ChangeActiveKeys(gestureNames);
+            });
+           
+            //   _curRig.StartMove();
+        
+            _characterPool.SetAvatarType(AvatarType.Local);
         }
 
         private bool isAnyNull()
