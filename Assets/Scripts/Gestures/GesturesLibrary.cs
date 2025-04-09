@@ -39,10 +39,18 @@ namespace Scripts.Gestures
             _playerData = data;
             _characterPool = characterPool;
            // _characterPool.characterChangedEvent.AddListener(OnCharacterChanged);
-           EventInitializer.Instance.onServicesInitilalised += ()=>
+           if (!EventInitializer.Instance.isInitialized)
+           {
+               EventInitializer.Instance.onServicesInitilalised += ()=>
+               {
+                   AddDictionary(data);
+               };
+           }
+           else
            {
                AddDictionary(data);
-           };
+           }
+           
         }
 
         private async void AddDictionary(PlayerData data)
