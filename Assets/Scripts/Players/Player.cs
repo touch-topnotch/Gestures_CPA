@@ -25,8 +25,8 @@ namespace Scripts.PlayerLogic
         public readonly ulong id;
         public readonly Transform playerTransform;
         public readonly PlayerHands hands;
-        public readonly Recognizer recognizer;
-        public readonly GesturesLibrary library;
+        public Recognizer recognizer;
+        public GesturesLibrary library;
         public PlayerData(ulong id, Transform transform, PlayerHands hands, Recognizer recognizer, GesturesLibrary library)
         {
             this.id = id;
@@ -95,8 +95,15 @@ namespace Scripts.PlayerLogic
 
         private void ActivateRig()
         {
+            if (_rigType == RigType.PCRig)
+                _pcRig.Initialize(data);
+            
+            if (_rigType == RigType.XRRig)
+                _xrRig.Initialize(data);
+            
             _pcRig.gameObject.SetActive(_rigType == RigType.PCRig);
             _xrRig.gameObject.SetActive(_rigType == RigType.XRRig);
+        
         }
         
 #if UNITY_EDITOR
@@ -146,42 +153,46 @@ namespace Scripts.PlayerLogic
         private void Awake()
         {
             if (isLocal)
-            {
+                SetOwner(0);
+        }
+
+        public void SetOwner(ulong id)
+        {
+            InitializeComponents(id);
+            if (_rigType == RigType.NoRig)
+                rigType = RigType.PCRig;
 #if UNITY_EDITOR
-                rigType = _rigType;
+            rigType = _rigType;
 #elif PLATFORM_ANDROID
             rigType = RigType.XRRig;
 #else
             rigType = _rigType;
 #endif
-            }
-            _gestureCombiner = new GestureCombiner(data, _characterPool);
-            data = new PlayerData(0, transform, _hands, _gestureCombiner.recognizer, _gestureCombiner.library);
-            UpdateEvent.Instance.AddListener(UpdateAnchors); 
-        }
-
-        public void InitializeLocally()
-        {
-            if (_rigType == RigType.PCRig)
-                _pcRig.library = _gestureCombiner.library;
-            
-            _gestureCombiner.CreateRecognizer(curRig.RecognitionPropertiesConfig);
-            _characterPool.characterChangedEvent.AddListener((e) =>
+            characterPool.SetAvatarType(AvatarType.Local);
+            _gestureCombiner.CreateRecognizer(curRig.RecognitionPropertiesConfig, data);
+            data.library.onLibraryInitialized += () =>
             {
-                // List<string> gestureNames = new();
-                // for (int i = 0; i < _characterPool.currentCharacter.recognizables.Count; i++)
-                // {
-                //     gestureNames.Add(_characterPool.currentCharacter.recognizables[i].gestureName);
-                // }
-                // Debug.Log("Change directed recognition on " + gestureNames + gestureNames[0]);
-                // _gestureCombiner.library.gestures.ChangeActiveKeys(gestureNames);
-            });
-           
-            //   _curRig.StartMove();
-        
-            _characterPool.SetAvatarType(AvatarType.Local);
+                _gestureCombiner.RecognizeWithAllGestures();
+            };
         }
 
+        public void SetEnemy(ulong id)
+        {
+            InitializeComponents(id);
+            rigType = RigType.NoRig;
+            characterPool.SetAvatarType(AvatarType.Enemy);
+        }
+
+        private void InitializeComponents(ulong id)
+        {
+            _gestureCombiner = new GestureCombiner(_characterPool);
+            data = new PlayerData(id, transform, _hands, _gestureCombiner.recognizer, _gestureCombiner.library);
+            characterPool.SetMaterialId((int)id); 
+            UpdateEvent.Instance.AddListener(UpdateAnchors);
+            Debug.Log($"Player {id} initialized. RigType = {rigType}");
+        }
+
+      
         private bool isAnyNull()
         {
             if (_pcRig == null || _xrRig == null)

@@ -27,33 +27,32 @@ namespace Scripts.Gestures
         public Dictionary<string, DynamicGesture> characterGestures;
         public  Dictionary<string, GestureFrame> systemGestures = new();
         public  Dictionary<string, GestureFrame> supportiveGestures = new();
-        
+
+        public event Action onLibraryInitialized;
         private readonly RestrictiveDictionary<string, DynamicGesture> allCharacterGestures = new();
-        
-        private readonly PlayerData _playerData;
+
 
         private CharacterPool _characterPool;
         
-        public GesturesLibrary(PlayerData data, CharacterPool characterPool)
+        public GesturesLibrary(CharacterPool characterPool)
         {
-            _playerData = data;
             _characterPool = characterPool;
            // _characterPool.characterChangedEvent.AddListener(OnCharacterChanged);
            if (!EventInitializer.Instance.isInitialized)
            {
                EventInitializer.Instance.onServicesInitilalised += ()=>
                {
-                   AddDictionary(data);
+                   AddDictionary();
                };
            }
            else
            {
-               AddDictionary(data);
+               AddDictionary();
            }
            
         }
 
-        private async void AddDictionary(PlayerData data)
+        private async void AddDictionary()
         {
             allCharacterGestures.AddDictionary(await GestureMapper.ReadCharacterGestures(_characterPool.charactersDict));
             
@@ -76,13 +75,14 @@ namespace Scripts.Gestures
             {
                 allAvailableFrames.Add(frame.Key, frame.Value);
             }
-            var log = $"Library has initialized for player: {data.id} .\n"
+            var log = $"Library has initialized! .\n"
                       + $"   All Parsed Gestures: {Debugger.dictionaryToString(allCharacterGestures.openDict, false, true)}"
                       + $"\n   Character Gestures (Now without limitations): {Debugger.dictionaryToString(characterGestures, false, true)}"
                       + $"\n   System Gestures: {Debugger.dictionaryToString(systemGestures, false, true)}"
                       + $"\n   Supportive Gestures: {Debugger.dictionaryToString(supportiveGestures, false, true)}";
           
             Debug.Log(log);
+            onLibraryInitialized?.Invoke();
         }
 
         private static JsonCharacterProperties AddGestureToChar(string name,  HandsStruct hands,  JsonCharacterProperties jsonChar)
