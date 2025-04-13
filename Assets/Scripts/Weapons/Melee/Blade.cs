@@ -16,19 +16,20 @@ namespace Scripts.Weapons
         public float speed => _speed.magnitude;
         public Vector3 speedVec => _speed;
         private bool lastTrigger = false;
+        private bool isTrigging = false;
         private string lastName = "";
         
         public void OnTriggerEnter(Collider other)
         {
             lastTrigger = true;
+            isTrigging = true;
             lastName = other.tag;
             Debug.Log("Trigger Enter");
         } 
         
         public void OnTriggerExit(Collider other)
         {
-            lastTrigger = false;
-            lastName = "";
+            isTrigging = false;
             Debug.Log("Trigger Exit");
         }
         private void Update()
@@ -42,9 +43,10 @@ namespace Scripts.Weapons
         {
             tag = lastName;
             
-            if (lastTrigger)
+            if (lastTrigger && isTrigging)
             {
                 lastTrigger = false;
+                isTrigging = false;
                 return true;
             }
             
