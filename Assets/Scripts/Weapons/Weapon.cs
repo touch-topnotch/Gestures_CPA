@@ -7,6 +7,7 @@ using Sirenix.OdinInspector;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 namespace Scripts.Weapons
 {
@@ -31,10 +32,25 @@ namespace Scripts.Weapons
         [SerializeField]
         protected WeaponDesign weaponDesign;
         
+        [SerializeField]
+        [Tooltip("Weapon hit call cooldown")] private float _hitCallDelay = 0.5f;
+        private float _hitCallTimer;
+        private bool CanHitCall => _hitCallTimer <= 0;
+        
         protected readonly NetworkVariable<State> state = new NetworkVariable<State>();
         protected UpdateEvent _onUpdate => UpdateEvent.Instance;
+        
         protected abstract bool HitImpactCondition(out string affected);
         protected abstract bool HitCallCondition();
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Y))
+            {
+                playerData = transform.parent.parent.parent.GetComponent<Player>().data;
+                weaponDesign.SetPlayerData(playerData);
+            }
+        }
 
         protected virtual void OnHitStartHold()
         {
@@ -48,8 +64,14 @@ namespace Scripts.Weapons
 
         protected virtual void OnHitCalled()
         {
+            if (!CanHitCall) return;
+
             if (IsClient)
+            {
                 weaponDesign.OnHitCalled();
+                _hitCallTimer = _hitCallDelay;
+                _onUpdate.AddListener(UpdateHitCallTimer);
+            }
         }
 
         protected virtual void OnHitImpact(string affected)
@@ -71,6 +93,13 @@ namespace Scripts.Weapons
                 return;
             
             OnHitImpact(affected);
+        }
+
+        private void UpdateHitCallTimer()
+        {
+            _hitCallTimer -= Time.deltaTime;
+            if (CanHitCall)
+                _onUpdate.RemoveListener(UpdateHitCallTimer);
         }
   
         protected void StartShooting()
@@ -98,7 +127,7 @@ namespace Scripts.Weapons
         }
         private void HandleHitCall() 
         {
-            if (IsOwner && IsClient && HitCallCondition())
+            if ((IsOwner && IsClient) && HitCallCondition())
             {
                 if (HitCallCondition() && state.Value == State.HitHolding)
                 {
@@ -114,11 +143,15 @@ namespace Scripts.Weapons
 
         private void HandleHitImpact()
         {
-            if (IsServer && HitImpactCondition(out string affected))
+            if ((IsServer) && HitImpactCondition(out string affected))
             {
                 state.Value = State.HitImpact;
                 OnHitImpact(affected);
                 OnHitImpactClientRpc(affected);
+            }
+            else if (!HitCallCondition())
+            {
+                state.Value = State.HitHolding;
             }
         }
 
