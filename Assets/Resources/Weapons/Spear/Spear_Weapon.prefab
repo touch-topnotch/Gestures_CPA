@@ -385,6 +385,7 @@ Transform:
   - {fileID: 8683294922624893941}
   - {fileID: 7108056222005415235}
   - {fileID: 8410959810567742289}
+  - {fileID: 8697072887091184149}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -402,7 +403,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponDesign: {fileID: 8258039175384466680}
   _hitCallDelay: 1
-  _offlineTest: 1
   _bladeMinSpeed: 2
   _blade: {fileID: 6993892442895758170}
   _weaponPoint: {fileID: 4752004106190894656}
@@ -440,7 +440,10 @@ MonoBehaviour:
     - Name: hands
       Entry: 6
       Data: 
-    - Name: gestureCombiner
+    - Name: recognizer
+      Entry: 6
+      Data: 
+    - Name: library
       Entry: 6
       Data: 
     - Name: 
@@ -1347,6 +1350,77 @@ MonoBehaviour:
       Entry: 8
       Data: 
   _audioSource: {fileID: 6309593632385555344}
+--- !u!1 &6829160652071403930
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8697072887091184149}
+  - component: {fileID: 6486191295519590421}
+  - component: {fileID: 6619047300825982455}
+  m_Layer: 0
+  m_Name: Sphere Volume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8697072887091184149
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6829160652071403930}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4297029366125296814}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &6486191295519590421
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6829160652071403930}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 2.84
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6619047300825982455
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6829160652071403930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IsGlobal: 0
+  priority: 0
+  blendDistance: 1
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 36097d876233544719279730db243c9f, type: 2}
 --- !u!1 &8186255696432301684
 GameObject:
   m_ObjectHideFlags: 0

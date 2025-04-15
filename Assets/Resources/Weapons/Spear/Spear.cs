@@ -68,7 +68,7 @@ public class Spear : WeaponDesign
 
     public override void OnHitHolding()
     {
-        Debug.Log("HitHolding");
+      //  Debug.Log("HitHolding");
     }
 
     public override void OnHitCalled()

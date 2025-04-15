@@ -27,12 +27,10 @@ namespace Scripts.PlayerLogic
         private Transform _handsParent;
         
         private GestureFrame _targetFrame;
-
-        public GesturesLibrary library;
         
-        protected override void Start()
+        public override void Initialize(PlayerData data)
         {
-            base.Start();
+            base.Initialize(data);
             
             UpdateEvent.Instance?.AddListener(ToggleMenu);
             UpdateEvent.Instance?.AddListener(SimulateHit);
@@ -47,16 +45,13 @@ namespace Scripts.PlayerLogic
                 //Cursor.visible = state == PlayerState.MENU;
             });
             playerStateChangedEvent?.Invoke(playerState = PlayerState.ACTIVE);
-
-            
-            
             hands.OnEnabled();
         }
 
         //Simulate Gestures
         public void TryGetGestureFrame(string frameName)
         {
-            if (library.characterGestures.TryGetValue(frameName, out var dynamicGesture))
+            if (playerData.library.characterGestures.TryGetValue(frameName, out var dynamicGesture))
             {
                 _ui.gestureInput.image.color = _palette.active;
                 // play Dynamic Gesture
@@ -65,7 +60,7 @@ namespace Scripts.PlayerLogic
                 return;
             }
     
-            if(library.allAvailableFrames.TryGetValue(frameName, out var frame))
+            if(playerData.library.allAvailableFrames.TryGetValue(frameName, out var frame))
             {
 //                    print(gestureFrame.name);
                     _ui.gestureInput.image.color = _palette.enabled;
@@ -82,15 +77,16 @@ namespace Scripts.PlayerLogic
         
         public void SimulateDynamicGesture()
         {
-            Debug.Log("Simulating...");
             StopCoroutine(WaitUntilNextFrame());
+            Debug.Log("Simulating...");
+           
             if (_targetFrame == null)
             {
                 _ui.gestureInput.image.color = _palette.clear;
                 return;
             }
 
-            var dynamic = library.characterGestures[_targetFrame.baseName];
+            var dynamic = playerData.library.characterGestures[_targetFrame.baseName];
             
             hands.MoveHands(_targetFrame, handsProperties.handSpeed, ()=>{StartCoroutine(WaitUntilNextFrame());});
             
