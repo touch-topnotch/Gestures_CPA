@@ -3,6 +3,7 @@ using Scripts.GameControllers;
 using Scripts.Gestures;
 using Scripts.Network;
 using Scripts.Static;
+using Scripts.Weapons;
 using Sirenix.OdinInspector;
 using Unity.Netcode;
 using Unity.VisualScripting;
@@ -36,6 +37,9 @@ namespace Scripts.PlayerLogic
             var IsPlayer = IsClient || IsHost;
             transform.name = $"Player {OwnerClientId}";
             
+            _player.characterPool.SpawnCharacters();
+            if (IsServer)
+                OnWeaponsInitializedClientRpc(JsonUtility.ToJson(_player.characterPool.SpawnWeapons()));
             if (IsPlayer && !IsOwner)
             {   
                 _player.SetEnemy(OwnerClientId);
@@ -47,13 +51,22 @@ namespace Scripts.PlayerLogic
                 _player.gestureCombiner.OnFrameRecognized.AddListener(
                     (frame) => { OnLocalClientFrameRecognizedServerRpc(frame, OwnerClientId); });
             }
+            
             if (IsServer && !IsHost)
             {
                 _player.SetEnemy(OwnerClientId);
                 _player.characterPool.SetAvatarType(AvatarType.None);
             }
+
+          
         }
-        
+
+        [ClientRpc]
+        public void OnWeaponsInitializedClientRpc(string weapons)
+        {
+            if(!IsOwner)
+                _player.characterPool.SetWeapons(JsonUtility.FromJson<List<KeyValuePair<string, List<ulong>>>>(weapons));
+        }
         [ServerRpc]
         public void OnLocalClientFrameRecognizedServerRpc(string frameName, ulong client)
         {

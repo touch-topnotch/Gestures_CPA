@@ -9,6 +9,7 @@ using Scripts.Systems;
 using Scripts.Tests;
 using Scripts.Weapons;
 using Sirenix.OdinInspector;
+using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
 using Avatar = Scripts.PlayerLogic.Avatar;
@@ -24,8 +25,11 @@ namespace Scripts.Characters
 
         private AvatarType _currentType;
         private HandAppearanceProcessor _handAppearanceProcessor;
-        public void SetSource(CharacterData data)
+
+        public void SpawnCharacters(CharacterData data)
         {
+
+            Debug.Log("SETTING SOURCE " + data.characterName);
             foreach (var VARIABLE in data.avatars)
             {
                 if (_avatarsDictionary.ContainsKey(VARIABLE.Key))
@@ -41,10 +45,25 @@ namespace Scripts.Characters
                         Instantiate(VARIABLE.Value, this.transform).GetComponent<Avatar>());
                 }
             }
+            _handAppearanceProcessor = new HandAppearanceProcessor(data.handAppearance);
+        }
 
-            if (data.weapons != null)
+        public void SetWeapons(in List<ulong> weapons)
+        {
+            _weapons.Clear();
+            foreach (var weapon_ulong in weapons)
             {
-                foreach (var WEAPON in data.weapons)
+                var nO = NetworkManager.Singleton.SpawnManager.SpawnedObjects[weapon_ulong].GetComponent<Weapon>();
+                _weapons.Add(nO.name.Split('_')[0], nO);
+            }
+            Debug.Log("Character " + name + " contains " + Debugger.dictionaryToString(_weapons, false, true));
+        }
+        public List<ulong> SpawnWeapons(in Dictionary<string, GameObject> weapons)
+        {
+            var spawns = new List<ulong>();
+            if (weapons != null)
+            {
+                foreach (var WEAPON in weapons)
                 {
                     if (WEAPON.Value == null)
                     {
@@ -56,20 +75,31 @@ namespace Scripts.Characters
                         continue;
                     }
 
+                    var instance = Instantiate(WEAPON.Value).GetComponent<NetworkObject>();
+                    instance.Spawn();
+                    if (!instance.TrySetParent(this.transform.parent.parent))
+                    {
+                        Debug.Log("Can't set parent for " + WEAPON.Key);
+                    }
+
                     if (_weapons.ContainsKey(WEAPON.Key))
                     {
-                        Debug.LogWarning("Overwriting weapon " + WEAPON.Key);
+                        Debug.Log("Overwriting weapon " + WEAPON.Key);
                         Destroy(_weapons[WEAPON.Key].gameObject);
-                        _weapons[WEAPON.Key] = Instantiate(WEAPON.Value, this.transform).GetComponent<Weapon>();
+                        _weapons[WEAPON.Key] = instance.GetComponent<Weapon>();
                     }
                     else
                     {
-                        _weapons.Add(WEAPON.Key, Instantiate(WEAPON.Value, this.transform).GetComponent<Weapon>());
+                        Debug.Log("Adding weapon " + WEAPON.Key);
+                        _weapons.Add(WEAPON.Key, instance.GetComponent<Weapon>());
+                     
                     }
+
+                    spawns.Add(_weapons[WEAPON.Key].NetworkObjectId);
                 }
             }
-
-            _handAppearanceProcessor = new HandAppearanceProcessor(data.handAppearance);
+            Debug.Log("Character " + name + " contains " + Debugger.dictionaryToString(_weapons, false, true));
+            return spawns;
         }
 
         public Avatar GetAvatar()

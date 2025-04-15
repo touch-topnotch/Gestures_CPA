@@ -246,9 +246,9 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0.01
   far clip plane: 1000
-  field of view: 129
+  field of view: 100
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -1452,7 +1452,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerCamera: {fileID: 7017231141427154578}
-  fov: 60
+  fov: 100
   invertCamera: 0
   cameraCanMove: 1
   mouseSensitivity: 2
@@ -1475,7 +1475,7 @@ MonoBehaviour:
   sprintSpeed: 7
   sprintDuration: 5
   sprintCooldown: 0.5
-  sprintFOV: 80
+  sprintFOV: 112
   sprintFOVStepTime: 10
   useSprintBar: 1
   hideBarWhenFull: 1

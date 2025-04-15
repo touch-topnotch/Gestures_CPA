@@ -8,6 +8,7 @@ using Scripts.PlayerLogic;
 using Scripts.Static;
 using Scripts.Systems;
 using Scripts.Tests;
+using Scripts.Weapons;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
@@ -148,7 +149,7 @@ namespace Scripts.Characters
 #endif
         #endregion
         
-        private void Awake()
+        public void SpawnCharacters()
         {
             charactersDict = new();
             foreach (var VARIABLE in characterConfigs)
@@ -156,6 +157,29 @@ namespace Scripts.Characters
                 charactersDict.Add(VARIABLE.characterName, InitialiseCharacter(VARIABLE));
             }
         }
+
+        
+        public List<KeyValuePair<string, List<ulong>>> SpawnWeapons()
+        {
+            var all_weapons = new List<KeyValuePair<string, List<ulong>>>();
+            foreach (var VARIABLE in characterConfigs)
+            {
+                var spawns = charactersDict[VARIABLE.characterName].SpawnWeapons(VARIABLE.weapons);
+                all_weapons.Add(new(VARIABLE.characterName, spawns));
+            }
+
+            return all_weapons;
+        }
+
+        public void SetWeapons(List<KeyValuePair<string, List<ulong>>> weapons)
+        {
+            foreach (var char_weapons in weapons)
+            {
+                charactersDict[char_weapons.Key].SetWeapons(char_weapons.Value);
+            }
+        }
+        
+
     
         private void Start()
         { 
@@ -167,7 +191,7 @@ namespace Scripts.Characters
             charInstance.transform.SetParent(this.transform, false);
             charInstance.name = data.characterName;
             var character = charInstance.AddComponent<Character>();
-            character.SetSource(data);
+            character.SpawnCharacters(data);
             return character;
         }
         
