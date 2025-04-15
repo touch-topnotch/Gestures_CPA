@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Scripts.Characters;
 using Scripts.Events;
+using Scripts.HandsLogic;
 using Scripts.PlayerLogic;
 using UnityEngine;
 
@@ -17,23 +18,19 @@ namespace Scripts.Gestures
         public readonly GesturesLibrary library;
         public FrameRecognized OnFrameRecognized => _recognizer.onFrameRecognized;
         public GestureRecognized OnGestureRecognized => _recognizer.onGestureRecognized;
-        private PlayerData _data;
         public Recognizer recognizer => _recognizer;
-        public GestureCombiner(PlayerData data, CharacterPool chars)
+        public GestureCombiner(CharacterPool chars)
         {
-            _data = data;
-            library = new GesturesLibrary(data, chars);
+            library = new GesturesLibrary(chars);
         }
-        public void CreateRecognizer(RecognitionPropertiesConfig config, bool isDebug = false)
+        public void CreateRecognizer(RecognitionPropertiesConfig config, PlayerData data)
         {
-            _recognizer = new Recognizer(_data.hands, config);
+            _recognizer = new Recognizer(data.hands, config);
             
-            if(isDebug)
-                  RecognizeWithAllGestures();
         }
-        private void RecognizeWithAllGestures()
+        public void RecognizeWithAllGestures()
         {
-           // _recognizer.RecognizeDynamicGesture(library.systemGestures);
+            _recognizer.RecognizeDynamicGesture(library.characterGestures);
         } 
 
         public void GestureRecognized(DynamicGesture gesture)
@@ -43,7 +40,7 @@ namespace Scripts.Gestures
             gesture.AllFramesDetected(OnTheEndOfGestureCall);
         }
 
-        public void SimulateFrame(string name)
+        public void SimulateFrame(PlayerHands hands, string name)
         {
             
             if(library.TryGetDynamicGesture(name,out var gesture))
@@ -53,7 +50,7 @@ namespace Scripts.Gestures
                 if(gesture.TryGetGestureFrame(name, out var frame))
                 {
                     Debug.Log("Move hands");
-                    _data.hands.MoveHands(frame, 4, () => { Debug.Log("Frame Simulated!"); });
+                    hands.MoveHands(frame, 4, () => { Debug.Log("Frame Simulated!"); });
                 }
             }
         }
