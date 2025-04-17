@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Components;
 using Gesture_Editor_SDK.Realtime;
 using Scripts.Events;
@@ -25,6 +26,8 @@ namespace Scripts.Weapons
         Range,
         Custom
     }
+
+   
     public abstract class Weapon : NetworkRecognizableBehaviour
     {
         [Header("Weapons components")] 
@@ -60,6 +63,8 @@ namespace Scripts.Weapons
         protected abstract bool HitImpactCondition(out string affected);
         protected abstract bool HitCallCondition();
 
+       
+        
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.Y))

@@ -56,7 +56,7 @@ namespace Characters
             {
                 if(data[charKey].Value.GetAsString() == "" || data[charKey].Value.GetAsString() == "null")
                     continue;
-                Debug.LogWarning(data[charKey].Value.GetAsString());
+                Debug.Log(data[charKey].Value.GetAsString());
                 converted.Add(charKey, data[charKey].Value.GetAs<JsonCharacterProperties>());
             }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Characters;
 using Gesture_Editor_SDK.Realtime;
+using ModestTree;
 using Newtonsoft.Json;
 using Scripts.Characters;
 using Scripts.Databases;
@@ -129,6 +130,7 @@ namespace Scripts.Gestures
  
             foreach (var charKey in jsonCharacters.Keys)
             {
+         
                 if (characters.ContainsKey(charKey))
                 {
                     foreach (var gesture in jsonCharacters[charKey].Gestures)

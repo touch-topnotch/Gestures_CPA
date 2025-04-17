@@ -8,7 +8,7 @@ namespace Scripts.Events
 {
     public class EventInitializer: MonoBehaviour
     {
-
+        public bool isInitialized;
         public event Action onServicesInitilalised;
         private async void CheckServicesInitialization()
         {
@@ -31,6 +31,7 @@ namespace Scripts.Events
                 Destroy(this);
             else
                 Instance = this;
+            onServicesInitilalised += () => { isInitialized = true; };
             CheckServicesInitialization();
         }
 
