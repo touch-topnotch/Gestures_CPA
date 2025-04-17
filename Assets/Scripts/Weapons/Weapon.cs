@@ -69,7 +69,7 @@ namespace Scripts.Weapons
         {
             if (Input.GetKeyDown(KeyCode.Y))
             {
-                playerData = transform.parent.parent.parent.GetComponent<Player>().data;
+                playerData = transform.parent.GetComponent<Player>().data;
                 weaponDesign.SetPlayerData(playerData);
             }
         }
