@@ -32,6 +32,23 @@ namespace Scripts.Weapons
         [SerializeField]
         protected WeaponDesign weaponDesign;
         
+        private int _power;
+        
+        [ShowInInspector]
+        public int power
+        {
+            get => _power;
+            protected set
+            {
+                _power = value;
+                if (_power <= 0)
+                {
+                    AbilityReleased();
+                    _power = 0;
+                }
+            }
+        }
+        
         [SerializeField]
         [Tooltip("Weapon hit call cooldown")] private float _hitCallDelay = 0.5f;
         private float _hitCallTimer;
@@ -143,7 +160,7 @@ namespace Scripts.Weapons
 
         private void HandleHitImpact()
         {
-            if ((IsServer) && HitImpactCondition(out string affected))
+            if (IsServer && HitImpactCondition(out string affected))
             {
                 state.Value = State.HitImpact;
                 OnHitImpact(affected);
