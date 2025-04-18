@@ -45,7 +45,7 @@ namespace Scripts.Network
         }
         public static void SetItemToCloud(string item, string itemKey, Action<string> onSuccess)
         {
-            Debug.Log("ITEM: " +item);
+            /*Debug.Log("ITEM: " +item);
             var url =
                 $"https://services.api.unity.com/cloud-save/v1/data/projects/{projectId}/environments/{environmentId}/custom/{itemKey}/items";
             WebRequests.PostJson(
@@ -58,7 +58,7 @@ namespace Scripts.Network
                 item,
                 (string error) => { Debug.LogError("Error: " + error); },
                 onSuccess
-            );
+            );*/
         }
         public static void SetItemToCloud(ItemStruct item, string itemKey, Action<string> onSuccess)
         {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -141,7 +142,7 @@ namespace Scripts.Systems
                 if (conditions[step][0] == 'w')
                 {
                     var keys = conditions[step].Split(' ');
-                    timer = float.Parse(keys[2]);
+                    timer = float.Parse(keys[2], CultureInfo.InvariantCulture);
                     _timerType = keys[1] == ">" ? TimerType.more : TimerType.less;
                     step += 1;
                 }

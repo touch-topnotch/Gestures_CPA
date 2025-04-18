@@ -20,9 +20,16 @@ namespace Network
         public event Action<string> LobbyConnected;
         public event Action<string> LobbyConnectedAsHost;
 
+        private void Start()
+        {
+            /*#if DEDICATED_SERVER
+            
+            #endif*/
+        }
+
         private void Update()
         {
-            HandleLobbyHeartbeat();
+            //HandleLobbyHeartbeat();
         }
 
         private async void HandleLobbyHeartbeat()
@@ -59,25 +66,7 @@ namespace Network
             CurrentLobbyID = _currentLobby.Id;
             LobbyConnected?.Invoke(CurrentLobbyID);
         }
-
-        public async UniTask ConnectOrCreateLobby(int maxPlayers)
-        {
-            if (_currentLobby != null)
-                return;
-
-            var availableLobbies = await ListLobbies();
-
-            if (availableLobbies.Count > 0)
-            {
-                await QuickJoinLobby();
-            }
-            else
-            {
-                await CreateLobby(maxPlayers);
-            }
-        }
-
-
+        
         public async UniTask CreateLobby(int maxPlayers)
         {
             try

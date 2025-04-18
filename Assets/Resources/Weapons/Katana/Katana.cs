@@ -14,7 +14,8 @@ using UnityEngine;
 
         private void Start()
         {
-            vfxProcessor.DisableAllObjects();
+            if(vfxProcessor!=null)
+                vfxProcessor.DisableAllObjects();
         }
 
         private void DissolveItem(GameObject o, int range = 0)
