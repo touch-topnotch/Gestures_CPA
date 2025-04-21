@@ -15,7 +15,6 @@ namespace Components
 
         public void SetPlayerData(PlayerData data)
         {
-            this.transform.SetParent(playerData.playerTransform);
             playerData = data;
         }
 

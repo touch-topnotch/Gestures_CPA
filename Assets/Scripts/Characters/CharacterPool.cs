@@ -10,6 +10,7 @@ using Scripts.Systems;
 using Scripts.Tests;
 using Scripts.Weapons;
 using Sirenix.OdinInspector;
+using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
@@ -176,6 +177,10 @@ namespace Scripts.Characters
             foreach (var char_weapons in weapons)
             {
                 charactersDict[char_weapons.Key].SetWeapons(char_weapons.Value);
+                foreach (var VARIABLE in char_weapons.Value)
+                {
+                    NetworkManager.Singleton.SpawnManager.SpawnedObjects[VARIABLE].GetComponent<Weapon>().Initialize(transform.parent.GetComponent<PlayerData>());
+                }
             }
         }
         

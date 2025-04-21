@@ -25,13 +25,15 @@ namespace Scripts.PlayerLogic
         public readonly ulong id;
         public readonly Transform playerTransform;
         public readonly PlayerHands hands;
+        public readonly BodyAnchors anchors;
         public Recognizer recognizer;
         public GesturesLibrary library;
-        public PlayerData(ulong id, Transform transform, PlayerHands hands, Recognizer recognizer, GesturesLibrary library)
+        public PlayerData(ulong id, Transform transform, PlayerHands hands, BodyAnchors anchors, Recognizer recognizer, GesturesLibrary library)
         {
             this.id = id;
             this.playerTransform = transform;
             this.hands = hands;
+            this.anchors = anchors;
             this.recognizer = recognizer;
             this.library = library;
         }
@@ -147,6 +149,7 @@ namespace Scripts.PlayerLogic
                 }
             }
         }
+        
 #endif
 
 
@@ -186,7 +189,7 @@ namespace Scripts.PlayerLogic
         private void InitializeComponents(ulong id)
         {
             _gestureCombiner = new GestureCombiner(_characterPool);
-            data = new PlayerData(id, transform, _hands, _gestureCombiner.recognizer, _gestureCombiner.library);
+            data = new PlayerData(id, transform, _hands, anchors, _gestureCombiner.recognizer, _gestureCombiner.library);
             characterPool.SetMaterialId((int)id); 
             UpdateEvent.Instance.AddListener(UpdateAnchors);
             Debug.Log($"Player {id} initialized. RigType = {rigType}");

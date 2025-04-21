@@ -10,15 +10,20 @@ using UnityEngine.Serialization;
 
 public class Spear : WeaponDesign
 {
+    [SerializeField] private LayerMask _floorMask;
+    
     [Header("Spear Settings")]
-    [SerializeField] private Transform _endSpawnPoint;
+    [SerializeField] private Transform _startSpawnPoint;
     [SerializeField] private float _spawnDuration;
     [SerializeField] private Animation _spawnAnimation;
     [SerializeField] private GameObject _spearObject;
+    
+    [Header("Aura")]
     [SerializeField] private GameObject _spearAura;
     
     [Header("VFX Objects")]
     [SerializeField] private GameObject _portalVFX;
+    private Vector3 _portalSpawnLocalPos;
     
     private bool _shouldPortalFollowHandPosStop;
     private bool _shouldPortalFollowHandRotZStop;
@@ -28,6 +33,7 @@ public class Spear : WeaponDesign
     private void Awake()
     {
         _spearObject.SetActive(false);
+        _portalSpawnLocalPos = _portalVFX.transform.localPosition;
     }
 
     public override void OnFrameRecognized(string frameName)
@@ -40,11 +46,18 @@ public class Spear : WeaponDesign
         
         switch (frameId)
         {
-            case 0:
-                transform.position = _endSpawnPoint.transform.position;
-                transform.rotation = playerData.playerTransform.rotation;
+            case 1: // 0
+                transform.position = playerData.anchors.Root.transform.position;
+                transform.rotation = playerData.anchors.Body.transform.rotation;
+                
+                RaycastHit hit;
+                if (Physics.Raycast(_startSpawnPoint.position, Vector3.down, out hit, 10f, _floorMask))
+                {
+                    transform.position = hit.point;
+                }
                 break;
             case 3:
+                _portalVFX.transform.localPosition = _portalSpawnLocalPos;
                 _portalVFX.SetActive(true);
                 _shouldPortalFollowHandPosStop = false;
                 _shouldPortalFollowHandRotZStop = false;
@@ -96,7 +109,7 @@ public class Spear : WeaponDesign
         float targetRotZ = playerData.hands.rightHand.points[0].rotation.eulerAngles.z;
         float targetRotX = playerData.hands.rightHand.points[0].rotation.eulerAngles.x;
 
-        while (!_shouldPortalFollowHandRotZStop || Vector3.Distance(_portalVFX.transform.eulerAngles, new Vector3(0,0, targetRotZ)) > 0.1f)
+        while (!_shouldPortalFollowHandRotZStop || Vector3.Distance(_portalVFX.transform.eulerAngles, new Vector3(targetRotX,0, targetRotZ)) > 0.1f)
         {
             if (!_shouldPortalFollowHandRotZStop) targetRotZ = playerData.hands.rightHand.points[0].rotation.eulerAngles.z;
             else targetRotZ = -180f;
@@ -106,7 +119,7 @@ public class Spear : WeaponDesign
             
             
             Quaternion targetQuaternion = Quaternion.Euler(targetRotX, 0, targetRotZ);
-            _portalVFX.transform.rotation = Quaternion.Lerp(_portalVFX.transform.rotation, targetQuaternion, 8f * Time.deltaTime);
+            _portalVFX.transform.rotation = Quaternion.Slerp(_portalVFX.transform.rotation, targetQuaternion, 8f * Time.deltaTime);
             yield return null;
         }
     }
