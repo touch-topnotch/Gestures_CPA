@@ -28,17 +28,16 @@ namespace Scripts.Weapons
     }
 
    
-    public abstract class Weapon : NetworkRecognizableBehaviour
+    public abstract class Weapon : NetworkRecognizableBehaviour, IGrabable
     {
         [Header("Weapons components")] 
         
         [SerializeField]
         protected WeaponDesign weaponDesign;
         
+        [field:SerializeField] public GrabSystem grabSystem { get; set; }
+
         protected int _power;
-        
-        [ShowInInspector]
-        
         
         [SerializeField]
         [Tooltip("Weapon hit call cooldown")] private float _hitCallDelay = 0.5f;
@@ -55,6 +54,32 @@ namespace Scripts.Weapons
         {
             playerData = data;
             weaponDesign.SetPlayerData(playerData);
+            SetGrabSystemPlayerData(data);
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                Initialize(transform.parent.GetComponent<Player>().data);
+            }
+        }
+        
+        public void SetGrabSystemPlayerData(PlayerData data)
+        {
+            grabSystem.SetPlayerData(data);
+            grabSystem.OnGrabStart += OnGrabbed;
+            grabSystem.OnGrabEnd += OnUnGrabbed;
+        }
+        
+        public void OnGrabbed()
+        {
+            
+        }
+
+        public void OnUnGrabbed()
+        {
+            
         }
 
         protected virtual void OnHitStartHold()
