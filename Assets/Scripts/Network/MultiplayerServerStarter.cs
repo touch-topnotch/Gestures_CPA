@@ -15,7 +15,7 @@ using UnityEngine;
 using Player = Unity.Services.Matchmaker.Models.Player;
 
 
-public class MultiplayerServerStarter : MonoBehaviour
+public class MultiplayerServerStarter : NetworkBehaviour
 {
     public static event Action ClientInstance;
 
@@ -39,9 +39,13 @@ public class MultiplayerServerStarter : MonoBehaviour
     private MatchmakingResults _matchmakingPayload;
 
     private bool _backfilling = false;
+    private NetworkManager _networkManager;
+
+    public bool playerWasConnected = false;
 
     async void Start()
     {
+        _networkManager = NetworkManager.Singleton;
         bool server = false;
         var args = System.Environment.GetCommandLineArgs();
         for (int i = 0; i < args.Length; i++)
@@ -71,19 +75,41 @@ public class MultiplayerServerStarter : MonoBehaviour
 
     private void StartServer()
     {
-        NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(
+        _networkManager.GetComponent<UnityTransport>().SetConnectionData(
             INTERNAL_SERVER_IP, _serverPort);
-        NetworkManager.Singleton.StartServer();
-        NetworkManager.Singleton.OnClientDisconnectCallback += ClientDisconnected;
+        _networkManager.StartServer();
+        _networkManager.OnClientDisconnectCallback += ClientDisconnected;
+        _networkManager.OnClientConnectedCallback += ClientConnected;
     }
 
-    private async void ClientDisconnected(ulong obj)
+    private void ClientConnected(ulong obj)
+    {
+        playerWasConnected = true;
+    }
+
+    private void ClientDisconnected(ulong obj)
     {
         Debug.Log($"{obj} player disconnected");
-        if (!_backfilling && NetworkManager.Singleton.ConnectedClients.Count > 0 && NeedsPlayers())
+        if (!_backfilling && _networkManager.ConnectedClients.Count > 0 && NeedsPlayers())
         {
             Debug.Log($"{obj} Started BeginBackfilling");
             BeginBackfilling(_matchmakingPayload);
+        }
+    }
+
+    private void Update()
+    {
+        if (!playerWasConnected)
+            return;
+
+        if (Application.platform == RuntimePlatform.LinuxServer)
+        {
+            if (_networkManager.ConnectedClients.Count == 0)
+            {
+                enabled = false;
+                Debug.Log("APPLICATION QUIT");
+                Application.Quit();
+            }
         }
     }
 
@@ -175,7 +201,7 @@ public class MultiplayerServerStarter : MonoBehaviour
 
     private bool NeedsPlayers()
     {
-        return NetworkManager.Singleton.ConnectedClients.Count < 4;
+        return _networkManager.ConnectedClients.Count < 4;
     }
 
     private async UniTask<MatchmakingResults> GetMatchmakerPayload(int timeout)

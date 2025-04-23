@@ -10,9 +10,17 @@ using Unity.Services.Matchmaker;
 using Unity.Services.Matchmaker.Models;
 using UnityEngine;
 
-public class MatchmakerClient : MonoBehaviour
+public class MatchmakerClient : NetworkBehaviour
 {
+    [SerializeField] private List<GameObject> offObjects = new();
+    private NetworkManager _networkManager;
     private string _ticketID;
+
+    private void Start()
+    {
+        _networkManager = NetworkManager.Singleton;
+    }
+
     private void OnEnable()
     {
         MultiplayerServerStarter.ClientInstance += SignIn;
@@ -93,6 +101,7 @@ public class MatchmakerClient : MonoBehaviour
                     gotAssignment = true;
                     TicketAssigned(multiplayAssignment);
                     Debug.Log("MultiplayAssignment.StatusOptions.Found");
+                    offObjects.ForEach(e => e.SetActive(false));
                     break;
                 case MultiplayAssignment.StatusOptions.InProgress:
                     Debug.Log("MultiplayAssignment.StatusOptions.InProgress");
@@ -111,10 +120,22 @@ public class MatchmakerClient : MonoBehaviour
         } while (!gotAssignment);
     }
 
+    private void OnApplicationQuit()
+    {
+        if (Application.platform != RuntimePlatform.LinuxServer)
+        {
+            if (_networkManager.IsConnectedClient)
+            {
+                _networkManager.Shutdown(true);
+                _networkManager.DisconnectClient(_networkManager.LocalClientId);
+            }
+        }
+    }
+
     private void TicketAssigned(MultiplayAssignment assignment)
     {
         Debug.Log($"Ticket Assigned: {assignment.Ip}:{assignment.Port}");
-        NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(assignment.Ip, (ushort)assignment.Port);
-        NetworkManager.Singleton.StartClient();
+        _networkManager.GetComponent<UnityTransport>().SetConnectionData(assignment.Ip, (ushort)assignment.Port);
+        _networkManager.StartClient();
     }
 }
