@@ -156,7 +156,11 @@ namespace Scripts.PlayerLogic
         private void Awake()
         {
             if (isLocal)
+            {
+                _characterPool.SpawnCharacters();
                 SetOwner(0);
+            }
+                
         }
 
         public void SetOwner(ulong id)
