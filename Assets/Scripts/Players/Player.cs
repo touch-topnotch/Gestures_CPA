@@ -22,18 +22,20 @@ namespace Scripts.PlayerLogic
     }
     public struct PlayerData
     {
+        public static PlayerData local;
         public readonly ulong id;
-        public readonly Transform playerTransform;
+        public readonly BodyAnchors bodyAnchors;
         public readonly PlayerHands hands;
         public Recognizer recognizer;
         public GesturesLibrary library;
-        public PlayerData(ulong id, Transform transform, PlayerHands hands, Recognizer recognizer, GesturesLibrary library)
+        public PlayerData(ulong id, BodyAnchors bodyAnchors, PlayerHands hands, Recognizer recognizer, GesturesLibrary library)
         {
             this.id = id;
-            this.playerTransform = transform;
+            this.bodyAnchors = bodyAnchors;
             this.hands = hands;
             this.recognizer = recognizer;
             this.library = library;
+            local = this;
         }
     }
 
@@ -95,14 +97,16 @@ namespace Scripts.PlayerLogic
 
         private void ActivateRig()
         {
+            _pcRig.gameObject.SetActive(_rigType == RigType.PCRig);
+            _xrRig.gameObject.SetActive(_rigType == RigType.XRRig);
+            
             if (_rigType == RigType.PCRig)
                 _pcRig.Initialize(data);
             
             if (_rigType == RigType.XRRig)
                 _xrRig.Initialize(data);
             
-            _pcRig.gameObject.SetActive(_rigType == RigType.PCRig);
-            _xrRig.gameObject.SetActive(_rigType == RigType.XRRig);
+         
         
         }
         
@@ -173,7 +177,7 @@ namespace Scripts.PlayerLogic
             rigType = _rigType;
 #endif
             characterPool.SetAvatarType(AvatarType.Local);
-            _gestureCombiner.CreateRecognizer(curRig.RecognitionPropertiesConfig, data);
+            _gestureCombiner.CreateRecognizer(curRig.RecognitionPropertiesConfig);
             data.library.onLibraryInitialized += () =>
             {
                 _gestureCombiner.RecognizeWithAllGestures();
@@ -190,7 +194,7 @@ namespace Scripts.PlayerLogic
         private void InitializeComponents(ulong id)
         {
             _gestureCombiner = new GestureCombiner(_characterPool);
-            data = new PlayerData(id, transform, _hands, _gestureCombiner.recognizer, _gestureCombiner.library);
+            data = new PlayerData(id, anchors, _hands, _gestureCombiner.recognizer, _gestureCombiner.library);
             characterPool.SetMaterialId((int)id); 
             UpdateEvent.Instance.AddListener(UpdateAnchors);
             Debug.Log($"Player {id} initialized. RigType = {rigType}");

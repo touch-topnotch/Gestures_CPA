@@ -3,6 +3,7 @@ using Gesture_Editor_SDK.ReadOnly;
 using Scripts.Design;
 using Scripts.Events;
 using Scripts.Gestures;
+using Scripts.PlayerLogic;
 using Scripts.Systems;
 using UnityEngine;
 
@@ -64,24 +65,16 @@ namespace Scripts.HandsLogic
         //         MoveHands(frame,speed, onPlaced);
         // }
 
-        public void MoveHands(in GestureFrame frame, in float speed, in Action onPlaced)
+        public void MoveHands(in GestureFrame frame,in BodyAnchors anchors, float speed, Action onPlaced)
         {
-            switch (frame.Hands.HandUsed)
-            {
-                case HandUsedType.LEFT:
-                    leftHand.ChangePositionSmooth(frame.Hands.LeftBones, speed, onPlaced);
-                    break;
-                case HandUsedType.RIGHT:
-                    rightHand.ChangePositionSmooth(frame.Hands.RightBones, speed, onPlaced);
-                    break;
-                case HandUsedType.LEFTNRIGHT:
-                    leftHand.ChangePositionSmooth(frame.Hands.LeftBones, speed, onPlaced);
-                    rightHand.ChangePositionSmooth(frame.Hands.RightBones, speed);
-                    break;
-                case HandUsedType.NULL:
-                    Debug.LogError("Gesture: " + frame.name + " doesn't contains bones!");
-                    break;
-            }
+            frame.Hands.LeftBones?.ListenAnchors(anchors);
+            frame.Hands.RightBones?.ListenAnchors(anchors);
+            string rName = frame.name;
+            frame.Hands.SwitchManipulation((item, data) => { item.Move(data, speed, onPlaced); }, leftHand, rightHand,
+                () =>
+                {
+                    Debug.Log($"Gesture frame {rName} doesn't contain frames!");
+                });
         }
     }
 }

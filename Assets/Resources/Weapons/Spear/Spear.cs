@@ -32,8 +32,8 @@ public class Spear : WeaponDesign
         switch (frameId)
         {
             case 0:
-                transform.position = playerData.playerTransform.position;
-                transform.rotation = playerData.playerTransform.rotation;
+                transform.position = playerData.bodyAnchors.Body.position;
+                transform.rotation = playerData.bodyAnchors.Body.rotation;
                 break;
             case 8:
                 _spearObject.transform.position = _spawnPoint.position;

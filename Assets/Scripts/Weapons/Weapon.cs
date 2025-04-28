@@ -51,7 +51,7 @@ namespace Scripts.Weapons
         public void Initialize(PlayerData data)
         {
             playerData = data;
-            weaponDesign.SetPlayerData(data);
+            weaponDesign.playerData = data;
         }
 
         protected virtual void OnHitStartHold()
@@ -85,7 +85,7 @@ namespace Scripts.Weapons
         public override void OnNetworkSpawn()
         {
             if (IsClient)
-                weaponDesign.SetPlayerData(playerData);
+                weaponDesign.playerData = playerData;
         }
 
         [ClientRpc]

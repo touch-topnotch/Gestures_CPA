@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Scripts.Design;
 using Scripts.Events;
 using Scripts.HandsLogic;
+using Scripts.PlayerLogic;
+using Scripts.Systems;
 using UnityEngine;
 
 namespace Scripts.Gestures
@@ -11,7 +13,9 @@ namespace Scripts.Gestures
     {
         public readonly GestureRecognized onGestureRecognized;
         public readonly FrameRecognized onFrameRecognized;
-        
+
+        private Color _colorActive = new Color(1, 1, 1, 0.5f);
+        private Color _colorPassive = new Color(1, 1, 1, 0.9f);
         private List<GestureFrame> _possibleFrames;
         private List<DynamicGesture> _possibleGestures;
         
@@ -20,12 +24,13 @@ namespace Scripts.Gestures
         private readonly UpdateEvent _onUpdate;
 
         private readonly GesturesLibrary _library;
-
+        private BodyAnchors bodyAnchors;
         private int _curGesture = 0;
         private int _curFrameId = 0;
         private bool wasDrawnNearly = false;
-        
 
+        private GameObject object1;
+        private GameObject object2;
         public Recognizer(PlayerHands hands, RecognitionPropertiesConfig config)
         {
             _hands = hands;
@@ -35,7 +40,7 @@ namespace Scripts.Gestures
             onFrameRecognized = new FrameRecognized();
             
             onGestureRecognized = new GestureRecognized();
-
+            bodyAnchors = _hands.transform.parent.GetComponent<BodyAnchors>();
             onFrameRecognized.AddListener(FrameLog);
             onFrameRecognized.AddListener((name)=>
             {
@@ -43,6 +48,8 @@ namespace Scripts.Gestures
             });
             
             onGestureRecognized.AddListener(GestureLog);
+            object1 = new GameObject("Hand L test");
+            object2 = new GameObject("Hand R test");
         }
 
         private void FrameLog(string name)
@@ -56,10 +63,10 @@ namespace Scripts.Gestures
 
         public bool RecognizeFrame(RecognitionProperties properties, GestureFrame frame, bool invokeEvent)
         {
-
-            if (!_hands.IsRecognized)
-                return false;
-            
+            //
+            // if (!_hands.IsRecognized)
+            //     return false;
+            //
             if (RecognizeHand(frame.Hands.LeftBones, _hands.leftHand.points, properties)
                 && RecognizeHand(frame.Hands.RightBones, _hands.rightHand.points, properties))
             {
@@ -113,14 +120,16 @@ namespace Scripts.Gestures
                 return;
 
             var NearlyFrameId = RecognizeFrame(_config.SupportiveProperties, false);
+            
             if (NearlyFrameId != -1)
             {
-                _hands.handVisualiser.OverrideHands(_possibleFrames[NearlyFrameId].Hands);
-
-                foreach (var hand in _hands.handVisualiser.activeHands)
-                {
-                    hand.ChangeColorPinPong(HandShaderProps.EdgeColor, new Color(1,1,1,0.1f), new Color(1,1,1,0.5f), 2);
-                }
+                Debug.Log("Show hands"); 
+                _hands.handVisualiser.Move(_possibleFrames[NearlyFrameId].Hands, 4, () => { });
+                _hands.handVisualiser.ManipulateLasts((m)=>m.ChangeColorPinPong(_colorActive, _colorPassive, new ColorParams(
+                    HandShaderProps.EdgeColor,
+                        1, false)));
+                
+             
 
                 wasDrawnNearly = true;
             }
@@ -133,7 +142,7 @@ namespace Scripts.Gestures
             var frameId = RecognizeFrame(_config.PlayerProperties, true);
             
             if (frameId != -1)
-            {
+            { 
                 HideHands();
                 
             //    onFrameRecognized?.Invoke(_possibleGestures[_curGesture].frames[_curFrameId].name);
@@ -167,28 +176,32 @@ namespace Scripts.Gestures
             }
             return -1;
         }
-        
-        
-        private static bool RecognizeHand(in BonesData bonesData, in Transform[] handSkeleton, in RecognitionProperties props)
+
+      
+        private bool RecognizeHand(in BonesData bonesData, in Transform[] handSkeleton, in RecognitionProperties props)
         {
             if (bonesData == null || bonesData.rotations?.Length != handSkeleton.Length)
                 return true;
-
-
-            var dist = OptimizedDistance(bonesData.rootPos, handSkeleton[0].localPosition);
-         
+            
+            bonesData.ListenAnchors(PlayerData.local.bodyAnchors);
+            
+            var dist = OptimizedDistance(bonesData.rootPos, handSkeleton[0].position);
+          
             if (1 - dist < props.positionQuality)
             {// l.rl("Canceled, because position: " + dist + " > " + props.positionQuality);
                 return false;
             }
+            float distance = OptimizedDistance(handSkeleton[0].rotation,bonesData.rotations[0]);
             
-            for (int i = 0; i < bonesData.rotations.Length; i++)
+            if (distance < props.rootRotationQuality)
+                return false;
+   
+            for (int i = 1; i < bonesData.rotations.Length; i++)
             {
-                float distance = OptimizedDistance( bonesData.rotations[i], handSkeleton[i].localRotation);
-                var quality = i == 0 ? props.rootRotationQuality : props.rotationQuality;
+                distance = OptimizedDistance( bonesData.rotations[i], handSkeleton[i].localRotation);
+                var quality = props.rotationQuality;
                 if (distance < quality) // 0 - bad, 1 - good, 0.9 - ok
                 {
-                    //l.rl("Canceled, because rotation: " + distance + " < " + props.rotationQuality);
                     return false;
                 }
             }
@@ -197,8 +210,8 @@ namespace Scripts.Gestures
         
         public void HideHands()
         {
-            Debug.Log("Hide Hands");
-             _hands.handVisualiser.HideHands();
+            Debug.Log("Hide hands"); 
+            _hands.handVisualiser.ManipulateAll((e)=>e.Hide());
             wasDrawnNearly = false;
         }
 

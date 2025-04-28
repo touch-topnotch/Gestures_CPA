@@ -65,8 +65,7 @@ namespace Scripts.PlayerLogic
 //                    print(gestureFrame.name);
                     _ui.gestureInput.image.color = _palette.enabled;
                     // play Gesture Frame
-                    
-                    hands.MoveHands(frame, handsProperties.handSpeed,
+                    hands.MoveHands(frame,anchors, handsProperties.handSpeed,
                         () => { _ui.gestureInput.image.color = _palette.clear; });
                     return;
                 
@@ -88,7 +87,7 @@ namespace Scripts.PlayerLogic
 
             var dynamic = playerData.library.characterGestures[_targetFrame.baseName];
             
-            hands.MoveHands(_targetFrame, handsProperties.handSpeed, ()=>{StartCoroutine(WaitUntilNextFrame());});
+            hands.MoveHands(_targetFrame, anchors, handsProperties.handSpeed, ()=>{StartCoroutine(WaitUntilNextFrame());});
             
             _targetFrame = dynamic.GetNextFrameOf(_targetFrame);
         }

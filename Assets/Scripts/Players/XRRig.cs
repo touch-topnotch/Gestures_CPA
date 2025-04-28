@@ -1,14 +1,16 @@
+using Scripts.HandsLogic;
 using Scripts.Movements;
 using Scripts.Static;
+using Scripts.Systems;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.XR.Hands.Samples.VisualizerSample;
 
 namespace Scripts.PlayerLogic
 {
-    public class XRRig :Rig
+    public class XRRig : Rig
     {
-        [SerializeField] private Transform cameraTarget;
-        
+        [SerializeField] private Transform _cameraTarget;
         [SerializeField] private XRMovement _movement;
         [SerializeField] private Vector3 _centerOffset;
         public override bool isMoved() => _movement.isMoved();
@@ -20,37 +22,58 @@ namespace Scripts.PlayerLogic
         public override void Initialize(PlayerData data)
         {
             base.Initialize(data);
-            Centrize();
+            headInteraction.onHeadInteraction += (e) =>
+            {
+                if (e == HeadInteractionType.DoubleNod)
+                {
+                    var transform1 = hands.transform;
+                    var position = transform1.position;
+                    position = new Vector3(position.x + 1, position.y, position.z);
+                    transform1.position = position;
+                }
+                if (e == HeadInteractionType.Shaking)
+                {
+                    if (_movement.isMoved())
+                        _movement.StopMove();
+                    else
+                    {
+                        Centrize();
+                        _movement.StartMove();
+                    }
+                        
+                }
+            };
         }
+
         private void Update()
         {
             // Update body rotation
-            var centrisedPosition = cameraTarget.localPosition + _centerOffset;
-            var eulerAngles = cameraTarget.localEulerAngles;
+            var centrisedPosition = _cameraTarget.localPosition + _centerOffset;
+            // Debug.Log(centrisedPosition);
+            var eulerAngles = _cameraTarget.localEulerAngles;
+
             anchors.Head.localPosition = new Vector3(0, centrisedPosition.y, 0);
             anchors.Head.localRotation = Quaternion.Euler(eulerAngles.x, 0, eulerAngles.z);
-            anchors.Body.localRotation =  Quaternion.Euler(0, eulerAngles.y, 0);
-            if (!isMoved())
-            {
-                anchors.Body.localPosition = new Vector3(centrisedPosition.x, 0, centrisedPosition.z);
-            }
-            else
-            {
-                anchors.Head.localPosition = Calculations.Rotate(centrisedPosition, eulerAngles.y);
-            }
+
+            anchors.Body.localPosition = new Vector3(centrisedPosition.x, 0, centrisedPosition.z);
+            anchors.Body.localRotation = Quaternion.Euler(0, eulerAngles.y, 0);
         }
+
         private static Vector3 ClampRotation(Vector3 rotation)
         {
             // rotation.x = rotation.x > 180 ? rotation.x - 360 : rotation.x;
             //rotation.z = rotation.z > 180 ? rotation.z - 360 : rotation.z;
             return rotation;
         }
+
         protected override void Centrize()
         {
-            var position = cameraTarget.localPosition;
+            var position = _cameraTarget.localPosition;
             _centerOffset = new Vector3(-position.x, 0, -position.z);
+            hands.transform.localPosition = _centerOffset;
         }
-
+        // мы двигаем голову, нужно двигать все, кроме тела
     }
- 
+
 }
+ 
