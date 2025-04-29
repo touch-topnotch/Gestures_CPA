@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5056249272422293498
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 782296985878454678}
+  m_Layer: 0
+  m_Name: L_GrabPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &782296985878454678
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5056249272422293498}
+  m_LocalRotation: {x: 0, y: 0.9914449, z: 0, w: 0.13052626}
+  m_LocalPosition: {x: 0, y: -0.0339, z: 0.08}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2893264351247911610}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 165, z: 0}
 --- !u!1 &5743823842873345001
 GameObject:
   m_ObjectHideFlags: 0
@@ -139,6 +170,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -2886011254516924842, guid: bf7151579c38e2a44be94ba8773876c1,
+        type: 3}
+      insertIndex: 0
+      addedObject: {fileID: 782296985878454678}
     - targetCorrespondingSourceObject: {fileID: -2886011254516924842, guid: bf7151579c38e2a44be94ba8773876c1,
         type: 3}
       insertIndex: -1
@@ -319,6 +354,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _handMaterialType: 0
   _handType: 0
+  grabPoint: {fileID: 782296985878454678}
   points:
   - {fileID: 2893264351247911610}
   - {fileID: 7904203235543305693}
