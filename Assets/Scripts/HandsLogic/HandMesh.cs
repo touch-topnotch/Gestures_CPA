@@ -49,7 +49,8 @@ namespace Scripts.HandsLogic
         private readonly List<PinPongProp> _pinPongs = new ();
         
         private UpdateEvent onUpdate => UpdateEvent.Instance;
-        
+
+        private bool _isPlaced;
         private Action _onPlaced;
         private float _speed;
         private bool _isMoved;
@@ -125,7 +126,8 @@ namespace Scripts.HandsLogic
             var a2 = Quaternion.Angle(points[13].localRotation, _target.rotations[13]);
             if(dist < 0.05f && a1 < 0.05f&& a2< 0.05f)
             {
-                StopMoveHand();
+                if(!_isPlaced)
+                    StopMoveHand();
                 return;
             }
             
@@ -142,7 +144,8 @@ namespace Scripts.HandsLogic
         private void StopMoveHand()
         {
             _onPlaced?.Invoke();
-            onUpdate.RemoveListener(MoveHand);
+            _isPlaced = true;
+            //onUpdate.RemoveListener(MoveHand);
         }
 
         public bool IsActive() => gameObject.activeSelf;
@@ -178,6 +181,7 @@ namespace Scripts.HandsLogic
             _target = target;
             _speed = speed;
             _onPlaced = onPlaced;
+            _isPlaced = false;
             if (!_isMoved)
                 onUpdate.AddListener(MoveHand);
         }

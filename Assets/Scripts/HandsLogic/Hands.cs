@@ -16,7 +16,8 @@ namespace Scripts.HandsLogic
         public HandMesh rightHand;
 
         private MaterialPair _handMaterialPair;
-
+        private bool _isSync;
+        private Action _onPlaced;
         public MaterialPair HandMaterialPair
         {
             get
@@ -65,16 +66,36 @@ namespace Scripts.HandsLogic
         //         MoveHands(frame,speed, onPlaced);
         // }
 
+        public void SyncHands()
+        {
+            _isSync = !_isSync;
+            if (_isSync)
+            {
+                _onPlaced?.Invoke();
+            }
+        }
         public void MoveHands(in GestureFrame frame,in BodyAnchors anchors, float speed, Action onPlaced)
         {
             frame.Hands.LeftBones?.ListenAnchors(anchors);
             frame.Hands.RightBones?.ListenAnchors(anchors);
-            string rName = frame.name;
-            frame.Hands.SwitchManipulation((item, data) => { item.Move(data, speed, onPlaced); }, leftHand, rightHand,
-                () =>
-                {
-                    Debug.Log($"Gesture frame {rName} doesn't contain frames!");
-                });
+            switch (frame.Hands.HandUsed)
+            {
+                case HandUsedType.LEFT:
+                    leftHand.Move(frame.Hands.LeftBones, speed, onPlaced);
+                    break;
+                case HandUsedType.RIGHT:
+                    rightHand.Move(frame.Hands.RightBones, speed, onPlaced);
+                    break;
+                case HandUsedType.LEFTNRIGHT:
+                    _onPlaced = onPlaced;
+                    _isSync = true; //  0 hands - true, 1 hand - false, 2 hands - true. Короче это так работает, забей
+                    leftHand.Move(frame.Hands.LeftBones, speed, SyncHands);
+                    rightHand.Move(frame.Hands.RightBones, speed, SyncHands);
+                    break;
+                case HandUsedType.NULL:
+                    Debug.LogError("Gesture: " + frame.name + " doesn't contains bones!");
+                    break;
+            }
         }
     }
 }

@@ -33,7 +33,6 @@ namespace Scripts.HandsLogic
         }
         public BonesData(in Transform[] points, in HandType type)
         {
-        
             var rot = new Quaternion[points.Length];
             for (int i = 0; i < points.Length; i++)
             {
@@ -54,8 +53,7 @@ namespace Scripts.HandsLogic
       
         public void ListenAnchors(in BodyAnchors anchors)
         {
-            rootPos  = fixedRootPos +  anchors.Root.position;
-            rootPos = anchors.Body.TransformPoint(rootPos);
+            rootPos = anchors.Body.TransformVector(fixedRootPos);
             // rotation of object is a rotation of parent * rotation of object
             rotations[0] = anchors.Body.rotation * this.fixedRootRot;
         }

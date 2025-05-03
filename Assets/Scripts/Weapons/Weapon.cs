@@ -46,12 +46,10 @@ namespace Scripts.Weapons
         protected abstract bool HitImpactCondition(out string affected);
         protected abstract bool HitCallCondition();
 
-       
-        
         public void Initialize(PlayerData data)
         {
-            playerData = data;
-            weaponDesign.playerData = data;
+            Debug.Log(name + " initialized. " + playerData);
+                playerData = data;
         }
 
         protected virtual void OnHitStartHold()
@@ -75,7 +73,7 @@ namespace Scripts.Weapons
                 _onUpdate.AddListener(UpdateHitCallTimer);
             }
         }
-
+        
         protected virtual void OnHitImpact(string affected)
         {
             if (IsClient)
@@ -84,8 +82,8 @@ namespace Scripts.Weapons
 
         public override void OnNetworkSpawn()
         {
-            if (IsClient)
-                weaponDesign.playerData = playerData;
+            // if (IsClient)
+            //     weaponDesign.playerData = playerData;
         }
 
         [ClientRpc]
