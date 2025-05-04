@@ -18,7 +18,6 @@ namespace Scripts.Gestures
         
         private static readonly Color _colorActive = new Color(1, 1, 1, 0.0f);
         private static readonly Color _colorPassive = new Color(1, 1, 1, 0.5f);
-        
         private static readonly WaitForUpdate v_waitForUpdate = new WaitForUpdate();
         private static PlayerHands _hands => PlayerData.local.hands;
         public Recognizer(RecognitionPropertiesConfig config)
@@ -99,9 +98,6 @@ namespace Scripts.Gestures
                 Debug.Log(log);
             }
         }
-        
-        
-        // не забудь про  onFrameRecognized?.Invoke(frame.name)
         public static bool TryRecognizeFrameInAnyPossibles(in RecognitionProperties props, in List<GestureFrame> possibleFrames, out int frameId)
         {
             for(int i = 0; i < possibleFrames.Count; i++)
@@ -174,8 +170,6 @@ namespace Scripts.Gestures
             (a.x - b.x) * (a.x - b.x) + (a.y - b.y)* (a.y - b.y) + (a.z - b.z) * (a.z - b.z) + (a.w - b.w) * (a.w - b.w);
         public static float OptimizedDistance(in Quaternion a, in Quaternion b) =>
             Math.Abs(Quaternion.Dot(a, b));
-        public static float OptimizedDistance(in Color a, in Color b) =>
-            OptimizedDistance(new Vector4(a.r, a.g, a.b, a.a), new Vector4(b.r, b.g, b.b, b.a));
         public static void FrameLog(string name)
         {
             Debug.Log("Frame " + name + " recognized");
