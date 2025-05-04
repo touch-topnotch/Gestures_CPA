@@ -10,8 +10,8 @@ public class GrabSystemOneHanded : GrabSystem
     {
         if (!_mainGrabbed)
         {
-            if (CheckHandGrab(_playerData.hands.rightHand.grabPoint, _mainGrabPoint, rightHandGrabGesture, ref _mainGrabberTransform, ref _mainGrabGesture, out _mainGrabPosOffset) ||
-                CheckHandGrab(_playerData.hands.leftHand.grabPoint, _mainGrabPoint, leftHandGrabGesture, ref _mainGrabberTransform, ref _mainGrabGesture, out _mainGrabPosOffset))
+            if (CheckHandGrab(_playerData.hands.rightHand.grabPoint, _mainGrabPoint, rightHandGrabGesture, ref _mainGrabberTransform, ref _mainGrabGesture, ref _mainGrabReversed, ref _mainGrabPosOffset) ||
+                CheckHandGrab(_playerData.hands.leftHand.grabPoint, _mainGrabPoint, leftHandGrabGesture, ref _mainGrabberTransform, ref _mainGrabGesture, ref _mainGrabReversed, ref _mainGrabPosOffset))
             {
                 if (!_mainGrabbed) OnGrabStarted();
                 _mainGrabbed = true;
@@ -31,7 +31,7 @@ public class GrabSystemOneHanded : GrabSystem
     {
         if (_mainGrabbed)
         {
-            SetGrabObjectTransformOneHanded(_mainGrabberTransform, _mainGrabPoint, _mainGrabPosOffset);
+            SetGrabObjectTransformOneHanded(_mainGrabberTransform, _mainGrabPoint, _mainGrabPosOffset, _mainGrabReversed);
         }
     }
     
@@ -39,8 +39,6 @@ public class GrabSystemOneHanded : GrabSystem
     {
         Gizmos.DrawWireSphere(_mainGrabPoint.GrabPointTransform.position, _mainGrabPoint.GrabPointRadius);
         Gizmos.DrawRay(_mainGrabPoint.GrabPointTransform.position, _mainGrabPoint.GrabPointTransform.right);
-        
-        //Gizmos.DrawRay(_playerData.hands.rightHand.points[0].position, -_playerData.hands.rightHand.points[0].right);
     }
 }
 

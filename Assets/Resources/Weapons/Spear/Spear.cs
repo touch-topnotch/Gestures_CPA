@@ -25,6 +25,8 @@ public class Spear : WeaponDesign
     
     [Header("VFX Objects")]
     [SerializeField] private GameObject _portalVFX;
+    [SerializeField] private float _portalSoundDelay;
+    private Coroutine _portalSoundCoroutine;
     private Vector3 _portalSpawnLocalPos;
     
     private bool _shouldPortalFollowHandPosStop;
@@ -65,6 +67,7 @@ public class Spear : WeaponDesign
                 _shouldPortalFollowHandRotZStop = false;
                 _shouldPortalFollowHandRotXStop = false;
 
+                _portalSoundCoroutine = StartCoroutine(PlayPortalSound());
                 StartCoroutine(PortalFollowHandPos());
                 StartCoroutine(PortalFollowHandRot());
                 break;
@@ -81,8 +84,20 @@ public class Spear : WeaponDesign
                 _spearObject.transform.rotation = Quaternion.LookRotation(Vector3.up);
                 
                 StartCoroutine(SpawnSpear());
+                StopCoroutine(_portalSoundCoroutine);
                 break;
         }
+    }
+
+    private IEnumerator PlayPortalSound()
+    {
+        WaitForSeconds delayWFS = new WaitForSeconds(_portalSoundDelay);
+        while (true)
+        {
+            audioProcessor.ActivateResource("Portal");
+            yield return delayWFS;
+        }
+
     }
     
     private IEnumerator PortalFollowHandPos()
@@ -162,5 +177,11 @@ public class Spear : WeaponDesign
     {
         Debug.Log("AbilityReleased");
 
+    }
+
+    public override void OnGrabbed()
+    {
+        base.OnGrabbed();
+        _spearAura.SetActive(false);
     }
 }
