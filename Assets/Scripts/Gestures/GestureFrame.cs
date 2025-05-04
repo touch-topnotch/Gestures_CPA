@@ -1,3 +1,4 @@
+using System;
 using JetBrains.Annotations;
 using Scripts.HandsLogic;
 using UnityEngine;
@@ -82,6 +83,30 @@ namespace Scripts.Gestures
                 HandUsed = HandUsedType.NULL;
             }
         }
+        
+        public delegate void HandManipulation<T>(T item, BonesData data);
+        public static void SwitchManipulation<T>(HandsStruct target, HandManipulation<T> manipulate, T left, T right, Action nullCallback = null)
+        {
+            switch (target.HandUsed)
+            {
+                case HandUsedType.NULL:
+                    if(nullCallback != null) nullCallback();
+                    return;
+                case HandUsedType.LEFT:
+                    manipulate(left, target.LeftBones);
+                    return;
+                case HandUsedType.RIGHT:
+                    manipulate(right, target.RightBones);
+                    return;
+                case HandUsedType.LEFTNRIGHT:
+                    manipulate(left, target.LeftBones);
+                    manipulate(right, target.RightBones);
+                    return;
+            }
+        }
+
+        public void SwitchManipulation<T>(HandManipulation<T> manipulate, T left, T right, Action nullCallback = null) =>
+            SwitchManipulation(this, manipulate, left, right, nullCallback);
     }
     public class GestureFrame
     {

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2449659954957854467}
   - component: {fileID: 7693106268883021279}
-  - component: {fileID: 3380636049994253246}
+  - component: {fileID: 3192040477957584226}
   m_Layer: 7
   m_Name: PlayerHands
   m_TagString: Untagged
@@ -49,8 +49,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftHand: {fileID: 3951760367619761799}
   rightHand: {fileID: 4769579139214597576}
-  handVisualiser: {fileID: 3380636049994253246}
---- !u!114 &3380636049994253246
+  handVisualiser: {fileID: 3192040477957584226}
+--- !u!114 &3192040477957584226
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -59,20 +59,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 2807707361542782179}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c5e58f73e04458e87fab9b4c00b37e8, type: 3}
+  m_Script: {fileID: 11500000, guid: 204372e1820d4c7aba14965559ec65cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  visualizationType: 0
-  LeftHand: {fileID: 2340536852447091744, guid: 91e14f9b191a14856880ce3e40760264,
+  length: 5
+  leftHandPrefab: {fileID: 2340536852447091744, guid: 91e14f9b191a14856880ce3e40760264,
     type: 3}
-  RightHand: {fileID: 6834515167605928210, guid: fcd2864247bb04f7eb3d6d26f1978e93,
+  rightHandPrefab: {fileID: 6834515167605928210, guid: fcd2864247bb04f7eb3d6d26f1978e93,
     type: 3}
-  Bones: {fileID: 783963858647521541, guid: 51a732783261da841af89ffe43e0bf50, type: 3}
-  Parent: {fileID: 2449659954957854467}
-  speed: 1
-  activeHands: []
-  hiddenHands: []
-  default_mat: {fileID: 2100000, guid: 41be6f1aca4582946a6893d5117a54d3, type: 2}
+  parent: {fileID: 2449659954957854467}
 --- !u!1001 &3209803501221571325
 PrefabInstance:
   m_ObjectHideFlags: 0

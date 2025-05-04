@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2623500155479729100
+--- !u!1 &1505000899833520306
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,21 +8,21 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3693836550012358530}
+  - component: {fileID: 7282378055056031821}
   m_Layer: 0
-  m_Name: R_GrabPoint
+  m_Name: L_GrabPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &3693836550012358530
+--- !u!4 &7282378055056031821
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2623500155479729100}
+  m_GameObject: {fileID: 1505000899833520306}
   m_LocalRotation: {x: 0, y: 0.13052616, z: 0, w: 0.9914449}
   m_LocalPosition: {x: 0, y: -0.0339, z: 0.08}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -173,7 +173,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 431247075847058747, guid: 56186ccf27ad7864681108ed88349071,
         type: 3}
       insertIndex: 0
-      addedObject: {fileID: 3693836550012358530}
+      addedObject: {fileID: 7282378055056031821}
     - targetCorrespondingSourceObject: {fileID: 431247075847058747, guid: 56186ccf27ad7864681108ed88349071,
         type: 3}
       insertIndex: -1
@@ -239,8 +239,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _handMaterialType: 0
-  _handType: 0
-  grabPoint: {fileID: 3693836550012358530}
+  _handType: 1
+  grabPoint: {fileID: 7282378055056031821}
   points:
   - {fileID: 406680937159969232}
   - {fileID: 1238089368174186672}
@@ -268,7 +268,9 @@ MonoBehaviour:
   - {fileID: 2466608082866845951}
   - {fileID: 2749711872896765397}
   - {fileID: 2233671238061583251}
-  _materials: []
+  _materials:
+  - {fileID: 2100000, guid: 455ef821a5429de4baeed61fa958acbc, type: 2}
+  - {fileID: 2100000, guid: ae2c5ea518413455cab189214f9c5559, type: 2}
   _meshRenderer: {fileID: 3867613729502079897}
 --- !u!4 &1238089368174186672 stripped
 Transform:

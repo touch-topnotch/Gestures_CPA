@@ -35,38 +35,36 @@ namespace Scripts.Weapons
         [SerializeField]
         protected WeaponDesign weaponDesign;
         
-        [field:SerializeField] public GrabSystem GrabSystem{ get; set; }
-
+        [field:SerializeField] public GrabSystem GrabSystem { get; set; }
+        
         protected int _power;
         
         [SerializeField]
         [Tooltip("Weapon hit call cooldown")] private float _hitCallDelay = 0.5f;
         private float _hitCallTimer;
         private bool CanHitCall => _hitCallTimer <= 0;
-        
+
         protected readonly NetworkVariable<State> state = new NetworkVariable<State>();
         protected UpdateEvent _onUpdate => UpdateEvent.Instance;
         
         protected abstract bool HitImpactCondition(out string affected);
         protected abstract bool HitCallCondition();
-        
+
         public void Initialize(PlayerData data)
         {
-            playerData = data;
-            weaponDesign.SetPlayerData(playerData);
-            SetGrabSystemPlayerData(data);
+            Debug.Log(name + " initialized. " + playerData);
+                playerData = data;
         }
         
         public void SetGrabSystemPlayerData(PlayerData data)
         {
-            GrabSystem.SetPlayerData(data);
             GrabSystem.OnGrabStart += OnGrabbed;
             GrabSystem.OnGrabEnd += OnUnGrabbed;
         }
-        
+
         public void OnGrabbed()
         {
-            weaponDesign.OnGrabbed();
+           weaponDesign.OnGrabbed();
         }
 
         public void OnUnGrabbed()
@@ -95,7 +93,7 @@ namespace Scripts.Weapons
                 _onUpdate.AddListener(UpdateHitCallTimer);
             }
         }
-
+        
         protected virtual void OnHitImpact(string affected)
         {
             if (IsClient)
@@ -104,7 +102,8 @@ namespace Scripts.Weapons
 
         public override void OnNetworkSpawn()
         {
-            if (IsClient) { }
+            // if (IsClient)
+            //     weaponDesign.playerData = playerData;
         }
 
         [ClientRpc]
@@ -164,7 +163,7 @@ namespace Scripts.Weapons
 
         private void HandleHitImpact()
         {
-            if (IsServer && HitImpactCondition(out string affected))
+            if ((IsServer) && HitImpactCondition(out string affected))
             {
                 state.Value = State.HitImpact;
                 OnHitImpact(affected);

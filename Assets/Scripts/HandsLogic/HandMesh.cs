@@ -1,15 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using Gesture_Editor_SDK.EditorAttributes.InspectorButtonAttribute;
+using DG.Tweening;
 using Scripts.Design;
 using Scripts.Events;
 using Scripts.Gestures;
-using Scripts.Static;
+using Scripts.PlayerLogic;
+using Scripts.Systems;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using Timer = Scripts.Static.Timer;
 
 namespace Scripts.HandsLogic
 {
@@ -18,7 +17,7 @@ namespace Scripts.HandsLogic
         left,
         right
     }
-    public class HandMesh : MonoBehaviour
+    public class HandMesh : MonoBehaviour, IQueueVisualised<BonesData>, IColorable
     {
         private enum HandMaterialType
         {
@@ -51,15 +50,17 @@ namespace Scripts.HandsLogic
         private readonly List<PinPongProp> _pinPongs = new ();
         
         private UpdateEvent onUpdate => UpdateEvent.Instance;
-        
+
+        private bool _isPlaced;
         private Action _onPlaced;
         private float _speed;
         private bool _isMoved;
         private BonesData _target;
-
+        private Tween _tween;
+        
 
         [Button("Add missing components")]
-        public void RefreshProperties()
+        public void AddMissingComponents()
         {
             _handType = name[^1] == 'L' ? HandType.left : HandType.right;
             
@@ -95,52 +96,20 @@ namespace Scripts.HandsLogic
 
             return id;
         }
+
         public void SetRotations(in Vector3[] rotations)
         {
             if (rotations == null)
             {
                 return;
             }
+
             for (int i = 0; i < points.Length; i++)
             {
                 points[i].rotation = Quaternion.Euler(rotations[i]);
             }
         }
-        
-        private void Start()
-        {
-            onUpdate.AddListener(UpdateProperties);
-        }
-        
-        public void ChangePosition(BonesData data)
-        {
-            if (!data.Exists())
-            {
-                Hide();
-                return;
-            }
 
-            Show();
-
-            points[0].localPosition = data.rootPos;
-            for (int i = 0; i < data.rotations.Length; i++)
-            {
-                points[i].localRotation = data.rotations[i];
-            }
-        }
-
-        public void ChangePositionSmooth(in BonesData data, in float speed, in Action onPlaced = null)
-        {
-            if (data == null || data.rotations == null || data.rotations.Length == 0)
-                return;
-            _target = data;
-            _speed = speed;
-            _onPlaced = onPlaced;
-            if (!_isMoved)
-                onUpdate.AddListener(MoveHand);
-        }
-
-        
         private void MoveHand()
         {  
        
@@ -151,12 +120,15 @@ namespace Scripts.HandsLogic
                 return;
             }
 
+            _target.ListenAnchors(PlayerData.local.bodyAnchors);
+
             var dist = Vector3.Distance(points[0].localPosition, _target.rootPos);
             var a1 = Quaternion.Angle(points[0].localRotation, _target.rotations[0]);
             var a2 = Quaternion.Angle(points[13].localRotation, _target.rotations[13]);
             if(dist < 0.05f && a1 < 0.05f&& a2< 0.05f)
             {
-                StopMoveHand();
+                if(!_isPlaced)
+                    StopMoveHand();
                 return;
             }
             
@@ -169,148 +141,109 @@ namespace Scripts.HandsLogic
            
         }
         
+        
         private void StopMoveHand()
         {
             _onPlaced?.Invoke();
-            onUpdate.RemoveListener(MoveHand);
+            _isPlaced = true;
+            //onUpdate.RemoveListener(MoveHand);
         }
-        
+
+        public bool IsActive() => gameObject.activeSelf;
         public void Show()
         {
-            StopPinPongAll();
             gameObject.SetActive(true);
+            Debug.Log("SHOW HAND");
         }
 
         public void Hide()
         {
-            StopPinPongAll();
-            SetColorSmooth(HandShaderProps.EdgeColor, Color.clear);
-            SetFingersColor(Color.clear, true);
-            var timer = new Timer(0.4f, () =>
-            {
-                gameObject.SetActive(false);
-            },onUpdate);
+            ChangeColorForProps(Color.clear, HandShaderProps.AllColors, new ColorParams(0, 1, false));
         }
 
-        public void SetFingersColor(in Color color, in bool isSmooth = false)
+        public void Replace(BonesData target)
         {
-            foreach (int prop in HandShaderProps.FingerNames)
-            { 
-                if(isSmooth)
-                    SetColorSmooth(prop, color);
+            if (!target.Exists())
+            {
+                Hide();
+                return;
+            }
+
+            points[0].localPosition = target.rootPos;
+            for (int i = 0; i < target.rotations.Length; i++)
+            {
+                points[i].localRotation = target.rotations[i];
+            }
+        }
+        public void Move(BonesData target, float speed, Action onPlaced)
+        {
+            if (target == null || target.rotations == null || target.rotations.Length == 0)
+                return;
+            _target = target;
+            _speed = speed;
+            _onPlaced = onPlaced;
+            _isPlaced = false;
+            if (!_isMoved)
+                onUpdate.AddListener(MoveHand);
+        }
+
+        public void Destroy()
+        {
+            HandMaterial.DOKill();
+            GameObject.Destroy(this);
+        }
+
+        public void ChangeColorForProps(in Color color, in int[] props, in ColorParams pColorParams)
+        {
+            foreach (int prop in props)
+            {
+                if (pColorParams.speed > 0)
+                {
+                    ChangeColorSmooth(color, new ColorParams(prop, pColorParams), () =>
+                    {
+                        HandMaterial.DOKill();
+                        this.gameObject.SetActive(false);
+                    });
+                }
                 else
-                    HandMaterial.SetColor(prop, color);
-            }
-        }
-
-        public void SetColorSmooth(int property, in Color color, in float speed = 1)
-        {
-            for (int i = 0; i < _targets.Count; i++)
-            {
-                if (_targets[i].id == property)
                 {
-                    _targets[i] = new TargetProp(property, color, speed);
-                    return;
-                }
-            }
-            _targets.Add(new TargetProp(property, color, speed));
-            
-        }
-        
-        public void ChangeColorPinPong(in int id, in Color a, in Color b, in float speed)
-        {
-            _pinPongs.Add(new PinPongProp(id, a, b, speed));
-        }
-
-        public void StopPinPonging(in int id)
-        {
-            foreach (var pinPongProp in _pinPongs)
-            {
-                if(pinPongProp.target.id == id)
-                    _pinPongs.Remove(pinPongProp);
-            }
-        }
-
-        public void StopPinPongAll()
-        {
-            _pinPongs.Clear();
-        }
-        
-        private void UpdateProperties()
-        {
-            if (_targets.Count != 0)
-            {
-                for (int i = 0; i < _targets.Count; i++)
-                {
-                    if (!TryLerpTargetProp(_targets[i]))
-                    {
-                        _targets.RemoveAt(i);
-                        i--;
-                    }
-                }
-            }
-
-            if (_pinPongs.Count != 0){
-                for (int i = 0; i < _pinPongs.Count; i++)
-                {
-                    if (!TryLerpTargetProp(_pinPongs[i].target))
-                    {
-                        _pinPongs[i].Revert();
-                    }
+                    ChangeColor(color, prop);
+                    this.gameObject.SetActive(false);
                 }
             }
         }
-
-        private bool TryLerpTargetProp(in TargetProp prop)
+        public void ChangeColor(in Color color, int id)
         {
-            HandMaterial.SetColor(prop.id, 
-                Color.Lerp(HandMaterial.GetColor(prop.id), prop.value, 
-                    Time.deltaTime * prop.speed));
-            return Recognizer.OptimizedDistance(prop.value, HandMaterial.GetColor(prop.id)) >= 0.001f;
+            HandMaterial.SetColor(id, color);
         }
 
-        private void OnDestroy()
+        public void ChangeColorPinPong(Color active, Color passive, ColorParams pColorParams)
         {
-          //  material
-        }
-        
-        // public Transform[] GetTransforms()
-        // {
-        //     throw new NotImplementedException();
-        // }
-    }
-
-    struct TargetProp
-    {
-        public readonly int id;
-        public readonly Color value;
-        public readonly float speed;
-        public TargetProp(int id, Color value, float speed = 1)
-        {
-            this.id = id;
-            this.value = value;
-            this.speed = speed;
-        }
-    }
-
-    class PinPongProp
-    {
-        public readonly TargetProp a;
-        public readonly TargetProp b;
-        public TargetProp target;
-        public PinPongProp(int id, Color a, Color b, float speed = 1)
-        {
-            this.a = new TargetProp(id, a, speed);
-            this.b = new TargetProp(id, b, speed);
-            this.target = this.a;
-        }
-
-        public void Revert()
-        {
-            target = a.value == target.value ? b : a;
+            if(pColorParams.kill)
+                HandMaterial.DOKill();
+            HandMaterial.DOColor(active, pColorParams.id, 1 / pColorParams.speed).onComplete = () =>
+            {
+                HandMaterial.DOColor(passive, pColorParams.id, 1 / pColorParams.speed).onComplete = () =>
+                {
+                    ChangeColorPinPong(active, passive,
+                        new ColorParams(pColorParams.id, pColorParams.speed, false));
+                };
+            };
         }
         
+        public void ChangeColorSmooth(Color color, ColorParams pColorParams, TweenCallback onComplete = null)
+        {
+            if(pColorParams.kill)
+                HandMaterial.DOKill();
+
+            HandMaterial.DOColor(color, pColorParams.id, 1 / pColorParams.speed).onComplete =
+                onComplete;
+        }
+
+       
     }
+
+   
     
 
  

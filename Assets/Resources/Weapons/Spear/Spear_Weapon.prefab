@@ -384,7 +384,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponDesign: {fileID: 8258039175384466680}
-  <GrabSystem>k__BackingField: {fileID: 365174912446849160}
+  <GrabSystem>k__BackingField: {fileID: 0}
   _hitCallDelay: 1
   _bladeMinSpeed: 2
   _blade: {fileID: 6993892442895758170}
@@ -413,17 +413,14 @@ MonoBehaviour:
     SerializationNodes:
     - Name: playerData
       Entry: 7
-      Data: Scripts.PlayerLogic.PlayerData, Assembly-CSharp
+      Data: 0|Scripts.PlayerLogic.PlayerData, Assembly-CSharp
     - Name: id
       Entry: 3
       Data: 0
-    - Name: playerTransform
+    - Name: bodyAnchors
       Entry: 6
       Data: 
     - Name: hands
-      Entry: 6
-      Data: 
-    - Name: anchors
       Entry: 6
       Data: 
     - Name: recognizer
@@ -447,7 +444,7 @@ MonoBehaviour:
   _spearObject: {fileID: 6222985961634163518}
   _spearAura: {fileID: 1383405317539875607}
   _portalVFX: {fileID: 468598426393822796}
-  _portalSoundDelay: 0
+  _portalSoundDelay: 1.5
 --- !u!82 &853675210891194910
 AudioSource:
   m_ObjectHideFlags: 0

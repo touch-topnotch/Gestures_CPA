@@ -23,9 +23,9 @@ namespace Scripts.Gestures
         {
             library = new GesturesLibrary(chars);
         }
-        public void CreateRecognizer(RecognitionPropertiesConfig config, PlayerData data)
+        public void CreateRecognizer(RecognitionPropertiesConfig config)
         {
-            _recognizer = new Recognizer(data.hands, config);
+            _recognizer = new Recognizer(PlayerData.local.hands, config);
             
         }
         public void RecognizeWithAllGestures()
@@ -50,7 +50,7 @@ namespace Scripts.Gestures
                 if(gesture.TryGetGestureFrame(name, out var frame))
                 {
                     Debug.Log("Move hands");
-                    hands.MoveHands(frame, 4, () => { Debug.Log("Frame Simulated!"); });
+                    hands.MoveHands(frame, PlayerData.local.bodyAnchors, 4, () => { Debug.Log("Frame Simulated!"); });
                 }
             }
         }

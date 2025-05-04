@@ -30,12 +30,15 @@ namespace Scripts.PlayerLogic
 
         public RecognitionPropertiesConfig RecognitionPropertiesConfig => _recognitionProperties;
         protected PlayerData playerData;
+        public static Rig instance;
+        
         public virtual void Initialize(PlayerData data)
         {
             if (!transform.gameObject.activeSelf)
                 return;
             
             playerData = data;
+            instance = this;
             
             playerStateChangedEvent = new PlayerStateChangedEvent();
             playerStateChangedEvent.AddListener(OnPlayerStateChaned);
@@ -43,7 +46,7 @@ namespace Scripts.PlayerLogic
             {
                 Debug.Log("Recognized " + headInteractionType);
 
-                if (headInteractionType == HeadInteractionType.LookingUp)
+                if (headInteractionType == HeadInteractionType.LookingDown)
                 {
                     Centrize();
                 }

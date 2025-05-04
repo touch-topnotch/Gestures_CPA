@@ -9,14 +9,8 @@ namespace Components
     {
         public AudioProcessor audioProcessor;
         public VFXProcessor vfxProcessor;
-        
-        [HideInInspector]
-        public PlayerData playerData;
 
-        public void SetPlayerData(PlayerData data)
-        {
-            playerData = data;
-        }
+        [HideInInspector] public PlayerData playerData;
 
         public abstract void OnFrameRecognized(string frameName);
         
@@ -25,7 +19,7 @@ namespace Components
         public abstract void OnHitCalled();
         public abstract void OnHitImpact(string affected);
         public abstract void OnAbilityReleased();
-
+        
         public virtual void OnGrabbed()
         {
             

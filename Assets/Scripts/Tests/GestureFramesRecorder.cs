@@ -28,8 +28,8 @@ namespace Scripts.Tests
         public TMP_Text characterLabel;
         public TMP_Text collectionLabel;
         public Player _player;
- 
-        private SupportHandVisualiser _supportHdCreator;
+
+        private SequencedHandVisualizer _sequencedHandVisualizer;
         
         private string _curCharacterName = "";
         private string _currentName = "";
@@ -126,7 +126,7 @@ namespace Scripts.Tests
                         break;
                 }
             };
-            _supportHdCreator = _player.data.hands.handVisualiser;
+            _sequencedHandVisualizer = _player.data.hands.handVisualiser;
             
             leftToggle.onValueChanged.AddListener(RecordLeft);
             rightToggle.onValueChanged.AddListener(RecordRight);
@@ -158,8 +158,8 @@ namespace Scripts.Tests
         }
 
         public async void NewGestureGroup()
-        { 
-            _supportHdCreator.CreateNewStack(_recordedHandStruct);
+        {
+            _sequencedHandVisualizer.Spawn(_recordedHandStruct);
             await SendToCompiler(_recordedHandStruct);
             ReloadToggles();
             Name = "";
@@ -214,7 +214,7 @@ namespace Scripts.Tests
             _recordedHandStruct.LeftBones = isOn ? new BonesData(_player.data.hands.leftHand.points, HandType.left) : null;
             if (isOn)
             {
-                _supportHdCreator.AddToStack(_recordedHandStruct.LeftBones);
+                _sequencedHandVisualizer.leftHandVisualizer.Spawn(_recordedHandStruct.LeftBones);
 //                Debug.Log("Left Ghost Hand Spawned");
             }
             else
@@ -229,7 +229,7 @@ namespace Scripts.Tests
          
             if (isOn)
             {
-                _supportHdCreator.AddToStack(_recordedHandStruct.RightBones);
+                _sequencedHandVisualizer.rightHandVisualizer.Spawn(_recordedHandStruct.RightBones);
             }
             else
             {
