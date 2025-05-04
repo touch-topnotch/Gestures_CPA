@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Scripts.Design;
 using Scripts.Events;
@@ -12,176 +13,128 @@ namespace Scripts.Gestures
 {
     public class Recognizer
     {
-        public readonly GestureRecognized onGestureRecognized;
-        public readonly FrameRecognized onFrameRecognized;
-
-        private Color _colorActive = new Color(1, 1, 1, 0.0f);
-        private Color _colorPassive = new Color(1, 1, 1, 0.5f);
-        private List<GestureFrame> _possibleFrames;
-        private List<DynamicGesture> _possibleGestures;
         
-        private readonly PlayerHands _hands;
         private readonly RecognitionPropertiesConfig _config;
-        private readonly UpdateEvent _onUpdate;
-
-        private readonly GesturesLibrary _library;
-        private BodyAnchors bodyAnchors;
-        private int _curGesture = 0;
-        private int _curFrameId = 0;
-        private bool wasDrawnNearly = false;
-        public Recognizer(PlayerHands hands, RecognitionPropertiesConfig config)
+        
+        private static readonly Color _colorActive = new Color(1, 1, 1, 0.0f);
+        private static readonly Color _colorPassive = new Color(1, 1, 1, 0.5f);
+        
+        private static readonly WaitForUpdate v_waitForUpdate = new WaitForUpdate();
+        private static PlayerHands _hands => PlayerData.local.hands;
+        public Recognizer(RecognitionPropertiesConfig config)
         {
-            _hands = hands;
             _config = config;
-            _onUpdate = UpdateEvent.Instance;
-
-            onFrameRecognized = new FrameRecognized();
-            
-            onGestureRecognized = new GestureRecognized();
-            bodyAnchors = _hands.transform.parent.GetComponent<BodyAnchors>();
-            onFrameRecognized.AddListener(FrameLog);
-            onFrameRecognized.AddListener((name)=>
-            {
-                _possibleGestures[_curGesture].FrameRecognized(name);
-            });
-            
-            onGestureRecognized.AddListener(GestureLog);
-            onGestureRecognized.AddListener((s)=>
-            {
-                HideHands();
-            });
         }
-
-        private void FrameLog(string name)
+        public IEnumerator RecognizeDynamicGesture(Dictionary<string, DynamicGesture> possibleGestures, GestureRecognized onGestureRecognized, FrameRecognized onFrameRecognized)
         {
-            Debug.Log("Frame " + name + " recognized");
-        }
-        private void GestureLog(string name)
-        {
-            Debug.Log("Dynamic Gesture " + name + " recognized");
-        }
-
-        public bool RecognizeFrame(RecognitionProperties properties, GestureFrame frame, bool invokeEvent, int gestureId)
-        {
-            //
-            // if (!_hands.IsRecognized)
-            //     return false;
-            //
-            if (RecognizeHand(frame.Hands.LeftBones, _hands.leftHand.points, properties)
-                && RecognizeHand(frame.Hands.RightBones, _hands.rightHand.points, properties))
+            // Initialize possible gestures
+            var v_possibleGestures = new List<DynamicGesture>(possibleGestures.Values);
+            
+            // Initialize possible frames. For first time we will take a 1st frame of each Dynamic Gesture 
+            var v_possibleFrames = new List<GestureFrame>();
+            
+            for (int i = 0; i < v_possibleGestures.Count; i++)
             {
-                if (invokeEvent)
-                {
-                    _curGesture = gestureId;
-                    onFrameRecognized?.Invoke(frame.name);
-                }
-                    
-                return true;
-            }
-            
-            return false;
-        }
-        
-        public void RecognizeDynamicGesture(Dictionary<string, DynamicGesture> possibleGestures)
-        {
-        
-            _possibleGestures = new List<DynamicGesture>(possibleGestures.Values);
-            _possibleFrames = new List<GestureFrame>();
-            
-            _curGesture = 0;
-            _curFrameId = 0;
-            
-            for (int i = 0; i < _possibleGestures.Count; i++)
-            {
-                _possibleFrames.Add(_possibleGestures[i].frames[0]);
-                //possibleGestures[i].LogFrames();
+                v_possibleFrames.Add(v_possibleGestures[i].frames[0]);
             }
             
             LogPossibleFrames();
             
-           _onUpdate.AddListener(FindStartOfDynamicGesture);
-        }
-        private void FindStartOfDynamicGesture()
-        {
-            
-            DrawNearlyGesture();
-
-
-            var frameId = RecognizeFrame(_config.PlayerProperties, true);
-            if (frameId != -1)
-            {     
-                _onUpdate.RemoveListener(FindStartOfDynamicGesture);
-                _curGesture = frameId;
-                _curFrameId++;
-                HideHands();
-                RecognizeInOneGesture();
-                
-            }
-        }
-
-        private void DrawNearlyGesture()
-        {
-            if (wasDrawnNearly)
-                return;
-      
-            var NearlyFrameId = RecognizeFrame(_config.SupportiveProperties, false);
-            
-            if (NearlyFrameId != -1)
+            //when some gesture of the list has been recognized, the curGesture becomes to the curFrameId of the list (index of Dynamic Gesture is equal to the index of possible frame)
+           
+            int v_curGesture;
+            int drawnSuppLast = -1;
+            while (!TryRecognizeFrameInAnyPossibles(_config.PlayerProperties, v_possibleFrames, out v_curGesture))
             {
-                Debug.Log("Draw nearly" + _possibleFrames[NearlyFrameId].name);
-                _hands.handVisualiser.Move(_possibleFrames[NearlyFrameId].Hands, 4, null);
-                _hands.handVisualiser.ManipulateLasts((m)=>m.ChangeColorPinPong(_colorActive, _colorPassive, new ColorParams(
-                    HandShaderProps.EdgeColor,
-                        1, false)));
-
-                wasDrawnNearly = true;
-            }
-        }
-        private void GoByOneGesture()
-        {
-            
-            DrawNearlyGesture();
-            
-            var frameId = RecognizeFrame(_config.PlayerProperties, true);
-            
-            if (frameId != -1)
-            { 
-                HideHands();
-                
-            //    onFrameRecognized?.Invoke(_possibleGestures[_curGesture].frames[_curFrameId].name);
-                _curFrameId++;
-                
-                if (_curFrameId < _possibleGestures[_curGesture].frames.Count)  // all possible gestures = one gesture (list of one element);
+                // and draw supportive hands at this time
+                if(!TryRecognizeFrameInAnyPossibles(_config.SupportiveProperties, v_possibleFrames, out var curSuppRec) && drawnSuppLast != curSuppRec)
                 {
-                    _possibleFrames[0] = _possibleGestures[_curGesture].frames[_curFrameId];
-                    return;
+                    _hands.handVisualiser.Move(v_possibleFrames[curSuppRec].Hands, 4, null);
+                    _hands.handVisualiser.ManipulateLasts((m)=>m.ChangeColorPinPong(_colorActive, _colorPassive, new ColorParams(HandShaderProps.EdgeColor, 1, false)));
+                    drawnSuppLast = curSuppRec;
                 }
                 
-                
-                _onUpdate.RemoveListener(GoByOneGesture);
-                onGestureRecognized.Invoke(_possibleGestures[_curGesture].Name);
-    
+                yield return v_waitForUpdate;
             }
-        }
-        
-        private void RecognizeInOneGesture()
-        {
-            _possibleFrames = new List<GestureFrame> { _possibleGestures[_curGesture].frames[_curFrameId] };
-            _onUpdate.AddListener(GoByOneGesture);
-        }
-        
-        private int RecognizeFrame(RecognitionProperties props, bool invokeEvent)
-        {
-            for(int i = 0; i < _possibleFrames.Count; i++)
+            // call the Frame Recognized Event after it
+              v_possibleGestures[v_curGesture].FrameRecognized(v_possibleFrames[v_curGesture].name);
+            onFrameRecognized?.Invoke(v_possibleFrames[v_curGesture].name);
+            
+            
+            int v_curFrameId = 1;
+            v_possibleFrames = v_possibleGestures[v_curGesture].frames;
+            
+            while (v_curFrameId < v_possibleGestures[v_curGesture].frames.Count)
             {
-                if (RecognizeFrame(props, _possibleFrames[i], invokeEvent, i))
-                    return i;
+                var possibleFrame = v_possibleFrames[v_curFrameId];
+                var wasDrawn = false;
+                while (!RecognizeFrame(_config.PlayerProperties, possibleFrame))
+                {
+                    
+                    if(!wasDrawn && RecognizeFrame(_config.SupportiveProperties, possibleFrame) )
+                    {
+                        _hands.handVisualiser.Move(possibleFrame.Hands, 4, null);
+                        _hands.handVisualiser.ManipulateLasts((m)=>m.ChangeColorPinPong(_colorActive, _colorPassive, new ColorParams(HandShaderProps.EdgeColor, 1, false)));
+                        wasDrawn = true;
+                    }
+                    
+                    yield return v_waitForUpdate;
+                }
+                //  v_possibleGestures[v_curGesture].FrameRecognized(v_possibleFrames[v_curFrameId].name);
+                onFrameRecognized?.Invoke(v_possibleFrames[v_curFrameId].name);
+                v_curFrameId++;
             }
-            return -1;
+            
+            //  v_possibleGestures[v_curGesture].AllFramesDetected();
+            onGestureRecognized?.Invoke(v_possibleGestures[v_curGesture].Name);
+            _hands.handVisualiser.ManipulateAll(e => e.Hide());
+            
+            void LogPossibleFrames()
+            {
+                string log = "Try to detect: ";
+                foreach (var frame in v_possibleFrames)
+                {
+                    log += frame.name + ", ";
+                }
+                Debug.Log(log);
+            }
         }
-
-      
-        private bool RecognizeHand(in BonesData bonesData, in Transform[] handSkeleton, in RecognitionProperties props)
+        
+        
+        // не забудь про  onFrameRecognized?.Invoke(frame.name)
+        public static bool TryRecognizeFrameInAnyPossibles(in RecognitionProperties props, in List<GestureFrame> possibleFrames, out int frameId)
+        {
+            for(int i = 0; i < possibleFrames.Count; i++)
+            {
+                if (RecognizeFrame(props, possibleFrames[i]))
+                {
+                    frameId = i;
+                    return true;
+                }
+            }
+            
+            frameId = -1;
+            return false;
+        }
+        public static bool RecognizeFrame(in RecognitionProperties properties, in GestureFrame frame)
+        {
+            if (RecognizeHand(frame.Hands.LeftBones, _hands.leftHand.points, properties)
+                && RecognizeHand(frame.Hands.RightBones, _hands.rightHand.points, properties))
+            {
+                return true;
+            }
+            return false;
+        }
+        public static bool RecognizeFrame(in RecognitionProperties properties, in GestureFrame frame, in PlayerHands hands)
+        {
+            if (RecognizeHand(frame.Hands.LeftBones, hands.leftHand.points, properties)
+                && RecognizeHand(frame.Hands.RightBones, hands.rightHand.points, properties))
+            {
+                return true;
+            }
+            return false;
+        }
+        public static bool RecognizeHand(in BonesData bonesData, in Transform[] handSkeleton, in RecognitionProperties props)
         {
             if (bonesData == null || bonesData.rotations?.Length != handSkeleton.Length)
                 return true;
@@ -209,39 +162,29 @@ namespace Scripts.Gestures
                 var quality = props.rotationQuality;
                 if (distance < quality) // 0 - bad, 1 - good, 0.9 - ok
                 {
-                //    l.rl("Canceled, because rotation: " + distance + " > " + props.rotationQuality);
+                    //    l.rl("Canceled, because rotation: " + distance + " > " + props.rotationQuality);
                     return false;
                 }
             }
             return true;
         }
-        
-        public void HideHands()
-        {
-            Debug.Log("Hide hands"); 
-            _hands.handVisualiser.ManipulateAll((e)=>e.Hide());
-            wasDrawnNearly = false;
-        }
-
-        private void LogPossibleFrames()
-        {
-            string log = "Try to detect: ";
-            foreach (var frame in _possibleFrames)
-            {
-                log += frame.name + ", ";
-            }
-            Debug.Log(log);
-        }
-
         public static float OptimizedDistance(in Vector3 a, in Vector3 b) =>
             (float)Math.Sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y) + (a.z - b.z) * (a.z - b.z));
         public static float OptimizedDistance(in Vector4 a, in Vector4 b) =>
             (a.x - b.x) * (a.x - b.x) + (a.y - b.y)* (a.y - b.y) + (a.z - b.z) * (a.z - b.z) + (a.w - b.w) * (a.w - b.w);
         public static float OptimizedDistance(in Quaternion a, in Quaternion b) =>
             Math.Abs(Quaternion.Dot(a, b));
-
         public static float OptimizedDistance(in Color a, in Color b) =>
             OptimizedDistance(new Vector4(a.r, a.g, a.b, a.a), new Vector4(b.r, b.g, b.b, b.a));
+        public static void FrameLog(string name)
+        {
+            Debug.Log("Frame " + name + " recognized");
+        }
+        public static void GestureLog(string name)
+        {
+            Debug.Log("Dynamic Gesture " + name + " recognized");
+        }
+        
     }
     
 }
