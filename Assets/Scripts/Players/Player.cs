@@ -157,9 +157,9 @@ namespace Scripts.PlayerLogic
       
             if (isLocal)
             {
-               
-                SetOwner(0);
                 _characterPool.SpawnCharacters();
+                SetOwner(0);
+               
             }
                 
         }

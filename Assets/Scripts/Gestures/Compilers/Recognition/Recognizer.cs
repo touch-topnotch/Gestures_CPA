@@ -31,9 +31,6 @@ namespace Scripts.Gestures
         private bool wasDrawnNearly = false;
         public Recognizer(PlayerHands hands, RecognitionPropertiesConfig config)
         {
-            Debug.Log(VectorConverter.VecToCodeRot(
-                          new Vector3(8.84876633f, 359.548981f, 61.1509857f)) + "\n" +
-                      VectorConverter.VecToCodeRot(new Vector3(22.8301735f, 313.677795f, 130.638489f)));
             _hands = hands;
             _config = config;
             _onUpdate = UpdateEvent.Instance;
