@@ -46,10 +46,10 @@ namespace Scripts.PlayerLogic
             {
                 Debug.Log("Recognized " + headInteractionType);
 
-                if (headInteractionType == HeadInteractionType.LookingDown)
-                {
-                    Centrize();
-                }
+                // if (headInteractionType == HeadInteractionType.LookingDown)
+                // {
+                //     Centrize();
+                // }
             };
             
         }
@@ -65,12 +65,12 @@ namespace Scripts.PlayerLogic
 
         protected virtual void Centrize()
         {
-            Debug.Log("Centrizing player");
-            var position = Anchors.Root.position;
-            Anchors.Head.position = new Vector3
-            (position.x,
-                Anchors.Head.position.y,
-                position.z);
+            // Debug.Log("Centrizing player");
+            // var position = Anchors.Root.position;
+            // Anchors.Head.position = new Vector3
+            // (position.x,
+            //     Anchors.Head.position.y,
+            //     position.z);
         }
     }
 }

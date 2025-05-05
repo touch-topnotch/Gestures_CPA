@@ -68,8 +68,9 @@ namespace Scripts.Gestures
 
         private async void AddDictionary()
         {
-            allCharacterGestures.AddDictionary(await GestureMapper.ReadCharacterGestures(_characterPool.charactersDict));
-            
+            var c = new Dictionary<string, Character>();
+            c.Add("Bravery", _characterPool.charactersDict["Bravery"]);
+            allCharacterGestures.AddDictionary(await GestureMapper.ReadCharacterGestures(c));
             characterGestures = allCharacterGestures.openDict;
             systemGestures = await GestureMapper.ReadGestureFrames("system");
             supportiveGestures = await GestureMapper.ReadGestureFrames("supportive");

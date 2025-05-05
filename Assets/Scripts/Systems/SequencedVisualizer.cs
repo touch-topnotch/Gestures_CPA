@@ -105,7 +105,6 @@ namespace Scripts.Systems
         }
         public void Show()
         {
-            
             objects[lastIndex].Show();
             lastIndex = (lastIndex ++) % length;
         }
