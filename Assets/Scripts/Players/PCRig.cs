@@ -1,10 +1,9 @@
 using System;
 using System.Collections;
-using Gesture_Editor_SDK.Realtime;
+using System.Collections.Generic;
 using Scripts.Events;
 using Scripts.Gestures;
-using Scripts.HandsLogic;
-using Scripts.UI;
+using Scripts.Static.Extensions;
 using UnityEngine;
 
 namespace Scripts.PlayerLogic
@@ -16,98 +15,106 @@ namespace Scripts.PlayerLogic
             [Range(0.01f, 10f)] public float delayOnFrame;
             [Range(0.01f, 6f)] public float handSpeed;
         }
-        
         [SerializeField]  private PCHandsProperties handsProperties;
-        
-        [SerializeField] protected PCUI _ui;
-        [SerializeField] protected Palette _palette;
         [SerializeField] protected FirstPersonController _personController;
-
+        [SerializeField] protected RingMenu gestureMenu;
         private WaitForSeconds _waitUntilNextFrame;
-        private Transform _handsParent;
-        
-        private GestureFrame _targetFrame;
-        
+        private GesturesLibrary _library;
         public override void Initialize(PlayerData data)
         {
             base.Initialize(data);
-            
-            UpdateEvent.Instance?.AddListener(ToggleMenu);
-            UpdateEvent.Instance?.AddListener(SimulateHit);
-            _waitUntilNextFrame= new WaitForSeconds(handsProperties.delayOnFrame);
-            
-            
-            _handsParent = hands.leftHand.transform.parent;
-            _ui.gestureInput.image.color = _palette.clear;
-            
-            playerStateChangedEvent.AddListener((state) =>
-            { 
-                //Cursor.visible = state == PlayerState.MENU;
-            });
-            playerStateChangedEvent?.Invoke(playerState = PlayerState.ACTIVE);
             hands.OnEnabled();
+            
+            _waitUntilNextFrame= new WaitForSeconds(handsProperties.delayOnFrame);
+            _library = PlayerData.local.library;
+            
+            _library.onLibraryInitialized += PrepareRingData;
+            playerStateChangedEvent.AddListener(ps => { gestureMenu.isActive = ps == PlayerState.MENU; });
+            playerStateChangedEvent.AddListener(ps => playerState = ps);
+            playerStateChangedEvent?.Invoke(playerState = PlayerState.ACTIVE);
+            
+        }
+        private void PrepareRingData()
+        {
+            var rings = new List<Ring>()
+            {
+                new Ring("Types", new List<RingProps>()
+                {
+                    new RingProps("Characters", gestureMenu.OpenRing),
+                    new RingProps("Supportive", gestureMenu.OpenRing),
+                    new RingProps("System", gestureMenu.OpenRing)
+                }),
+                new Ring("Characters", RingProps.GetFromDictionary(_library.characterGestures, gestureMenu.OpenRing)),
+                new Ring("Supportive", RingProps.GetFromDictionary(_library.supportiveGestures, SimulateFrameAnClose)),
+                new Ring("System", RingProps.GetFromDictionary(_library.systemGestures, SimulateFrameAnClose))
+            };
+            foreach (var dg in _library.characterGestures.Keys)
+            {
+                // create new ring (dynamic gesture, simple gestures.)
+                var sectors = new List<RingProps> { new(dg, SimulateGestureAnClose) };
+            
+                foreach (var f in _library.characterGestures[dg].frames)
+                {
+                    sectors.Add(new RingProps(f.name, SimulateFrameAnClose));
+                }
+            
+                rings.Add(new Ring(dg, sectors));
+            }
+
+            gestureMenu.SetRings(rings, "Types");
+            Debug.Log("Toggle menu");
+            UpdateEvent.Instance.AddListener(ToggleMenu);
         }
 
-        //Simulate Gestures
-        public void TryGetGestureFrame(string frameName)
+        private void SimulateFrameAnClose(string key)
         {
-            if (playerData.library.characterGestures.TryGetValue(frameName, out var dynamicGesture))
-            {
-                _ui.gestureInput.image.color = _palette.active;
-                // play Dynamic Gesture
-                _targetFrame = dynamicGesture.frames[0];
-                SimulateDynamicGesture();
-                return;
-            }
-    
-            if(playerData.library.allAvailableFrames.TryGetValue(frameName, out var frame))
-            {
-//                    print(gestureFrame.name);
-                    _ui.gestureInput.image.color = _palette.enabled;
-                    // play Gesture Frame
-                    hands.MoveHands(frame,anchors, handsProperties.handSpeed,
-                        () => { _ui.gestureInput.image.color = _palette.clear; });
-                    return;
-                
-            }
-            _ui.gestureInput.image.color = _palette.wrong;
+            SimulateFrame(key);
+            gestureMenu.OpenRing("Types");
+            playerStateChangedEvent?.Invoke(PlayerState.ACTIVE);
+        }
+        private void SimulateGestureAnClose(string key)
+        {
+            SimulateDynamicGesture(key);
+            gestureMenu.OpenRing("Types");
+            playerStateChangedEvent?.Invoke(PlayerState.ACTIVE);
+        }
+        private void SimulateFrame(string key)
+        {
+            hands.MoveHands(_library.allAvailableFrames[key], anchors, handsProperties.handSpeed, ()=>{},!InputExtension.CtrlOrCmd());
         }
         
-        
-        public void SimulateDynamicGesture()
+        private void SimulateDynamicGesture(string key)
         {
-            if (_targetFrame == null)
-            {
-                _ui.gestureInput.image.color = _palette.clear;
+            var dynamicName = GestureMapper.PrefixOfName(key);
+            var indexOfName = dynamicName == key ? 0 : GestureMapper.IndexOfName(key);
+            var frameName = dynamicName + '_' + indexOfName;
+            var nextFrame = dynamicName + '_' + (indexOfName + 1);
+            
+            if (indexOfName >= _library.characterGestures[dynamicName].frames.Count)
                 return;
-            }
             
-            var dynamic = playerData.library.characterGestures[_targetFrame.baseName];
-            Debug.Log("Simulating " +  _targetFrame.name);
-            hands.MoveHands(_targetFrame, anchors, handsProperties.handSpeed, ()=>{StartCoroutine(WaitUntilNextFrame());});
-            
-            _targetFrame = dynamic.GetNextFrameOf(_targetFrame);
+            Debug.Log("Simulating " +  key);
+            hands.MoveHands(_library.allAvailableFrames[frameName], anchors, handsProperties.handSpeed, ()=>{StartCoroutine(WaitUntilNextFrame(nextFrame));},
+                !InputExtension.CtrlOrCmd());
         }
         
-        private IEnumerator WaitUntilNextFrame()
+        private IEnumerator WaitUntilNextFrame(string next)
         {
             yield return _waitUntilNextFrame;
-            SimulateDynamicGesture();
+            SimulateDynamicGesture(next);
         }
         
         // Player State
-        protected override void OnPlayerStateChaned(PlayerState state)
+        protected override void OnPlayerStateChanged(PlayerState state)
         {
             switch (state)
             {
                 case PlayerState.MENU:
                     StopMove();
-                    _ui.Show();
                   //  Cursor.visible = true;
                     break;
                 case PlayerState.ACTIVE:
                     StartMove();
-                    _ui.Hide();
                   //  Cursor.visible = false;
                     break;
             }
@@ -128,68 +135,16 @@ namespace Scripts.PlayerLogic
             _personController.cameraCanMove = false;
         }
 
+        
         private void ToggleMenu()
         {
-            if ((Input.GetKey(KeyCode.LeftCommand) || Input.GetKey(KeyCode.LeftControl)) &&
-                Input.GetKeyDown(KeyCode.G)) 
+            if (InputExtension.GetKeyWithCtrlOrCmd(KeyCode.G)) 
             {
-                playerState = playerState == PlayerState.MENU ? PlayerState.ACTIVE : PlayerState.MENU;
-                playerStateChangedEvent?.Invoke(playerState);
+                playerStateChangedEvent?.Invoke(playerState == PlayerState.MENU ? PlayerState.ACTIVE : PlayerState.MENU);
             }
-
+            
             if (playerState == PlayerState.MENU)
                 _personController.cameraCanMove = Input.GetKey(KeyCode.LeftShift);
-        }
-        public void ToggleParentingHands(bool toggle)
-        {
-            if (hands == null)
-                return;
-            hands.transform.SetParent(toggle ? _handsParent : null);
-        }
-
-        public void SimulateHit()
-        {
-            // if (Input.GetKeyDown(KeyCode.H))
-            // {
-            //     StartCoroutine(HitCoroutine());
-            // }
-        }
-
-        private IEnumerator HitCoroutine()
-        {
-            var p = hands.rightHand.points[0];
-            Vector3 previousPos = p.localPosition;
-            Quaternion previousRot = p.localRotation;
-            Vector3 targetPos = new Vector3(0.078f, 1.712f, 0.056f);
-            Quaternion targetRot = Quaternion.Euler(new Vector3(290.106018f, 121.231873f, 212.849854f));
-            var frameTime = new WaitForFixedUpdate();
-            while (Vector3.Distance(targetPos, p.localPosition) > 0.04f)
-            {
-                p.localPosition = Vector3.Lerp(p.localPosition, targetPos, Time.deltaTime * 1f);
-                p.localRotation = Quaternion.Lerp(p.localRotation, targetRot, Time.deltaTime * 1f);
-                yield return frameTime;
-            }
-
-            targetPos = new Vector3(0.187000006f, 1.63600004f, 0.197999999f);
-            targetRot = Quaternion.Euler(new Vector3(27.9578094f,360 - 334.099945f,169.45488f));
-           
-            while (Vector3.Distance(targetPos, p.localPosition) > 0.0001f)
-            {
-                p.localPosition = Vector3.Lerp(p.localPosition, targetPos, Time.deltaTime * 5f);
-                p.localRotation = Quaternion.Lerp(p.localRotation, targetRot, Time.deltaTime * 6f);
-                yield return frameTime;
-            }
-
-            targetPos = previousPos;
-            targetRot = previousRot;
-            
-            while (Vector3.Distance(targetPos, p.localPosition) > 0.04f)
-            {
-                p.localPosition = Vector3.Lerp(p.localPosition, targetPos, Time.deltaTime * 1f);
-                p.localRotation = Quaternion.Lerp(p.localRotation, targetRot, Time.deltaTime * 2f);
-                yield return frameTime;
-            }
-            
         }
     }
 }

@@ -27,8 +27,8 @@ namespace Scripts.HandsLogic
         [Header("Types")]
         [SerializeField] private HandMaterialType _handMaterialType;
         [SerializeField] private HandType _handType;
-        [Space] 
-        [Header("Transforms")] 
+        [Space]
+        [Header("Transforms")]
         public Transform grabPoint;
         public Transform[] points;
 
@@ -57,7 +57,7 @@ namespace Scripts.HandsLogic
         private bool _isMoved;
         private BonesData _target;
         private Tween _tween;
-        
+        private bool _changePosition;
 
         [Button("Add missing components")]
         public void AddMissingComponents()
@@ -125,14 +125,14 @@ namespace Scripts.HandsLogic
             var dist = Vector3.Distance(points[0].localPosition, _target.rootPos);
             var a1 = Quaternion.Angle(points[0].localRotation, _target.rotations[0]);
             var a2 = Quaternion.Angle(points[13].localRotation, _target.rotations[13]);
-            if(dist < 0.05f && a1 < 0.05f&& a2< 0.05f)
+            if(a1 < 0.05f&& a2< 0.05f)
             {
-                if(!_isPlaced)
+                if(!_isPlaced && (!_changePosition || dist < 0.05f))
                     StopMoveHand();
                 return;
             }
-            
-            points[0].localPosition = Vector3.Lerp(points[0].localPosition, _target.rootPos, _speed*Time.deltaTime);
+            if(_changePosition)
+                points[0].localPosition = Vector3.Lerp(points[0].localPosition, _target.rootPos, _speed*Time.deltaTime);
             
             for(int i = 0; i < points.Length; i++)
             {
@@ -155,11 +155,11 @@ namespace Scripts.HandsLogic
             gameObject.SetActive(true);
             Debug.Log("SHOW HAND");
         }
+        
 
         public void Hide()
         {
-            ChangeColorForProps(Color.clear, HandShaderProps.AllColors, new ColorParams(0, 1, false));
-            
+            ChangeColorForProps(Color.clear, HandShaderProps.AllColors, new ColorParams(0, -1, false));
         }
 
         public void Replace(BonesData target)
@@ -176,7 +176,7 @@ namespace Scripts.HandsLogic
                 points[i].localRotation = target.rotations[i];
             }
         }
-        public void Move(BonesData target, float speed, Action onPlaced)
+        public void Move(BonesData target, float speed, Action onPlaced, bool changePosition = true)
         {
             if (target == null || target.rotations == null || target.rotations.Length == 0)
                 return;
@@ -184,6 +184,7 @@ namespace Scripts.HandsLogic
             _speed = speed;
             _onPlaced = onPlaced;
             _isPlaced = false;
+            _changePosition = changePosition;
             if (!_isMoved)
                 onUpdate.AddListener(MoveHand);
         }
