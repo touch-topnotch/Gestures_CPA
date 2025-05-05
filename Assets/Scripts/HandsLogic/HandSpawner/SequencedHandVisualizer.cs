@@ -40,6 +40,7 @@ namespace Scripts.HandsLogic
                     o.transform.name = "Sequenced_Hand_R (" + id + ")";
                     return o.GetComponent<HandMesh>();
                 });
+            ManipulateAll(e=>e.Hide());
         }
 
         public void SwitchManipulation(HandsStruct target,
@@ -59,15 +60,21 @@ namespace Scripts.HandsLogic
 
         public void Spawn(HandsStruct target) =>
             SwitchManipulation(target, (visualizer, data) => { visualizer.Spawn(data); });
-
+        public void ShowHands()
+        {
+            leftHandVisualizer.Show();
+            rightHandVisualizer.Show();
+        }
         public void Override(HandsStruct target, int index = 0) =>
             SwitchManipulation(target, (v, d) => { v.Override(d, index); });
 
         public void SpawnAndMove(HandsStruct target, float speed, Action onPlaced) =>  
             SwitchManipulation(target, (v, d) => { v.SpawnAndMove(d, speed, onPlaced); });
-        
-        public void Move(HandsStruct target, float speed, Action onPlaced, int index = 0) =>
+
+        public void Move(HandsStruct target, float speed, Action onPlaced, int index = 0)
+        =>
             SwitchManipulation(target, (v, d) => { v.Move(d, speed, onPlaced, index); });
+
         public void ManipulateLasts(HandMeshManipulation manipulation) =>  TwoHandsManipulation((e) =>
         {
             manipulation((HandMesh)e.GetLast());
@@ -76,7 +83,8 @@ namespace Scripts.HandsLogic
 
         public void ManipulateAll(HandMeshManipulation manipulation) =>TwoHandsManipulation((e) =>
         {
-            foreach (var VARIABLE in leftHandVisualizer.GetAll())
+            
+            foreach (var VARIABLE in e.GetAll())
             {
                 manipulation((HandMesh)VARIABLE);
             }

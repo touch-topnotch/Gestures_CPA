@@ -17,7 +17,7 @@ namespace Scripts.Gestures
         private readonly RecognitionPropertiesConfig _config;
         
         private static readonly Color _colorActive = new Color(1, 1, 1, 0.0f);
-        private static readonly Color _colorPassive = new Color(1, 1, 1, 0.5f);
+        private static readonly Color _colorPassive = new Color(0.6f, 1, 1, 0.8f);
         private static readonly WaitForUpdate v_waitForUpdate = new WaitForUpdate();
         private static PlayerHands _hands => PlayerData.local.hands;
         public Recognizer(RecognitionPropertiesConfig config)
@@ -46,8 +46,10 @@ namespace Scripts.Gestures
             while (!TryRecognizeFrameInAnyPossibles(_config.PlayerProperties, v_possibleFrames, out v_curGesture))
             {
                 // and draw supportive hands at this time
-                if(!TryRecognizeFrameInAnyPossibles(_config.SupportiveProperties, v_possibleFrames, out var curSuppRec) && drawnSuppLast != curSuppRec)
+       
+                if(TryRecognizeFrameInAnyPossibles(_config.SupportiveProperties, v_possibleFrames, out var curSuppRec) && drawnSuppLast != curSuppRec)
                 {
+                    _hands.handVisualiser.ShowHands();
                     _hands.handVisualiser.Move(v_possibleFrames[curSuppRec].Hands, 4, null);
                     _hands.handVisualiser.ManipulateLasts((m)=>m.ChangeColorPinPong(_colorActive, _colorPassive, new ColorParams(HandShaderProps.EdgeColor, 1, false)));
                     drawnSuppLast = curSuppRec;
@@ -136,17 +138,16 @@ namespace Scripts.Gestures
             
             bonesData.ListenAnchors(PlayerData.local.bodyAnchors);
             var dist = OptimizedDistance(bonesData.rootPos, handSkeleton[0].localPosition);
-          
-            if (1 - dist < props.positionQuality) 
+            if (1/props.positionQuality - dist < props.positionQuality)
             {
-                //l.rl("Canceled, because position: " + dist + " < " + props.positionQuality);
+                //     l.rl("Canceled, because position: " + dist + " < " + props.positionQuality);
                 return false;
             }
             float distance = OptimizedDistance(bonesData.rotations[0],handSkeleton[0].localRotation);
 
             if (distance < props.rootRotationQuality)
             {
-               // l.rl("Canceled, because root rotation: " + distance + " > " + props.rootRotationQuality);
+                //    l.rl("Canceled, because root rotation: " + distance + " > " + props.rootRotationQuality);
                 return false;
             }
                 
@@ -156,7 +157,7 @@ namespace Scripts.Gestures
                 distance = OptimizedDistance( bonesData.rotations[i], handSkeleton[i].localRotation);
                 var quality = props.rotationQuality;
                 if (distance < quality) // 0 - bad, 1 - good, 0.9 - ok
-                {
+                {   
                     //    l.rl("Canceled, because rotation: " + distance + " > " + props.rotationQuality);
                     return false;
                 }

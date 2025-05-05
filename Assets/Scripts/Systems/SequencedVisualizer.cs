@@ -93,10 +93,11 @@ namespace Scripts.Systems
 
         public List<IQueueVisualised<T>> GetAll()
         {
+            
             var ret = new List<IQueueVisualised<T>>();
             for (int i = 0; i < objects.Length; i++)
             {
-                if(!objects[i].IsActive())
+                if(objects[i].IsActive())
                     ret.Add(objects[i]);
             }
 
@@ -104,7 +105,6 @@ namespace Scripts.Systems
         }
         public void Show()
         {
-            
             objects[lastIndex].Show();
             lastIndex = (lastIndex ++) % length;
         }

@@ -28,18 +28,22 @@ namespace Scripts.Weapons
     }
 
    
-    public abstract class Weapon : NetworkRecognizableBehaviour
+    public abstract class Weapon : NetworkRecognizableBehaviour, IGrabable
     {
         [Header("Weapons components")] 
         
         [SerializeField]
         protected WeaponDesign weaponDesign;
         
+        [field:SerializeField] public GrabSystem GrabSystem { get; set; }
+        
+        protected int _power;
+        
         [SerializeField]
         [Tooltip("Weapon hit call cooldown")] private float _hitCallDelay = 0.5f;
         private float _hitCallTimer;
         private bool CanHitCall => _hitCallTimer <= 0;
-        
+
         protected readonly NetworkVariable<State> state = new NetworkVariable<State>();
         protected UpdateEvent _onUpdate => UpdateEvent.Instance;
         
@@ -50,6 +54,23 @@ namespace Scripts.Weapons
         {
             Debug.Log(name + " initialized. " + playerData);
                 playerData = data;
+            SetGrabSystemPlayerData();
+        }
+        
+        public void SetGrabSystemPlayerData()
+        {
+            GrabSystem.OnGrabStart += OnGrabbed;
+            GrabSystem.OnGrabEnd += OnUnGrabbed;
+        }
+
+        public void OnGrabbed()
+        {
+           weaponDesign.OnGrabbed();
+        }
+
+        public void OnUnGrabbed()
+        {
+            
         }
 
         protected virtual void OnHitStartHold()

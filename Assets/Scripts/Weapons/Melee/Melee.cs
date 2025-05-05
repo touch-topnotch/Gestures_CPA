@@ -11,24 +11,20 @@ namespace Scripts.Weapons
         [Header("Melee components")]
         [SerializeField] protected float _bladeMinSpeed;
         [SerializeField] protected Blade _blade;
-
-        [ShowInInspector]
+        
         public int capacity
         {
-            get => _capacity;
-            private set
+            get => _power;
+            protected set
             {
-                _capacity = value;
-                if (_capacity <= 0)
+                _power = value;
+                if (_power <= 0)
                 {
                     AbilityReleased();
-                    _capacity = 0;
+                    _power = 0;
                 }
             }
         }
-     
-        
-        private int _capacity;
         
         private Vector3 _previousBladePointPosition;
 
@@ -41,6 +37,7 @@ namespace Scripts.Weapons
 
         protected override bool HitImpactCondition(out string affected) => _blade.onHitImpact(out affected);
         protected override bool HitCallCondition() => _blade.speed > _bladeMinSpeed;
+
         protected override void OnHitImpact(string affected)
         {
             switch (affected)
