@@ -159,7 +159,13 @@ namespace Scripts.HandsLogic
 
         public void Hide()
         {
-            ChangeColorForProps(Color.clear, HandShaderProps.AllColors, new ColorParams(0, -1, false));
+            gameObject.SetActive(false);
+            ChangeColorForProps(Color.clear, HandShaderProps.AllColors, new ColorParams(0, 1, false), prop =>
+            {
+                ChangeColor(Color.clear, prop);
+                HandMaterial.DOKill();
+                this.gameObject.SetActive(false);
+            });
         }
 
         public void Replace(BonesData target)
@@ -194,8 +200,8 @@ namespace Scripts.HandsLogic
             HandMaterial.DOKill();
             GameObject.Destroy(this);
         }
-
-        public void ChangeColorForProps(in Color color, in int[] props, in ColorParams pColorParams)
+        
+        public void ChangeColorForProps(in Color color, in int[] props, in ColorParams pColorParams, Action<int> onComplete)
         {
             foreach (int prop in props)
             {
@@ -203,14 +209,12 @@ namespace Scripts.HandsLogic
                 {
                     ChangeColorSmooth(color, new ColorParams(prop, pColorParams), () =>
                     {
-                        HandMaterial.DOKill();
-                        this.gameObject.SetActive(false);
+                        onComplete?.Invoke(prop);
                     });
                 }
                 else
                 {
-                    ChangeColor(color, prop);
-                    this.gameObject.SetActive(false);
+                    onComplete?.Invoke(prop);
                 }
             }
         }

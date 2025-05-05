@@ -94,12 +94,15 @@ public class GrabSystemTwoHanded : GrabSystem
 
     private bool IsSecondGrabValid()
     {
+        if (!_mainGrabbed)
+            return true;
+        
         var twistAngle = Vector3.Angle(_mainGrabberTransform.right, _secondaryGrabberTransform.right);
         var angle = Vector3.Angle(-_mainGrabberTransform.right, _secondaryGrabberTransform.position - _mainGrabberTransform.position);
         
-        return !_mainGrabbed 
-               || ((twistAngle < grabberTwistAngle || 180 - twistAngle < grabberTwistAngle) 
+        return ((twistAngle < grabberTwistAngle || 180 - twistAngle < grabberTwistAngle) 
                    && angle < angleBetweenGrabbers|| 180 - angle < angleBetweenGrabbers);
+        
     }
     
     private void OnDrawGizmos()

@@ -76,7 +76,8 @@ namespace Scripts.HandsLogic
 
         public void ManipulateAll(HandMeshManipulation manipulation) =>TwoHandsManipulation((e) =>
         {
-            foreach (var VARIABLE in leftHandVisualizer.GetAll())
+            
+            foreach (var VARIABLE in e.GetAll())
             {
                 manipulation((HandMesh)VARIABLE);
             }

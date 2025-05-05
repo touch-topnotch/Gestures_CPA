@@ -9,7 +9,7 @@ public abstract class GrabSystem : MonoBehaviour
     
     [SerializeField] protected Transform _grabObject;
     
-    protected PlayerData _playerData;
+    protected PlayerData _playerData => PlayerData.local;
     
     [Header("Grab Gestures")] 
     [SerializeField] protected string rightHandGrabGesture;
@@ -39,7 +39,7 @@ public abstract class GrabSystem : MonoBehaviour
     
     public void Start()
     {
-        _playerData = PlayerData.local;
+    //    _playerData = PlayerData.local;
     }
     
     protected virtual void OnGrabStarted()
