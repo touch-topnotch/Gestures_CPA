@@ -54,9 +54,10 @@ namespace Scripts.Weapons
         {
             Debug.Log(name + " initialized. " + playerData);
                 playerData = data;
+            SetGrabSystemPlayerData();
         }
         
-        public void SetGrabSystemPlayerData(PlayerData data)
+        public void SetGrabSystemPlayerData()
         {
             GrabSystem.OnGrabStart += OnGrabbed;
             GrabSystem.OnGrabEnd += OnUnGrabbed;

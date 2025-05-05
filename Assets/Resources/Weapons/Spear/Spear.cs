@@ -136,10 +136,10 @@ public class Spear : WeaponDesign
             
             if (!_shouldPortalFollowHandRotXStop) targetRotX = playerData.hands.rightHand.points[0].rotation.eulerAngles.x;
             else targetRotX = 0f;
-            
-            
+
+
             Quaternion targetQuaternion = Quaternion.Euler(targetRotX, 0, targetRotZ);
-            _portalVFX.transform.rotation = Quaternion.Slerp(_portalVFX.transform.rotation, targetQuaternion, 8f * Time.deltaTime) * _portalOffsetRotation;
+            _portalVFX.transform.rotation = Quaternion.Slerp(_portalVFX.transform.rotation, targetQuaternion, 8f * Time.deltaTime);
             yield return null;
         }
     }
@@ -152,6 +152,7 @@ public class Spear : WeaponDesign
 
         yield return new WaitForSeconds(_spawnDuration);
         
+        _portalVFX.gameObject.SetActive(false);
         _spearAura.SetActive(true);
     }
 

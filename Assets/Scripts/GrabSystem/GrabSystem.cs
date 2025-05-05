@@ -116,8 +116,8 @@ public abstract class GrabSystem : MonoBehaviour
     
     protected bool RecognizeFrame(string grabGesture)
     {
-        return _playerData.recognizer.RecognizeFrame(_recognitionProperties,
-            _playerData.library.supportiveGestures[grabGesture], false, 0);
+        return Recognizer.RecognizeFrame(_recognitionProperties,
+            _playerData.library.supportiveGestures[grabGesture]);
     }
 }
 
