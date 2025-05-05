@@ -7,6 +7,7 @@ using Scripts.Gestures;
 using Scripts.HandsLogic;
 using Scripts.PlayerLogic;
 using UnityEngine;
+using UnityEngine.VFX;
 
 public class Spear : WeaponDesign
 {
@@ -24,8 +25,9 @@ public class Spear : WeaponDesign
     [SerializeField] private GameObject _spearAura;
     
     [Header("VFX Objects")]
-    [SerializeField] private GameObject _portalVFX;
-    [SerializeField] private float _portalSoundDelay;
+    [SerializeField] private VisualEffect _portalVFX;
+    [SerializeField] private float _portalSoundDelay; 
+    private Quaternion _portalOffsetRotation;
     private Coroutine _portalSoundCoroutine;
     private Vector3 _portalSpawnLocalPos;
     
@@ -38,6 +40,7 @@ public class Spear : WeaponDesign
     {
         _spearObject.SetActive(false);
         _portalSpawnLocalPos = _portalVFX.transform.localPosition;
+        _portalOffsetRotation = _portalVFX.transform.rotation;
     }
 
     public override void OnFrameRecognized(string frameName)
@@ -57,10 +60,11 @@ public class Spear : WeaponDesign
                 {
                     transform.position = hit.point;
                 }
+                _portalVFX.gameObject.SetActive(true);
+                //_portalVFX.SetFloat("TwirlStrength",10f);
                 break;
             case 3:
                 _portalVFX.transform.localPosition = _portalSpawnLocalPos;
-                _portalVFX.SetActive(true);
                 _shouldPortalFollowHandPosStop = false;
                 _shouldPortalFollowHandRotZStop = false;
                 _shouldPortalFollowHandRotXStop = false;
@@ -71,6 +75,7 @@ public class Spear : WeaponDesign
                 break;
             case 4:
                 _shouldPortalFollowHandRotXStop = true;
+                
                 break;
             case 5: 
                 _shouldPortalFollowHandRotZStop = true;
@@ -134,7 +139,7 @@ public class Spear : WeaponDesign
             
             
             Quaternion targetQuaternion = Quaternion.Euler(targetRotX, 0, targetRotZ);
-            _portalVFX.transform.rotation = Quaternion.Slerp(_portalVFX.transform.rotation, targetQuaternion, 8f * Time.deltaTime);
+            _portalVFX.transform.rotation = Quaternion.Slerp(_portalVFX.transform.rotation, targetQuaternion, 8f * Time.deltaTime) * _portalOffsetRotation;
             yield return null;
         }
     }
