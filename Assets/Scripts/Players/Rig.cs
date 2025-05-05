@@ -41,7 +41,7 @@ namespace Scripts.PlayerLogic
             instance = this;
             
             playerStateChangedEvent = new PlayerStateChangedEvent();
-            playerStateChangedEvent.AddListener(OnPlayerStateChaned);
+            playerStateChangedEvent.AddListener(OnPlayerStateChanged);
             headInteraction.onHeadInteraction += (headInteractionType) =>
             {
                 Debug.Log("Recognized " + headInteractionType);
@@ -54,7 +54,7 @@ namespace Scripts.PlayerLogic
             
         }
 
-        protected virtual void OnPlayerStateChaned(PlayerState state)
+        protected virtual void OnPlayerStateChanged(PlayerState state)
         {
             Debug.Log("Current state: " + state);
         }

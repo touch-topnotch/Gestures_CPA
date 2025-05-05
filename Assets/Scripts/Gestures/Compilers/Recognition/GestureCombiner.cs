@@ -55,7 +55,7 @@ namespace Scripts.Gestures
                 if(gesture.TryGetGestureFrame(name, out var frame))
                 {
                     Debug.Log("Move hands");
-                    hands.MoveHands(frame, PlayerData.local.bodyAnchors, 4, () => { Debug.Log("Frame Simulated!"); });
+                    hands.MoveHands(frame, PlayerData.local.bodyAnchors, 4, () => { Debug.Log("Frame Simulated!"); }, true);
                 }
             }
         }

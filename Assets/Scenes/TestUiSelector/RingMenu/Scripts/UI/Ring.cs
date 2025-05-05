@@ -1,42 +1,57 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Events;
 
 public class Ring
 {
-    private readonly Action<RingElement> _onClick;
-    public string Name { get; set; }
-    public List<RingElement> Elements { get; set; }
-
-    public Ring(string name, List<RingElement> elements, Action<RingElement> onClick)
+    public string name { get; set; }
+    public List<RingSector> sectors { get; set; }
+    public Ring(
+        string name,
+        List<RingProps> elements)
     {
-        _onClick = onClick;
-        Name = name;
-        Elements = elements;
+        this.name = name;
+        if (elements == null)
+            return;
+        this.sectors = new List<RingSector>();
+        foreach (var element in elements)
+        {
+            this.sectors.Add(new RingSector(element));
+        }
+    }
+}
+public class RingProps
+{
+    public string name;
+    public UnityAction<string> onClick;
+
+    public RingProps(string name, UnityAction<string> onClick)
+    {
+        this.name = name;
+        this.onClick = onClick;
     }
 
-    public static Ring CreateRing<T>
-    (string ringName, Dictionary<string, T> data,
-        Func<KeyValuePair<string, T>, string> getIdFromNodeAction, Action<RingElement> onClick)
+    public static List<RingProps> GetFromDictionary<T>(in Dictionary<string, T> dictionary, in UnityAction<string> onClick)
     {
-        var intNameRingElements = new List<RingElement>();
-        foreach (var i in data)
+        if (dictionary == null || dictionary.Count == 0)
+            return null;
+        
+        var list = new List<RingProps>();
+        foreach (var VARIABLE in dictionary.Keys)
         {
-            intNameRingElements.Add(new RingElement(i.Key, getIdFromNodeAction(i)));
+            list.Add(new RingProps(VARIABLE, onClick));
         }
-
-        return new Ring(ringName, intNameRingElements, onClick);
+        
+        return list;
     }
 }
 
-public class RingElement
+public class RingSector
 {
-    public string Name { get; set; }
-    public string Key { get; set; }
-    public Ring NextRing { get; set; }
-
-    public RingElement(string name, string key)
+    public RingProps props;
+    public RingSector(RingProps ringProps)
     {
-        Name = name;
-        Key = key;
+        props = ringProps;
     }
 }
