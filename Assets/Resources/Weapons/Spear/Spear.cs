@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Components;
+using DG.Tweening;
 using Scripts.Design;
 using Scripts.Gestures;
 using Scripts.HandsLogic;
@@ -27,20 +28,25 @@ public class Spear : WeaponDesign
     [Header("VFX Objects")]
     [SerializeField] private VisualEffect _portalVFX;
     [SerializeField] private float _portalSoundDelay; 
-    private Quaternion _portalOffsetRotation;
     private Coroutine _portalSoundCoroutine;
+
+    [SerializeField] private float _portalOffsetY;
     private Vector3 _portalSpawnLocalPos;
+
     
     private bool _shouldPortalFollowHandPosStop;
     private bool _shouldPortalFollowHandRotZStop;
     private bool _shouldPortalFollowHandRotXStop;
+
+    private const string TwirlStrength = "TwirlStrength";
+    private const string FeathDistance = "FeathDistance";
+    private const string FeathGradient = "FeathGradient";
     
 
     private void Awake()
     {
         _spearObject.SetActive(false);
         _portalSpawnLocalPos = _portalVFX.transform.localPosition;
-        _portalOffsetRotation = _portalVFX.transform.rotation;
     }
 
     public override void OnFrameRecognized(string frameName)
@@ -61,15 +67,20 @@ public class Spear : WeaponDesign
                     transform.position = hit.point;
                 }
                 _portalVFX.gameObject.SetActive(true);
-                //_portalVFX.SetFloat("TwirlStrength",10f);
-                break;
-            case 3:
                 _portalVFX.transform.localPosition = _portalSpawnLocalPos;
                 _shouldPortalFollowHandPosStop = false;
                 _shouldPortalFollowHandRotZStop = false;
                 _shouldPortalFollowHandRotXStop = false;
-
                 _portalSoundCoroutine = StartCoroutine(PlayPortalSound());
+                
+                var endScale = _portalVFX.transform.localScale;
+                DOVirtual.Vector3(Vector3.zero, endScale, 2f, v => _portalVFX.transform.localScale = v).SetEase(Ease.OutExpo);
+                break;
+            case 1:
+                DOVirtual.Float(1, 8f, 3f, v => _portalVFX.SetFloat(TwirlStrength, v)).SetEase(Ease.InOutQuart);
+                DOVirtual.Float(0, -2.24f, 2f, v => _portalVFX.SetFloat(FeathDistance, v)).SetEase(Ease.InOutQuad);
+                break;
+            case 3:
                 StartCoroutine(PortalFollowHandPos());
                 StartCoroutine(PortalFollowHandRot());
                 break;
@@ -87,11 +98,35 @@ public class Spear : WeaponDesign
                 _spearObject.transform.rotation = Quaternion.LookRotation(Vector3.up);
                 
                 StartCoroutine(SpawnSpear());
+                StartCoroutine(DestroyPortal());
                 StopCoroutine(_portalSoundCoroutine);
                 break;
         }
     }
-    
+
+    private IEnumerator DestroyPortal()
+    {
+        DOVirtual.Float(-2.24f, -8f, 1f, v => _portalVFX.SetFloat(FeathDistance, v)).SetEase(Ease.InQuart);
+        
+        /*Gradient gradient = _portalVFX.GetGradient(FeathGradient);
+        GradientAlphaKey[] alphaKeys = gradient.alphaKeys;
+        
+        DOVirtual.Float(1, 0, 3f, v =>
+        {
+            alphaKeys[0].alpha = v;
+            gradient.SetKeys(gradient.colorKeys, alphaKeys);
+            _portalVFX.SetGradient(FeathGradient, gradient);
+        }).SetEase(Ease.InQuart);*/
+
+        DOVirtual.Float(8, 1, 3f, v => _portalVFX.SetFloat(TwirlStrength, v)).SetEase(Ease.InOutQuart);
+        
+        var startScale = _portalVFX.transform.localScale;
+        DOVirtual.Vector3(startScale, Vector3.zero, 3f, v => _portalVFX.transform.localScale = v).SetEase(Ease.InExpo);
+
+        yield return new WaitForSeconds(3f);
+        _portalVFX.gameObject.SetActive(false);
+    }
+
     private IEnumerator PlayPortalSound()
     {
         WaitForSeconds delayWFS = new WaitForSeconds(_portalSoundDelay);
@@ -105,7 +140,7 @@ public class Spear : WeaponDesign
     
     private IEnumerator PortalFollowHandPos()
     {
-        var targetPos = playerData.hands.rightHand.points[0].position.y + 0.1f;
+        var targetPos = playerData.hands.rightHand.points[0].position.y + _portalOffsetY;
         var portalTransform = _portalVFX.transform;
 
         while (!_shouldPortalFollowHandPosStop || Vector3.Distance(portalTransform.position,
@@ -113,7 +148,7 @@ public class Spear : WeaponDesign
         {
             if (!_shouldPortalFollowHandPosStop) 
             {
-                targetPos = playerData.hands.rightHand.points[0].position.y + 0.1f;
+                targetPos = playerData.hands.rightHand.points[0].position.y +_portalOffsetY;
             }
 
             var position = portalTransform.position;
@@ -152,7 +187,6 @@ public class Spear : WeaponDesign
 
         yield return new WaitForSeconds(_spawnDuration);
         
-        _portalVFX.gameObject.SetActive(false);
         _spearAura.SetActive(true);
     }
 
