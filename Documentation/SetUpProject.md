@@ -16,10 +16,10 @@ After that, you can proceed to importing the Gesture_TYPE project from the repos
 
 ### Troubleshooting.
 
-You may have a number of errors after importing. You can deal with them by reinstalling the [Odin Plugin](https://drive.google.com/file/d/1l2FogxZCO3kcP6VRp8Lni-lg1l_N13Ua/view?usp=drive_link)
+You may have a number of errors after importing. You can deal with them by reinstalling the [Odin Plugin](https://drive.google.com/file/d/1l2FogxZCO3kcP6VRp8Lni-lg1l_N13Ua/view?usp=sharing)
 .
 
-![](c73c45ca-85bb-49fb-b508-522d40c5b60a.png)
+![](source/error_odin.png)
 It is also possible to see this error. Just ignore it, because it connected with Meta Organization geographic limitations.
 
 The next step is - [Analysis of the project architecture](ProjectArchitecture.md)
