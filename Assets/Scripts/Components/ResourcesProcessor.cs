@@ -21,14 +21,16 @@ namespace Components
         Models,
         Other
     }
+
     public abstract class ResourcesProcessor<T> : PrefabSerializedMonoBehaviour
-    where T: Object
+        where T : Object
     {
-        [BoxGroup("Resources")][SerializeField]
+        [BoxGroup("Resources")] [SerializeField]
         protected readonly Dictionary<string, T> itemsDict = new();
-        [BoxGroup("Resources")][SerializeField]
+
+        [BoxGroup("Resources")] [SerializeField]
         protected readonly Dictionary<string, List<T>> listOfItemsDict = new();
-        
+
         private T LoadResource(string resourceName)
         {
             if (itemsDict.ContainsKey(resourceName))
@@ -36,7 +38,7 @@ namespace Components
             Debug.LogWarning("Resource " + resourceName + " not found in " + GetType().Name);
             return default;
         }
-        
+
         private T LoadRandomResource(string listName)
         {
             if (listOfItemsDict.ContainsKey(listName))
@@ -45,8 +47,7 @@ namespace Components
             return default;
         }
 
-      
-        
+
         private T LoadSequencedResource(string listName, int id)
         {
             if (!listOfItemsDict.ContainsKey(listName))
@@ -65,10 +66,10 @@ namespace Components
         }
 
         protected abstract void ManipulateResource(T resource);
-        
+
         public virtual void ActivateResource(string itemName, Action<T> manipulation = null, bool mightBeNull = true)
         {
-            if(manipulation == null)
+            if (manipulation == null)
                 ManipulateResource(LoadResource(itemName));
             else
             {
@@ -76,30 +77,35 @@ namespace Components
             }
         }
 
-        public virtual void ActivateRandomResource(string listName,Action<T> manipulation = null, bool mightBeNull = true)
+        public virtual void ActivateRandomResource(string listName, Action<T> manipulation = null,
+            bool mightBeNull = true)
         {
-            if(manipulation == null)
+            if (manipulation == null)
                 ManipulateResource(LoadRandomResource(listName));
             else
             {
                 manipulation(LoadRandomResource(listName));
             }
-        }  
-        public virtual void ActivateSequencedResource(string listName, int id, Action<T> manipulation = null, bool mightBeNull = true)
+        }
+
+        public virtual void ActivateSequencedResource(string listName, int id, Action<T> manipulation = null,
+            bool mightBeNull = true)
         {
-            if(manipulation == null)
+            if (manipulation == null)
                 ManipulateResource(LoadSequencedResource(listName, id));
             else
             {
                 manipulation(LoadSequencedResource(listName, id));
             }
         }
-        
+
         #region Authomatization
-    
-        #if UNITY_EDITOR
-        [BoxGroup("Add missing resources")] [ShowInInspector]
+
+#if UNITY_EDITOR
+        [BoxGroup("Add missing resources")]
+        [ShowInInspector]
         protected string _folderPath => "Resources/Weapons/" + name.Split('_')[0];
+
         [BoxGroup("Add missing resources")]
         [Button("Add missing resources")]
         protected virtual void AddMissingResources()
@@ -108,7 +114,8 @@ namespace Components
             // add all audio clips in folder to tempClips, if it contains S_ prefix
             // if clip contains S_R_ prefix, add it to _audioClipLists with name S_name_of_clip_without_prefix
             // else add it to _audioClips with name S_name_of_clip_without_prefix
-            Debug.Log("Trying to find assets in folder " + _folderPath + ". If there is no resources, please add it by sorting resources folder or add руками");
+            Debug.Log("Trying to find assets in folder " + _folderPath +
+                      ". If there is no resources, please add it by sorting resources folder or add руками");
             if (Directory.Exists(_folderPath))
             {
                 var files = Directory.GetFiles(_folderPath);
@@ -116,10 +123,10 @@ namespace Components
                 {
                     if (file.Contains(".meta")) continue;
                     var item = AssetDatabase.LoadAssetAtPath(file, typeof(T)) as T;
-                    
-                    if(!item)
-                           continue;
-                   
+
+                    if (!item)
+                        continue;
+
                     if (item.name.Contains("_R_"))
                     {
                         var name = item.name.Split("_")[2];
@@ -145,19 +152,18 @@ namespace Components
                                 {
                                     listOfItemsDict.Add(name, new List<T>());
                                 }
-    
+
                                 if (listOfItemsDict[name].Count > index)
                                 {
                                     listOfItemsDict[name][index] = item;
                                 }
                                 else
                                 {
-                                    
                                     for (int i = listOfItemsDict[name].Count; i < index; i++)
                                     {
                                         listOfItemsDict[name].Add(item);
                                     }
-    
+
                                     //_audioClipLists[name]
                                     listOfItemsDict[name].Add(item);
                                 }
@@ -177,7 +183,6 @@ namespace Components
                                 itemsDict.Add(name, item);
                         }
                     }
-                    
                 }
             }
             else
@@ -188,7 +193,7 @@ namespace Components
 
         // [BoxGroup("Sorting")][SerializeField]
         // private ResourceType _type;
-        
+
         [BoxGroup("Add missing resources")]
         [Button("Sort Telegram resources to folders")]
         private void SortResources()
@@ -209,83 +214,86 @@ namespace Components
                 {
                     if (file.Contains(".meta"))
                         AssetDatabase.DeleteAsset(file);
-    
+
                     var item = (T)AssetDatabase.LoadAssetAtPath(file, typeof(T));
                     if (!item || item.name.Split("_").Length < 3)
                         continue;
-                    
+
                     var name = item.name.Split("_")[2];
-    
+
                     var folder = "Assets/Resources/Weapons/" + name + "/" + GetTypeByPrefix(item.name.Split("_")[0]);
-    
+
                     if (!Directory.Exists(folder))
                     {
                         Directory.CreateDirectory(folder);
                     }
-    
+
                     string fullPath = folder + "/" + item.name + Path.GetExtension(file);
                     AssetDatabase.MoveAsset(file, fullPath);
                     found = true;
-                    Debug.Log("Imported " +fullPath);
-                    
+                    Debug.Log("Imported " + fullPath);
                 }
             }
-            if(!found)
+
+            if (!found)
                 Debug.Log("There is no resources( ");
         }
-    
+
         protected void PoolObject(string list, int id = -1)
         {
-            
-            GameObject item;
             if (id == -1)
             {
                 if (!itemsDict.ContainsKey(list))
-                { 
+                {
                     Debug.LogWarning("Can't pool object, because items dict not contains " + list);
                     return;
                 }
-                   
+
                 if (itemsDict[list] is not GameObject)
                 {
                     Debug.LogWarning("Can't pool object, because item is not a GameObject");
                     return;
                 }
-    
+
                 if (GameObject.Find(itemsDict[list].name))
                 {
                     Debug.LogWarning("This object already exists");
                     return;
                 }
+
                 itemsDict[list] = PrefabUtility.InstantiatePrefab(itemsDict[list] as GameObject, this.transform) as T;
             }
             else
             {
                 if (!listOfItemsDict.ContainsKey(list))
-                { 
+                {
                     Debug.LogWarning("Can't pool object, because list of items dict not contains " + list);
                     return;
                 }
-    
+
                 if (listOfItemsDict[list].Count <= id)
                 {
                     Debug.LogWarning("Can't pool object, because index is more than count of items");
                     return;
                 }
+
                 if (listOfItemsDict[list][id] is not GameObject)
                 {
                     Debug.LogWarning("Can't pool object, because item is not a GameObject");
                     return;
                 }
+
                 if (GameObject.Find(listOfItemsDict[list][id].name))
                 {
                     Debug.LogWarning("This object already exists");
                     return;
                 }
-                listOfItemsDict[list][id] = PrefabUtility.InstantiatePrefab(listOfItemsDict[list][id] as GameObject, this.transform) as T;
+
+                listOfItemsDict[list][id] =
+                    PrefabUtility.InstantiatePrefab(listOfItemsDict[list][id] as GameObject, this.transform) as T;
             }
         }
-    
+
         protected void PoolAllObjects()
         {
             foreach (var VARIABLE in listOfItemsDict.Keys)
@@ -295,13 +303,13 @@ namespace Components
                     PoolObject(VARIABLE, i);
                 }
             }
-    
+
             foreach (var VARIABLE in itemsDict.Keys)
             {
                 PoolObject(VARIABLE);
             }
         }
-    #endif
+#endif
 
         #endregion
 
@@ -320,6 +328,7 @@ namespace Components
                 }
             }
         }
+
         private static ResourceType GetTypeByPrefix(string prefix)
         {
             switch (prefix)
@@ -334,6 +343,7 @@ namespace Components
                     return ResourceType.Other;
             }
         }
+
         private static string GetPrefixByType(ResourceType type)
         {
             switch (type)
@@ -349,5 +359,4 @@ namespace Components
             }
         }
     }
-
 }

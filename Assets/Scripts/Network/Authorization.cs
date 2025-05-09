@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Scripts.Network
 {
-    public class Authorization: MonoBehaviour
+    public class Authorization : MonoBehaviour
     {
         // singleton
         public string accessToken;
@@ -33,8 +33,11 @@ namespace Scripts.Network
             SetupEvents();
             await SignInAnonymouslyAsync();
         }
-        public void SetupEvents() {
-            AuthenticationService.Instance.SignedIn += () => {
+
+        public void SetupEvents()
+        {
+            AuthenticationService.Instance.SignedIn += () =>
+            {
                 // Shows how to get a playerID
                 Debug.Log($"PlayerID: {AuthenticationService.Instance.PlayerId}");
 
@@ -42,16 +45,11 @@ namespace Scripts.Network
                 Debug.Log($"Access Token: {AuthenticationService.Instance.AccessToken}");
                 accessToken = AuthenticationService.Instance.AccessToken;
                 OnSignedIn?.Invoke();
-                
             };
 
-            AuthenticationService.Instance.SignInFailed += (err) => {
-                Debug.LogError(err);
-            };
+            AuthenticationService.Instance.SignInFailed += (err) => { Debug.LogError(err); };
 
-            AuthenticationService.Instance.SignedOut += () => {
-                Debug.Log("Player signed out.");
-            };
+            AuthenticationService.Instance.SignedOut += () => { Debug.Log("Player signed out."); };
 
             AuthenticationService.Instance.Expired += () =>
             {

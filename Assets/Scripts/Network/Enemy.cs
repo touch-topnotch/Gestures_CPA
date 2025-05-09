@@ -5,7 +5,6 @@ namespace Scripts.Network
         // do only from server
         public void OnDamageTaken(float damage)
         {
-            
         }
     }
 }

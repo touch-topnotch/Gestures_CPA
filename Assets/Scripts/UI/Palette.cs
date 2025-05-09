@@ -5,7 +5,7 @@ namespace Scripts.UI
 {
     [Serializable]
     [CreateAssetMenu(fileName = "Palette_", menuName = "Config/Palette")]
-    public class Palette: ScriptableObject
+    public class Palette : ScriptableObject
     {
         public Color active = Color.green;
         public Color enabled = Color.yellow;

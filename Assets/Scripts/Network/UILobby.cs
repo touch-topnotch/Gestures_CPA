@@ -11,14 +11,14 @@ public class UILobby : MonoBehaviour
     [SerializeField] private TextMeshProUGUI lobbyPlayersCount;
     [SerializeField] private Image background;
     [SerializeField] private GameObject connectButton;
-    
+
     public Color MyLobby;
     public Color NotMyLobby;
-    
+
     private string _lobbyID;
-    
+
     public event Action<string> Clicked;
-    
+
     public void UpdateLobby(LobbyInfo lobbyInfo)
     {
         _lobbyID = lobbyInfo.LobbyID;

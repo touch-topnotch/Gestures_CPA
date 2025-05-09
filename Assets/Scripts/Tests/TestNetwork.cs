@@ -10,8 +10,9 @@ namespace Scripts.Tests
         public Button startServerButton;
         public Button startClientButton;
         public GameObject TestObj;
+
         private void Start()
-        
+
         {
             startServerButton.onClick.AddListener(() =>
             {
@@ -25,16 +26,14 @@ namespace Scripts.Tests
             startClientButton.onClick.AddListener(() =>
             {
                 networkManager.StartClient();
-                networkManager.ConnectionApprovalCallback += (request, response) =>
-                {
-                    OnClient();
-                };
+                networkManager.ConnectionApprovalCallback += (request, response) => { OnClient(); };
             });
-          
         }
-        public void OnServer(){
+
+        public void OnServer()
+        {
             print("server found client");
-    }
+        }
 
         public void SpawnObj()
         {
@@ -46,6 +45,5 @@ namespace Scripts.Tests
         {
             print("client found server");
         }
-
-}
+    }
 }

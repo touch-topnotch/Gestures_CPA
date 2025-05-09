@@ -15,9 +15,8 @@ namespace Scripts.GameControllers
 {
     public class GameController : NetworkBehaviour
     {
-
         public const int targetFPS = 60;
-        
+
         private static GameController _gameController;
         public static GameController Instance => _gameController;
 
@@ -28,9 +27,8 @@ namespace Scripts.GameControllers
 
         [SerializeField] private NetworkManager _networkManager;
         public Dictionary<ulong, NetworkPlayerProcessor> PlayersDict => _playersDict;
-                    
-#if DEDICATED_SERVER
 
+#if DEDICATED_SERVER
         private IServerQueryHandler _serverQueryHandler;
         private async void ListenServerEvents()
         {
@@ -106,28 +104,26 @@ namespace Scripts.GameControllers
             {
                 _gameController = this;
             }
-            
+
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = targetFPS;
-            
+
             SessionManager.ReadCommandArgs(_networkManager);
-            #if DEDICATED_SERVER
+#if DEDICATED_SERVER
             EventInitializer.Instance.onServicesInitilalised += ListenServerEvents;
-            #endif
-            #if !DEDICATED_SERVER
-         
-                ServerBrowser.ConnectToServer();
-            #endif
-            
-            
+#endif
+#if !DEDICATED_SERVER
+
+            ServerBrowser.ConnectToServer();
+#endif
+
+
             _networkManager.OnClientConnectedCallback += ClientConnected;
             _networkManager.OnClientDisconnectCallback += ClientDisconnected;
-
         }
 
         private void ClientConnected(ulong clientId)
         {
-
             if (!_networkManager.IsServer)
             {
                 l.rl(_networkManager.LocalClient.PlayerObject.name + " constructed!");

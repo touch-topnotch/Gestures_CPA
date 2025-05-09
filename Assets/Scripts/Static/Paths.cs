@@ -1,5 +1,3 @@
-
-
 using System;
 using System.Text;
 
@@ -18,6 +16,5 @@ namespace Scripts.Static
         public const string keyId = "fa5b5a42-d8eb-438c-92fc-2e350b45063d";
         public const string keySecret = "Fbey4vc1XydQfW8TTnU3gsl1aYBTYSlO";
         public static string keyBase64 => Convert.ToBase64String(Encoding.UTF8.GetBytes(keyId + ":" + keySecret));
- 
     }
 }

@@ -64,9 +64,9 @@ namespace Scripts.Design
 
         [ShowInInspector]
         public Dictionary<AvatarType, HandStageProps> handStages = new Dictionary<AvatarType, HandStageProps>();
-        
-        [BoxGroup("Create Automatically")]
-        [SerializeField] private AvatarType tempType;
+
+        [BoxGroup("Create Automatically")] [SerializeField]
+        private AvatarType tempType;
 
         [Button("Create")]
         [BoxGroup("Create Automatically")]
@@ -80,7 +80,7 @@ namespace Scripts.Design
             handStages[tempType] = defaultProps;
         }
 
-        public  void GenerateAllAutomatically()
+        public void GenerateAllAutomatically()
         {
             var avatarTypes = Enum.GetValues(typeof(AvatarType));
             foreach (AvatarType type in avatarTypes)
@@ -88,7 +88,6 @@ namespace Scripts.Design
                 tempType = type;
                 GenerateOneAutomatically();
             }
-
         }
 
         public HandStageProps defaultProps => new HandStageProps()

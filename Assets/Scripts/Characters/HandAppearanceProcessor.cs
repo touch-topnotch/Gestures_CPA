@@ -9,15 +9,17 @@ namespace Scripts.Design
     {
         // This class is used to process the appearance of the hand 
         private readonly HandAppearance handAppearanceConfig;
+
         public HandAppearanceProcessor(HandAppearance handAppearance)
         {
             handAppearanceConfig = handAppearance;
         }
 
-         public void ChangeMaterialPair(MaterialPair pair, AvatarType type)
+        public void ChangeMaterialPair(MaterialPair pair, AvatarType type)
         {
-           RefreshProps(pair, type);
+            RefreshProps(pair, type);
         }
+
         private void RefreshProps(MaterialPair pair, AvatarType type)
         {
             RefreshProps(pair.Left, type);

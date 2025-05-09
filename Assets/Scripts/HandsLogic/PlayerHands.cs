@@ -1,4 +1,3 @@
-
 namespace Scripts.HandsLogic
 {
     public class PlayerHands : Hands

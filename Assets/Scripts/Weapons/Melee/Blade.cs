@@ -8,8 +8,7 @@ namespace Scripts.Weapons
     {
         [SerializeField] private Transform bladePoint;
 
-        [ReadOnlyInInspector]
-        [SerializeField] private Vector3 _speed;
+        [ReadOnlyInInspector] [SerializeField] private Vector3 _speed;
 
         private Vector3 _prevPosition;
 
@@ -18,20 +17,21 @@ namespace Scripts.Weapons
         private bool lastTrigger = false;
         private bool isTrigging = false;
         private string lastName = "";
-        
+
         public void OnTriggerEnter(Collider other)
         {
             lastTrigger = true;
             isTrigging = true;
             lastName = other.tag;
             Debug.Log("Trigger Enter");
-        } 
-        
+        }
+
         public void OnTriggerExit(Collider other)
         {
             isTrigging = false;
             Debug.Log("Trigger Exit");
         }
+
         private void Update()
         {
             var position = bladePoint.position;
@@ -42,14 +42,14 @@ namespace Scripts.Weapons
         public bool onHitImpact(out string tag)
         {
             tag = lastName;
-            
+
             if (lastTrigger && isTrigging)
             {
                 lastTrigger = false;
                 isTrigging = false;
                 return true;
             }
-            
+
             return false;
         }
     }

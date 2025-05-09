@@ -20,15 +20,15 @@ namespace Scripts.Tests
             {
                 Add(key, dict[key]);
             }
-           
         }
     }
+
     public interface IPrefabDictionaryEditable<K, V>
     {
-        public Dictionary<K,V> GetDictionaryInEditMode();
+        public Dictionary<K, V> GetDictionaryInEditMode();
         public void SetDictionaryInEditMode(Dictionary<K, V> dict);
-        
     }
+
     /// <summary>
     /// Unity can't serialize Dictionary so here's a custom wrapper that does. Note that you have to
     /// extend it before it can be serialized as Unity won't serialized generic-based types either.
@@ -94,7 +94,7 @@ namespace Scripts.Tests
                 Add(key, val);
             }
         }
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         public static Dictionary<K, V> GetDictionaryFromPrefab(string path)
         {
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
@@ -112,23 +112,23 @@ namespace Scripts.Tests
             throw new NullReferenceException();
         }
 
-        public static void SetDictionaryToPrefab(string path, Dictionary<K,V> dict)
+        public static void SetDictionaryToPrefab(string path, Dictionary<K, V> dict)
         {
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
 
             if (prefab == null)
                 throw new NullReferenceException();
-            
+
             GameObject prefabInstance = PrefabUtility.InstantiatePrefab(prefab) as GameObject;
-            
+
             if (prefabInstance == null)
                 throw new NullReferenceException();
-            
+
             if (prefabInstance.TryGetComponent(typeof(IPrefabDictionaryEditable<K, V>), out var component))
             {
                 var prefabDictEditable = (IPrefabDictionaryEditable<K, V>)component;
                 prefabDictEditable.SetDictionaryInEditMode(dict);
-                
+
                 PrefabUtility.ApplyPrefabInstance(prefabInstance, InteractionMode.AutomatedAction);
                 Object.DestroyImmediate(prefabInstance);
                 AssetDatabase.Refresh();
@@ -138,7 +138,7 @@ namespace Scripts.Tests
                 throw new NullReferenceException();
             }
         }
-        #endif
+#endif
     }
 
     /// <summary>

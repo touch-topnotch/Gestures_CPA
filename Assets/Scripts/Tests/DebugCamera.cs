@@ -7,6 +7,7 @@ namespace Scripts.Tests
     {
         private Camera _camera;
         private bool _enabled;
+
         private void Start()
         {
             _camera = GetComponent<Camera>();

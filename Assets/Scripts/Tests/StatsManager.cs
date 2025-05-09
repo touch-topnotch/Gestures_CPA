@@ -7,7 +7,7 @@ using Zenject;
 
 namespace Scripts.Tests
 {
-    public class StatsManager: MonoBehaviour
+    public class StatsManager : MonoBehaviour
     {
         [SerializeField] private GameObject statsPanel;
         [SerializeField] private TMP_Text speedText;
@@ -15,21 +15,21 @@ namespace Scripts.Tests
         private bool isActive = true;
         private Vector3 lastPostion;
         private UpdateEvent onUpdate => UpdateEvent.Instance;
+
         private void Start()
         {
             onUpdate.AddListener(WaitCommand);
             ToggleStats();
         }
-        
+
         private void ToggleStats()
         {
-            isActive = !isActive; 
+            isActive = !isActive;
             statsPanel.SetActive(isActive);
             if (isActive)
                 onUpdate.AddListener(UpdateProps);
             else
                 onUpdate.RemoveListener(UpdateProps);
-            
         }
 
         private void UpdateProps()

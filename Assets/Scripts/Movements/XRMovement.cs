@@ -1,9 +1,12 @@
 using Scripts.Events;
 using Scripts.PlayerLogic;
+using Telegram.Bot.Types;
 using TMPro;
 using Unity.Mathematics;
 using Unity.XR.CoreUtils;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 using Zenject;
 
 namespace Scripts.Movements
@@ -48,11 +51,15 @@ namespace Scripts.Movements
             }
         }
 
+        public void Centrize()
+        {
+            pivot.position = _rigAnchors.Head.position;
+        }
+
         public void StartMove()
         {
-            
             _isMoved = true;
-            pivot.position = _rigAnchors.Head.position;
+            Centrize();
             Debug.Log("Movement started");
         }
 
@@ -66,12 +73,12 @@ namespace Scripts.Movements
         {
             if (!_isMoved)
                 return;
-            
+
             _velocity = (HeadManipulations.HeadVelocity(pivot.position, _rigAnchors.Head.position, XZBoard, YBoard,
                 moveSpeed,
                 jumpSpeed) + Vector3.down * gravity) / 10;
-           
-            parentMoveController.Move(ClampVelocity(_velocity)); 
+
+            parentMoveController.Move(ClampVelocity(_velocity));
         }
 
         private Vector3 ClampVelocity(Vector3 velocity)
@@ -81,6 +88,14 @@ namespace Scripts.Movements
             velocity.z = Mathf.Clamp(velocity.z, -velocityBoard.x, velocityBoard.x);
             return velocity;
         }
-    }
+#if UNITY_EDITOR
+        public void AddMissingComponents()
+        {
+            var rig = Selection.activeGameObject.GetComponentInChildren<XRRig>();
+            _rigAnchors ??= rig.GetComponent<BodyAnchors>();
+            parentMoveController ??= rig.GetComponentInChildren<CharacterController>();
+        }
 
+#endif
+    }
 }

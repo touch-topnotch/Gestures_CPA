@@ -17,10 +17,9 @@ namespace Scripts.Gestures
         {
             foreach (DynamicGesture gest in all_gestures)
             {
-
                 var ost = all_gestures;
                 ost.Remove(gest);
-                if(ost.Count == 0)
+                if (ost.Count == 0)
                     continue;
                 for (int i = 0; i > ost.Count; i++)
                 {

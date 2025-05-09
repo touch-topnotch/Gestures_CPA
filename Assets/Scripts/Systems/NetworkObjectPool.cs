@@ -18,12 +18,12 @@ namespace Scripts.Systems
     {
         public static NetworkObjectPool Singleton { get; private set; }
 
-        [SerializeField]
-        List<PoolConfigObject> PooledPrefabsList;
+        [SerializeField] List<PoolConfigObject> PooledPrefabsList;
 
         HashSet<GameObject> m_Prefabs = new HashSet<GameObject>();
 
-        Dictionary<GameObject, ObjectPool<NetworkObject>> m_PooledObjects = new Dictionary<GameObject, ObjectPool<NetworkObject>>();
+        Dictionary<GameObject, ObjectPool<NetworkObject>> m_PooledObjects =
+            new Dictionary<GameObject, ObjectPool<NetworkObject>>();
 
         public void Awake()
         {
@@ -55,6 +55,7 @@ namespace Scripts.Systems
                 NetworkManager.Singleton.PrefabHandler.RemoveHandler(prefab);
                 m_PooledObjects[prefab].Clear();
             }
+
             m_PooledObjects.Clear();
             m_Prefabs.Clear();
         }
@@ -66,7 +67,8 @@ namespace Scripts.Systems
                 var prefab = PooledPrefabsList[i].Prefab;
                 if (prefab != null)
                 {
-                    Assert.IsNotNull(prefab.GetComponent<NetworkObject>(), $"{nameof(NetworkObjectPool)}: Pooled prefab \"{prefab.name}\" at index {i.ToString()} has no {nameof(NetworkObject)} component.");
+                    Assert.IsNotNull(prefab.GetComponent<NetworkObject>(),
+                        $"{nameof(NetworkObjectPool)}: Pooled prefab \"{prefab.name}\" at index {i.ToString()} has no {nameof(NetworkObject)} component.");
                 }
             }
         }
@@ -131,7 +133,8 @@ namespace Scripts.Systems
             m_Prefabs.Add(prefab);
 
             // Create the pool
-            m_PooledObjects[prefab] = new ObjectPool<NetworkObject>(CreateFunc, ActionOnGet, ActionOnRelease, ActionOnDestroy, defaultCapacity: prewarmCount);
+            m_PooledObjects[prefab] = new ObjectPool<NetworkObject>(CreateFunc, ActionOnGet, ActionOnRelease,
+                ActionOnDestroy, defaultCapacity: prewarmCount);
 
             // Populate the pool
             var prewarmNetworkObjects = new List<NetworkObject>();
@@ -139,6 +142,7 @@ namespace Scripts.Systems
             {
                 prewarmNetworkObjects.Add(m_PooledObjects[prefab].Get());
             }
+
             foreach (var networkObject in prewarmNetworkObjects)
             {
                 m_PooledObjects[prefab].Release(networkObject);
@@ -167,7 +171,8 @@ namespace Scripts.Systems
             m_Pool = pool;
         }
 
-        NetworkObject INetworkPrefabInstanceHandler.Instantiate(ulong ownerClientId, Vector3 position, Quaternion rotation)
+        NetworkObject INetworkPrefabInstanceHandler.Instantiate(ulong ownerClientId, Vector3 position,
+            Quaternion rotation)
         {
             return m_Pool.GetNetworkObject(m_Prefab, position, rotation);
         }
@@ -177,5 +182,4 @@ namespace Scripts.Systems
             m_Pool.ReturnNetworkObject(networkObject, m_Prefab);
         }
     }
-
 }

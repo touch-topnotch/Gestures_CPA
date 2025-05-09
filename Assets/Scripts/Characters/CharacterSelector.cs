@@ -5,9 +5,7 @@ using UnityEngine;
 
 namespace Characters
 {
-   
-    
-    public class CharacterSelector: MonoBehaviour
+    public class CharacterSelector : MonoBehaviour
     {
         enum DebugCharacters
         {
@@ -15,8 +13,10 @@ namespace Characters
             Grief,
             Bravery
         }
+
         [SerializeField] private DebugCharacters currentCharacter;
         [SerializeField] private CharacterPool _characterPool;
+
         private void OnValidate()
         {
             if (_characterPool == null)

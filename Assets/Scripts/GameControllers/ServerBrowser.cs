@@ -10,22 +10,21 @@ using UnityEngine.Rendering;
 
 namespace Scripts.GameControllers
 {
-    public class ServerBrowser: MonoBehaviour
+    public class ServerBrowser : MonoBehaviour
     {
-        
         [SerializeField] private Transform serverContainer;
         [SerializeField] private Transform serverTemplate;
         private const string keyId = "1a49ee8c-66a4-4a3d-a208-e1e286f2cbd5";
         private const string keySecret = "8bGE6xx28AM1YBwGwSFc3U17GLxC8mDV";
-    
+
         public static void ConnectToServer()
         {
-            #if DEDICATED_SERVER
+#if DEDICATED_SERVER
                 return;
-            #endif
+#endif
             byte[] keyByteArray = Encoding.UTF8.GetBytes(keyId + " : " + keySecret);
             string keyBase64 = Convert.ToBase64String(keyByteArray);
-            
+
             string url =
                 $"https://services.api.unity.com/auth/v1/token-exchange?projectId={CustomPaths.projectId}&environmentId={CustomPaths.environmentId}";
 
@@ -46,7 +45,8 @@ namespace Scripts.GameControllers
                             server.status == ServerStatus.ALLOCATED.ToString())
                         {
                             // Server is Online!
-                            NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(server.ip, (ushort)server.port);
+                            NetworkManager.Singleton.GetComponent<UnityTransport>()
+                                .SetConnectionData(server.ip, (ushort)server.port);
                             NetworkManager.Singleton.StartClient();
                             // Transform serverTransform = Instantiate(serverTemplate, serverContainer);
                             // serverTransform.gameObject.SetActive(true);
@@ -92,5 +92,4 @@ namespace Scripts.GameControllers
             public string status;
         }
     }
-
 }

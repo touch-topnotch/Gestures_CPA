@@ -16,18 +16,18 @@ namespace Characters
         private static string characterLibrary =>
             DataChanel.Get(Application.dataPath + "/Resources/Database/CharacterLibrary.json");
 
-    
-        public static async Task<Dictionary<string, JsonCharacterProperties>> GetAvailableCharactersStruct(HashSet<string> characterNames)
+
+        public static async Task<Dictionary<string, JsonCharacterProperties>> GetAvailableCharactersStruct(
+            HashSet<string> characterNames)
         {
-            
-            var data = await CloudSaveService.Instance.Data.Custom.LoadAsync("characters", characterNames );
-     
+            var data = await CloudSaveService.Instance.Data.Custom.LoadAsync("characters", characterNames);
+
             if (data == null)
                 return null;
             var converted = new Dictionary<string, JsonCharacterProperties>();
             foreach (var charKey in data.Keys)
             {
-                if(data[charKey].Value.GetAsString() == "" || data[charKey].Value.GetAsString() == "null")
+                if (data[charKey].Value.GetAsString() == "" || data[charKey].Value.GetAsString() == "null")
                     continue;
                 converted.Add(charKey, data[charKey].Value.GetAs<JsonCharacterProperties>());
             }
@@ -43,18 +43,20 @@ namespace Characters
                 Debug.Log("NULL");
                 return;
             }
+
             foreach (var key in items.Keys)
             {
                 Debug.Log($"{key}, {items[key]}");
             }
         }
+
         public static async Task<Dictionary<string, JsonCharacterProperties>> GetCharacterStructs()
         {
             var data = await CloudSaveService.Instance.Data.Custom.LoadAllAsync("characters");
             var converted = new Dictionary<string, JsonCharacterProperties>();
             foreach (var charKey in data.Keys)
             {
-                if(data[charKey].Value.GetAsString() == "" || data[charKey].Value.GetAsString() == "null")
+                if (data[charKey].Value.GetAsString() == "" || data[charKey].Value.GetAsString() == "null")
                     continue;
                 Debug.Log(data[charKey].Value.GetAsString());
                 converted.Add(charKey, data[charKey].Value.GetAs<JsonCharacterProperties>());
@@ -62,13 +64,11 @@ namespace Characters
 
             return converted;
         }
+
         public static void SendCharacterStruct(JsonCharacterStruct characterStruct)
         {
-            CloudSaveProcessor.SetItemToCloud(JsonConvert.SerializeObject(characterStruct), "characters", (e) =>
-            {
-                Debug.Log("Character " + characterStruct.key + " was sent to cloud");
-            });
+            CloudSaveProcessor.SetItemToCloud(JsonConvert.SerializeObject(characterStruct), "characters",
+                (e) => { Debug.Log("Character " + characterStruct.key + " was sent to cloud"); });
         }
-
     }
 }

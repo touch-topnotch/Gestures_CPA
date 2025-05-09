@@ -12,10 +12,9 @@ namespace Scripts.Tests
 {
     public class TestPlayerProperties : MonoBehaviour
     {
-        
         //[SerializeField] private SerializedDictionary<AvatarType, Avatar> _avatars = new();
         [SerializeField] private CustomDictionary<AvatarType, Avatar> _avatars;
-        
+
         //     [SerializeField] private Player _player;
         //     [SerializeField] private string changeCharacterTo;
         //

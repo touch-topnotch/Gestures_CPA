@@ -17,7 +17,6 @@ namespace Scripts.Tests
     public class GestureFramesRecorder : MonoBehaviour
 
     {
-        
         public BubbleToggle leftToggle;
         public BubbleToggle rightToggle;
         public XRInputField nameInput;
@@ -30,9 +29,10 @@ namespace Scripts.Tests
         public Player _player;
 
         private SequencedHandVisualizer _sequencedHandVisualizer;
-        
+
         private string _curCharacterName = "";
         private string _currentName = "";
+
         public string Name
         {
             get => _currentName;
@@ -46,13 +46,14 @@ namespace Scripts.Tests
                     if (!int.TryParse(words[^1], out var suff))
                         _currentName += "_0";
                 }
-                
+
                 gestureLabel.text = _currentName;
                 LockButtons();
             }
         }
 
         private HandsStruct _recordedHandStruct = new();
+
         private void OnMessageReceived(Message message)
         {
             var text = message.Text;
@@ -60,22 +61,24 @@ namespace Scripts.Tests
                 return;
             var tokens = text.Split(' ');
             int i = 0;
-            while(i < tokens.Length)
+            while (i < tokens.Length)
             {
                 switch (tokens[i])
                 {
-                    case"/char":
-                        string characterName = i + 1 < tokens.Length ? tokens[i+1] : Calculations.RandomString(6);
+                    case "/char":
+                        string characterName = i + 1 < tokens.Length ? tokens[i + 1] : Calculations.RandomString(6);
                         characterNameInput.inputString = characterName;
                         _curCharacterName = characterName;
-                        TelegramBotProcessor.Instance.SendTextToTelegramFunc("Принято, теперь перса зовут " + characterName);
+                        TelegramBotProcessor.Instance.SendTextToTelegramFunc("Принято, теперь перса зовут " +
+                                                                             characterName);
                         i += 2;
                         break;
                     case "/gest":
-                        string gestureName= i + 1 < tokens.Length ? tokens[i+1] : Calculations.RandomString(6);
+                        string gestureName = i + 1 < tokens.Length ? tokens[i + 1] : Calculations.RandomString(6);
                         nameInput.inputString = gestureName;
                         Name = gestureName;
-                        TelegramBotProcessor.Instance.SendTextToTelegramFunc("Принято, теперь жест называется " + gestureName);
+                        TelegramBotProcessor.Instance.SendTextToTelegramFunc("Принято, теперь жест называется " +
+                                                                             gestureName);
                         i += 2;
                         break;
                     case "/continue":
@@ -102,8 +105,8 @@ namespace Scripts.Tests
                 }
             }
         }
-        
-        private void Start ()
+
+        private void Start()
         {
             TelegramBotProcessor.Instance.StartReceiving();
             TelegramBotProcessor.onMessageReceived += OnMessageReceived;
@@ -127,17 +130,17 @@ namespace Scripts.Tests
                 }
             };
             _sequencedHandVisualizer = _player.data.hands.handVisualiser;
-            
+
             leftToggle.onValueChanged.AddListener(RecordLeft);
             rightToggle.onValueChanged.AddListener(RecordRight);
-            
+
             nameInput.OnExit.AddListener(RecordName);
-            
+
             newGestureButton.onClick.AddListener(NewGestureGroup);
             continueRecording.onClick.AddListener(ContinueRecording);
-                
-          //  Name = Calculations.RandomString(6)+ "_0";
-          //   characterNameInput.inputString = Calculations.RandomString(8);
+
+            //  Name = Calculations.RandomString(6)+ "_0";
+            //   characterNameInput.inputString = Calculations.RandomString(8);
         }
 
         private void ReloadToggles()
@@ -164,15 +167,17 @@ namespace Scripts.Tests
             ReloadToggles();
             Name = "";
         }
+
         public async void ContinueRecording()
         {
             await SendToCompiler(_recordedHandStruct);
             ReloadToggles();
             AddIndexToName();
         }
+
         private async Task SendToCompiler(HandsStruct handStruct)
         {
-            GestureCollections coll;//ch su // sy
+            GestureCollections coll; //ch su // sy
             if (collectionLabel.text[1] == 'h')
             {
                 coll = GestureCollections.characters;
@@ -185,9 +190,10 @@ namespace Scripts.Tests
             {
                 coll = GestureCollections.system;
             }
-            await _player.gestureCombiner.library.RecordFrame(handStruct, _currentName, coll,  characterLabel.text);
+
+            await _player.gestureCombiner.library.RecordFrame(handStruct, _currentName, coll, characterLabel.text);
         }
-        
+
         public virtual void RecordName(string name)
         {
             Name = name;
@@ -199,10 +205,10 @@ namespace Scripts.Tests
             // add index to last word
             if (Name.Split('_').Length == 1)
             {
-               Name += "_1";
-               return;
+                Name += "_1";
+                return;
             }
-            
+
             var words = Name.Split('_');
             words[^1] = (int.Parse(words[^1]) + 1).ToString();
             // join words
@@ -211,7 +217,8 @@ namespace Scripts.Tests
 
         public void RecordLeft(bool isOn)
         {
-            _recordedHandStruct.LeftBones = isOn ? new BonesData(_player.data.hands.leftHand.points, HandType.left) : null;
+            _recordedHandStruct.LeftBones =
+                isOn ? new BonesData(_player.data.hands.leftHand.points, HandType.left) : null;
             if (isOn)
             {
                 _sequencedHandVisualizer.leftHandVisualizer.Spawn(_recordedHandStruct.LeftBones);
@@ -224,9 +231,10 @@ namespace Scripts.Tests
         }
 
         public void RecordRight(bool isOn)
-        {           
-            _recordedHandStruct.RightBones = isOn ? new BonesData(_player.data.hands.rightHand.points, HandType.right) : null;
-         
+        {
+            _recordedHandStruct.RightBones =
+                isOn ? new BonesData(_player.data.hands.rightHand.points, HandType.right) : null;
+
             if (isOn)
             {
                 _sequencedHandVisualizer.rightHandVisualizer.Spawn(_recordedHandStruct.RightBones);

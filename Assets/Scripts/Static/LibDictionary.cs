@@ -12,7 +12,7 @@ namespace Scripts.Static
         public Dictionary<K, T> openDict => _dict;
         public Dictionary<K, T> limitedDict => _limitedDictionary;
         private readonly Dictionary<K, T> _limitedDictionary = new();
-        
+
         private Dictionary<K, T> _dict = new();
         private readonly List<K> _activeKeys = new List<K>();
         private readonly List<K> _notExistedKeys = new List<K>();
@@ -24,6 +24,7 @@ namespace Scripts.Static
             _dict = dictionary;
             ChangeActiveKeys(_activeKeys);
         }
+
         public void AddItem(K key, T value)
         {
             _dict.Add(key, value);
@@ -34,6 +35,7 @@ namespace Scripts.Static
                     AddItemToLists(key);
                 }
             }
+
             for (int i = 0; i < _notExistedKeys.Count; i++)
             {
                 if (Equals(_notExistedKeys[i], key))
@@ -44,27 +46,27 @@ namespace Scripts.Static
                 }
             }
         }
-        
+
         public void ChangeActiveKeys(List<K> keys)
         {
             _activeKeys.Clear();
             _notExistedKeys.Clear();
-            
+
             _limitedList.Clear();
             _limitedDictionary.Clear();
-            
+
             for (int i = 0; i < keys.Count; i++)
             {
                 AddActiveKey(keys[i]);
             }
         }
 
-     
+
         public void AddActiveKey(K key)
         {
             if (_limitedDictionary.ContainsKey(key))
                 return;
-   
+
             if (_dict.ContainsKey(key))
             {
                 _activeKeys.Add(key);
@@ -75,12 +77,13 @@ namespace Scripts.Static
                 bool hasInList = false;
                 for (int i = 0; i < _notExistedKeys.Count; i++)
                 {
-                    if (Equals(_notExistedKeys[i],key))
+                    if (Equals(_notExistedKeys[i], key))
                     {
                         hasInList = true;
                     }
                 }
-                if(!hasInList)
+
+                if (!hasInList)
                     _notExistedKeys.Add(key);
             }
         }
@@ -90,12 +93,12 @@ namespace Scripts.Static
             _limitedDictionary.Add(key, _dict[key]);
             _limitedList.Add(_dict[key]);
         }
-        
+
         public void RemoveActiveKey(K key)
         {
             for (int i = 0; i < _limitedList.Count; i++)
             {
-                if(Equals(_limitedList, key))
+                if (Equals(_limitedList, key))
                 {
                     _activeKeys.Remove(key);
                     RemoveItemFromList(key);
@@ -112,6 +115,7 @@ namespace Scripts.Static
                 }
             }
         }
+
         private void RemoveItemFromList(K key)
         {
             _limitedDictionary.Remove(key);
@@ -129,7 +133,7 @@ namespace Scripts.Static
             restrictive.AddItem("K", 2);
             restrictive.AddActiveKey("K");
             restrictive.RemoveActiveKey("K");
-            restrictive.ChangeActiveKeys(new List<string>(){"1", "2", "3"});
+            restrictive.ChangeActiveKeys(new List<string>() { "1", "2", "3" });
         }
     }
 }

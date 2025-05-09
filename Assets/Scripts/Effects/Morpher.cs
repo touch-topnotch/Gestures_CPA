@@ -28,10 +28,11 @@ namespace Scripts.Effects
     {
         public bool IsDeforming = true;
 
-        [Tooltip("Mesh should be read/write enabled from the model import settings")]
-        [SerializeField] private Mesh _oldMesh;
-        [Tooltip("Mesh should be read/write enabled from the model import settings")]
-        [SerializeField] private Mesh _newMesh;
+        [Tooltip("Mesh should be read/write enabled from the model import settings")] [SerializeField]
+        private Mesh _oldMesh;
+
+        [Tooltip("Mesh should be read/write enabled from the model import settings")] [SerializeField]
+        private Mesh _newMesh;
 
         [SerializeField] private Material _oldMat;
         [SerializeField] private Material _newMat;
@@ -39,8 +40,7 @@ namespace Scripts.Effects
         [SerializeField] private MeshFilter _meshFilter;
         [SerializeField] private Renderer _renderer;
 
-        [Range(0f, 1f)]
-        [SerializeField] private float _slider;
+        [Range(0f, 1f)] [SerializeField] private float _slider;
 
 
         private Vector3[] _oldVertices;
@@ -80,7 +80,6 @@ namespace Scripts.Effects
             CreatePairs2();
 
             _finalMaterial = new Material(_slider < 0.5 ? _oldMat : _newMat);
-
         }
 
         /// <summary>
@@ -163,14 +162,14 @@ namespace Scripts.Effects
             _interpolatedMesh.RecalculateNormals();
 
             _finalMaterial.Lerp(_oldMat, _newMat, _slider);
-            _finalMaterial.SetTexture("_MainTex", _slider < 0.5f ? _oldMat.GetTexture("_MainTex") : _newMat.GetTexture("_MainTex"));
+            _finalMaterial.SetTexture("_MainTex",
+                _slider < 0.5f ? _oldMat.GetTexture("_MainTex") : _newMat.GetTexture("_MainTex"));
             //_finalMaterial.SetTexture("_BumpMap", _slider < 0.5f ? _oldMat.GetTexture("_BumpMap") : _newMat.GetTexture("_BumpMap"));
             //_finalMaterial.SetTexture("_MetallicGlossMap", _slider < 0.5f ? _oldMat.GetTexture("_MetallicGlossMap") : _newMat.GetTexture("_MetallicGlossMap"));
             //_finalMaterial.SetTexture("_OcclusionMap", _slider < 0.5f ? _oldMat.GetTexture("_OcclusionMap") : _newMat.GetTexture("_OcclusionMap"));
             //_finalMaterial.SetTexture("_EmissionMap", _slider < 0.5f ? _oldMat.GetTexture("_EmissionMap") : _newMat.GetTexture("_EmissionMap"));
-        
+
             _renderer.material = _finalMaterial;
         }
-
     }
 }

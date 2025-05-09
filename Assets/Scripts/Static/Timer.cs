@@ -4,12 +4,12 @@ using UnityEngine;
 
 namespace Scripts.Static
 {
-    
     public class Timer
     {
         private float time = 0;
         private readonly Action action;
         private readonly UpdateEvent _update;
+
         public Timer(float seconds, Action action, UpdateEvent update)
         {
             this.time = seconds;

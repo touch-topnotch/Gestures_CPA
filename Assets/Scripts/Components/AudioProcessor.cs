@@ -6,7 +6,7 @@ namespace Components
     public class AudioProcessor : ResourcesProcessor<AudioClip>
     {
         [SerializeField] private AudioSource _audioSource;
-        
+
         private void OnValidate()
         {
             // if (_audioSource == null)

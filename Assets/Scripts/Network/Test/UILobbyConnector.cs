@@ -10,6 +10,7 @@ namespace Network.Test
     public class UILobbyConnector : MonoBehaviour
     {
         [SerializeField] private bool CreateOnAwake;
+        [SerializeField] private GameObject LobbyComponents;
         [SerializeField] private LobbyConnector lobbyConnector;
         [SerializeField] private UIListLobbies uiListLobbies;
         [SerializeField] private GameObject LobbyActionVariants;
@@ -23,11 +24,12 @@ namespace Network.Test
 
         private void Awake()
         {
-            if (CreateOnAwake)
+            if (CreateOnAwake || Application.platform == RuntimePlatform.Android)
             {
                 EventInitializer.Instance.onServicesInitilalised += CreateLobby;
             }
         }
+
         private void OnEnable()
         {
             uiListLobbies.LobbyChosenForConnect += OnLobbyChosenForConnect;
@@ -35,6 +37,7 @@ namespace Network.Test
 
         private async void OnLobbyChosenForConnect(string obj)
         {
+            LobbyComponents.SetActive(false);
             await lobbyConnector.ConnectLobby(obj);
         }
 
@@ -47,6 +50,7 @@ namespace Network.Test
         {
             if (!AuthenticationService.Instance.IsAuthorized)
                 return;
+            LobbyComponents.SetActive(false);
             LobbyActionVariants.SetActive(false);
             loading.gameObject.SetActive(true);
             await lobbyConnector.CreateLobby(MAX_PLAYERS);

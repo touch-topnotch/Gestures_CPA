@@ -6,10 +6,10 @@ using UnityEngine;
 public interface IGrabable
 {
     GrabSystem GrabSystem { get; set; }
-    
+
     public void SetGrabSystemPlayerData();
-    
+
     public void OnGrabbed();
-    
+
     public void OnUnGrabbed();
 }

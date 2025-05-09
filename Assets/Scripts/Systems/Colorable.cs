@@ -8,8 +8,9 @@ namespace Scripts.Systems
     {
         public void ChangeColor(in Color color, int id);
         public void ChangeColorPinPong(Color active, Color passive, ColorParams pColorParams);
-        public void ChangeColorSmooth(Color color,  ColorParams pColorParams, TweenCallback onComplete);
+        public void ChangeColorSmooth(Color color, ColorParams pColorParams, TweenCallback onComplete);
     }
+
     public struct ColorParams
     {
         public int id;
@@ -22,12 +23,14 @@ namespace Scripts.Systems
             this.speed = speed;
             this.kill = kill;
         }
+
         public ColorParams(int id)
         {
             this.id = id;
             this.speed = 1;
             this.kill = true;
         }
+
         public ColorParams(int id, float speed)
         {
             this.id = id;
@@ -42,11 +45,13 @@ namespace Scripts.Systems
             this.kill = pColorParams.kill;
         }
     }
+
     struct TargetProp
     {
         public readonly int id;
         public readonly Color value;
         public readonly float speed;
+
         public TargetProp(int id, Color value, float speed = 1)
         {
             this.id = id;
@@ -60,6 +65,7 @@ namespace Scripts.Systems
         public readonly TargetProp a;
         public readonly TargetProp b;
         public TargetProp target;
+
         public PinPongProp(int id, Color a, Color b, float speed = 1)
         {
             this.a = new TargetProp(id, a, speed);
@@ -71,6 +77,5 @@ namespace Scripts.Systems
         {
             target = a.value == target.value ? b : a;
         }
-        
     }
 }

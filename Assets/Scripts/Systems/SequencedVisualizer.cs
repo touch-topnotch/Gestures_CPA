@@ -19,13 +19,14 @@ namespace Scripts.Systems
         public void ChangeMaxLength(int l);
         public void Hide(int index);
         public void HideAll();
+
         /// <summary>
         /// Method <c>Override</c> take last changed object and replace the <c>T target</c> 
         /// </summary>
         public void Spawn(T target);
 
         public void Override(T target, int index);
-        
+
         public void SpawnAndMove(T target, float speed, Action onPlaced);
         public void Move(T target, float speed, Action onPlaced, int index);
     }
@@ -33,13 +34,14 @@ namespace Scripts.Systems
     public class SequencedVisualizer<T> : ISequencedVisualizer<T>
     {
         public delegate IQueueVisualised<T> QueueObjectAction(int index);
+
         public int lastIndex { get; private set; }
-        
+
         private IQueueVisualised<T>[] objects;
         private int length;
         private QueueObjectAction spawnAction;
         private bool isColorSequenced;
-   
+
 
         public SequencedVisualizer(int length, QueueObjectAction spawnAction)
         {
@@ -53,6 +55,7 @@ namespace Scripts.Systems
 
             lastIndex = 0;
         }
+
         public void ChangeMaxLength(int l)
         {
             if (l > length)
@@ -93,31 +96,31 @@ namespace Scripts.Systems
 
         public List<IQueueVisualised<T>> GetAll()
         {
-            
             var ret = new List<IQueueVisualised<T>>();
             for (int i = 0; i < objects.Length; i++)
             {
-                if(objects[i].IsActive())
+                if (objects[i].IsActive())
                     ret.Add(objects[i]);
             }
 
             return ret;
         }
+
         public void Show()
         {
             objects[lastIndex].Show();
-            lastIndex = (lastIndex ++) % length;
+            lastIndex = (lastIndex++) % length;
         }
-        
+
         public void Hide(int index = -1)
         {
             if (index == -1)
             {
                 objects[lastIndex].Hide();
-                lastIndex = (lastIndex --) % length;
+                lastIndex = (lastIndex--) % length;
                 return;
             }
-            
+
             objects[index].Hide();
         }
 
@@ -129,22 +132,23 @@ namespace Scripts.Systems
 
         public void Override(T target, int index = -1)
         {
-            if(index == -1) index = lastIndex;
+            if (index == -1) index = lastIndex;
             objects[index].Replace(target);
         }
+
         public void SpawnAndMove(T target, float speed, Action onPlaced)
         {
             Show();
             Move(target, speed, onPlaced);
         }
-        
-        
+
+
         public void Move(T target, float speed, Action onPlaced, int index = -1)
         {
-            if(index == -1) index = lastIndex;
+            if (index == -1) index = lastIndex;
             objects[index].Move(target, speed, onPlaced, true);
         }
-        
+
         public void HideAll()
         {
             for (int i = 0; i < length; i++)

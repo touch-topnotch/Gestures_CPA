@@ -10,7 +10,7 @@ namespace Network
     public class RelayCreator : MonoBehaviour
     {
         private const string CONNECTION_TYPE = "udp";
-        
+
         public async UniTask<string> CreateRelay(int maxConnection)
         {
             try

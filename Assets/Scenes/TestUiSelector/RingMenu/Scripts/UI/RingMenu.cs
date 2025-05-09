@@ -131,8 +131,7 @@ public class RingMenu : MonoBehaviour
         }
     }
     private float NormalizeAngle(float a) => (a + 360f) % 360f;
-    private bool _toggleAllowed = false;
-    
+
     private bool _isActive = false;
     public bool isActive
     {

@@ -2,7 +2,10 @@ using Scripts.HandsLogic;
 using Scripts.Movements;
 using Scripts.Static;
 using Scripts.Systems;
+using Sirenix.OdinInspector;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.SpatialTracking;
 using UnityEngine.UIElements;
 using UnityEngine.XR.Hands.Samples.VisualizerSample;
 
@@ -12,25 +15,30 @@ namespace Scripts.PlayerLogic
     {
         [SerializeField] private Transform _cameraTarget;
         [SerializeField] private XRMovement _movement;
-        [SerializeField] private Vector3 _centerOffset;
+        private Vector3 _centerOffset;
         public override bool isMoved() => _movement.isMoved();
 
         public override void StartMove() => _movement.StartMove();
 
         public override void StopMove() => _movement.StopMove();
 
+#if UNITY_EDITOR
+        [Button("Add Missing Components")]
+        public override void AddMissingComponents()
+        {
+            base.AddMissingComponents();
+            var rig = Selection.activeGameObject.GetComponentInChildren<XRRig>();
+            _cameraTarget ??= rig.GetComponentInChildren<TrackedPoseDriver>().transform;
+            _movement ??= rig.GetComponentInChildren<XRMovement>();
+            _movement.AddMissingComponents();
+            Selection.activeGameObject.GetComponentInChildren<CustomHandVisualizer>().AddMissingComponents();
+        }
+#endif
         public override void Initialize(PlayerData data)
         {
             base.Initialize(data);
             headInteraction.onHeadInteraction += (e) =>
             {
-                if (e == HeadInteractionType.DoubleNod)
-                {
-                    var transform1 = hands.transform;
-                    var position = transform1.position;
-                    position = new Vector3(position.x + 1, position.y, position.z);
-                    transform1.position = position;
-                }
                 if (e == HeadInteractionType.Shaking)
                 {
                     if (_movement.isMoved())
@@ -40,7 +48,6 @@ namespace Scripts.PlayerLogic
                         Centrize();
                         _movement.StartMove();
                     }
-                        
                 }
             };
         }
@@ -71,9 +78,9 @@ namespace Scripts.PlayerLogic
             var position = _cameraTarget.localPosition;
             _centerOffset = new Vector3(-position.x, 0, -position.z);
             hands.transform.localPosition = _centerOffset;
+            Update();
+            _movement.Centrize();
         }
         // мы двигаем голову, нужно двигать все, кроме тела
     }
-
 }
- 

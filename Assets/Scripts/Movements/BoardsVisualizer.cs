@@ -2,7 +2,7 @@
 
 namespace Scripts.Movements
 {
-    public class BoardsVisualizer: MonoBehaviour
+    public class BoardsVisualizer : MonoBehaviour
     {
         [SerializeField] private XRMovement _movement;
         public Transform mainCamera;
@@ -12,12 +12,10 @@ namespace Scripts.Movements
 
         private void Update()
         {
-            if(GoToMainCamera)
+            if (GoToMainCamera)
                 xzBoard.position = new Vector3(xzBoard.position.x, mainCamera.position.y, xzBoard.position.z);
             xzBoard.localScale = new Vector3(_movement.XZBoard, xzBoard.localScale.y, _movement.XZBoard);
             yBoard.position = new Vector3(yBoard.position.x, _movement.YBoard, yBoard.position.z);
         }
-
-
     }
 }

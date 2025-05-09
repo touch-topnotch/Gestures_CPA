@@ -6,6 +6,7 @@ namespace Design.RecordingScene
     public class BubbleToggle : BubbleItem
     {
         private bool _isOn = false;
+
         public bool isOn
         {
             get => _isOn;
@@ -15,7 +16,9 @@ namespace Design.RecordingScene
                 OnValueChanged();
             }
         }
+
         public UnityEvent<bool> onValueChanged;
+
         protected override void OnHoverEntered()
         {
             isOn = interactable ? !isOn : isOn;
@@ -30,11 +33,12 @@ namespace Design.RecordingScene
         {
             UpdateProp(ref emissive, 10f);
             UpdateProp(ref size, 10f);
-            if(!emissive.isEqual)
+            if (!emissive.isEqual)
                 _mat.SetColor("_EmissionColor", Color.Lerp(colorDisabled, colorEnabled, emissive.from));
             if (!size.isEqual)
                 transform.localScale = Vector3.one * size.from;
         }
+
         private void OnValueChanged()
         {
             if (_isOn)
@@ -49,7 +53,6 @@ namespace Design.RecordingScene
             }
 
             onValueChanged?.Invoke(_isOn);
-
         }
     }
 }

@@ -4,11 +4,12 @@ using UnityEngine;
 
 namespace Scripts.Static
 {
-    public class Parenter: NetworkBehaviour
+    public class Parenter : NetworkBehaviour
     {
         private Transform _parent;
         private UpdateEvent _onUpdate;
         private bool _isParented;
+
         public void SetParent(Transform parent, ref UpdateEvent onUpdate)
         {
             if (_isParented)
@@ -20,6 +21,7 @@ namespace Scripts.Static
 
             _onUpdate.AddListener(OnUpdate);
         }
+
         public void RemoveParent()
         {
             if (!_isParented)
@@ -27,7 +29,7 @@ namespace Scripts.Static
 
             _onUpdate.RemoveListener(OnUpdate);
         }
-        
+
         private void OnUpdate()
         {
             transform.position = _parent.transform.position;

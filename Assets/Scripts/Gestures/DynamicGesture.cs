@@ -7,19 +7,20 @@ using UnityEngine;
 
 namespace Scripts.Gestures
 {
-
     public enum GestureType
     {
         System,
         Weapon,
     }
+
     public class DynamicGesture // frame + IRecognizable = оружие
     {
-        public List<GestureFrame> frames{ get;}
+        public List<GestureFrame> frames { get; }
         public GestureType gestureType { get; private set; }
         private IRecognizable _recognizable;
-        
+
         private string _name;
+
         public string Name
         {
             get => _name;
@@ -31,9 +32,11 @@ namespace Scripts.Gestures
                     Debug.LogWarning("Name of gesture " + value + " is too short!");
                     _name = Calculations.RandomString(5, value);
                 }
+
                 _name = value ?? Calculations.RandomString(5);
             }
         }
+
         public DynamicGesture(string name, GestureType type, List<GestureFrame> frames, IRecognizable recognizable)
         {
             Name = name;
@@ -48,26 +51,28 @@ namespace Scripts.Gestures
             frames = new();
         }
 
-        public bool HasFrame(string frame) => GestureMapper.PrefixOfName(frame) == Name&& GestureMapper.IndexOfName(frame) < frames.Count;
-        
+        public bool HasFrame(string frame) => GestureMapper.PrefixOfName(frame) == Name &&
+                                              GestureMapper.IndexOfName(frame) < frames.Count;
+
         public void AddFrame(GestureFrame frame)
         {
             frames.Add(frame);
         }
-        
+
         //    public GestureFrame GetGestureFrame() => _currentGesture < frames.Count ? frames[_currentGesture] : null;
-        
+
         public GestureFrame GetNextFrameOf(GestureFrame frame)
         {
             if (frame == null)
                 return frames[0];
-            
+
             var index = frames.IndexOf(frame);
             if (index == -1)
                 return null;
-            
+
             return index + 1 < frames.Count ? frames[index + 1] : null;
         }
+
         public void FrameRecognized(string name)
         {
             _recognizable?.OnFrameRecognized(name);
@@ -81,6 +86,7 @@ namespace Scripts.Gestures
                 _recognizable.AbilityReleasedEvent += () => { onAbilityReleasedCallback?.Invoke(); };
             }
         }
+
         public bool TryGetGestureFrame(string name, out GestureFrame gestureFrame)
         {
             var id = GestureMapper.IndexOfName(name);
@@ -93,15 +99,15 @@ namespace Scripts.Gestures
             var log = $"Gesture {Name} contains: ";
             for (int i = 0; i < frames.Count; i++)
             {
-                log += frames[i].name + " - base name: "+ frames[i].baseName + ", ";
+                log += frames[i].name + " - base name: " + frames[i].baseName + ", ";
             }
 
             Debug.Log(log);
         }
+
         public GestureFrame this[int i]
         {
             get => frames[i];
         }
-
     }
 }

@@ -17,10 +17,9 @@ using Avatar = Scripts.PlayerLogic.Avatar;
 
 namespace Scripts.Characters
 {
-    public class Character: MonoBehaviour
+    public class Character : MonoBehaviour
     {
-    
-        private readonly Dictionary<AvatarType, Avatar> _avatarsDictionary = new ();
+        private readonly Dictionary<AvatarType, Avatar> _avatarsDictionary = new();
         private readonly Dictionary<string, Weapon> _weapons = new Dictionary<string, Weapon>();
 
         private AvatarType _currentType;
@@ -28,7 +27,6 @@ namespace Scripts.Characters
 
         public void SpawnCharacters(CharacterData data)
         {
-
             Debug.Log("SETTING SOURCE " + data.characterName);
             foreach (var VARIABLE in data.avatars)
             {
@@ -45,6 +43,7 @@ namespace Scripts.Characters
                         Instantiate(VARIABLE.Value, this.transform).GetComponent<Avatar>());
                 }
             }
+
             _handAppearanceProcessor = new HandAppearanceProcessor(data.handAppearance);
         }
 
@@ -56,8 +55,10 @@ namespace Scripts.Characters
                 var nO = NetworkManager.Singleton.SpawnManager.SpawnedObjects[weapon_ulong].GetComponent<Weapon>();
                 _weapons.Add(nO.name.Split('_')[0], nO);
             }
+
             Debug.Log("Character " + name + " contains " + Debugger.dictionaryToString(_weapons, false, true));
         }
+
         public List<ulong> SpawnWeapons(in Dictionary<string, GameObject> weapons, PlayerData data)
         {
             var spawns = new List<ulong>();
@@ -93,10 +94,12 @@ namespace Scripts.Characters
                         Debug.Log("Adding weapon " + WEAPON.Key);
                         _weapons.Add(WEAPON.Key, instance.GetComponent<Weapon>());
                     }
+
                     _weapons[WEAPON.Key].Initialize(data);
                     spawns.Add(_weapons[WEAPON.Key].NetworkObjectId);
                 }
             }
+
             Debug.Log("Character " + name + " contains " + Debugger.dictionaryToString(_weapons, false, true));
             return spawns;
         }
@@ -107,17 +110,19 @@ namespace Scripts.Characters
             {
                 return null;
             }
+
             return _avatarsDictionary[getAvatarType];
         }
 
-        public Dictionary<string,Weapon> weapons => _weapons;
-        
+        public Dictionary<string, Weapon> weapons => _weapons;
+
         public AvatarType getAvatarType => _currentType;
+
         public void ChangeAvatarType(AvatarType type, Hands hands)
         {
             _currentType = type;
             RefreshAvatars();
-            if(hands != null)
+            if (hands != null)
                 ChangeMaterials(hands.HandMaterialPair, _currentType);
         }
 
@@ -128,14 +133,15 @@ namespace Scripts.Characters
                 avatar.gameObject.SetActive(avatar.type == _currentType);
             }
         }
+
         public void ChangeMaterials(MaterialPair materialPair)
         {
-           _handAppearanceProcessor?.ChangeMaterialPair(materialPair, _currentType);
+            _handAppearanceProcessor?.ChangeMaterialPair(materialPair, _currentType);
         }
+
         public void ChangeMaterials(MaterialPair materialPair, AvatarType type)
         {
             _handAppearanceProcessor?.ChangeMaterialPair(materialPair, type);
         }
-        
     }
 }
