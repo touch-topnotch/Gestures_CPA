@@ -28,7 +28,7 @@ namespace Scripts.Weapons
     }
 
 
-    public abstract class Weapon : NetworkRecognizableBehaviour, IGrabable
+    public abstract class Weapon : NetworkRecognizableComponent, IGrabable
     {
         [Header("Weapons components")] [SerializeField]
         protected WeaponDesign weaponDesign;
@@ -48,11 +48,9 @@ namespace Scripts.Weapons
 
         protected abstract bool HitImpactCondition(out string affected);
         protected abstract bool HitCallCondition();
-
-        public void Initialize(PlayerData data)
+        
+        public void Start()
         {
-            Debug.Log(name + " initialized. " + playerData);
-            playerData = data;
             SetGrabSystemPlayerData();
         }
 
@@ -191,6 +189,14 @@ namespace Scripts.Weapons
         {
             if (IsClient)
                 weaponDesign.OnAbilityReleased();
+        }
+        // write implementation here
+        protected override bool shouldAddMissingComponents { get; }
+        //
+        
+        // write implementation here
+        public override void AddMissingComponents()
+        {
         }
     }
 }

@@ -22,21 +22,9 @@ namespace Scripts.PlayerLogic
 
         public override void StopMove() => _movement.StopMove();
 
-#if UNITY_EDITOR
-        [Button("Add Missing Components")]
-        public override void AddMissingComponents()
+        public override void Initialize()
         {
-            base.AddMissingComponents();
-            var rig = Selection.activeGameObject.GetComponentInChildren<XRRig>();
-            _cameraTarget ??= rig.GetComponentInChildren<TrackedPoseDriver>().transform;
-            _movement ??= rig.GetComponentInChildren<XRMovement>();
-            _movement.AddMissingComponents();
-            Selection.activeGameObject.GetComponentInChildren<CustomHandVisualizer>().AddMissingComponents();
-        }
-#endif
-        public override void Initialize(PlayerData data)
-        {
-            base.Initialize(data);
+            base.Initialize();
             headInteraction.onHeadInteraction += (e) =>
             {
                 if (e == HeadInteractionType.Shaking)
@@ -82,5 +70,19 @@ namespace Scripts.PlayerLogic
             _movement.Centrize();
         }
         // мы двигаем голову, нужно двигать все, кроме тела
+        
+        public override void AddMissingComponents()
+        {
+            base.AddMissingComponents();
+            var rig = Selection.activeGameObject.GetComponentInChildren<XRRig>();
+            _cameraTarget ??= rig.GetComponentInChildren<TrackedPoseDriver>().transform;
+            _movement ??= rig.GetComponentInChildren<XRMovement>();
+            _movement.AddMissingComponents();
+            gameObject.GetComponentInChildren<CustomHandVisualizer>().AddMissingComponents();
+        }
+
+        protected override bool shouldAddMissingComponents => base.shouldAddMissingComponents ||
+                                                                !(_cameraTarget && _movement);
+
     }
 }

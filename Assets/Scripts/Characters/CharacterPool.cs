@@ -180,11 +180,11 @@ namespace Scripts.Characters
             foreach (var char_weapons in weapons)
             {
                 charactersDict[char_weapons.Key].SetWeapons(char_weapons.Value);
-                foreach (var VARIABLE in char_weapons.Value)
-                {
-                    NetworkManager.Singleton.SpawnManager.SpawnedObjects[VARIABLE].GetComponent<Weapon>()
-                        .Initialize(PlayerData.local);
-                }
+                // foreach (var VARIABLE in char_weapons.Value)
+                // {
+                //     NetworkManager.Singleton.SpawnManager.SpawnedObjects[VARIABLE].GetComponent<Weapon>()
+                //         .Initialize(PlayerData.local);
+                // }
             }
         }
 

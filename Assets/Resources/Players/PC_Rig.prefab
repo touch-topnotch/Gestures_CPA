@@ -1408,7 +1408,7 @@ GameObject:
   - component: {fileID: 9181283588283036817}
   - component: {fileID: 372722643100421405}
   m_Layer: 7
-  m_Name: PC Rig
+  m_Name: PC_Rig
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1445,8 +1445,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b339a44995d41fc944e23aad227c6f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  anchors: {fileID: 372722643100421405}
-  hands: {fileID: 0}
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects:
+    - {fileID: 372722643100421405}
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: inherited
+      Entry: 6
+      Data: 
+    - Name: anchors
+      Entry: 10
+      Data: 0
   _recognitionProperties: {fileID: 11400000, guid: 5dd9888e091be49049a3d33d417ea57e,
     type: 2}
   _headInteraction: {fileID: 7127944232115332663}
@@ -1576,6 +1590,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2589d1f259d452280184af065088d25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
   Root: {fileID: 1208917844900822806}
   Body: {fileID: 1208917844900822806}
   Head: {fileID: 4532246721276544345}

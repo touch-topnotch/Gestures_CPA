@@ -16,5 +16,10 @@ namespace Scripts.PlayerLogic
         {
             throw new System.NotImplementedException();
         }
+
+        protected override void Centrize()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

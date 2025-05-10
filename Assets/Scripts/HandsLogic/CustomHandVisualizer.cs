@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Scripts.PlayerLogic;
 using Unity.XR.CoreUtils;
 using UnityEditor;
 using UnityEngine;
@@ -9,7 +10,7 @@ using UnityEngine.XR.Hands;
 
 namespace Scripts.HandsLogic
 {
-    public class CustomHandVisualizer : MonoBehaviour
+    public class CustomHandVisualizer : RigComponent
     {
         public enum VelocityType
         {
@@ -75,15 +76,8 @@ namespace Scripts.HandsLogic
 #endif // ENABLE_INPUT_SYSTEM
         }
 
-#if UNITY_EDITOR
-        public void AddMissingComponents()
-        {
-            m_Origin ??= Selection.activeGameObject.GetComponentInChildren<XROrigin>();
-            m_PlayerHands ??= Selection.activeGameObject.GetComponentInChildren<PlayerHands>();
-            m_OnEnabled.AddListener(m_PlayerHands.OnEnabled);
-            m_OnDisabled.AddListener(m_PlayerHands.OnDisabled);
-        }
-#endif
+        
+        
 
 
         protected void OnEnable()
@@ -559,5 +553,16 @@ namespace Scripts.HandsLogic
                     ToggleRenderers<TRenderer>(toggle, xform.GetChild(childIndex));
             }
         }
+
+        protected override bool shouldAddMissingComponents =>
+            !(m_Origin && m_PlayerHands);
+        public override void AddMissingComponents()
+        {
+            m_Origin ??= Selection.activeGameObject.GetComponentInChildren<XROrigin>();
+            m_PlayerHands ??= Selection.activeGameObject.GetComponentInChildren<PlayerHands>();
+            m_OnEnabled.AddListener(m_PlayerHands.OnEnabled);
+            m_OnDisabled.AddListener(m_PlayerHands.OnDisabled);
+        }
     }
+    
 }
