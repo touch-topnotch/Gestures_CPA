@@ -14,7 +14,7 @@ using UnityEngine.UI;
 
 namespace Scripts.Tests
 {
-    public class GestureFramesRecorder : MonoBehaviour
+    public class GestureRecorder : MonoBehaviour
 
     {
         public BubbleToggle leftToggle;
@@ -31,28 +31,26 @@ namespace Scripts.Tests
         private SequencedHandVisualizer _sequencedHandVisualizer;
 
         private string _curCharacterName = "";
-        private string _currentName = "";
 
         public string Name
         {
-            get => _currentName;
+            get => _recordedHandStruct.name;
             set
             {
-                _currentName = value;
-
+                
                 if (collectionLabel.text == "character")
                 {
                     var words = value.Split('_');
                     if (!int.TryParse(words[^1], out var suff))
-                        _currentName += "_0";
+                        _recordedHandStruct.name += "_0";
                 }
-
-                gestureLabel.text = _currentName;
+                _recordedHandStruct.name = value;
+                gestureLabel.text = _recordedHandStruct.name;
                 LockButtons();
             }
         }
 
-        private HandsStruct _recordedHandStruct = new();
+        private FrameData _recordedHandStruct = new("");
 
         private void OnMessageReceived(Message message)
         {
@@ -153,7 +151,7 @@ namespace Scripts.Tests
 
         private void LockButtons()
         {
-            bool interactable = _currentName != "";
+            bool interactable = _recordedHandStruct.name != "";
             leftToggle.interactable = interactable;
             rightToggle.interactable = interactable;
             newGestureButton.interactable = interactable;
@@ -175,7 +173,7 @@ namespace Scripts.Tests
             AddIndexToName();
         }
 
-        private async Task SendToCompiler(HandsStruct handStruct)
+        private async Task SendToCompiler(FrameData handStruct)
         {
             GestureCollections coll; //ch su // sy
             if (collectionLabel.text[1] == 'h')
@@ -190,8 +188,8 @@ namespace Scripts.Tests
             {
                 coll = GestureCollections.system;
             }
-
-            await _player.gestureCombiner.library.RecordFrame(handStruct, _currentName, coll, characterLabel.text);
+            
+            await _player.gestureCombiner.library.RecordFrame(handStruct, coll, characterLabel.text);
         }
 
         public virtual void RecordName(string name)

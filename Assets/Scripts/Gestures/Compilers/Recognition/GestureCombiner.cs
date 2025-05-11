@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Scrips.Components;
 using Scripts.Characters;
 using Scripts.Events;
 using Scripts.HandsLogic;
@@ -7,7 +8,7 @@ using UnityEngine;
 
 namespace Scripts.Gestures
 {
-    public class GestureCombiner : MonoBehaviour
+    public class GestureCombiner : PlayerComponent
     {
         public GesturesLibrary library;
 
@@ -23,7 +24,7 @@ namespace Scripts.Gestures
 
         public void Initialize(CharacterPool chars)
         {
-            library = new GesturesLibrary(chars);
+             library = new GesturesLibrary(chars);
             OnGestureRecognized = new GestureRecognized();
             OnAbilityFrameRecognized = new FrameRecognized();
             OnAbilityFrameRecognized.AddListener((e) =>
@@ -55,13 +56,15 @@ namespace Scripts.Gestures
             {
                 gesture.FrameRecognized(name);
 
-                if (gesture.TryGetGestureFrame(name, out var frame))
+                if (gesture.TryGetFrameData(name, out var frame))
                 {
                     Debug.Log("Move hands");
-                    hands.MoveHands(frame, PlayerData.local.bodyAnchors, 4, () => { Debug.Log("Frame Simulated!"); },
+                    hands.MoveHands(frame.ParentedFrame(inherited.anchors.Body), 4, () => { Debug.Log("Frame Simulated!"); },
                         true);
                 }
             }
         }
+
+        protected override bool shouldAddMissingComponents => false;
     }
 }

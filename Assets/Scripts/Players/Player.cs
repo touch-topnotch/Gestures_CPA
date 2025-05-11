@@ -28,7 +28,7 @@ namespace Scripts.PlayerLogic
         public readonly ulong id;
         public readonly BodyAnchors bodyAnchors;
         public readonly PlayerHands hands;
-        public GesturesLibrary library;
+        public readonly GesturesLibrary library;
 
         public PlayerData(ulong id, BodyAnchors bodyAnchors, PlayerHands hands, GesturesLibrary library)
         {
@@ -109,7 +109,6 @@ namespace Scripts.PlayerLogic
 
         private void Awake()
         {
-            rigType = RigType.NoRig;
             if (isLocal)
             {
                 _characterPool.SpawnCharacters();
@@ -120,9 +119,9 @@ namespace Scripts.PlayerLogic
         public void SetOwner(ulong id)
         {
             InitializeComponents(id);
+            
             PlayerData.local = data;
-            if (_rigType == RigType.NoRig)
-                rigType = RigType.PCRig;
+            
 #if UNITY_EDITOR
             rigType = _rigType;
 #elif PLATFORM_ANDROID
@@ -130,9 +129,13 @@ namespace Scripts.PlayerLogic
 #else
             rigType = _rigType;
 #endif
+            
             characterPool.SetAvatarType(AvatarType.Local);
             _gestureCombiner.CreateRecognizer(curRig.RecognitionPropertiesConfig);
             data.library.onLibraryInitialized += () => { _gestureCombiner.RecognizeWithAllGestures(); };
+            
+
+            
         }
 
         public void SetEnemy(ulong id)
@@ -146,7 +149,7 @@ namespace Scripts.PlayerLogic
         {
             _gestureCombiner.Initialize(characterPool);
             data = new PlayerData(id, anchors, _hands, _gestureCombiner.library);
-
+            
             characterPool.SetMaterialId((int)id);
             UpdateEvent.Instance.AddListener(UpdateAnchors);
             Debug.Log($"Player {id} initialized. RigType = {rigType}");
@@ -166,14 +169,15 @@ namespace Scripts.PlayerLogic
 
         protected void UpdateAnchors()
         {
+            Debug.Log("bebra");
             if (_rigType != RigType.NoRig)
             {
                 // updating 
                 BodyAnchors.EquateAnchors(curRig.anchors,
-                    _anchors); // нельзя прокинуть _anchors в риг напрямую, потому-что в риге находится камера.
+                    ref _anchors); // нельзя прокинуть _anchors в риг напрямую, потому-что в риге находится камера.
             }
-
-            BodyAnchors.EquateAnchors(_anchors, character.GetAvatar()?.Anchors);
+            if(character.curAvatar)
+                BodyAnchors.EquateAnchors(_anchors, ref character.curAvatar.Anchors);
         }
 
         protected override bool shouldAddMissingComponents =>

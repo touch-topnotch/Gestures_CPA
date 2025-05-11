@@ -5,7 +5,6 @@ using Scripts.Design;
 using Scripts.Events;
 using Scripts.HandsLogic;
 using Scripts.PlayerLogic;
-using Scripts.Static;
 using Scripts.Systems;
 using UnityEngine;
 
@@ -34,11 +33,11 @@ namespace Scripts.Gestures
             var v_possibleGestures = new List<DynamicGesture>(possibleGestures.Values);
 
             // Initialize possible frames. For first time we will take a 1st frame of each Dynamic Gesture 
-            var v_possibleFrames = new List<GestureFrame>();
+            var v_possibleFrames = new List<FrameData>();
 
             for (int i = 0; i < v_possibleGestures.Count; i++)
             {
-                v_possibleFrames.Add(v_possibleGestures[i].frames[0]);
+                v_possibleFrames.Add(v_possibleGestures[i].frames[0].AttachedToPlayer());
             }
 
             LogPossibleFrames();
@@ -55,7 +54,7 @@ namespace Scripts.Gestures
                         out var curSuppRec, false) && drawnSuppLast != curSuppRec)
                 {
                     _hands.handVisualiser.ShowHands();
-                    _hands.handVisualiser.Move(v_possibleFrames[curSuppRec].Hands, 4, null);
+                    _hands.handVisualiser.Move(v_possibleFrames[curSuppRec], 4, null);
                     _hands.handVisualiser.ManipulateLasts((m) => m.ChangeColorPinPong(_colorActive, _colorPassive,
                         new ColorParams(HandShaderProps.EdgeColor, 1, false)));
                     drawnSuppLast = curSuppRec;
@@ -73,13 +72,13 @@ namespace Scripts.Gestures
 
             while (v_curFrameId < v_possibleGestures[v_curGesture].frames.Count)
             {
-                var possibleFrame = v_possibleFrames[v_curFrameId];
+                var possibleFrame = v_possibleFrames[v_curFrameId].AttachedToPlayer();
                 var wasDrawn = false;
                 while (!RecognizeFrame(_config.PlayerProperties, possibleFrame, true))
                 {
                     if (!wasDrawn && RecognizeFrame(_config.SupportiveProperties, possibleFrame, _hands, false))
                     {
-                        _hands.handVisualiser.Move(possibleFrame.Hands, 4, null);
+                        _hands.handVisualiser.Move(possibleFrame, 4, null);
                         _hands.handVisualiser.ManipulateLasts((m) => m.ChangeColorPinPong(_colorActive, _colorPassive,
                             new ColorParams(HandShaderProps.EdgeColor, 1, false)));
                         wasDrawn = true;
@@ -110,7 +109,7 @@ namespace Scripts.Gestures
         }
 
         public static bool TryRecognizeFrameInAnyPossibles(in RecognitionProperties props,
-            in List<GestureFrame> possibleFrames, out int frameId, in bool shareFrameBetweenDevices = false)
+            in List<FrameData> possibleFrames, out int frameId, in bool shareFrameBetweenDevices = false)
         {
             for (int i = 0; i < possibleFrames.Count; i++)
             {
@@ -125,19 +124,19 @@ namespace Scripts.Gestures
             return false;
         }
 
-        public static bool RecognizeFrame(in RecognitionProperties properties, in GestureFrame frame, in bool shareFrameBetweenDevices = false)
+        public static bool RecognizeFrame(in RecognitionProperties properties, FrameData frameData, in bool shareFrameBetweenDevices = false)
         {
-            return RecognizeFrame(properties, frame, _hands, shareFrameBetweenDevices);
+            return RecognizeFrame(properties, frameData, _hands, shareFrameBetweenDevices);
         }
 
-        public static bool RecognizeFrame(in RecognitionProperties properties, in GestureFrame frame,
-            in PlayerHands hands, in bool shareFrameBetweenDevices = false)
+        public static bool RecognizeFrame(RecognitionProperties properties, FrameData frameData,
+            PlayerHands hands, in bool shareFrameBetweenDevices = false)
         {
-            if (RecognizeHand(frame.Hands.LeftBones, hands.leftHand.points, properties)
-                && RecognizeHand(frame.Hands.RightBones, hands.rightHand.points, properties))
+            if (RecognizeHand(frameData.LeftBones, hands.leftHand.points, properties)
+                && RecognizeHand(frameData.RightBones, hands.rightHand.points, properties))
             {
                 if(shareFrameBetweenDevices)
-                    onSharedFrameBetweenDevices?.Invoke(frame.name);
+                    onSharedFrameBetweenDevices?.Invoke(frameData.name);
                 return true;
             }
 
@@ -149,8 +148,7 @@ namespace Scripts.Gestures
         {
             if (bonesData == null || bonesData.rotations?.Length != handSkeleton.Length)
                 return true;
-
-            bonesData.ListenAnchors(PlayerData.local.bodyAnchors);
+            
             var dist = OptimizedDistance(bonesData.rootPos, handSkeleton[0].localPosition);
             if (1 / props.positionQuality - dist < props.positionQuality)
             {

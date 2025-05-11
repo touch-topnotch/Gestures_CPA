@@ -2,13 +2,13 @@ using System.Collections.Generic;
 
 namespace Scripts.Databases
 {
-    public struct JsonGestureStruct
+    public struct JsonFrameStruct
     {
         public string key;
-        public JsonGestureProperty value;
+        public JsonFrameProperty value;
     }
 
-    public struct JsonGestureProperty
+    public struct JsonFrameProperty
     {
         public int Type;
         public List<string[]> Frames;
