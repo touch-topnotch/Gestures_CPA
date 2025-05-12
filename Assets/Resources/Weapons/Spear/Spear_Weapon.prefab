@@ -813,7 +813,7 @@ VFXRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3673535004748917195}
   m_Enabled: 0
-  m_CastShadows: 1
+  m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
@@ -1161,6 +1161,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0593fc4bf2d0aae45972f0cc4254ad17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
   _audioProcessor: {fileID: 5146045309000706831}
   _startSounds:
   - Start_Aura
@@ -1168,13 +1177,13 @@ MonoBehaviour:
   - Crowd_Aura
   _continuousSoundGroups:
     keys:
-    - Crowd_Aura
     - Anvil_Aura
+    - Crowd_Aura
     - Horse_Aura
     values:
-    - 2.7
-    - 15
     - 20
+    - 3
+    - 15
   _endSounds:
   - End_Aura
   _endSoundsRandom: []
