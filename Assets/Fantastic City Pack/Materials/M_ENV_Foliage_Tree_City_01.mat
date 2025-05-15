@@ -2,20 +2,24 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: M_ENV_Foliage_Tree_City_01
   m_Shader: {fileID: 4800000, guid: 6f0a79cdc55289f43a72a135161c9e87, type: 3}
-  m_ShaderKeywords: 
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -63,8 +67,9 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
-    - _AlphaClipThreshold: 0.5
+    - _AlphaClipThreshold: 1
     - _AlphaCutoff: 0.5
     - _BumpScale: 1
     - _Cutoff: 0.5
@@ -82,7 +87,7 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ShadowRecievedStrength: 1
+    - _ShadowRecievedStrength: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -90,17 +95,17 @@ Material:
     - _Usevertexcolorforwind: 0
     - _WindScale: 0.351
     - _WindStrength: 0.139
-    - _WindTintContrast: 1.12
-    - _WindTintOpacity: 0.022
-    - _WindTintScale: 0.295
+    - _WindTintContrast: 1.1
+    - _WindTintOpacity: 0.066
+    - _WindTintScale: 0
     - _ZWrite: 1
     - __dirty: 1
     m_Colors:
-    - _BaseTexColorTint: {r: 0.27059996, g: 0.50980395, b: 0.08235293, a: 0}
+    - _BaseTexColorTint: {r: 1, g: 1, b: 1, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DistanceFadeColor: {r: 0.21176471, g: 0.5019608, b: 0.6039216, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _GroundFadeColor: {r: 0.31372547, g: 0.39607847, b: 0.11372546, a: 1}
+    - _GroundFadeColor: {r: 0.8773585, g: 0.8464445, b: 0.23589355, a: 1}
     - _WindSpeed: {r: 2, g: 1, b: 0, a: 0}
     - _WindTintSpeed: {r: -2, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []

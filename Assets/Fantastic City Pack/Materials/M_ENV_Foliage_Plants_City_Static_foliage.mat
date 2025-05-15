@@ -15,20 +15,25 @@ MonoBehaviour:
   version: 4
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: M_ENV_Foliage_Plants_City_Static_foliage
   m_Shader: {fileID: 4800000, guid: 6f0a79cdc55289f43a72a135161c9e87, type: 3}
-  m_ShaderKeywords: _ALPHATEST_ON
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords: []
+  m_InvalidKeywords:
+  - _ALPHATEST_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 1
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -104,9 +109,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - _AlphaClip: 1
-    - _AlphaClipThreshold: 0.5
+    - _AlphaClipThreshold: 0.801
     - _AlphaCutoff: 0.5
     - _Blend: 0
     - _BumpScale: 1
@@ -124,7 +130,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0
     - _GlossyReflections: 1
-    - _GroundFadeContrast: 0
+    - _GroundFadeContrast: 0.123
     - _GroundFadeHeight: -5
     - _Metallic: 0
     - _Mode: 1
@@ -150,11 +156,11 @@ Material:
     - __dirty: 1
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _BaseTexColorTint: {r: 0.754717, g: 0.754717, b: 0.754717, a: 0}
+    - _BaseTexColorTint: {r: 0.23829654, g: 0.8018865, b: 0.8018868, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DistanceFadeColor: {r: 0.5333334, g: 0.6745098, b: 0.1607843, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _GroundFadeColor: {r: 1, g: 1, b: 1, a: 1}
+    - _GroundFadeColor: {r: 1, g: 0.9588851, b: 0.1462264, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
     - _WindSpeed: {r: 2, g: 1, b: 0, a: 0}
     - _WindTintSpeed: {r: -3, g: 1, b: 0, a: 0}
