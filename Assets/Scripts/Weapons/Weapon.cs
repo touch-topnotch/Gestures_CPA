@@ -60,13 +60,14 @@ namespace Scripts.Weapons
             GrabSystem.OnGrabEnd += OnUnGrabbed;
         }
 
-        public void OnGrabbed()
+        public virtual void OnGrabbed()
         {
             weaponDesign.OnGrabbed();
         }
 
-        public void OnUnGrabbed()
+        public virtual void OnUnGrabbed()
         {
+            weaponDesign.OnUnGrabbed();
         }
 
         protected virtual void OnHitStartHold()

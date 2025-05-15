@@ -23,5 +23,9 @@ namespace Components
         public virtual void OnGrabbed()
         {
         }
+        
+        public virtual void OnUnGrabbed()
+        {
+        }
     }
 }

@@ -8,33 +8,31 @@ public class GrabSystemOneHanded : GrabSystem
 {
     protected override void HandleGrab()
     {
-        if (!_mainGrabbed)
+        if (!_mainGrabPoint.IsGrabbed)
         {
-            if (CheckHandGrab(_playerData.hands.rightHand.grabPoint, _mainGrabPoint, rightHandGrabGesture,
-                    ref _mainGrabberTransform, ref _mainGrabGesture, ref _mainGrabReversed, ref _mainGrabPosOffset) ||
-                CheckHandGrab(_playerData.hands.leftHand.grabPoint, _mainGrabPoint, leftHandGrabGesture,
-                    ref _mainGrabberTransform, ref _mainGrabGesture, ref _mainGrabReversed, ref _mainGrabPosOffset))
+            if (CheckHandGrab(_playerData.hands.rightHand.grabPoint, _mainGrabPoint, rightHandGrabGesture) ||
+                CheckHandGrab(_playerData.hands.leftHand.grabPoint, _mainGrabPoint, leftHandGrabGesture))
             {
-                if (!_mainGrabbed) OnGrabStarted();
-                _mainGrabbed = true;
+                if (!_mainGrabPoint.IsGrabbed) OnGrabStarted();
+                if (_mainGrabPoint.UnGrabCoroutine != null) StopCoroutine(_mainGrabPoint.UnGrabCoroutine);
+                _mainGrabPoint.IsGrabbed = true;
             }
         }
         else
         {
-            if (!RecognizeFrame(_mainGrabGesture))
+            if (!RecognizeFrame(_mainGrabPoint.GrabGesture))
             {
-                if (_mainGrabbed) OnGrabEnded();
-                _mainGrabbed = false;
+                if (!_mainGrabPoint.IsUnGrabbing && _mainGrabPoint.IsGrabbed)
+                    _mainGrabPoint.UnGrabCoroutine = StartCoroutine(UnGrab(_mainGrabPoint, _mainGrabPoint.IsGrabbed));
             }
         }
     }
 
     protected override void SetGrabObjectTransform()
     {
-        if (_mainGrabbed)
+        if (_mainGrabPoint.IsGrabbed)
         {
-            SetGrabObjectTransformOneHanded(_mainGrabberTransform, _mainGrabPoint, _mainGrabPosOffset,
-                _mainGrabReversed);
+            SetGrabObjectTransformOneHanded(_mainGrabPoint);
         }
     }
 
@@ -43,4 +41,5 @@ public class GrabSystemOneHanded : GrabSystem
         Gizmos.DrawWireSphere(_mainGrabPoint.GrabPointTransform.position, _mainGrabPoint.GrabPointRadius);
         Gizmos.DrawRay(_mainGrabPoint.GrabPointTransform.position, _mainGrabPoint.GrabPointTransform.right);
     }
+
 }

@@ -11,6 +11,8 @@ namespace Scripts.Weapons
         protected float _bladeMinSpeed;
 
         [SerializeField] protected Blade _blade;
+        
+        [SerializeField] private Rigidbody _rigidbody;
 
         public int capacity
         {
@@ -29,10 +31,19 @@ namespace Scripts.Weapons
         private Vector3 _previousBladePointPosition;
 
         private bool _bladeTriggered;
+        
 
-        private void Start()
+        public override void OnGrabbed()
         {
+            base.OnGrabbed();
             StartShooting();
+            _rigidbody.isKinematic = true;
+        }
+        
+        public override void OnUnGrabbed()
+        {
+            base.OnGrabbed();
+            _rigidbody.isKinematic = false;
         }
 
         protected override bool HitImpactCondition(out string affected) => _blade.onHitImpact(out affected);
