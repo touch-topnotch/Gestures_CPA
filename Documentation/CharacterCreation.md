@@ -39,9 +39,6 @@
        </div>
 </div>
 
-<div>
-<p></p>
-</div>
 
 <div style="display: flex; align-items: center;">
     <div style="flex: 1; text-align: center; ">
@@ -53,9 +50,6 @@
        </div>
 </div>
 
-<div>
-<p></p>
-</div>
 
 <div style="display: flex; align-items: center;">
     <div style="flex: 1; text-align: center; ">
@@ -86,7 +80,7 @@
         <img src="source/cc_5.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
        </div>
 </div>
-<p> </p>
+
 <div style="display: flex; align-items: center;">
     <div style="flex: 1; text-align: center; ">
         <p>Magic!</p>
@@ -111,7 +105,7 @@
         <img src="image-2.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
        </div>
 </div>
-<p></p>
+
 <div style="display: flex; align-items: center;">
     <div style="flex: 1; text-align: center; ">
         <p>A Enemy - более агрессивным</p>
@@ -159,7 +153,12 @@
         <img src="source/cc_13.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
        </div>
 </div>
-<p></p>
+
 
 # Ставим пивоты у персонажа
 
+Зачем мне вообще это делать?
+-
+Чтобы ваш аватар отображался в VR без коллизий текстур, тело игрока находилось действительно в теле и шея не была как у перекосоебеного жирафа. В общем, надо
+
+### Итак, приступим
