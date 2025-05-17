@@ -28,4 +28,22 @@
 
 Добро пожаловать, мне кажется, в самое удобное создание персонажа в игре. Благодаря [CharacterCreatorWindow](../assets/Scripts/Static/CharacterCreatorWindow.cs) мы можем создать …. барабанная дробь … Character Creator Window!
 
-<img align="right" width="50%" src="source/cc_1.png">Находится это добро по пути **Tools -> CharacterCreator**
+
+<div style="display: flex; align-items: center;">
+    <div style="flex: 1; text-align: center; ">
+        <p>Находится это добро по пути Tools -> CharacterCreator</p>
+    </div>
+    <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-end;">
+        <img src="source/cc_1.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
+       </div>
+</div>
+
+<div style="display: flex; align-items: center;">
+    <div style="flex: 1; text-align: center; ">
+        <p>Итак, внутри этого окна есть необходимые поля - <strong> Character Name</strong> - имя персонажа типа PascalCase без нижних подчеркиваний. Например AngerGrief.
+<strong>CharacterModel</strong> - нужно подробно разобрать здесь. </p>
+    </div>
+    <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-end;">
+        <img src="source/cc_2.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
+       </div>
+</div>
