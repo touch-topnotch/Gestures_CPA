@@ -42,7 +42,7 @@
 
 **Weapons** - здесь вы можете добавить любые виды оружий. У вас могут быть не готовы скрипты логики/дизайна, это ок, можно добавить их и позже. Главное - напишите имена всех оружий, так создадутся необходимые директории (Resources/Weapons/ИмяОружия/) и префабы.
 <p align="right">
-<img src="source/cc_3.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
+<img src="source/cc_3.png" alt="Description of the image" style="width: 50%; max-width: 400px;">
       
 
 
@@ -61,7 +61,7 @@
 Выбираем цвета и жмем Create
 
 <p align="right">
-<img src="source/cc_5.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
+<img src="source/cc_5.png" alt="Description of the image" style="width: 50%; max-width: 400px;">
 
 Magic!
 
@@ -88,22 +88,22 @@ A Enemy - более агрессивным
 
 Ну и когда готово - жмем **Bake**
 <p align="right">
-<img src="source/cc_9.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
+<img src="source/cc_9.png" alt="Description of the image" style="width: 50%; max-width: 400px;">
 
 Вы можете посмотреть на созданного персонажа в папке Resources/Characters/ИмяПерсонажа
 
 <p align="right">
-<img src="source/cc_10.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
+<img src="source/cc_10.png" alt="Description of the image" style="width: 50%; max-width: 400px;">
       
 SrciptableObject CharData_ИмяПерсонажа должен выглядеть примерно так
 
 <p align="right">
-<img src="source/cc_11.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
+<img src="source/cc_11.png" alt="Description of the image" style="width: 50%; max-width: 400px;">
 
 Последнее, что осталось сделать - убедиться, что ваш персонаж добавился в CharacterConfigs по пути Prefabs/Managers/CharacterController
 
 <p align="right">
-<img src="source/cc_13.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
+<img src="source/cc_13.png" alt="Description of the image" style="width: 50%; max-width: 400px;">
     
 # Ставим пивоты у персонажа
 
