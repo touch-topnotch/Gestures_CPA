@@ -1,13 +1,8 @@
-<div style="display: flex; align-items: center;">
-    <div align="center" style="flex: 1; text-align: center; ">
-       test
-    </div>
-    <img align="right" src="source/cc_2.png" alt="Description of the image" style="width: 30%; max-width: 400px;">
-</div>
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed et libero id justo iaculis fermentum sed id ex. Phasellus sit amet sapien id nisi volutpat lacinia. Fusce non diam id turpis maximus placerat. 
 
-<div style="display: flex; align-items: center;">
-    <p align="center" style="flex: 1; text-align: center; ">
-       test
-    </p>
-    <img align="right" src="source/cc_2.png" alt="Description of the image" style="width: 30%; max-width: 400px;">
+<div style="display:flex">
+   <div style="flex:1;">
+       Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed et libero id justo iaculis fermentum sed id ex. Phasellus sit amet sapien id nisi volutpat lacinia. Fusce non diam id turpis maximus placerat.
+   </div>
+   <img style = "flex:1; width: 30%;" src = "source/cc_1.png">
 </div>
