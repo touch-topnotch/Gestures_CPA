@@ -66,10 +66,8 @@
 Magic!
 
 <img align= "left" src="source/cc_6.png" alt="Description of the image" style="width: 50%;">
-<img align="right" src="image-2.png" alt="Description of the image" style="width: 50%;">
+<img src="image-2.png" alt="Description of the image" style="width: 50%;">
       
-
-
 Также мы можем настраивать разные варианты отображения на разных аватаров.
 
 Допустим, local будет дружелюбным
