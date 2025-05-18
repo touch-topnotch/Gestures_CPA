@@ -28,33 +28,22 @@
 
 Добро пожаловать, мне кажется, в самое удобное создание персонажа в игре. Благодаря [CharacterCreatorWindow](../assets/Scripts/Static/CharacterCreatorWindow.cs) мы можем создать …. барабанная дробь … Character Creator Window!
 
+Находится оно в Tools->CharacterCreator:
 
-<div style="display: flex; align-items: center;">
-    <div style="flex: 1; text-align: center; ">
-        Итак, внутри этого окна есть необходимые поля - <strong> Character Name</strong> - имя персонажа типа PascalCase без нижних подчеркиваний. Например AngerGrief.
-<strong>CharacterModel</strong> - нужно подробно разобрать здесь. 
-    </div>
-    <img src="source/cc_2.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
-</div>
+<p align="right">
+<img src="source/cc_1.png" alt="Description of the image" style="width: 50%; max-width: 400px;">
 
-<div style="display: flex; align-items: center;">
-    <div style="flex: 1; text-align: center; ">
-        Итак, внутри этого окна есть необходимые поля - <strong> Character Name</strong> - имя персонажа типа PascalCase без нижних подчеркиваний. Например AngerGrief.
-<strong>CharacterModel</strong> - нужно подробно разобрать здесь. 
-    </div>
-    <img src="source/cc_2.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
-</div>
+
+ Итак, внутри этого окна есть необходимые поля - **Character Name** - имя персонажа типа PascalCase без нижних подчеркиваний. Например AngerGrief.
+<p align="right">
+<img src="source/cc_2.png" alt="Description of the image" style="width: 50%; max-width: 400px;">
 
 
 
-<div style="display: flex; align-items: center;">
-    <div style="flex: 1; text-align: center; ">
-        <strong>Weapons</strong> - здесь вы можете добавить любые виды оружий. У вас могут быть не готовы скрипты логики/дизайна, это ок, можно добавить их и позже. Главное - напишите имена всех оружий, так создадутся необходимые директории (Resources/Weapons/ИмяОружия/) и префабы.
-    </div>
-    <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-end;">
-        <img src="source/cc_3.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
-       </div>
-</div>
+**Weapons** - здесь вы можете добавить любые виды оружий. У вас могут быть не готовы скрипты логики/дизайна, это ок, можно добавить их и позже. Главное - напишите имена всех оружий, так создадутся необходимые директории (Resources/Weapons/ИмяОружия/) и префабы.
+<p align="right">
+<img src="source/cc_3.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
+      
 
 
 
@@ -68,89 +57,54 @@
 
 Итак, последняя деталь - это [HandAppearance Config](../assets/scripts/characters/HandAppearance.cs). Тут вы выбираете 3 главных цвета персонажа и по ним компилятор соберет визуал для рук. (Самая волшебная вещь - у нас не создается дополнительных материалов => батчинг везде одинаковый. На сцене присутствуют 10 материалов рук (для команды 5*5) - настройки которых мы можем динамически изменять благодаря конфигу).
 
-<div style="display: flex; align-items: center;">
-    <div style="flex: 1; text-align: center; ">
-        <p>Выбираем цвета и жмем Create</p>
-    </div>
-    <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-end;">
-        <img src="source/cc_5.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
-       </div>
-</div>
 
-<div style="display: flex; align-items: center;">
-    <div style="flex: 1; text-align: center; ">
-        <p>Magic!</p>
-    </div>
-    <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-end;">
-        <img src="source/cc_6.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
-       </div>
-        <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-end;">
-        <img src="image-2.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
-       </div>
-</div>
+Выбираем цвета и жмем Create
+
+<p align="right">
+<img src="source/cc_5.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
+
+Magic!
+
+<img align= "left" src="source/cc_6.png" alt="Description of the image" style="width: 50%;">
+<img align="right" src="image-2.png" alt="Description of the image" style="width: 50%;">
+      
+
 
 Также мы можем настраивать разные варианты отображения на разных аватаров.
-<div style="display: flex; align-items: center;">
-    <div style="flex: 1; text-align: center; ">
-        <p>Допустим, local будет дружелюбным</p>
-    </div>
-    <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-end;">
-        <img src="source/cc_7.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
-       </div>
-         <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-end;">
-        <img src="image-2.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
-       </div>
-</div>
 
-<div style="display: flex; align-items: center;">
-    <div style="flex: 1; text-align: center; ">
-        <p>A Enemy - более агрессивным</p>
-    </div>
-    <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-end;">
-        <img src="source/cc_8.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
-       </div>
-         <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-end;">
-        <img src="image-3.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
-       </div>
-</div>
-<div style="display: flex; align-items: center;">
-    <div style="flex: 1; display: flex; flex-direction: column; align-items: center;">
-        <img src="source/cc_9.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
-       </div>
+Допустим, local будет дружелюбным
 
-</div>
-<div style="flex: 1; text-align: center; ">
-    <p>Ну и когда готово - жмем <strong>Bake</strong></p>
-</div>
+<img align= "left" src="source/cc_7.png" alt="Description of the image" style="width: 50%;">
+<img src="image-2.png" alt="Description of the image" style="width: 50%;">
+
+
+A Enemy - более агрессивным
+
+<img align= "left" src="source/cc_8.png" alt="Description of the image" style="width: 50%;">
+
+<img src="image-3.png" alt="Description of the image" style="width: 50%;">
 
 
 
-<div style="display: flex; align-items: center;">
-    <div style="flex: 1; text-align: center; ">
-        <p>Вы можете посмотреть на созданного персонажа в папке Resources/Characters/ИмяПерсонажа</p>
-    </div>
-    <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-end;">
-        <img src="source/cc_10.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
-       </div>
-</div>
-<div style="display: flex; align-items: center;">
-    <div style="flex: 1; text-align: center; ">
-        <p>SrciptableObject CharData_ИмяПерсонажа должен выглядеть примерно так</p>
-    </div>
-    <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-end;">
-        <img src="source/cc_11.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
-       </div>
-</div>
-<div style="display: flex; align-items: center;">
-    <div style="flex: 1; text-align: center; ">
-        <p>Последнее, что осталось сделать - убедиться, что ваш персонаж добавился в CharacterConfigs по пути Prefabs/Managers/CharacterController</p>
-    </div>
-    <div style="flex: 1; display: flex; flex-direction: column; align-items: flex-end;">
-        <img src="source/cc_13.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
-       </div>
-</div>
+Ну и когда готово - жмем **Bake**
+<p align="right">
+<img src="source/cc_9.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
 
+Вы можете посмотреть на созданного персонажа в папке Resources/Characters/ИмяПерсонажа
 
+<p align="right">
+<img src="source/cc_10.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
+      
+SrciptableObject CharData_ИмяПерсонажа должен выглядеть примерно так
+
+<p align="right">
+<img src="source/cc_11.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
+
+Последнее, что осталось сделать - убедиться, что ваш персонаж добавился в CharacterConfigs по пути Prefabs/Managers/CharacterController
+
+<p align="right">
+<img src="source/cc_13.png" alt="Description of the image" style="width: 100%; max-width: 400px;">
+    
 # Ставим пивоты у персонажа
 
 Зачем мне вообще это делать?
