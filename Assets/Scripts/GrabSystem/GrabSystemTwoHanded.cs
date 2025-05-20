@@ -5,13 +5,7 @@ public class GrabSystemTwoHanded : GrabSystem
 {
     [Header("Secondary Grab Point")] [SerializeField]
     private GrabPoint _secondaryGrabPoint;
-
-    private bool _secondaryGrabbed;
-    private bool _secondaryGrabReversed;
-    private float _secondaryGrabPosOffset;
-    private Transform _secondaryGrabberTransform;
-    protected string _secondaryGrabGesture;
-
+    
     [Header("Secondary Grab Boundaries")] [SerializeField]
     private float grabberTwistAngle;
 
@@ -19,65 +13,61 @@ public class GrabSystemTwoHanded : GrabSystem
 
     protected override void HandleGrab()
     {
-        if (!_mainGrabbed)
+        if (!_mainGrabPoint.IsGrabbed)
         {
-            if (CheckHandGrab(_playerData.hands.rightHand.grabPoint, _mainGrabPoint, rightHandGrabGesture,
-                    ref _mainGrabberTransform, ref _mainGrabGesture, ref _mainGrabReversed, ref _mainGrabPosOffset) ||
-                CheckHandGrab(_playerData.hands.leftHand.grabPoint, _mainGrabPoint, leftHandGrabGesture,
-                    ref _mainGrabberTransform, ref _mainGrabGesture, ref _mainGrabReversed, ref _mainGrabPosOffset))
+            if (CheckHandGrab(_playerData.hands.rightHand.grabPoint, _mainGrabPoint, rightHandGrabGesture) ||
+                CheckHandGrab(_playerData.hands.leftHand.grabPoint, _mainGrabPoint, leftHandGrabGesture))
             {
-                if (!_mainGrabbed && !_secondaryGrabbed) OnGrabStarted();
-                _mainGrabbed = true;
+                if (!_mainGrabPoint.IsGrabbed && !_secondaryGrabPoint.IsGrabbed) OnGrabStarted();
+                if (_mainGrabPoint.UnGrabCoroutine != null) StopCoroutine(_mainGrabPoint.UnGrabCoroutine);
+                _mainGrabPoint.IsGrabbed = true;
             }
         }
         else
         {
-            if (!RecognizeFrame(_mainGrabGesture))
+            if (!RecognizeFrame(_mainGrabPoint.GrabGesture))
             {
-                if (_mainGrabbed && !_secondaryGrabbed) OnGrabEnded();
-                _mainGrabbed = false;
+                if (!_mainGrabPoint.IsUnGrabbing && _mainGrabPoint.IsGrabbed)
+                    _mainGrabPoint.UnGrabCoroutine = StartCoroutine(UnGrab(_mainGrabPoint, 
+                        _mainGrabPoint.IsGrabbed && !_secondaryGrabPoint.IsGrabbed));
             }
         }
 
-        if (!_secondaryGrabbed)
+        if (!_secondaryGrabPoint.IsGrabbed)
         {
-            if ((CheckHandGrab(_playerData.hands.rightHand.grabPoint, _secondaryGrabPoint, rightHandGrabGesture,
-                     ref _secondaryGrabberTransform, ref _secondaryGrabGesture, ref _secondaryGrabReversed,
-                     ref _secondaryGrabPosOffset) ||
-                 CheckHandGrab(_playerData.hands.leftHand.grabPoint, _secondaryGrabPoint, leftHandGrabGesture,
-                     ref _secondaryGrabberTransform, ref _secondaryGrabGesture, ref _secondaryGrabReversed,
-                     ref _secondaryGrabPosOffset))
+            if ((CheckHandGrab(_playerData.hands.rightHand.grabPoint, _secondaryGrabPoint, rightHandGrabGesture) ||
+                 CheckHandGrab(_playerData.hands.leftHand.grabPoint, _secondaryGrabPoint, leftHandGrabGesture))
                 && IsSecondGrabValid())
             {
-                if (!_mainGrabbed && !_secondaryGrabbed) OnGrabStarted();
-                _secondaryGrabbed = true;
+                if (!_mainGrabPoint.IsGrabbed && !_secondaryGrabPoint.IsGrabbed) OnGrabStarted();
+                if (_secondaryGrabPoint.UnGrabCoroutine != null) StopCoroutine(_secondaryGrabPoint.UnGrabCoroutine);
+                _secondaryGrabPoint.IsGrabbed = true;
             }
         }
         else
         {
-            if (!RecognizeFrame(_secondaryGrabGesture) || !IsSecondGrabValid())
+            if (!RecognizeFrame(_secondaryGrabPoint.GrabGesture) || !IsSecondGrabValid())
             {
-                if (_secondaryGrabbed && !_mainGrabbed) OnGrabEnded();
-                _secondaryGrabbed = false;
+                if (!_secondaryGrabPoint.IsUnGrabbing && _secondaryGrabPoint.IsGrabbed)
+                    _secondaryGrabPoint.UnGrabCoroutine = StartCoroutine(UnGrab(_secondaryGrabPoint,
+                    _secondaryGrabPoint.IsGrabbed && !_mainGrabPoint.IsGrabbed));
             }
         }
     }
 
     protected override void SetGrabObjectTransform()
     {
-        if (_mainGrabbed && !_secondaryGrabbed)
+        if (_mainGrabPoint.IsGrabbed && !_secondaryGrabPoint.IsGrabbed)
         {
-            SetGrabObjectTransformOneHanded(_mainGrabberTransform, _mainGrabPoint, _mainGrabPosOffset,
-                _mainGrabReversed);
+            SetGrabObjectTransformOneHanded(_mainGrabPoint);
         }
 
-        if (!_mainGrabbed && _secondaryGrabbed)
+        if (!_mainGrabPoint.IsGrabbed && _secondaryGrabPoint.IsGrabbed)
         {
-            SetGrabObjectTransformOneHanded(_secondaryGrabberTransform, _secondaryGrabPoint, _secondaryGrabPosOffset,
-                _secondaryGrabReversed);
+            SetGrabObjectTransformOneHanded(_secondaryGrabPoint);
         }
 
-        if (_mainGrabbed && _secondaryGrabbed)
+        if (_mainGrabPoint.IsGrabbed && _secondaryGrabPoint.IsGrabbed)
         {
             SetGrabObjectTransformTwoHanded();
         }
@@ -89,17 +79,17 @@ public class GrabSystemTwoHanded : GrabSystem
         var grabObjectPos = grabObjectTransform.position;
 
         grabObjectPos = Vector3.Lerp(grabObjectPos,
-            _mainGrabberTransform.position +
-            (_secondaryGrabberTransform.position - _mainGrabberTransform.position).normalized * _mainGrabPosOffset +
+            _mainGrabPoint.GrabberTransform.position +
+            (_secondaryGrabPoint.GrabberTransform.position - _mainGrabPoint.GrabberTransform.position).normalized * _mainGrabPoint.GrabPosOffset +
             (grabObjectPos - _mainGrabPoint.GrabPointTransform.position), moveLerpSpeed * Time.deltaTime);
 
         grabObjectTransform.position = grabObjectPos;
 
-        Vector3 direction = _secondaryGrabberTransform.position - _mainGrabberTransform.position;
+        Vector3 direction = _secondaryGrabPoint.GrabberTransform.position - _mainGrabPoint.GrabberTransform.position;
 
         Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
 
-        targetRotation *= Quaternion.Euler(0, 0, -_mainGrabberTransform.eulerAngles.x);
+        targetRotation *= Quaternion.Euler(0, 0, -_mainGrabPoint.GrabberTransform.eulerAngles.x);
 
         grabObjectTransform.rotation = Quaternion.Slerp(grabObjectTransform.rotation, targetRotation,
             rotationSlerpSpeed * Time.deltaTime);
@@ -107,12 +97,12 @@ public class GrabSystemTwoHanded : GrabSystem
 
     private bool IsSecondGrabValid()
     {
-        if (!_mainGrabbed)
+        if (!_mainGrabPoint.IsGrabbed)
             return true;
 
-        var twistAngle = Vector3.Angle(_mainGrabberTransform.right, _secondaryGrabberTransform.right);
-        var angle = Vector3.Angle(-_mainGrabberTransform.right,
-            _secondaryGrabberTransform.position - _mainGrabberTransform.position);
+        var twistAngle = Vector3.Angle(_mainGrabPoint.GrabberTransform.right, _secondaryGrabPoint.GrabberTransform.right);
+        var angle = Vector3.Angle(-_mainGrabPoint.GrabberTransform.right,
+            _secondaryGrabPoint.GrabberTransform.position - _mainGrabPoint.GrabberTransform.position);
 
         return ((twistAngle < grabberTwistAngle || 180 - twistAngle < grabberTwistAngle)
             && angle < angleBetweenGrabbers || 180 - angle < angleBetweenGrabbers);

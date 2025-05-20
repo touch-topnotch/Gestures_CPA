@@ -14,7 +14,7 @@ namespace Scripts.Weapons
 {
     public enum State
     {
-        HitHolding,
+        HitHolds,
         HitCalled,
         HitImpact,
     }
@@ -28,6 +28,22 @@ namespace Scripts.Weapons
     }
 
 
+    /// <summary>
+    /// This class describes all SERVER logic of the weapon. Don't try to use it as front-part of weapon, only hit logic,
+    /// which involves other players.
+    /// For managing gesture side of this logic (for example, hit condition is (player gesture == palm)) - manipulate
+    /// of all calculations in the client side inside inherited script and call serverRPC method for change condition
+    /// when you want to make a hit.
+    /// More simple:
+    /// <example>
+    /// private onHit;
+    /// hitConditionServerRPC(bool onHit) => this.onHit = onHit;
+    /// hitCondition = onHit;
+    /// update()
+    ///     if(isClient && isOwner && gesture == palm)
+    ///         hitConditionServerRPC(true);
+    /// </example>
+    /// </summary>
     public abstract class Weapon : NetworkRecognizableComponent, IGrabable
     {
         [Header("Weapons components")] [SerializeField]
@@ -37,18 +53,71 @@ namespace Scripts.Weapons
 
         protected int _power;
 
-        [SerializeField] [Tooltip("Weapon hit call cooldown")]
-        private float _hitCallDelay = 0.5f;
 
-        private float _hitCallTimer;
-        private bool CanHitCall => _hitCallTimer <= 0;
-
-        protected readonly NetworkVariable<State> state = new NetworkVariable<State>();
+        private bool _canHitCall;
+        
+        private State _state;
+        protected  State state
+        {
+            get => _state;
+            set
+            {
+                _state = value;
+                if (value != State.HitCalled)
+                {
+                    _canHitCall = true;
+                }
+            }
+        }
         protected UpdateEvent _onUpdate => UpdateEvent.Instance;
 
-        protected abstract bool HitImpactCondition(out string affected);
-        protected abstract bool HitCallCondition();
+ 
+        /// <summary>
+        /// <remarks>
+        /// Server-Only! Don't use a lot of memory and time inside, иначе придется продать почку на хостинг сервера
+        ///</remarks>
+        /// This function is called when the player grabs the weapon and it able to shoot
+        /// </summary>
+        protected virtual void OnWeaponGrabbed(){}
         
+        /// <summary>
+        /// <remarks>
+        /// Server-Only! Don't use a lot of memory and time inside, иначе придется продать почку на хостинг сервера
+        ///</remarks>
+        /// The hit call ability.
+        /// <example>
+        /// katana speed is higher than minimum speed
+        /// </example>
+        /// </summary>
+        protected abstract bool HitCondition();
+        
+        /// <summary>
+        /// <remarks>
+        /// Server-Only! Don't use a lot of memory and time inside, иначе придется продать почку на хостинг сервера
+        ///</remarks>
+        /// <example>
+        /// bullet inside the target, player in hammer-hit area
+        /// </example>
+        /// This function describes the hit impact ability.
+        /// </summary>
+        /// <param name="affected"> affected object tag (Player/Floor/Map/Others..)</param>
+        /// <returns></returns>
+        protected abstract bool ImpactCondition(out string affected);
+
+        /// <summary>
+        /// This function is called when player tried to hit
+        /// <example>
+        /// Player moves katana, press the pistol button, make some gesture
+        /// </example>
+        /// </summary>
+        protected virtual void OnHit(){}
+
+        /// <summary>
+        /// This function is called when weapon hit condition is met. For example, when bullet hit the target.
+        /// </summary>
+        /// <param name="affected"> affected object tag (Player/Floor/Map/Others..)</param>
+        protected virtual void OnImpact(string affected) {}
+
         public void Start()
         {
             SetGrabSystemPlayerData();
@@ -60,82 +129,67 @@ namespace Scripts.Weapons
             GrabSystem.OnGrabEnd += OnUnGrabbed;
         }
 
-        public void OnGrabbed()
+        public virtual void OnGrabbed()
         {
             weaponDesign.OnGrabbed();
         }
 
-        public void OnUnGrabbed()
+        public virtual void OnUnGrabbed()
         {
+            weaponDesign.OnUnGrabbed();
         }
 
-        protected virtual void OnHitStartHold()
-        {
-        }
-
-        protected virtual void OnHitHolding()
-        {
-            if (IsClient)
-                weaponDesign.OnHitHolding();
-        }
-
-        protected virtual void OnHitCalled()
-        {
-            if (!CanHitCall) return;
-
-            if (IsClient)
-            {
-                weaponDesign.OnHitCalled();
-                _hitCallTimer = _hitCallDelay;
-                _onUpdate.AddListener(UpdateHitCallTimer);
-            }
-        }
-
-        protected virtual void OnHitImpact(string affected)
-        {
-            if (IsClient)
-                weaponDesign.OnHitImpact(affected);
-        }
-
-        public override void OnNetworkSpawn()
-        {
-            // if (IsClient)
-            //     weaponDesign.playerData = playerData;
-        }
 
         [ClientRpc]
-        private void OnHitImpactClientRpc(string affected)
+        private void PlayWeaponDesignClientRpc(string props)
         {
-            if (IsServer)
+            if (!IsClient)
                 return;
-
-            OnHitImpact(affected);
+            
+            var keywords = props.Split();
+         
+            switch (keywords[0])
+            {
+                case "L":
+                    weaponDesign.OnHitHolds();
+                    return;
+                case "H":
+                    weaponDesign.OnHit();
+                    return;
+                case "I":
+                    if (keywords.Length < 2)
+                        return;
+                    weaponDesign.OnImpact(keywords[1]);
+                    return;
+                case "A":
+                    weaponDesign.OnAbilityReleased();
+                    return;
+                
+            }
         }
-
-        private void UpdateHitCallTimer()
+        [ServerRpc]
+        protected void StartShootingServerRPC()
         {
-            _hitCallTimer -= Time.deltaTime;
-            if (CanHitCall)
-                _onUpdate.RemoveListener(UpdateHitCallTimer);
-        }
-
-        protected void StartShooting()
-        {
-            state.Value = State.HitHolding;
-            OnHitStartHold();
+            if (!IsServer)
+                return;
+            OnWeaponGrabbed();
+            PlayWeaponDesignClientRpc("L");            
+            state = State.HitHolds;
             _onUpdate.AddListener(AbilityShootingProcess);
         }
 
         private void AbilityShootingProcess()
         {
-            switch (state.Value)
+            switch (state)
             {
-                case State.HitHolding: // ожидаем выстрел
-                    OnHitHolding();
+                case State.HitHolds: // ожидаем выстрела
                     HandleHitCall();
                     return;
                 case State.HitCalled: //  нажали на курок
-                    OnHitCalled();
+                    if (!_canHitCall) 
+                        return;
+                    PlayWeaponDesignClientRpc("H");
+                    _canHitCall = false;
                     HandleHitImpact();
                     return;
                 case State.HitImpact: // попали
@@ -146,47 +200,48 @@ namespace Scripts.Weapons
 
         private void HandleHitCall()
         {
-            if ((IsOwner && IsClient) && HitCallCondition())
+            if (HitCondition())
             {
-                if (HitCallCondition() && state.Value == State.HitHolding)
+                if (HitCondition() && state == State.HitHolds)
                 {
-                    state.Value = State.HitCalled;
+                    state = State.HitCalled;
                 }
                 else
                 {
-                    state.Value = State.HitHolding;
+                    state = State.HitHolds;
                 }
             }
         }
 
         private void HandleHitImpact()
         {
-            if ((IsServer) && HitImpactCondition(out string affected))
+            if ((IsServer) && ImpactCondition(out string affected))
             {
-                state.Value = State.HitImpact;
-                OnHitImpact(affected);
-                OnHitImpactClientRpc(affected);
+                state = State.HitImpact;
+                OnImpact(affected);
+                PlayWeaponDesignClientRpc("I " + affected);
             }
-            else if (!HitCallCondition())
+            else if (!HitCondition())
             {
-                state.Value = State.HitHolding;
+                StartShootingServerRPC();
             }
         }
 
-        public override void OnFrameRecognized(string name)
+        public sealed override void OnFrameRecognized(string name)
         {
             if (IsClient)
                 weaponDesign.OnFrameRecognized(name);
         }
 
-        public override void AbilityCalled()
+        public sealed override void AbilityCalled()
         {
             if (IsClient)
                 weaponDesign.OnGestureDetected();
         }
 
-        protected override void OnAbilityReleased()
+        protected sealed override void OnAbilityReleased()
         {
+            _onUpdate.RemoveListener(AbilityShootingProcess);
             if (IsClient)
                 weaponDesign.OnAbilityReleased();
         }

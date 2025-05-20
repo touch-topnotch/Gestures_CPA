@@ -67,16 +67,11 @@ using UnityEngine;
             //throw new System.NotImplementedException();
         }
 
-        public override void OnHitHolding()
-        {
-           // throw new System.NotImplementedException();
-        }
-
-        public override void OnHitCalled()
+        public override void OnHit()
         { 
             audioProcessor.ActivateResource("Swing");
         }
-        public override void OnHitImpact(string affected)
+        public override void OnImpact(string affected)
         {
             switch (affected)
             {
@@ -91,6 +86,11 @@ using UnityEngine;
 
         public override void OnAbilityReleased()
         {
+        }
+
+        public override void OnHitHolds()
+        {
+            
         }
     }
 

@@ -558,8 +558,8 @@ namespace Scripts.HandsLogic
             !(m_Origin && m_PlayerHands);
         public override void AddMissingComponents()
         {
-            m_Origin ??= Selection.activeGameObject.GetComponentInChildren<XROrigin>();
-            m_PlayerHands ??= Selection.activeGameObject.GetComponentInChildren<PlayerHands>();
+            m_Origin ??= this.transform.GetComponentInChildren<XROrigin>();
+            m_PlayerHands ??= transform.GetComponentInChildren<PlayerHands>();
             m_OnEnabled.AddListener(m_PlayerHands.OnEnabled);
             m_OnDisabled.AddListener(m_PlayerHands.OnDisabled);
         }

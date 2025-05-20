@@ -1,6 +1,3 @@
-using System;
-using Scripts.Events;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Scripts.Weapons
@@ -11,6 +8,8 @@ namespace Scripts.Weapons
         protected float _bladeMinSpeed;
 
         [SerializeField] protected Blade _blade;
+        
+        [SerializeField] private Rigidbody _rigidbody;
 
         public int capacity
         {
@@ -29,34 +28,38 @@ namespace Scripts.Weapons
         private Vector3 _previousBladePointPosition;
 
         private bool _bladeTriggered;
+        
 
-        private void Start()
+        public override void OnGrabbed()
         {
-            StartShooting();
+            base.OnGrabbed();
+            _rigidbody.isKinematic = true;
+        }
+        
+        public override void OnUnGrabbed()
+        {
+            base.OnGrabbed();
+            _rigidbody.isKinematic = false;
+            StartShootingServerRPC();
         }
 
-        protected override bool HitImpactCondition(out string affected) => _blade.onHitImpact(out affected);
-        protected override bool HitCallCondition() => _blade.speed > _bladeMinSpeed;
+        protected override bool ImpactCondition(out string affected) => _blade.onHitImpact(out affected);
 
-        protected override void OnHitImpact(string affected)
+        protected override bool HitCondition() => _blade.speed > _bladeMinSpeed;
+
+        protected override void OnImpact(string affected)
         {
             switch (affected)
             {
                 case "Player":
                     Debug.Log("Melee weapon hit player!");
-                    weaponDesign.OnHitImpact(affected);
                     capacity -= 10;
                     break;
                 case "Map":
                     Debug.Log("Melee weapon hit solid object");
-                    weaponDesign.OnHitImpact(affected);
                     capacity -= 5;
                     break;
             }
-
-            StartShooting();
         }
-
-    
     }
 }

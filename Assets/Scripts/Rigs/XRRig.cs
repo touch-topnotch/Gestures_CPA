@@ -74,7 +74,7 @@ namespace Scripts.PlayerLogic
         public override void AddMissingComponents()
         {
             base.AddMissingComponents();
-            var rig = Selection.activeGameObject.GetComponentInChildren<XRRig>();
+            var rig = this.transform;
             _cameraTarget ??= rig.GetComponentInChildren<TrackedPoseDriver>().transform;
             _movement ??= rig.GetComponentInChildren<XRMovement>();
             _movement.AddMissingComponents();

@@ -1,34 +1,31 @@
 using System;
+using System.Collections;
+using Scripts.Components;
 using Scripts.Gestures;
 using Scripts.PlayerLogic;
 using UnityEngine;
 
-public abstract class GrabSystem : MonoBehaviour
+public abstract class GrabSystem : InheritedComponent<Player>
 {
     public event Action OnGrabStart;
     public event Action OnGrabEnd;
+    protected override bool shouldAddMissingComponents { get; }
 
     [SerializeField] protected Transform _grabObject;
 
-    protected PlayerData _playerData => PlayerData.local;
+    protected PlayerData _playerData => inherited.data;
 
-    [Header("Grab Gestures")] [SerializeField]
-    protected string rightHandGrabGesture;
-
+    [Header("Grab Gestures")] 
+    [SerializeField] protected string rightHandGrabGesture;
     [SerializeField] protected string leftHandGrabGesture;
+    [SerializeField] protected float recognizeFailDelay;
 
     [Header("Movement")] [SerializeField] protected float moveLerpSpeed;
     [SerializeField] protected float rotationSlerpSpeed;
 
-    [Header("Main Grab Point")] [SerializeField]
-    protected GrabPoint _mainGrabPoint;
-
-    protected bool _mainGrabbed;
-    protected bool _mainGrabReversed;
-    protected float _mainGrabPosOffset;
-    protected Transform _mainGrabberTransform;
-    protected string _mainGrabGesture;
-
+    [Header("Main Grab Point")] 
+    [SerializeField] protected GrabPoint _mainGrabPoint;
+    
     private RecognitionProperties _recognitionProperties = new RecognitionProperties
     {
         positionQuality = 0,
@@ -38,11 +35,6 @@ public abstract class GrabSystem : MonoBehaviour
 
     protected abstract void HandleGrab();
     protected abstract void SetGrabObjectTransform();
-
-    public void Start()
-    {
-        //    _playerData = PlayerData.local;
-    }
 
     protected virtual void OnGrabStarted()
     {
@@ -60,7 +52,7 @@ public abstract class GrabSystem : MonoBehaviour
         SetGrabObjectTransform();
     }
 
-    private bool IsHandInGrabZone(Transform hand, GrabPoint grabPoint, ref float grabPos)
+    private bool IsHandInGrabZone(Transform hand, GrabPoint grabPoint)
     {
         // Calculate the direction vector from the hand to the capture point
         Vector3 captureDirection = grabPoint.GrabPointTransform.position - hand.position;
@@ -69,7 +61,8 @@ public abstract class GrabSystem : MonoBehaviour
         float distanceToLine = Vector3.Cross(captureDirection, grabPoint.GrabPointTransform.right).magnitude;
 
         // Check if the distance to the line is less than the capture area radius
-        if (distanceToLine < grabPoint.GrabPointRadius)
+        var grabPointGrabPointRadius = grabPoint.IsGrabbed ? grabPoint.GrabPointRadius * 2 : grabPoint.GrabPointRadius;
+        if (distanceToLine < grabPointGrabPointRadius)
         {
             // Calculate the closest point on the line to the capture point
             Vector3 closestPointOnLine = grabPoint.GrabPointTransform.position - grabPoint.GrabPointTransform.right *
@@ -79,11 +72,12 @@ public abstract class GrabSystem : MonoBehaviour
             float distanceToClosestPoint = Vector3.Distance(grabPoint.GrabPointTransform.position, closestPointOnLine);
 
             // Check if the distance to the closest point on the line is less than the capture area length
-            if (distanceToClosestPoint < grabPoint.GrabPointLength)
+            var grabPointGrabPointLength = grabPoint.IsGrabbed ? grabPoint.GrabPointLength * 1.5f : grabPoint.GrabPointLength;
+            if (distanceToClosestPoint < grabPointGrabPointLength)
             {
-                grabPos = (grabPoint.GrabPointTransform.position - closestPointOnLine).magnitude;
+                grabPoint.GrabPosOffset = (grabPoint.GrabPointTransform.position - closestPointOnLine).magnitude;
                 if (Vector3.Dot(captureDirection, grabPoint.GrabPointTransform.right) < 0)
-                    grabPos = -grabPos;
+                    grabPoint.GrabPosOffset = -grabPoint.GrabPosOffset;
                 return true;
             }
         }
@@ -91,14 +85,13 @@ public abstract class GrabSystem : MonoBehaviour
         return false;
     }
 
-    protected bool CheckHandGrab(Transform hand, GrabPoint grabPoint, string gesture,
-        ref Transform currentGrabberTransform, ref string grabGesture, ref bool grabReversed, ref float grabPosOffset)
+    protected bool CheckHandGrab(Transform hand, GrabPoint grabPoint, string gesture)
     {
-        if (IsHandInGrabZone(hand, grabPoint, ref grabPosOffset) && RecognizeFrame(gesture))
+        if (IsHandInGrabZone(hand, grabPoint) && RecognizeFrame(gesture))
         {
-            currentGrabberTransform = hand;
-            grabGesture = gesture;
-            grabReversed = Vector3.Dot(hand.right, grabPoint.GrabPointTransform.right) > 0;
+            grabPoint.GrabberTransform = hand;
+            grabPoint.GrabGesture = gesture;
+            grabPoint.GrabReversed = Vector3.Dot(hand.right, grabPoint.GrabPointTransform.right) > 0;
 
             return true;
         }
@@ -106,20 +99,19 @@ public abstract class GrabSystem : MonoBehaviour
         return false;
     }
 
-    protected void SetGrabObjectTransformOneHanded(Transform grabberTransform, GrabPoint grabPoint, float grabPosOffset,
-        bool grabReversed)
+    protected void SetGrabObjectTransformOneHanded(GrabPoint grabPoint)
     {
         var grabObjectTransform = _grabObject.transform;
         var grabObjectPos = grabObjectTransform.position;
 
-        var localRotation = grabReversed
+        var localRotation = grabPoint.GrabReversed
             ? Quaternion.Inverse(grabPoint.GrabPointTransform.localRotation)
             : grabPoint.GrabPointTransform.localRotation;
         grabObjectTransform.rotation = Quaternion.Slerp(grabObjectTransform.rotation,
-            grabberTransform.rotation * localRotation, rotationSlerpSpeed * Time.deltaTime);
-        grabObjectPos = Vector3.Lerp(grabObjectPos, grabberTransform.position +
-                                                    ((grabReversed ? grabberTransform.right : -grabberTransform.right) *
-                                                     grabPosOffset) +
+            grabPoint.GrabberTransform.rotation * localRotation, rotationSlerpSpeed * Time.deltaTime);
+        grabObjectPos = Vector3.Lerp(grabObjectPos, grabPoint.GrabberTransform.position +
+                                                    ((grabPoint.GrabReversed ? grabPoint.GrabberTransform.right : -grabPoint.GrabberTransform.right) *
+                                                     grabPoint.GrabPosOffset) +
                                                     (grabObjectPos - grabPoint.GrabPointTransform.position),
             moveLerpSpeed * Time.deltaTime);
         grabObjectTransform.position = grabObjectPos;
@@ -130,6 +122,15 @@ public abstract class GrabSystem : MonoBehaviour
         return Recognizer.RecognizeFrame(_recognitionProperties,
             _playerData.library.supportiveGestures[grabGesture]);
     }
+
+    protected IEnumerator UnGrab(GrabPoint grabPoint, bool needOnGrabEndedRaise)
+    {
+        grabPoint.IsUnGrabbing = true;
+        yield return new WaitForSeconds(recognizeFailDelay);
+        if (needOnGrabEndedRaise) OnGrabEnded();
+        grabPoint.IsGrabbed = false;
+        grabPoint.IsUnGrabbing = false;
+    }
 }
 
 [Serializable]
@@ -138,4 +139,12 @@ public class GrabPoint
     public Transform GrabPointTransform;
     public float GrabPointRadius;
     public float GrabPointLength;
+    
+    [NonSerialized] public bool IsGrabbed;
+    [NonSerialized] public bool GrabReversed;
+    [NonSerialized] public float GrabPosOffset;
+    [NonSerialized] public Transform GrabberTransform;
+    [NonSerialized] public string GrabGesture;
+    [NonSerialized] public Coroutine UnGrabCoroutine;
+    [NonSerialized] public bool IsUnGrabbing;
 }
