@@ -1,16 +1,12 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using Components;
 using DG.Tweening;
-using Scripts.Design;
 using Scripts.Gestures;
-using Scripts.HandsLogic;
 using Scripts.PlayerLogic;
 using UnityEngine;
 using UnityEngine.VFX;
 
-public class Spear : WeaponDesign
+public class Spear_WD : WeaponDesign
 {
     [SerializeField] private LayerMask _floorMask;
 
@@ -46,6 +42,7 @@ public class Spear : WeaponDesign
     private void Awake()
     {
         _spearObject.SetActive(false);
+        
         _portalSpawnLocalPos = _portalVFX.transform.localPosition;
     }
 
@@ -195,18 +192,18 @@ public class Spear : WeaponDesign
         Debug.Log("GestureDetected");
     }
 
-    public override void OnHitHolding()
+    public override void OnHitHolds()
     {
       //  Debug.Log("HitHolding");
     }
 
-    public override void OnHitCalled()
+    public override void OnHit()
     {
         //Debug.Log("HitCalled");
         weaponAudioProcessor.ActivateRandomResource("Swing");
     }
 
-    public override void OnHitImpact(string affected)
+    public override void OnImpact(string affected)
     {
         weaponAudioProcessor.ActivateRandomResource("Hit_" + affected);
     }

@@ -1,6 +1,3 @@
-using System;
-using Scripts.Events;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Scripts.Weapons
@@ -36,7 +33,6 @@ namespace Scripts.Weapons
         public override void OnGrabbed()
         {
             base.OnGrabbed();
-            StartShooting();
             _rigidbody.isKinematic = true;
         }
         
@@ -44,30 +40,26 @@ namespace Scripts.Weapons
         {
             base.OnGrabbed();
             _rigidbody.isKinematic = false;
+            StartShootingServerRPC();
         }
 
-        protected override bool HitImpactCondition(out string affected) => _blade.onHitImpact(out affected);
-        protected override bool HitCallCondition() => _blade.speed > _bladeMinSpeed;
+        protected override bool ImpactCondition(out string affected) => _blade.onHitImpact(out affected);
 
-        protected override void OnHitImpact(string affected)
+        protected override bool HitCondition() => _blade.speed > _bladeMinSpeed;
+
+        protected override void OnImpact(string affected)
         {
             switch (affected)
             {
                 case "Player":
                     Debug.Log("Melee weapon hit player!");
-                    weaponDesign.OnHitImpact(affected);
                     capacity -= 10;
                     break;
                 case "Map":
                     Debug.Log("Melee weapon hit solid object");
-                    weaponDesign.OnHitImpact(affected);
                     capacity -= 5;
                     break;
             }
-
-            StartShooting();
         }
-
-    
     }
 }
