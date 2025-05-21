@@ -15,6 +15,9 @@ public abstract class GrabSystem : InheritedComponent<Player>
 
     protected PlayerData _playerData => inherited.data;
 
+    protected Grabber rightHandGrabber;
+    protected Grabber lefttHandGrabber;
+
     [Header("Grab Gestures")] 
     [SerializeField] protected string rightHandGrabGesture;
     [SerializeField] protected string leftHandGrabGesture;
@@ -44,6 +47,12 @@ public abstract class GrabSystem : InheritedComponent<Player>
     protected virtual void OnGrabEnded()
     {
         OnGrabEnd?.Invoke();
+    }
+
+    private void Start()
+    {
+        rightHandGrabber = new Grabber(_playerData.hands.rightHand.grabPoint);
+        lefttHandGrabber = new Grabber(_playerData.hands.leftHand.grabPoint);
     }
 
     private void Update()
@@ -85,14 +94,14 @@ public abstract class GrabSystem : InheritedComponent<Player>
         return false;
     }
 
-    protected bool CheckHandGrab(Transform hand, GrabPoint grabPoint, string gesture)
+    protected bool CheckHandGrab(Grabber grabber, GrabPoint grabPoint, string gesture)
     {
-        if (IsHandInGrabZone(hand, grabPoint) && RecognizeFrame(gesture))
+        if (grabber.IsGrabbing) return false;
+        if (IsHandInGrabZone(grabber.Transform, grabPoint) && RecognizeFrame(gesture))
         {
-            grabPoint.GrabberTransform = hand;
+            grabPoint.Grabber = grabber;
             grabPoint.GrabGesture = gesture;
-            grabPoint.GrabReversed = Vector3.Dot(hand.right, grabPoint.GrabPointTransform.right) > 0;
-
+            grabPoint.GrabReversed = Vector3.Dot(grabber.Transform.right, grabPoint.GrabPointTransform.right) > 0;
             return true;
         }
 
@@ -108,9 +117,9 @@ public abstract class GrabSystem : InheritedComponent<Player>
             ? Quaternion.Inverse(grabPoint.GrabPointTransform.localRotation)
             : grabPoint.GrabPointTransform.localRotation;
         grabObjectTransform.rotation = Quaternion.Slerp(grabObjectTransform.rotation,
-            grabPoint.GrabberTransform.rotation * localRotation, rotationSlerpSpeed * Time.deltaTime);
-        grabObjectPos = Vector3.Lerp(grabObjectPos, grabPoint.GrabberTransform.position +
-                                                    ((grabPoint.GrabReversed ? grabPoint.GrabberTransform.right : -grabPoint.GrabberTransform.right) *
+            grabPoint.Grabber.Transform.rotation * localRotation, rotationSlerpSpeed * Time.deltaTime);
+        grabObjectPos = Vector3.Lerp(grabObjectPos, grabPoint.Grabber.Transform.position +
+                                                    ((grabPoint.GrabReversed ? grabPoint.Grabber.Transform.right : -grabPoint.Grabber.Transform.right) *
                                                      grabPoint.GrabPosOffset) +
                                                     (grabObjectPos - grabPoint.GrabPointTransform.position),
             moveLerpSpeed * Time.deltaTime);
@@ -130,6 +139,7 @@ public abstract class GrabSystem : InheritedComponent<Player>
         if (needOnGrabEndedRaise) OnGrabEnded();
         grabPoint.IsGrabbed = false;
         grabPoint.IsUnGrabbing = false;
+        grabPoint.Grabber.IsGrabbing = false;
     }
 }
 
@@ -143,8 +153,19 @@ public class GrabPoint
     [NonSerialized] public bool IsGrabbed;
     [NonSerialized] public bool GrabReversed;
     [NonSerialized] public float GrabPosOffset;
-    [NonSerialized] public Transform GrabberTransform;
+    [NonSerialized] public Grabber Grabber;
     [NonSerialized] public string GrabGesture;
     [NonSerialized] public Coroutine UnGrabCoroutine;
     [NonSerialized] public bool IsUnGrabbing;
+}
+
+public class Grabber
+{
+    public Transform Transform;
+    public bool IsGrabbing;
+
+    public Grabber(Transform transform)
+    {
+        Transform = transform;
+    }
 }
