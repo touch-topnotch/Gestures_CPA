@@ -15,10 +15,10 @@ namespace Components
         public abstract void OnFrameRecognized(string frameName);
 
         public abstract void OnGestureDetected();
-        public abstract void OnHitHolding();
-        public abstract void OnHitCalled();
-        public abstract void OnHitImpact(string affected);
+        public abstract void OnHit();
+        public abstract void OnImpact(string affected);
         public abstract void OnAbilityReleased();
+        public abstract void OnHitHolds();
 
         public virtual void OnGrabbed()
         {

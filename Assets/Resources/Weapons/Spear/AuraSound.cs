@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Components;
 using Scripts.Systems;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class AuraSound : PrefabSerializedMonoBehaviour
@@ -14,7 +13,7 @@ public class AuraSound : PrefabSerializedMonoBehaviour
     [Header("Sounds")]
     [SerializeField] private string[] _startSounds;
     [SerializeField] private string[] _startSoundsRandom;
-    [SerializeField] private SerializableDictionary<string, float> _continuousSoundGroups;
+    [SerializeField] private Dictionary<string, float> _continuousSoundGroups;
     [SerializeField] private string[] _endSounds;
     [SerializeField] private string[] _endSoundsRandom;
     

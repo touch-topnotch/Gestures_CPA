@@ -169,7 +169,6 @@ namespace Scripts.PlayerLogic
 
         protected void UpdateAnchors()
         {
-            Debug.Log("bebra");
             if (_rigType != RigType.NoRig)
             {
                 // updating 
