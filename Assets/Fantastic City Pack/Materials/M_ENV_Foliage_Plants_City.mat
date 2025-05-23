@@ -12,12 +12,11 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
-  m_InvalidKeywords:
-  - _ALPHATEST_ON
+  m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 2000
   stringTagMap: {}
   disabledShaderPasses: []
   m_LockedProperties: 
@@ -49,7 +48,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 2b3a3e88acefb534da57cd8a0bb70b9a, type: 3}
+        m_Texture: {fileID: 2800000, guid: f1ba42321841866449b0a99bd479d177, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -74,43 +73,43 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AlphaClipThreshold: 0.885
+    - _AlphaClipThreshold: 1
     - _AlphaCutoff: 0.5
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _DistanceFadeEnd: 74.52
-    - _DistanceFadeOpacity: 0.021
-    - _DistanceFadeStart: 53.6
+    - _DistanceFadeEnd: 77.3
+    - _DistanceFadeOpacity: 1
+    - _DistanceFadeStart: 69.3
     - _DstBlend: 0
     - _GlossMapScale: 1
-    - _Glossiness: 0
+    - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _GroundFadeContrast: 0.091
-    - _GroundFadeHeight: -3.56
+    - _GroundFadeContrast: 0.047
+    - _GroundFadeHeight: -4.58
     - _Metallic: 0
-    - _Mode: 1
+    - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _ShadowRecievedStrength: 1
+    - _ShadowRecievedStrength: 0.65
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
     - _Usevertexcolorforwind: 0
-    - _WindScale: 0.184
-    - _WindStrength: 0.167
-    - _WindTintContrast: 1
-    - _WindTintOpacity: 0
-    - _WindTintScale: 0.43
+    - _WindScale: 0.351
+    - _WindStrength: 0.139
+    - _WindTintContrast: 1.1
+    - _WindTintOpacity: 0.066
+    - _WindTintScale: 0
     - _ZWrite: 1
     - __dirty: 1
     m_Colors:
-    - _BaseTexColorTint: {r: 1, g: 1, b: 1, a: 0}
+    - _BaseTexColorTint: {r: 1, g: 0.98691326, b: 0.9764151, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DistanceFadeColor: {r: 0.21176471, g: 0.5019608, b: 0.6039216, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _GroundFadeColor: {r: 0.990566, g: 0.87196964, b: 0.31305623, a: 1}
+    - _GroundFadeColor: {r: 0.2473643, g: 0.4528302, b: 0.16447133, a: 1}
     - _WindSpeed: {r: 2, g: 1, b: 0, a: 0}
-    - _WindTintSpeed: {r: -0.08, g: 1, b: 0, a: 0}
+    - _WindTintSpeed: {r: -2, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
