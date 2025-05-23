@@ -38,7 +38,7 @@ namespace Scripts
 
         public List<VFXProperty> properties = new List<VFXProperty>();
         public VisualEffect vfx;
-        public string AddNextComponents;
+        public string AddNextComponents = "";
 
         public void AddBindings()
         {
