@@ -15,12 +15,13 @@ public class GrabSystemTwoHanded : GrabSystem
     {
         if (!_mainGrabPoint.IsGrabbed)
         {
-            if (CheckHandGrab(_playerData.hands.rightHand.grabPoint, _mainGrabPoint, rightHandGrabGesture) ||
-                CheckHandGrab(_playerData.hands.leftHand.grabPoint, _mainGrabPoint, leftHandGrabGesture))
+            if (CheckHandGrab(rightHandGrabber, _mainGrabPoint, rightHandGrabGesture) ||
+                CheckHandGrab(lefttHandGrabber, _mainGrabPoint, leftHandGrabGesture))
             {
                 if (!_mainGrabPoint.IsGrabbed && !_secondaryGrabPoint.IsGrabbed) OnGrabStarted();
                 if (_mainGrabPoint.UnGrabCoroutine != null) StopCoroutine(_mainGrabPoint.UnGrabCoroutine);
                 _mainGrabPoint.IsGrabbed = true;
+                _mainGrabPoint.Grabber.IsGrabbing = true;
             }
         }
         else
@@ -35,13 +36,14 @@ public class GrabSystemTwoHanded : GrabSystem
 
         if (!_secondaryGrabPoint.IsGrabbed)
         {
-            if ((CheckHandGrab(_playerData.hands.rightHand.grabPoint, _secondaryGrabPoint, rightHandGrabGesture) ||
-                 CheckHandGrab(_playerData.hands.leftHand.grabPoint, _secondaryGrabPoint, leftHandGrabGesture))
+            if ((CheckHandGrab(rightHandGrabber, _secondaryGrabPoint, rightHandGrabGesture) ||
+                 CheckHandGrab(lefttHandGrabber, _secondaryGrabPoint, leftHandGrabGesture))
                 && IsSecondGrabValid())
             {
                 if (!_mainGrabPoint.IsGrabbed && !_secondaryGrabPoint.IsGrabbed) OnGrabStarted();
                 if (_secondaryGrabPoint.UnGrabCoroutine != null) StopCoroutine(_secondaryGrabPoint.UnGrabCoroutine);
                 _secondaryGrabPoint.IsGrabbed = true;
+                _secondaryGrabPoint.Grabber.IsGrabbing = true;
             }
         }
         else
@@ -79,17 +81,17 @@ public class GrabSystemTwoHanded : GrabSystem
         var grabObjectPos = grabObjectTransform.position;
 
         grabObjectPos = Vector3.Lerp(grabObjectPos,
-            _mainGrabPoint.GrabberTransform.position +
-            (_secondaryGrabPoint.GrabberTransform.position - _mainGrabPoint.GrabberTransform.position).normalized * _mainGrabPoint.GrabPosOffset +
+            _mainGrabPoint.Grabber.Transform.position +
+            (_secondaryGrabPoint.Grabber.Transform.position - _mainGrabPoint.Grabber.Transform.position).normalized * _mainGrabPoint.GrabPosOffset +
             (grabObjectPos - _mainGrabPoint.GrabPointTransform.position), moveLerpSpeed * Time.deltaTime);
 
         grabObjectTransform.position = grabObjectPos;
 
-        Vector3 direction = _secondaryGrabPoint.GrabberTransform.position - _mainGrabPoint.GrabberTransform.position;
+        Vector3 direction = _secondaryGrabPoint.Grabber.Transform.position - _mainGrabPoint.Grabber.Transform.position;
 
         Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
 
-        targetRotation *= Quaternion.Euler(0, 0, -_mainGrabPoint.GrabberTransform.eulerAngles.x);
+        targetRotation *= Quaternion.Euler(0, 0, -_mainGrabPoint.Grabber.Transform.eulerAngles.x);
 
         grabObjectTransform.rotation = Quaternion.Slerp(grabObjectTransform.rotation, targetRotation,
             rotationSlerpSpeed * Time.deltaTime);
@@ -100,9 +102,9 @@ public class GrabSystemTwoHanded : GrabSystem
         if (!_mainGrabPoint.IsGrabbed)
             return true;
 
-        var twistAngle = Vector3.Angle(_mainGrabPoint.GrabberTransform.right, _secondaryGrabPoint.GrabberTransform.right);
-        var angle = Vector3.Angle(-_mainGrabPoint.GrabberTransform.right,
-            _secondaryGrabPoint.GrabberTransform.position - _mainGrabPoint.GrabberTransform.position);
+        var twistAngle = Vector3.Angle(_mainGrabPoint.Grabber.Transform.right, _secondaryGrabPoint.Grabber.Transform.right);
+        var angle = Vector3.Angle(-_mainGrabPoint.Grabber.Transform.right,
+            _secondaryGrabPoint.Grabber.Transform.position - _mainGrabPoint.Grabber.Transform.position);
 
         return ((twistAngle < grabberTwistAngle || 180 - twistAngle < grabberTwistAngle)
             && angle < angleBetweenGrabbers || 180 - angle < angleBetweenGrabbers);

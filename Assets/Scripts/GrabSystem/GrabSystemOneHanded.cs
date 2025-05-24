@@ -10,8 +10,8 @@ public class GrabSystemOneHanded : GrabSystem
     {
         if (!_mainGrabPoint.IsGrabbed)
         {
-            if (CheckHandGrab(_playerData.hands.rightHand.grabPoint, _mainGrabPoint, rightHandGrabGesture) ||
-                CheckHandGrab(_playerData.hands.leftHand.grabPoint, _mainGrabPoint, leftHandGrabGesture))
+            if (CheckHandGrab(rightHandGrabber, _mainGrabPoint, rightHandGrabGesture) ||
+                CheckHandGrab(lefttHandGrabber, _mainGrabPoint, leftHandGrabGesture))
             {
                 if (!_mainGrabPoint.IsGrabbed) OnGrabStarted();
                 if (_mainGrabPoint.UnGrabCoroutine != null) StopCoroutine(_mainGrabPoint.UnGrabCoroutine);

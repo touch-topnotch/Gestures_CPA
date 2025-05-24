@@ -1222,21 +1222,32 @@ MonoBehaviour:
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
-    SerializationNodes: []
+    SerializationNodes:
+    - Name: _continuousSoundGroups
+      Entry: 7
+      Data: 0|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Single,
+        mscorlib]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 1|System.Collections.Generic.GenericEqualityComparer`1[[System.String,
+        mscorlib]], mscorlib
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
   _audioProcessor: {fileID: 5146045309000706831}
   _startSounds:
   - Start_Aura
   _startSoundsRandom:
   - Crowd_Aura
-  _continuousSoundGroups:
-    keys:
-    - Anvil_Aura
-    - Crowd_Aura
-    - Horse_Aura
-    values:
-    - 20
-    - 3
-    - 15
   _endSounds:
   - End_Aura
   _endSoundsRandom: []
@@ -1382,25 +1393,7 @@ MonoBehaviour:
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
-    SerializationNodes:
-    - Name: playerData
-      Entry: 7
-      Data: 0|Scripts.PlayerLogic.PlayerData, Assembly-CSharp
-    - Name: id
-      Entry: 3
-      Data: 0
-    - Name: bodyAnchors
-      Entry: 6
-      Data: 
-    - Name: hands
-      Entry: 6
-      Data: 
-    - Name: library
-      Entry: 6
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
+    SerializationNodes: []
   audioProcessor: {fileID: 3723247436879803530}
   vfxProcessor: {fileID: 7511636564416663047}
   _floorMask:
