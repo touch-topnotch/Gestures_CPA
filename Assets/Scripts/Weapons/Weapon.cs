@@ -49,7 +49,7 @@ namespace Scripts.Weapons
         [Header("Weapons components")] [SerializeField]
         protected WeaponDesign weaponDesign;
 
-        protected int _power;
+        protected int _power = 100;
 
 
         private bool _canHitCall;
@@ -212,6 +212,7 @@ namespace Scripts.Weapons
 
         public sealed override void AbilityCalled()
         {
+            _power = 100;
             if (IsClient)
                 weaponDesign.OnGestureDetected();
         }

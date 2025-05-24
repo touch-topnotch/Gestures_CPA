@@ -774,6 +774,11 @@ PrefabInstance:
       propertyPath: isLocal
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5491886108191989563, guid: 1e3fbdbda288e4656bcacf97400f90e0,
+        type: 3}
+      propertyPath: _rigType
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5795572504889976989, guid: 1e3fbdbda288e4656bcacf97400f90e0,
         type: 3}
       propertyPath: m_Name
@@ -1086,11 +1091,11 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5795572504889976989, guid: 1e3fbdbda288e4656bcacf97400f90e0,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6722316110242918235}
+      addedObject: {fileID: 1220}
     - targetCorrespondingSourceObject: {fileID: 5795572504889976989, guid: 1e3fbdbda288e4656bcacf97400f90e0,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 518706708883444102}
+      addedObject: {fileID: 1139}
   m_SourcePrefab: {fileID: 100100000, guid: 1e3fbdbda288e4656bcacf97400f90e0, type: 3}
 --- !u!1 &6598764132264055131 stripped
 GameObject:
@@ -1098,7 +1103,7 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 863995655604730310}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6722316110242918235
+--- !u!114 &1220
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1117,7 +1122,7 @@ MonoBehaviour:
   SceneMigrationSynchronization: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &518706708883444102
+--- !u!114 &1139
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

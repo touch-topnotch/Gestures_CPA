@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.006013802, g: 0.06016229, b: 0.19518852, a: 1}
+  m_IndirectSpecularColor: {r: 0.0059908116, g: 0.060134917, b: 0.1950528, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -419,7 +419,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 328542382}
   m_LocalRotation: {x: 0.08113793, y: 0.02087332, z: -0.0016995957, w: 0.99648285}
-  m_LocalPosition: {x: 6.39, y: 2.76, z: -10.523068}
+  m_LocalPosition: {x: 0.36, y: 2.76, z: -10.27}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -575,7 +575,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.00002670288}
+  m_AnchoredPosition: {x: 0, y: -0.000019777794}
   m_SizeDelta: {x: 0, y: 300}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &355595360
@@ -1428,7 +1428,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -50}
+  m_AnchoredPosition: {x: 0, y: -50.000244}
   m_SizeDelta: {x: -200, y: -300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &919721265
@@ -1895,7 +1895,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1976833178}
   m_HandleRect: {fileID: 1976833177}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -2596,7 +2596,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!223 &1693271149
 Canvas:
   m_ObjectHideFlags: 0
@@ -2606,7 +2606,7 @@ Canvas:
   m_GameObject: {fileID: 1693271146}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
+  m_RenderMode: 2
   m_Camera: {fileID: 328542384}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -2627,9 +2627,9 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1693271146}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -8.06}
+  m_LocalScale: {x: 0.001, y: 0.001, z: 0.001}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1323551273}
@@ -2639,9 +2639,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0.51, y: 2.73}
+  m_SizeDelta: {x: 1244.9712, y: 1665.5809}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1715208953
 GameObject:
   m_ObjectHideFlags: 0
@@ -3705,7 +3705,7 @@ PrefabInstance:
     - target: {fileID: 1463395751525147186, guid: 9fd0df6f36f84c745a7ffa3f5cd18b03,
         type: 3}
       propertyPath: CreateOnAwake
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1463395751525147186, guid: 9fd0df6f36f84c745a7ffa3f5cd18b03,
         type: 3}

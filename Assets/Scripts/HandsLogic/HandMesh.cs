@@ -28,9 +28,11 @@ namespace Scripts.HandsLogic
 
         [Header("Types")] [SerializeField] private HandMaterialType _handMaterialType;
         [SerializeField] private HandType _handType;
-        [Space] [Header("Transforms")] public Transform grabPoint;
+        [Space] [Header("Transforms")] 
+        public Transform grabPoint;
+        public Transform palmCenter;
         public Transform[] points;
-
+   
         [SerializeField] private List<Material> _materials = new List<Material>();
 
         public Material HandMaterial

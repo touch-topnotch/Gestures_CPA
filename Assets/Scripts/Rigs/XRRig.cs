@@ -40,18 +40,24 @@ namespace Scripts.PlayerLogic
             };
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             // Update body rotation
             var centrisedPosition = _cameraTarget.localPosition + _centerOffset;
             // Debug.Log(centrisedPosition);
             var eulerAngles = _cameraTarget.localEulerAngles;
 
-            anchors.Head.localPosition = new Vector3(0, centrisedPosition.y, 0);
-            anchors.Head.localRotation = Quaternion.Euler(eulerAngles.x, 0, eulerAngles.z);
+            anchors.Head.localPosition = Vector3.Lerp(anchors.Head.localPosition,
+                new Vector3(0, centrisedPosition.y, 0), 10* Time.deltaTime);
+            
+            anchors.Head.localRotation = Quaternion.Lerp(anchors.Head.localRotation,
+                Quaternion.Euler(eulerAngles.x, 0, eulerAngles.z), 10 * Time.deltaTime);
 
-            anchors.Body.localPosition = new Vector3(centrisedPosition.x, 0, centrisedPosition.z);
-            anchors.Body.localRotation = Quaternion.Euler(0, eulerAngles.y, 0);
+            anchors.Body.localPosition = Vector3.Lerp(anchors.Body.localPosition,
+                new Vector3(centrisedPosition.x, 0, centrisedPosition.z), 10 * Time.deltaTime);
+            
+            anchors.Body.localRotation = Quaternion.Lerp(anchors.Body.localRotation,
+                Quaternion.Euler(0, eulerAngles.y, 0), 10 * Time.deltaTime);
         }
 
         private static Vector3 ClampRotation(Vector3 rotation)
@@ -66,7 +72,7 @@ namespace Scripts.PlayerLogic
             var position = _cameraTarget.localPosition;
             _centerOffset = new Vector3(-position.x, 0, -position.z);
             hands.transform.localPosition = _centerOffset;
-            Update();
+            FixedUpdate();
             _movement.Centrize();
         }
         // мы двигаем голову, нужно двигать все, кроме тела

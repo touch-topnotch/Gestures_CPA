@@ -84,6 +84,37 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.05
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &7030346320129341300
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2507821879996458138}
+  m_Layer: 0
+  m_Name: R_PalmCenter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2507821879996458138
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7030346320129341300}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: -0.0179, z: 0.0726}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 406680937159969232}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1001 &24992751349005547
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -176,6 +207,10 @@ PrefabInstance:
       addedObject: {fileID: 4741875426979300812}
     - targetCorrespondingSourceObject: {fileID: 431247075847058747, guid: 56186ccf27ad7864681108ed88349071,
         type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 2507821879996458138}
+    - targetCorrespondingSourceObject: {fileID: 431247075847058747, guid: 56186ccf27ad7864681108ed88349071,
+        type: 3}
       insertIndex: -1
       addedObject: {fileID: 3097502686728502384}
     m_AddedComponents:
@@ -241,6 +276,7 @@ MonoBehaviour:
   _handMaterialType: 0
   _handType: 1
   grabPoint: {fileID: 4741875426979300812}
+  palmCenter: {fileID: 2507821879996458138}
   points:
   - {fileID: 406680937159969232}
   - {fileID: 1238089368174186672}

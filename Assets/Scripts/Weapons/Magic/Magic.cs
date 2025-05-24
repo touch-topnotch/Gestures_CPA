@@ -9,6 +9,7 @@ namespace Scripts
     {
         public int mana
         {
+            
             get => _power;
             protected set
             {
@@ -29,5 +30,6 @@ namespace Scripts
             affected = "";
             return true;
         }
+        
     }
 }

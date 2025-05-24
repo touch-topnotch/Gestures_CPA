@@ -1,15 +1,13 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using Gesture_Editor_SDK.EditorAttributes.InspectorButtonAttribute;
-using Sirenix.OdinInspector;
-using Unity.VisualScripting;
-using UnityEditor;
+
+
 using UnityEngine;
+
 using UnityEngine.VFX;
-using UnityEngine.VFX.Utility;
-using Object = UnityEngine.Object;
+#if UNITY_EDITOR   
+using UnityEditor;
+#endif
 
 namespace Scripts
 {
@@ -74,8 +72,9 @@ namespace Scripts
                 return;
             foreach (var prop in properties)
             {
-                if(prop.name == "" || prop.value == null)
+                if(prop.name == "" || prop.value == null || vfx.GetVector3(prop.name) == Vector3.zero)
                     continue;
+                
                 if (prop.type == VFXPropertyType.Position)
                 {
                     vfx.SetVector3(prop.name, prop.value.transform.position);
@@ -91,7 +90,8 @@ namespace Scripts
             }
         }
     }
-
+    #if UNITY_EDITOR
+ 
     [CustomEditor(typeof(VFXPropertyFinder))]
     public class VFXPropertyFinderEditor: Editor
     {
@@ -106,4 +106,5 @@ namespace Scripts
             ((VFXPropertyFinder)target).Update();
         }
     }
+    #endif
 }
