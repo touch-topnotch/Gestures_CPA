@@ -44,18 +44,17 @@ namespace Scripts.Weapons
     ///         hitConditionServerRPC(true);
     /// </example>
     /// </summary>
-    public abstract class Weapon : NetworkRecognizableComponent, IGrabable
+    public abstract class Weapon : NetworkRecognizableComponent
     {
         [Header("Weapons components")] [SerializeField]
         protected WeaponDesign weaponDesign;
-
-        [field: SerializeField] public GrabSystem GrabSystem { get; set; }
 
         protected int _power;
 
 
         private bool _canHitCall;
-        
+        protected virtual bool CanHitCall => _canHitCall;
+
         private State _state;
         protected  State state
         {
@@ -118,28 +117,6 @@ namespace Scripts.Weapons
         /// <param name="affected"> affected object tag (Player/Floor/Map/Others..)</param>
         protected virtual void OnImpact(string affected) {}
 
-        public void Start()
-        {
-            SetGrabSystemPlayerData();
-        }
-
-        public void SetGrabSystemPlayerData()
-        {
-            GrabSystem.OnGrabStart += OnGrabbed;
-            GrabSystem.OnGrabEnd += OnUnGrabbed;
-        }
-
-        public virtual void OnGrabbed()
-        {
-            weaponDesign.OnGrabbed();
-        }
-
-        public virtual void OnUnGrabbed()
-        {
-            weaponDesign.OnUnGrabbed();
-        }
-
-
         [ClientRpc]
         private void PlayWeaponDesignClientRpc(string props)
         {
@@ -186,7 +163,7 @@ namespace Scripts.Weapons
                     HandleHitCall();
                     return;
                 case State.HitCalled: //  нажали на курок
-                    if (!_canHitCall) 
+                    if (!CanHitCall) 
                         return;
                     PlayWeaponDesignClientRpc("H");
                     _canHitCall = false;

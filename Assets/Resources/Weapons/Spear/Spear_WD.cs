@@ -42,7 +42,6 @@ public class Spear_WD : WeaponDesign
     private void Awake()
     {
         _spearObject.SetActive(false);
-        
         _portalSpawnLocalPos = _portalVFX.transform.localPosition;
     }
 
@@ -52,7 +51,7 @@ public class Spear_WD : WeaponDesign
         Debug.Log("Design FrameRecognized " + frameId);
         
         audioProcessor.ActivateResource("Frame_" + frameId);
-        playerData = PlayerData.local;
+        
         switch (frameId)
         {
             case 0:
@@ -104,16 +103,6 @@ public class Spear_WD : WeaponDesign
     private IEnumerator DestroyPortal()
     {
         DOVirtual.Float(-2.24f, -8f, 1f, v => _portalVFX.SetFloat(FeathDistance, v)).SetEase(Ease.InQuart);
-        
-        /*Gradient gradient = _portalVFX.GetGradient(FeathGradient);
-        GradientAlphaKey[] alphaKeys = gradient.alphaKeys;
-        
-        DOVirtual.Float(1, 0, 3f, v =>
-        {
-            alphaKeys[0].alpha = v;
-            gradient.SetKeys(gradient.colorKeys, alphaKeys);
-            _portalVFX.SetGradient(FeathGradient, gradient);
-        }).SetEase(Ease.InQuart);*/
 
         DOVirtual.Float(8, 1, 3f, v => _portalVFX.SetFloat(TwirlStrength, v)).SetEase(Ease.InOutQuart);
         
@@ -132,7 +121,6 @@ public class Spear_WD : WeaponDesign
             audioProcessor.ActivateResource("Portal");
             yield return delayWFS;
         }
-
     }
     
     private IEnumerator PortalFollowHandPos()

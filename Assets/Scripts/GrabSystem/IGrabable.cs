@@ -7,7 +7,7 @@ public interface IGrabable
 {
     GrabSystem GrabSystem { get; set; }
 
-    public void SetGrabSystemPlayerData();
+    public void SetGrabSystem();
 
     public void OnGrabbed();
 

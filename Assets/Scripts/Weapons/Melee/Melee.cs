@@ -2,8 +2,10 @@ using UnityEngine;
 
 namespace Scripts.Weapons
 {
-    public class Melee : Weapon
+    public class Melee : Weapon, IGrabable
     {
+        [field: SerializeField] public GrabSystem GrabSystem { get; set; }
+        
         [Header("Melee components")] [SerializeField]
         protected float _bladeMinSpeed;
 
@@ -29,18 +31,28 @@ namespace Scripts.Weapons
 
         private bool _bladeTriggered;
         
-
-        public override void OnGrabbed()
+        public void Start()
         {
-            base.OnGrabbed();
+            SetGrabSystem();
+        }
+
+        public void SetGrabSystem()
+        {
+            GrabSystem.OnGrabStart += OnGrabbed;
+            GrabSystem.OnGrabEnd += OnUnGrabbed;
+        }
+
+        public virtual void OnGrabbed()
+        {
+            weaponDesign.OnGrabbed();
             _rigidbody.isKinematic = true;
+            StartShootingServerRPC();
         }
         
-        public override void OnUnGrabbed()
+        public virtual void OnUnGrabbed()
         {
-            base.OnGrabbed();
+            weaponDesign.OnUnGrabbed();
             _rigidbody.isKinematic = false;
-            StartShootingServerRPC();
         }
 
         protected override bool ImpactCondition(out string affected) => _blade.onHitImpact(out affected);

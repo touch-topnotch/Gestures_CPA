@@ -10,7 +10,7 @@ namespace Components
         public AudioProcessor audioProcessor;
         public VFXProcessor vfxProcessor;
 
-        [HideInInspector] public PlayerData playerData;
+        [HideInInspector] protected PlayerData playerData => PlayerData.local;
 
         public abstract void OnFrameRecognized(string frameName);
 
@@ -20,12 +20,8 @@ namespace Components
         public abstract void OnAbilityReleased();
         public abstract void OnHitHolds();
 
-        public virtual void OnGrabbed()
-        {
-        }
+        public virtual void OnGrabbed() {}
         
-        public virtual void OnUnGrabbed()
-        {
-        }
+        public virtual void OnUnGrabbed() {}
     }
 }
