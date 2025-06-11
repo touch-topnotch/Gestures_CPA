@@ -5,7 +5,7 @@
 - [Set up project](pages/SetUpProject.md)
 - [Architecture Analysis](pages/ProjectArchitecture.md)
 - [Character creation](pages/CharacterCreation.md)
-- Ability creation
+- [Ability creation](pages/AbilityCreation.md)
 - Testing the creations
 - Record dynamic gestures
 
