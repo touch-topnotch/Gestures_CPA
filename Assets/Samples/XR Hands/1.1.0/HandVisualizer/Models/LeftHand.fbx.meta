@@ -16,7 +16,8 @@ ModelImporter:
     optimizeGameObjects: 0
     removeConstantScaleCurves: 0
     motionNodeName: 
-    rigImportErrors: 
+    rigImportErrors: "Invalid Avatar Rig Configuration. Missing or invalid transform:\n\tRequired
+      human bone 'LeftUpperArm' not found\n"
     rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
@@ -24,7 +25,7 @@ ModelImporter:
     animationDoRetargetingWarnings: 0
     importAnimatedCustomProperties: 0
     importConstraints: 0
-    animationCompression: 1
+    animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
     animationScaleError: 0.5
@@ -82,7 +83,147 @@ ModelImporter:
   humanDescription:
     serializedVersion: 3
     human: []
-    skeleton: []
+    skeleton:
+    - name: LeftHand(Clone)
+      parentName: 
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: LeftHand
+      parentName: LeftHand(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: L_Wrist
+      parentName: LeftHand(Clone)
+      position: {x: -0.0036095, y: 0.10848038, z: -0.034286}
+      rotation: {x: -0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: L_IndexMetacarpal
+      parentName: L_Wrist
+      position: {x: 0.019818999, y: -0.009505, z: 0.036447998}
+      rotation: {x: -0.57378656, y: -0, z: 0.054250006, w: 0.8172062}
+      scale: {x: 1, y: 1, z: 1}
+    - name: L_IndexProximal
+      parentName: L_IndexMetacarpal
+      position: {x: 0.003732, y: 0.002189, z: 0.059548}
+      rotation: {x: 0.15188201, y: 0.076982684, z: -0.041177794, w: 0.9845354}
+      scale: {x: 1.0000446, y: 1.0000407, z: 0.999991}
+    - name: L_IndexIntermediate
+      parentName: L_IndexProximal
+      position: {x: 0.0000014584699, y: -0.0000018205594, z: 0.037927467}
+      rotation: {x: 0.10676588, y: 0.55373824, z: 0.09522337, w: 0.82030946}
+      scale: {x: 0.99995506, y: 0.99994946, z: 0.99994963}
+    - name: L_IndexDistal
+      parentName: L_IndexIntermediate
+      position: {x: 0.0000009285007, y: 0.00000015937881, z: 0.024305161}
+      rotation: {x: 0.021491943, y: 0.11007099, z: 0.01069679, w: 0.99363375}
+      scale: {x: 1.0000452, y: 1.000008, z: 1.0000005}
+    - name: L_IndexTip
+      parentName: L_IndexDistal
+      position: {x: -0.00029495324, y: 0.0010254311, z: 0.022364646}
+      rotation: {x: -0, y: -0, z: 3.9290163e-10, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: L_MiddleMetacarpal
+      parentName: L_Wrist
+      position: {x: 0.00361, y: -0.007648, z: 0.034286}
+      rotation: {x: -0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: L_MiddleProximal
+      parentName: L_MiddleMetacarpal
+      position: {x: -0.0018839999, y: 0.005105, z: 0.061360996}
+      rotation: {x: 0.1896454, y: -0.011715394, z: 0.009750123, w: 0.98173434}
+      scale: {x: 0.9999646, y: 1.000007, z: 1.000008}
+    - name: L_MiddleIntermediate
+      parentName: L_MiddleProximal
+      position: {x: -0.00000033112343, y: -0.0000008804644, z: 0.042926535}
+      rotation: {x: 0.20427485, y: -0.001967567, z: 0.012308918, w: 0.9788343}
+      scale: {x: 1.0000314, y: 0.99999595, z: 1.0000381}
+    - name: L_MiddleDistal
+      parentName: L_MiddleIntermediate
+      position: {x: 0.00000017030132, y: 0.0000005871987, z: 0.027548432}
+      rotation: {x: -0.032235827, y: -0.0019387968, z: 0.04045328, w: 0.99865943}
+      scale: {x: 0.99997187, y: 1.0000141, z: 0.99996316}
+    - name: L_MiddleTip
+      parentName: L_MiddleDistal
+      position: {x: -0.00030950914, y: 0.0011371507, z: 0.02496384}
+      rotation: {x: -0, y: -0, z: 4.6566123e-10, w: 1}
+      scale: {x: 0.9999998, y: 1, z: 1.0000002}
+    - name: L_RingMetacarpal
+      parentName: L_Wrist
+      position: {x: -0.014992, y: -0.0060159997, z: 0.034776}
+      rotation: {x: -0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: L_RingProximal
+      parentName: L_RingMetacarpal
+      position: {x: -0.002473, y: -0.000513, z: 0.053917997}
+      rotation: {x: 0.08123158, y: -0.08615341, z: 0.05587995, w: 0.9913912}
+      scale: {x: 0.99998975, y: 1.0000367, z: 1.0000347}
+    - name: L_RingIntermediate
+      parentName: L_RingProximal
+      position: {x: 0.0000005266108, y: 0.0000003652638, z: 0.03899503}
+      rotation: {x: 0.30174103, y: 0.0072941408, z: 0.03955707, w: 0.95254105}
+      scale: {x: 1.0000358, y: 0.9999273, z: 0.9999417}
+    - name: L_RingDistal
+      parentName: L_RingIntermediate
+      position: {x: -0.000001039646, y: -0.00000054232555, z: 0.026573557}
+      rotation: {x: 0.09175542, y: 0.02957032, z: 0.008964419, w: 0.99530214}
+      scale: {x: 0.99993455, y: 0.9999722, z: 1.0000097}
+    - name: L_RingTip
+      parentName: L_RingDistal
+      position: {x: -0.0002563861, y: 0.0016081122, z: 0.024326071}
+      rotation: {x: -0.000029429793, y: 0.000000013038516, z: 0.00000005122274, w: 1}
+      scale: {x: 0.99999994, y: 1.0000552, z: 1}
+    - name: L_ThumbMetacarpal
+      parentName: L_Wrist
+      position: {x: 0.030218, y: -0.016083999, z: 0.034498}
+      rotation: {x: 0.29808012, y: 0.5804339, z: -0.5970516, w: 0.46666285}
+      scale: {x: 1.0000203, y: 1.0000342, z: 0.99997854}
+    - name: L_ThumbProximal
+      parentName: L_ThumbMetacarpal
+      position: {x: -0.000001152053, y: -0.000004860463, z: 0.032513987}
+      rotation: {x: 0.13021831, y: 0.04761251, z: 0.10037689, w: 0.9852415}
+      scale: {x: 0.9999928, y: 0.9999971, z: 0.9999634}
+    - name: L_ThumbDistal
+      parentName: L_ThumbProximal
+      position: {x: -0.000001023574, y: -0.000001828242, z: 0.033794336}
+      rotation: {x: -0.023023268, y: -0.419375, z: 0.12329508, w: 0.8991067}
+      scale: {x: 0.9999871, y: 0.99997395, z: 0.9999929}
+    - name: L_ThumbTip
+      parentName: L_ThumbDistal
+      position: {x: -0.00067067984, y: 0.0010256439, z: 0.02459195}
+      rotation: {x: -0, y: -0, z: 0.000000007916242, w: 1}
+      scale: {x: 1.0000001, y: 1.0000001, z: 0.9999999}
+    - name: L_Palm
+      parentName: L_Wrist
+      position: {x: 0.000863, y: -0.001272, z: 0.047823}
+      rotation: {x: -0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: L_LittleMetacarpal
+      parentName: L_Wrist
+      position: {x: -0.022999, y: -0.009419999, z: 0.034073997}
+      rotation: {x: 0.58626443, y: -0.2565483, z: 0.23647587, w: 0.7311335}
+      scale: {x: 1.0000184, y: 1.0000081, z: 0.99995893}
+    - name: L_LittleProximal
+      parentName: L_LittleMetacarpal
+      position: {x: 0.0000025303066, y: 0.000001160611, z: 0.045651983}
+      rotation: {x: -0.062673695, y: -0.05101183, z: -0.09903597, w: 0.99179727}
+      scale: {x: 0.9999564, y: 1.0000366, z: 1.0000681}
+    - name: L_LittleIntermediate
+      parentName: L_LittleProximal
+      position: {x: 0.0000001720091, y: -0.0000006646861, z: 0.030719941}
+      rotation: {x: 0.36025834, y: -0.025498018, z: 0.06776487, w: 0.9300386}
+      scale: {x: 1.0000151, y: 1.0000069, z: 0.9999501}
+    - name: L_LittleDistal
+      parentName: L_LittleIntermediate
+      position: {x: 0.00000013540283, y: 0.0000006386686, z: 0.020311324}
+      rotation: {x: -0.44273007, y: 0.27743658, z: -0.093959756, w: 0.8474612}
+      scale: {x: 1.0000207, y: 0.99997157, z: 0.99997234}
+    - name: L_LittleTip
+      parentName: L_LittleDistal
+      position: {x: 0.00024632577, y: 0.0012151983, z: 0.021923328}
+      rotation: {x: -0, y: -0, z: 0.0000000037252907, w: 1}
+      scale: {x: 1.000001, y: 1.0000026, z: 0.99999636}
     armTwist: 0.5
     foreArmTwist: 0.5
     upperLegTwist: 0.5
@@ -93,13 +234,13 @@ ModelImporter:
     globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
-    hasExtraRoot: 0
+    hasExtraRoot: 1
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 2
   humanoidOversampling: 1
-  avatarSetup: 0
+  avatarSetup: 1
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1
   importBlendShapeDeformPercent: 0
   remapMaterialsIfMaterialImportModeIsNone: 0

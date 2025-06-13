@@ -27,6 +27,10 @@ namespace Scripts.Tests
         public TMP_Text characterLabel;
         public TMP_Text collectionLabel;
         public Player _player;
+        public HeadInteractionType recordLeftHand;
+        public HeadInteractionType recordRightHand;
+        public HeadInteractionType recordTwoHands;
+        public HeadInteractionType saveAndGoNext;
 
         private SequencedHandVisualizer _sequencedHandVisualizer;
 
@@ -110,22 +114,20 @@ namespace Scripts.Tests
             TelegramBotProcessor.onMessageReceived += OnMessageReceived;
             _player.curRig.headInteraction.onHeadInteraction += (type) =>
             {
-                switch (type)
+                if (type == recordLeftHand)
+                    leftToggle.isOn = true;
+                if (type == recordRightHand)
+                    rightToggle.isOn = true;
+                if (type == recordTwoHands)
                 {
-                    case HeadInteractionType.Left:
-                        leftToggle.isOn = true;
-                        break;
-                    case HeadInteractionType.Right:
-                        rightToggle.isOn = true;
-                        break;
-                    case HeadInteractionType.Shaking:
-                        leftToggle.isOn = true;
-                        rightToggle.isOn = true;
-                        break;
-                    case HeadInteractionType.DoubleNod:
-                        ContinueRecording();
-                        break;
+                    leftToggle.isOn = true;
+                    rightToggle.isOn = true;
                 }
+                if (type == saveAndGoNext)
+                {
+                    ContinueRecording();
+                }
+
             };
             _sequencedHandVisualizer = _player.data.hands.handVisualiser;
 

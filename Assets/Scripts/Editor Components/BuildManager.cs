@@ -20,6 +20,8 @@ public class BuildManager : IPreprocessBuildWithReport
         "/Users/dmitry057/Projects/UnityProjects/Gestures_CPA/Builds/NetworkTest.app/Contents/MacOS/Gesture -lobby-server -n "
     };
 
+    private static string playSound = "afplay /System/Library/Sounds/Glass.aiff";
+
     public int callbackOrder { get; }
 
     public void OnPreprocessBuild(BuildReport report)
@@ -30,22 +32,7 @@ public class BuildManager : IPreprocessBuildWithReport
     [PostProcessBuild(1)]
     public static void OnPostprocessBuild(BuildTarget target, string pathToBuiltProject)
     {
-        // if (target == BuildTarget.Android)
-        // {
-        //     try
-        //     {
-        //         AdbInstaller adbInstaller = new AdbInstaller();
-        //
-        //         adbInstaller.InstallApk(
-        //             "/Users/dmitry057/Projects/platform-tools",
-        //             pathToBuiltProject
-        //         );
-        //     }
-        //     catch(Exception e)
-        //     {
-        //         Debug.LogWarning(e);
-        //     }
-        // }
+        RunTerminalCommand(playSound);
     }
 
     [MenuItem("Testing/RunSCC")]

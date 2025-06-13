@@ -132,10 +132,7 @@ namespace Scripts.PlayerLogic
             
             characterPool.SetAvatarType(AvatarType.Local);
             _gestureCombiner.CreateRecognizer(curRig.RecognitionPropertiesConfig);
-            data.library.onLibraryInitialized += () => { _gestureCombiner.RecognizeWithAllGestures(); };
-            
-
-            
+            //data.library.onLibraryInitialized += () => { _gestureCombiner.RecognizeWithAllGestures(); };
         }
 
         public void SetEnemy(ulong id)
@@ -147,7 +144,7 @@ namespace Scripts.PlayerLogic
 
         private void InitializeComponents(ulong id)
         {
-            _gestureCombiner.Initialize(characterPool);
+           // _gestureCombiner.Initialize(characterPool);
             data = new PlayerData(id, anchors, _hands, _gestureCombiner.library);
             
             characterPool.SetMaterialId((int)id);

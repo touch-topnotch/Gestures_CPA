@@ -45,7 +45,7 @@ namespace Scripts.HandsLogic
             }
         }
 
-        [SerializeField] private SkinnedMeshRenderer _meshRenderer;
+        [SerializeField] public SkinnedMeshRenderer _meshRenderer;
 
         private readonly List<TargetProp> _targets = new();
 
@@ -83,6 +83,18 @@ namespace Scripts.HandsLogic
             }
         }
 #endif
+        public void Initialize(Transform[] bones, Matrix4x4[] bindPoses, Mesh mesh)
+        {
+            print(_meshRenderer.sharedMesh.name+ " " + _meshRenderer.bones.Length);
+            _meshRenderer.sharedMesh = mesh;
+            _meshRenderer.sharedMesh.bindposes = bindPoses;
+            _meshRenderer.bones = bones;
+            _meshRenderer.updateWhenOffscreen = true;
+     
+            print(_meshRenderer.sharedMesh.name + ", " + mesh.name + " " + _meshRenderer.bones.Length);
+            points = bones;
+           
+        }
 
         private int AddAllChildren(Transform parent, int id = 0)
         {
@@ -154,7 +166,6 @@ namespace Scripts.HandsLogic
         public void Show()
         {
             gameObject.SetActive(true);
-            Debug.Log("SHOW HAND");
         }
 
 
@@ -168,6 +179,15 @@ namespace Scripts.HandsLogic
                 this.gameObject.SetActive(false);
             });
         }
+
+        public void ToggleMesh(bool visible)
+        {
+            if (visible == this.gameObject.activeSelf) ;
+            
+            if (visible) Show();
+            else Hide();
+        }
+        
 
         public void Replace(BonesData target)
         {

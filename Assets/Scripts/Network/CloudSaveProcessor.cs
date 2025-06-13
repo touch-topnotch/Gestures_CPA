@@ -1,11 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-using Authentication;
 using Scripts.Static;
-using Unity.Services.Authentication;
-using Unity.Services.Core;
 using UnityEngine;
 using UnityEngine.Networking;
 

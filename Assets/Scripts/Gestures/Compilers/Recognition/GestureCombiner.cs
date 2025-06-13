@@ -24,9 +24,19 @@ namespace Scripts.Gestures
 
         public void Initialize(CharacterPool chars)
         {
-             library = new GesturesLibrary(chars);
+            library = new GesturesLibrary(chars);
             OnGestureRecognized = new GestureRecognized();
             OnAbilityFrameRecognized = new FrameRecognized();
+            
+            if (!EventInitializer.Instance.isInitialized)
+            {
+                EventInitializer.Instance.onServicesInitilalised += () => { StartCoroutine(library.DownloadGestures()); };
+            }
+            else
+            {
+                StartCoroutine(library.DownloadGestures());
+            }
+            
             OnAbilityFrameRecognized.AddListener((e) =>
             {
                 library.characterGestures[GestureMapper.PrefixOfName(e)].FrameRecognized(e);
@@ -41,6 +51,7 @@ namespace Scripts.Gestures
         public void CreateRecognizer(RecognitionPropertiesConfig config)
         {
             _recognizer = new Recognizer(config);
+            
         }
 
         public void RecognizeWithAllGestures()

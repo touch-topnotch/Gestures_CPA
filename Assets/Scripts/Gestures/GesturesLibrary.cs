@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Characters;
 using Scripts.Characters;
 using Scripts.Databases;
-using Scripts.Events;
 using Scripts.Static;
 using Scripts.Systems;
 using UnityEngine;
@@ -48,23 +48,27 @@ namespace Scripts.Gestures
         {
             _characterPool = characterPool;
             // _characterPool.characterChangedEvent.AddListener(OnCharacterChanged);
-            Debug.Log("Trying to invoke");
-            if (!EventInitializer.Instance.isInitialized)
-            {
-                EventInitializer.Instance.onServicesInitilalised += () => { AddDictionary(); };
-            }
-            else
-            {
-                AddDictionary();
-            }
+          
+         
         }
 
-        private async void AddDictionary()
+        public IEnumerator DownloadGestures()
         {
-            allCharacterGestures.AddDictionary(await GestureMapper.ReadCharacterGestures(_characterPool.charactersDict));
+            Task<Dictionary<string, DynamicGesture>> readCharacterGesturesTask = GestureMapper.ReadCharacterGestures(_characterPool.charactersDict);
+            Task<Dictionary<string, FrameData>> readSystemGesturesTask = GestureMapper.ReadFrameDatas("system");
+            Task<Dictionary<string, FrameData>> readSupportiveGesturesTask = GestureMapper.ReadFrameDatas("supportive");
+
+            while (!readCharacterGesturesTask.IsCompleted || !readSystemGesturesTask.IsCompleted || !readSupportiveGesturesTask.IsCompleted) {
+                yield return null; // Ждем окончания выполнения асинхронной задачи
+            }
+
+            Dictionary<string, DynamicGesture> result = readCharacterGesturesTask.Result;
+            
+            allCharacterGestures.AddDictionary(result);
             characterGestures = allCharacterGestures.openDict;
-            systemGestures = await GestureMapper.ReadFrameDatas("system");
-            supportiveGestures = await GestureMapper.ReadFrameDatas("supportive");
+            systemGestures = readSystemGesturesTask.Result;
+            supportiveGestures = readSupportiveGesturesTask.Result;
+            
             foreach (var dgesture in characterGestures)
             {
                 foreach (var frame in dgesture.Value.frames)
