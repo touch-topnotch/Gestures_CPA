@@ -19,6 +19,8 @@ namespace Scripts.HandsLogic
             None,
         }
 
+        [SerializeField] [Range(0.1f, 20)] public float positionSpeed = 10f;
+
         [SerializeField]
         [Tooltip(
             "If this is enabled, this component will enable the Input System internal feature flag 'USE_OPTIMIZED_CONTROLS'. You must have at least version 1.5.0 of the Input System and have its backend enabled for this to take effect.")]
@@ -135,7 +137,8 @@ namespace Scripts.HandsLogic
                     Handedness.Left,
                     m_PlayerHands.leftHand,
                     m_DebugDrawPrefab,
-                    m_VelocityPrefab);
+                    m_VelocityPrefab,
+                    positionSpeed);
             }
 
             if (m_RightHandGameObjects == null)
@@ -144,7 +147,8 @@ namespace Scripts.HandsLogic
                     Handedness.Right,
                     m_PlayerHands.rightHand,
                     m_DebugDrawPrefab,
-                    m_VelocityPrefab);
+                    m_VelocityPrefab,
+                    positionSpeed);
             }
 
 
@@ -264,7 +268,7 @@ namespace Scripts.HandsLogic
 
         class HandGameObjects
         {
-            public HandMesh m_HandMesh;
+            HandMesh m_HandMesh;
             GameObject m_DrawJointsParent;
 
             Transform[] m_JointXforms = new Transform[XRHandJointID.EndMarker.ToIndex()];
@@ -272,7 +276,7 @@ namespace Scripts.HandsLogic
             GameObject[] m_VelocityParents = new GameObject[XRHandJointID.EndMarker.ToIndex()];
             LineRenderer[] m_Lines = new LineRenderer[XRHandJointID.EndMarker.ToIndex()];
             bool m_IsTracked;
-
+            float m_positionSpeed;
             static Vector3[] s_LinePointsReuse = new Vector3[2];
             const float k_LineWidth = 0.005f;
 
@@ -280,7 +284,8 @@ namespace Scripts.HandsLogic
                 Handedness handedness,
                 HandMesh handMesh,
                 GameObject debugDrawPrefab,
-                GameObject velocityPrefab)
+                GameObject velocityPrefab,
+                float positionSpeed)
             {
                 void AssignJoint(
                     XRHandJointID jointId,
@@ -303,6 +308,7 @@ namespace Scripts.HandsLogic
                     m_Lines[jointIndex].SetPositions(s_LinePointsReuse);
                 }
 
+                this.m_positionSpeed = positionSpeed;
                 m_HandMesh = handMesh;
                 var hand_transf = m_HandMesh.transform;
                 //    hand_transf.parent.transform.localPosition = handOffset;
@@ -441,7 +447,8 @@ namespace Scripts.HandsLogic
             public void UpdateRootPose(XRHand hand)
             {
                 var xform = m_JointXforms[XRHandJointID.Wrist.ToIndex()];
-                xform.localPosition = hand.rootPose.position;
+                xform.localPosition = Vector3.Lerp(xform.localPosition, hand.rootPose.position,
+                    Time.deltaTime * m_positionSpeed);
                 xform.localRotation = hand.rootPose.rotation;
             }
 
@@ -516,7 +523,7 @@ namespace Scripts.HandsLogic
                 }
 
                 var inverseParentRotation = Quaternion.Inverse(parentPose.rotation);
-                xform.localPosition = inverseParentRotation * (pose.position - parentPose.position);
+                xform.localPosition =  Vector3.Lerp(xform.localPosition, inverseParentRotation * (pose.position - parentPose.position), Time.deltaTime * 1);
                 xform.localRotation = inverseParentRotation * pose.rotation;
                 if (cacheParentPose)
                     parentPose = pose;
