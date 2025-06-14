@@ -8,6 +8,7 @@ using UnityEngine.Rendering;
 
 namespace Scripts.HandsLogic
 {
+    [RequireComponent(typeof(HandMesh), typeof(HandAdapter))]
     public class Custom2HandVisualiser: RigComponent
     {
 
@@ -21,27 +22,6 @@ namespace Scripts.HandsLogic
         public bool isEnabled { get; private set; }
 
         public OVRSkeleton testSkeleton;
-        private void Initialize()
-        {
-
-            var _skinnedMeshRenderer = m_HandMesh._meshRenderer;
-            if ((testSkeleton != null && testSkeleton.Bones.Count > 0))
-            {
-                int numSkinnableBones = testSkeleton.GetCurrentNumSkinnableBones();
-                var bindPoses = new Matrix4x4[numSkinnableBones];
-                var bones = new Transform[numSkinnableBones];
-                var localToWorldMatrix = transform.localToWorldMatrix;
-                for (int i = 0; i < numSkinnableBones && i < testSkeleton.Bones.Count; ++i)
-                {
-                    bones[i] = testSkeleton.Bones[i].Transform;
-                    bindPoses[i] = testSkeleton.BindPoses[i].Transform.worldToLocalMatrix * localToWorldMatrix;
-                }
-
-                _skinnedMeshRenderer.sharedMesh.bindposes = bindPoses;
-                _skinnedMeshRenderer.bones = bones;
-                _skinnedMeshRenderer.updateWhenOffscreen = true;
-            }
-        }
         void UpdateRenderingVisibility(bool isTracked)
         {
             if (isTracked == isEnabled)
@@ -63,36 +43,25 @@ namespace Scripts.HandsLogic
 
         private void Start()
         {
-           // UpdateRenderingVisibility(m_HandAdapter.isTracked);
-            Initialize();
+            UpdateRenderingVisibility(m_HandAdapter.isTracked);
+           
         }
 
 
         private float t = 1;
         protected void FixedUpdate()
         {
-          //  UpdateRenderingVisibility(m_HandAdapter.isTracked);
-
-            // for (int i = 0; i < m_HandAdapter.points.Length; i ++)
-            // {
-            //     if (m_HandAdapter.points[i] != null)
-            //     {
-            //         m_HandMesh.points[i].localPosition = m_HandAdapter.points[i].localPosition;
-            //         m_HandMesh.points[i].localRotation = m_HandAdapter.points[i].localRotation;
-            //     }
-            //         
-            //         
-            // }
-            if (t < 0)
+            
+            UpdateRenderingVisibility(m_HandAdapter.isTracked);
+            if (!m_HandAdapter.isTracked)
+                return;
+          
+            for (int i = 0; i < m_HandAdapter.rotations.Length; i ++)
             {
-                Debug.Log(m_HandMesh.points[0].position);
-                Debug.Log(m_HandMesh._meshRenderer.rootBone.position);
-                t = 1;
+                m_HandMesh.points[i].localRotation = m_HandAdapter.rotations[i];
             }
 
-            t -= Time.deltaTime;
-
-
+            m_HandMesh.points[0].localPosition = m_HandAdapter.rootPos;
         }
     }
 }
