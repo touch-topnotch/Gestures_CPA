@@ -61,21 +61,20 @@ namespace Scripts.Rigs
 
         private void SynchronizeBodyAnchors()
         {
-      //      UpdateAnchors(true, false);
-            // var c = anchors.Head.position;
-            // if (_lerpBody)
-            // {
-            //     anchors.Body.position = Vector3.Lerp(anchors.Body.position,
-            //         new Vector3(c.x, c.y - _bodyHeightOffset, c.z),
-            //         Time.deltaTime * _bodyLerpSpeed);
-            //     anchors.Body.rotation = Quaternion.Lerp(anchors.Body.rotation,
-            //         Quaternion.Euler(0, anchors.Head.eulerAngles.y, 0), Time.deltaTime * _bodyLerpSpeed);
-            // }
-            // else
-            // {
-            //     anchors.Body.position = new Vector3(c.x, c.y - _bodyHeightOffset, c.z);
-            //     anchors.Body.rotation = Quaternion.Euler(0, anchors.Head.eulerAngles.y, 0);
-            // }
+            var c = anchors.Head.position;
+            if (_lerpBody)
+            {
+                anchors.Body.position = Vector3.Lerp(anchors.Body.position,
+                    new Vector3(c.x, c.y - _bodyHeightOffset, c.z),
+                    Time.deltaTime * _bodyLerpSpeed);
+                anchors.Body.rotation = Quaternion.Lerp(anchors.Body.rotation,
+                    Quaternion.Euler(0, anchors.Head.eulerAngles.y, 0), Time.deltaTime * _bodyLerpSpeed);
+            }
+            else
+            {
+                anchors.Body.position = new Vector3(c.x, c.y - _bodyHeightOffset, c.z);
+                anchors.Body.rotation = Quaternion.Euler(0, anchors.Head.eulerAngles.y, 0);
+            }
         }
         
 
@@ -87,9 +86,7 @@ namespace Scripts.Rigs
         
         protected override void Centrize()
         {
-          //  var position = _cameraTarget.localPosition;
-          //  _centerOffset = new Vector3(-position.x, 0, -position.z);
-          //  hands.transform.localPosition = _centerOffset;
+            
             Update();
             _movement.Centrize();
         }
