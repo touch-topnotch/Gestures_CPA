@@ -20,19 +20,27 @@ namespace Scripts.PlayerLogic
 
     public abstract class Rig : PlayerComponent, IMovable
     {
-        [SerializeField] public BodyAnchors anchors;
-        protected Hands hands => inherited.data.hands;
-
+        [Header("Rig Components")]
+        public BodyAnchors anchors;
+      
+        [SerializeField]
+        private HeadInteraction _headInteraction;
+        
         [SerializeField]
         private RecognitionPropertiesConfig _recognitionProperties;
-        [SerializeField] private HeadInteraction _headInteraction;
-
+    
+        protected Hands hands => inherited.data.hands;
         protected PlayerStateChangedEvent playerStateChangedEvent;
         protected PlayerState playerState;
         public HeadInteraction headInteraction => _headInteraction;
 
         public RecognitionPropertiesConfig RecognitionPropertiesConfig => _recognitionProperties;
 
+        protected void OnValidate()
+        {
+            if(anchors && anchors.Head)
+                _headInteraction = anchors.Head.GetComponent<HeadInteraction>();
+        }
         
         public virtual void Initialize()
         {
