@@ -20,7 +20,7 @@ namespace Scripts.PlayerLogic
 
     public abstract class Rig : PlayerComponent, IMovable
     {
-        public RigType rigType;
+        public RigType type;
         [Header("Rig Components")]
         public BodyAnchors anchors;
       

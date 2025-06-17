@@ -1,10 +1,13 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Scrips.Components;
 using Scripts.Characters;
 using Scripts.Events;
 using Scripts.Gestures;
 using Scripts.HandsLogic;
 using Scripts.Network;
+using Scripts.PlayerLogic;
 using Scripts.Static;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -47,7 +50,7 @@ namespace Scripts.PlayerLogic
         [Header("Runtime Settings")] [SerializeField]
         private bool isLocal;
 
-        [InspectorName("Debug Rig")] [SerializeField]
+        [InspectorName("Debug Rig")] [SerializeField][EnumToggleButtons][OnValueChanged("ActivateRig")]
         private RigType _rigType;
 
         public RigType rigType
@@ -57,19 +60,7 @@ namespace Scripts.PlayerLogic
             {
                 Debug.Log("Rig type changed on " + value);
                 _rigType = value;
-                switch (value)
-                {
-                    case RigType.XRRig:
-                        curRig = _xrRig;
-                        break;
-                    case RigType.PCRig:
-                        curRig = _pcRig;
-                        break;
-                    case RigType.NoRig:
-                        curRig = null;
-                        break;
-                }
-
+                curRig = _rigDict[_rigType];
                 ActivateRig();
             }
         }
@@ -80,9 +71,8 @@ namespace Scripts.PlayerLogic
 
         [SerializeField] private GestureCombiner _gestureCombiner;
 
-        [Header("Rigs")] [SerializeField] private Rig _pcRig;
-        [SerializeField] private Rig _xrRig;
-
+        [Header("Rigs")] [SerializeField] private Rig[] _rigList;
+        private Dictionary<RigType, Rig> _rigDict = new Dictionary<RigType, Rig>();
         public Rig curRig { get; private set; }
 
 
@@ -96,21 +86,24 @@ namespace Scripts.PlayerLogic
         public Character character => _characterPool.currentCharacter;
         public CharacterPool characterPool => _characterPool;
 
-
+        
         private void ActivateRig()
         {
-            _pcRig.gameObject.SetActive(_rigType == RigType.PCRig);
-            _xrRig.gameObject.SetActive(_rigType == RigType.XRRig);
-
-            if (_rigType == RigType.PCRig)
-                _pcRig.Initialize();
-
-            if (_rigType == RigType.XRRig)
-                _xrRig.Initialize();
+            foreach (var rig in _rigList)
+            {
+                rig.gameObject.SetActive(_rigType == rig.type);
+            }
         }
 
         private void Awake()
         {
+            _rigDict = new Dictionary<RigType, Rig>();
+            foreach (var VARIABLE in _rigList)
+            {
+                if (_rigDict.ContainsKey(VARIABLE.type))
+                    continue;
+                _rigDict.Add(VARIABLE.type, VARIABLE);
+            }
             if (isLocal)
             {
                 _characterPool.SpawnCharacters();
@@ -127,7 +120,7 @@ namespace Scripts.PlayerLogic
 #if UNITY_EDITOR
             rigType = _rigType;
 #elif PLATFORM_ANDROID
-            rigType = RigType.XRRig;
+            rigType = RigType.OVRRig;
 #else
             rigType = _rigType;
 #endif
@@ -160,7 +153,12 @@ namespace Scripts.PlayerLogic
 
         private bool isAnyNull()
         {
-            if (_pcRig == null || _xrRig == null)
+            var allRigTypes = Enum.GetValues(typeof(RigType)).Cast<RigType>().ToList();
+
+            var existingRigTypes = _rigDict.Keys.ToList();
+
+            bool allRigTypesExist = allRigTypes.All(rt => existingRigTypes.Contains(rt));
+            if(!allRigTypesExist)
             {
                 Debug.Log("Please, add all avatars and rigs to player " + name);
                 return true;
@@ -182,7 +180,7 @@ namespace Scripts.PlayerLogic
         }
 
         protected override bool shouldAddMissingComponents =>
-            !(_characterPool && _anchors && _hands && _pcRig && _xrRig && _gestureCombiner);
+            !(_characterPool && _anchors && _hands  && _gestureCombiner);
 
         public override void AddMissingComponents()
         {
@@ -190,10 +188,10 @@ namespace Scripts.PlayerLogic
             _anchors = transform.Find("Anchors").GetComponent<BodyAnchors>();
             _anchors.AddMissingComponents();
             _hands = _anchors.transform.GetComponentInChildren<PlayerHands>();
-            _pcRig = transform.Find("PC_Rig").GetComponent<PCRig>();
-            _pcRig.AddMissingComponents();
-            _xrRig = transform.Find("XR_Rig").GetComponent<XRRig>();
-            _xrRig.AddMissingComponents();
+            foreach (var VARIABLE in _rigList)
+            {
+                VARIABLE.AddMissingComponents();
+            }
             _gestureCombiner = transform.Find("GestureCombiner").GetComponent<GestureCombiner>();
 
             if (!isLocal)

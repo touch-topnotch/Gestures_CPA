@@ -34,7 +34,7 @@ namespace Scripts.Adapter
             {
                 if (!plug)
                 {
-                    var p = transform.Find("PlugAnchor").gameObject;
+                    var p = transform.Find("PlugAnchor")?.gameObject;
                     if(!p)
                         p = new GameObject("PlugAnchor");
                     plug = p;
