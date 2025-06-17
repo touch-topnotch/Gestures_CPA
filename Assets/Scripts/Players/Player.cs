@@ -18,6 +18,8 @@ namespace Scripts.PlayerLogic
         XRRig,
 
         PCRig,
+        
+        OVRRig,
 
         NoRig,
     }
@@ -78,8 +80,8 @@ namespace Scripts.PlayerLogic
 
         [SerializeField] private GestureCombiner _gestureCombiner;
 
-        [Header("Rigs")] [SerializeField] private PCRig _pcRig;
-        [SerializeField] private XRRig _xrRig;
+        [Header("Rigs")] [SerializeField] private Rig _pcRig;
+        [SerializeField] private Rig _xrRig;
 
         public Rig curRig { get; private set; }
 
