@@ -50,9 +50,9 @@ namespace Scripts.PlayerLogic
         [Header("Runtime Settings")] [SerializeField]
         private bool isLocal;
 
+        [Header("Rigs")]
         [InspectorName("Debug Rig")] [SerializeField][EnumToggleButtons][OnValueChanged("ActivateRig")]
         private RigType _rigType;
-
         public RigType rigType
         {
             get => _rigType;
@@ -64,19 +64,23 @@ namespace Scripts.PlayerLogic
                 ActivateRig();
             }
         }
-
+        [SerializeField] private Rig[] _rigList;
+        private Dictionary<RigType, Rig> _rigDict = new Dictionary<RigType, Rig>();
+        
+        [Header("Components")]
         [FormerlySerializedAs("_characterController")] [SerializeField]
         private CharacterPool _characterPool;
 
+        
+        [SerializeField]
+        private GestureCombiner _gestureCombiner;
 
-        [SerializeField] private GestureCombiner _gestureCombiner;
-
-        [Header("Rigs")] [SerializeField] private Rig[] _rigList;
-        private Dictionary<RigType, Rig> _rigDict = new Dictionary<RigType, Rig>();
+        
         public Rig curRig { get; private set; }
 
 
-        [Header("Anchors")] [SerializeField] private BodyAnchors _anchors;
+        [Header("Anchors")]
+        [SerializeField] private BodyAnchors _anchors;
 
         [SerializeField] private PlayerHands _hands;
         [HideInInspector]
