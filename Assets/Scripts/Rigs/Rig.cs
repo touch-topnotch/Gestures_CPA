@@ -10,14 +10,6 @@ using UnityEngine;
 
 namespace Scripts.PlayerLogic
 {
-    public enum PlayerState
-    {
-        MENU,
-        ACTIVE,
-        DYED,
-        SPECTATOR
-    }
-
     public abstract class Rig : PlayerComponent, IMovable
     {
         public RigType type;
@@ -31,8 +23,6 @@ namespace Scripts.PlayerLogic
         private RecognitionPropertiesConfig _recognitionProperties;
     
         protected Hands hands => inherited?.data?.hands;
-        protected PlayerStateChangedEvent playerStateChangedEvent;
-        protected PlayerState playerState;
         public HeadInteraction headInteraction => _headInteraction;
 
         public RecognitionPropertiesConfig RecognitionPropertiesConfig => _recognitionProperties;
@@ -49,15 +39,15 @@ namespace Scripts.PlayerLogic
             if (!transform.gameObject.activeSelf)
                 return;
 
-            playerStateChangedEvent = new PlayerStateChangedEvent();
-            playerStateChangedEvent.AddListener(OnPlayerStateChanged);
+         
+            inherited.onPlayerModeChanged.AddListener(OnPlayerStateChanged);
             headInteraction.onHeadInteraction += (headInteractionType) =>
             {
                 Debug.Log("Recognized " + headInteractionType);
             };
         }
 
-        protected virtual void OnPlayerStateChanged(PlayerState state)
+        protected virtual void OnPlayerStateChanged(PlayerMode state)
         {
             Debug.Log("Current state: " + state);
         }

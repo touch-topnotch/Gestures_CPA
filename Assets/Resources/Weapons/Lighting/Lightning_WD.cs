@@ -137,11 +137,11 @@ namespace Scripts
                 var xzDistance = Vector2.Distance(new Vector2(leftPalmPos.x, leftPalmPos.z),
                     new Vector2(rightPalmPos.x, rightPalmPos.z));
                 var xzCoef = Math.Clamp((boardingXZ - xzDistance) / boardingXZ*6, 0, 1);
-                Debug.Log(yCoef + " " +xzCoef);
+              
                 var power = yCoef * xzCoef;
             
                 arc.SetFloat("Power", power);
-                orb.SetFloat("Power", power*0.9f);
+                orb.SetFloat("Power", power);
                 orb.transform.position = Vector3.Lerp(orb.transform.position, (leftPalmPos + rightPalmPos) / 2,
                     speed * Time.deltaTime);
             }

@@ -27,15 +27,15 @@ namespace Scripts.PlayerLogic
         {
             
             base.Initialize();
+            
             if(hands)
                 hands.OnEnabled();
             _waitUntilNextFrame = new WaitForSeconds(handsProperties.delayOnFrame);
             _library = PlayerData.local.library;
 
             _library.onLibraryInitialized += PrepareRingData;
-            playerStateChangedEvent.AddListener(ps => { gestureMenu.isActive = ps == PlayerState.MENU; });
-            playerStateChangedEvent.AddListener(ps => playerState = ps);
-            playerStateChangedEvent?.Invoke(playerState = PlayerState.ACTIVE);
+            inherited.onPlayerModeChanged.AddListener(ps => { gestureMenu.isActive = ps == PlayerMode.MENU; });
+            inherited.playerMode = PlayerMode.ACTIVE;
         }
 
         private void PrepareRingData()
@@ -72,14 +72,14 @@ namespace Scripts.PlayerLogic
         {
             SimulateFrame(key);
             gestureMenu.OpenRing("Types");
-            playerStateChangedEvent?.Invoke(PlayerState.ACTIVE);
+            inherited.playerMode = PlayerMode.ACTIVE;
         }
 
         private void SimulateGestureAnClose(string key)
         {
             SimulateDynamicGesture(key);
             gestureMenu.OpenRing("Types");
-            playerStateChangedEvent?.Invoke(PlayerState.ACTIVE);
+            inherited.playerMode = PlayerMode.ACTIVE;
         }
 
         private void SimulateFrame(string key)
@@ -111,15 +111,15 @@ namespace Scripts.PlayerLogic
         }
 
         // Player State
-        protected override void OnPlayerStateChanged(PlayerState state)
+        protected override void OnPlayerStateChanged(PlayerMode state)
         {
             switch (state)
             {
-                case PlayerState.MENU:
+                case PlayerMode.MENU:
                     StopMove();
                     //  Cursor.visible = true;
                     break;
-                case PlayerState.ACTIVE:
+                case PlayerMode.ACTIVE:
                     StartMove();
                     //  Cursor.visible = false;
                     break;
@@ -154,12 +154,12 @@ namespace Scripts.PlayerLogic
         {
             if (InputExtension.GetKeyWithCtrlOrCmd(KeyCode.G))
             {
-                playerStateChangedEvent?.Invoke(playerState == PlayerState.MENU
-                    ? PlayerState.ACTIVE
-                    : PlayerState.MENU);
+                inherited.playerMode = inherited.playerMode == PlayerMode.MENU
+                    ? PlayerMode.ACTIVE
+                    : PlayerMode.MENU;
             }
 
-            if (playerState == PlayerState.MENU)
+            if (inherited.playerMode == PlayerMode.MENU)
                 _personController.cameraCanMove = Input.GetKey(KeyCode.LeftShift);
         }
     }

@@ -29,7 +29,7 @@ namespace Scripts.Gestures
             OnGestureRecognized = new GestureRecognized();
             OnAbilityFrameRecognized = new FrameRecognized();
             
-            if (Player.modesWithGestureRecognition.Contains(inherited.mode))
+            if (Player.modesWithGestureRecognition.Contains(inherited.playerMode))
             {
                 OnAbilityFrameRecognized.AddListener((e) =>
                 {
