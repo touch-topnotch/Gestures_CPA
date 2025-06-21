@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Design.RecordingScene;
 using Scripts.PlayerLogic;
@@ -11,12 +12,24 @@ using TMPro;
 using UI.KeyboardPack;
 using UnityEngine;
 using UnityEngine.UI;
+using WebSocketSharp;
 
 namespace Scripts.Tests
 {
     public class GestureRecorder : MonoBehaviour
 
     {
+        enum GestureRecordingCommand
+        {
+            CHAR,
+            GEST,
+            CONTINUE,
+            LEFT,
+            RIGHT,
+            TYPE,
+            NONE
+        }
+        
         public BubbleToggle leftToggle;
         public BubbleToggle rightToggle;
         public XRInputField nameInput;
@@ -52,56 +65,77 @@ namespace Scripts.Tests
 
         private FrameData _recordedHandStruct = new("");
 
-        private void OnMessageReceived(Message message)
+        private GestureRecordingCommand lastCommand = GestureRecordingCommand.NONE;
+
+        private GestureRecordingCommand MessageToCommand(Message message)
         {
             var text = message.Text;
             if (text == null)
-                return;
-            var tokens = text.Split(' ');
-            int i = 0;
-            while (i < tokens.Length)
+                return GestureRecordingCommand.NONE;
+            var tokens = text.Split('@');
+            
+            if (Enum.TryParse(typeof(GestureRecordingCommand), tokens[0].Substring(1).ToUpper(), out var v))
             {
-                switch (tokens[i])
+                return (GestureRecordingCommand)v;
+            }
+
+            return GestureRecordingCommand.NONE;
+        }
+        private void OnMessageReceived(Message message)
+        {       
+            // /char 
+            bool getCommand;
+            getCommand = lastCommand == GestureRecordingCommand.NONE;
+
+            if (getCommand)
+            {
+                lastCommand = MessageToCommand(message);
+                switch (lastCommand)
                 {
-                    case "/char":
-                        string characterName = i + 1 < tokens.Length ? tokens[i + 1] : Calculations.RandomString(6);
-                        characterNameInput.inputString = characterName;
-                        _curCharacterName = characterName;
-                        TelegramBotProcessor.Instance.SendTextToTelegramFunc("Принято, теперь перса зовут " +
-                                                                             characterName);
-                        i += 2;
-                        break;
-                    case "/gest":
-                        string gestureName = i + 1 < tokens.Length ? tokens[i + 1] : Calculations.RandomString(6);
-                        nameInput.inputString = gestureName;
-                        Name = gestureName;
-                        TelegramBotProcessor.Instance.SendTextToTelegramFunc("Принято, теперь жест называется " +
-                                                                             gestureName);
-                        i += 2;
-                        break;
-                    case "/continue":
+                    case GestureRecordingCommand.CONTINUE:
                         ContinueRecording();
                         TelegramBotProcessor.Instance.SendTextToTelegramFunc("Nessun problema, caro amico!");
-                        i++;
+                        lastCommand = GestureRecordingCommand.NONE;
                         break;
-                    case "/left":
+                    case GestureRecordingCommand.LEFT:
                         leftToggle.isOn = !leftToggle.isOn;
                         TelegramBotProcessor.Instance.SendTextToTelegramFunc("Nessun problema, caro amico!");
-                        i++;
+                        lastCommand = GestureRecordingCommand.NONE;
                         break;
-                    case "/right":
+                    case GestureRecordingCommand.RIGHT:
                         rightToggle.isOn = !rightToggle.isOn;
                         TelegramBotProcessor.Instance.SendTextToTelegramFunc("Nessun problema, caro amico!");
-                        i++;
-                        break;
-                    case "/type":
-                        collectionLabel.text = ++i < tokens.Length ? tokens[i++] : collectionLabel.text;
-                        break;
-                    default:
-                        i++;
+                        lastCommand = GestureRecordingCommand.NONE;
                         break;
                 }
+                return;
             }
+
+
+            var text = message.Text;
+            if(text.IsNullOrEmpty())
+                return;
+            
+            switch (lastCommand)
+            {
+                case GestureRecordingCommand.CHAR:
+                    characterNameInput.inputString = text;
+                    _curCharacterName = text;
+                    TelegramBotProcessor.Instance.SendTextToTelegramFunc("Принято, теперь перса зовут " + text);
+                    lastCommand = GestureRecordingCommand.NONE;
+                    break;
+                case GestureRecordingCommand.GEST:
+                    nameInput.inputString = text;
+                    Name = text;
+                    TelegramBotProcessor.Instance.SendTextToTelegramFunc("Принято, теперь жест называется " + text);
+                    lastCommand = GestureRecordingCommand.NONE;
+                    break;
+                case GestureRecordingCommand.TYPE:
+                    collectionLabel.text = text;
+                    lastCommand = GestureRecordingCommand.NONE;
+                    break;
+            }
+            
         }
 
         private void Start()
@@ -134,15 +168,19 @@ namespace Scripts.Tests
 
             nameInput.OnExit.AddListener(RecordName);
 
-            newGestureButton.onClick.AddListener(NewGestureGroup);
-            continueRecording.onClick.AddListener(ContinueRecording);
+            // newGestureButton.onClick.AddListener(NewGestureGroup);
+            // continueRecording.onClick.AddListener(ContinueRecording);
 
             //  Name = Calculations.RandomString(6)+ "_0";
             //   characterNameInput.inputString = Calculations.RandomString(8);
         }
+        
 
         private void ReloadToggles()
         {
+
+            // мы отправляем аудио в нейронку, которая переводит в текст
+                
             _recordedHandStruct.LeftBones = null;
             _recordedHandStruct.RightBones = null;
             leftToggle.isOn = false;
@@ -161,6 +199,7 @@ namespace Scripts.Tests
         public async void NewGestureGroup()
         {
             _sequencedHandVisualizer.Spawn(_recordedHandStruct);
+            
             await SendToCompiler(_recordedHandStruct);
             ReloadToggles();
             Name = "";
@@ -168,7 +207,15 @@ namespace Scripts.Tests
 
         public async void ContinueRecording()
         {
-            await SendToCompiler(_recordedHandStruct);
+            try
+            {
+                await SendToCompiler(_recordedHandStruct);
+            }
+            catch
+            {
+                HintWindow.Log("Oops, it looks like you couldn't save the gesture(  Don't worry, just connect the Internet and try to send it again. All frames remained in place)");
+                return;
+            }
             ReloadToggles();
             AddIndexToName();
         }
@@ -225,6 +272,7 @@ namespace Scripts.Tests
             else
             {
                 // remove last Left Hand.
+                _sequencedHandVisualizer.leftHandVisualizer.Hide();
             }
         }
 
@@ -236,9 +284,11 @@ namespace Scripts.Tests
             if (isOn)
             {
                 _sequencedHandVisualizer.rightHandVisualizer.Spawn(_recordedHandStruct.RightBones);
+           
             }
             else
             {
+                _sequencedHandVisualizer.rightHandVisualizer.Hide();
                 // remove last Right Hand.
             }
         }

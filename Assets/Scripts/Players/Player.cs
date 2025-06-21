@@ -16,6 +16,13 @@ using UnityEngine.Serialization;
 
 namespace Scripts.PlayerLogic
 {
+    public enum PlayerMode
+    {
+        RECORDING,
+        FIGHTING,
+        WAITING,
+    }
+   
     public enum RigType
     {
         XRRig,
@@ -49,8 +56,8 @@ namespace Scripts.PlayerLogic
     {
         [Header("Runtime Settings")] [SerializeField]
         private bool isLocal;
-
-        [Header("Rigs")]
+        [EnumToggleButtons]
+        public PlayerMode mode;
         [InspectorName("Debug Rig")] [SerializeField][EnumToggleButtons][OnValueChanged("ActivateRig")]
         private RigType _rigType;
         public RigType rigType
@@ -90,12 +97,15 @@ namespace Scripts.PlayerLogic
         public Character character => _characterPool.currentCharacter;
         public CharacterPool characterPool => _characterPool;
 
+        public static readonly PlayerMode[] modesWithGestureRecognition = { PlayerMode.FIGHTING };
         
         private void ActivateRig()
         {
             foreach (var rig in _rigList)
             {
                 rig.gameObject.SetActive(_rigType == rig.type);
+                if(rig.type == _rigType)
+                    rig.Initialize();
             }
         }
 
@@ -131,10 +141,10 @@ namespace Scripts.PlayerLogic
             
             characterPool.SetAvatarType(AvatarType.Local);
             _gestureCombiner.CreateRecognizer(curRig.RecognitionPropertiesConfig);
-            data.library.onLibraryInitialized += () => { _gestureCombiner.RecognizeWithAllGestures(); };
-            
-
-            
+            if (modesWithGestureRecognition.Contains(mode))
+            {
+                data.library.onLibraryInitialized += () => { _gestureCombiner.RecognizeWithAllGestures(); };
+            }
         }
 
         public void SetEnemy(ulong id)

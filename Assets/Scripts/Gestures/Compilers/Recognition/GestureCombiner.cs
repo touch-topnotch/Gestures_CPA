@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Scrips.Components;
 using Scripts.Characters;
 using Scripts.Events;
@@ -24,23 +25,28 @@ namespace Scripts.Gestures
 
         public void Initialize(CharacterPool chars)
         {
-             library = new GesturesLibrary(chars);
+            library = new GesturesLibrary(chars);
             OnGestureRecognized = new GestureRecognized();
             OnAbilityFrameRecognized = new FrameRecognized();
-            OnAbilityFrameRecognized.AddListener((e) =>
+            
+            if (Player.modesWithGestureRecognition.Contains(inherited.mode))
             {
-                library.characterGestures[GestureMapper.PrefixOfName(e)].FrameRecognized(e);
-            });
-            OnGestureRecognized.AddListener((e) =>
-            {
-                // start to recognize dynamic gestures again
-                library.characterGestures[e].AllFramesDetected(RecognizeWithAllGestures);
-            });
+                OnAbilityFrameRecognized.AddListener((e) =>
+                {
+                    library.characterGestures[GestureMapper.PrefixOfName(e)].FrameRecognized(e);
+                });
+                OnGestureRecognized.AddListener((e) =>
+                {
+                    // start to recognize dynamic gestures again
+                    library.characterGestures[e].AllFramesDetected(RecognizeWithAllGestures);
+                });
+            }
         }
 
         public void CreateRecognizer(RecognitionPropertiesConfig config)
         {
             _recognizer = new Recognizer(config);
+            
         }
 
         public void RecognizeWithAllGestures()

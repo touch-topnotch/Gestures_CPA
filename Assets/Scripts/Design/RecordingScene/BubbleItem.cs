@@ -25,7 +25,7 @@ namespace Design.RecordingScene
             set
             {
                 _interactable = value;
-                _xrSimpleInteractable.hoverEntered.AddListener((a) =>
+                _xrSimpleInteractable?.hoverEntered?.AddListener((a) =>
                 {
                     if (_interactable)
                         OnHoverEntered();
@@ -35,14 +35,12 @@ namespace Design.RecordingScene
 
         protected abstract void OnHoverEntered();
         protected abstract void OnHoverExited();
-
         private void Awake()
         {
             defaultSize = transform.localScale.x;
             size = new(defaultSize, defaultSize);
             emissive = new(1, 0);
-            if (!_xrSimpleInteractable)
-                _xrSimpleInteractable = GetComponent<XRSimpleInteractable>();
+            _xrSimpleInteractable ??= GetComponent<XRSimpleInteractable>();
             if (!_mat)
                 _mat = GetComponent<MeshRenderer>().sharedMaterial;
             _xrSimpleInteractable.hoverEntered.AddListener((a) =>
@@ -50,7 +48,7 @@ namespace Design.RecordingScene
                 if (_interactable)
                     OnHoverEntered();
             });
-            _mat.EnableKeyword("_EMISSION");
+//            _mat.EnableKeyword("_EMISSION");
         }
 
         protected void UpdateProp(ref FromToProp prop, float speed)

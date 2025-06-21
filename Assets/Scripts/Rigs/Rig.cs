@@ -30,7 +30,7 @@ namespace Scripts.PlayerLogic
         [SerializeField]
         private RecognitionPropertiesConfig _recognitionProperties;
     
-        protected Hands hands => inherited.data.hands;
+        protected Hands hands => inherited?.data?.hands;
         protected PlayerStateChangedEvent playerStateChangedEvent;
         protected PlayerState playerState;
         public HeadInteraction headInteraction => _headInteraction;
@@ -45,6 +45,7 @@ namespace Scripts.PlayerLogic
         
         public virtual void Initialize()
         {
+            
             if (!transform.gameObject.activeSelf)
                 return;
 

@@ -22,12 +22,13 @@ namespace Scripts.PlayerLogic
         [SerializeField] protected RingMenu gestureMenu;
         private WaitForSeconds _waitUntilNextFrame;
         private GesturesLibrary _library;
-
+        private bool isInitialized;
         public override void Initialize()
         {
+            
             base.Initialize();
-            hands.OnEnabled();
-
+            if(hands)
+                hands.OnEnabled();
             _waitUntilNextFrame = new WaitForSeconds(handsProperties.delayOnFrame);
             _library = PlayerData.local.library;
 

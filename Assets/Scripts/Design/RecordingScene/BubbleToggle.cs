@@ -31,12 +31,12 @@ namespace Design.RecordingScene
 
         protected override void UpdateProperties()
         {
-            UpdateProp(ref emissive, 10f);
-            UpdateProp(ref size, 10f);
-            if (!emissive.isEqual)
-                _mat.SetColor("_EmissionColor", Color.Lerp(colorDisabled, colorEnabled, emissive.from));
-            if (!size.isEqual)
-                transform.localScale = Vector3.one * size.from;
+            // UpdateProp(ref emissive, 10f);
+            // UpdateProp(ref size, 10f);
+            // if (!emissive.isEqual)
+            //     _mat.SetColor("_EmissionColor", Color.Lerp(colorDisabled, colorEnabled, emissive.from));
+            // if (!size.isEqual)
+            //     transform.localScale = Vector3.one * size.from;
         }
 
         private void OnValueChanged()
