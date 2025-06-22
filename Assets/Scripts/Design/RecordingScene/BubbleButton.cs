@@ -6,7 +6,7 @@ namespace Design.RecordingScene
 {
     public class BubbleButton : BubbleItem
     {
-        public UnityEvent onClick;
+        public XRSimpleInteractable xrSimpleInteractable;
 
         protected override void OnHoverEntered() => OnClick();
 
@@ -51,7 +51,7 @@ namespace Design.RecordingScene
         {
             step = 0;
             AnimateByStep();
-            onClick?.Invoke();
+           // xrSimpleInteractable.selectEntered.Invoke();
         }
     }
 }

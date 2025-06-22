@@ -222,8 +222,15 @@ namespace Scripts.Gestures
                         }
                     }
                     : AddFrameToChar(frame, dictionary[characterName]);
-                CharacterMapper.SendCharacterStruct(new JsonCharacterStruct()
-                    { key = characterName, value = jsonChar });
+                try
+                {
+                    CharacterMapper.SendCharacterStruct(new JsonCharacterStruct()
+                        { key = characterName, value = jsonChar });
+                }
+                catch(Exception e)
+                {
+                    HintWindow.Log(e.Message);
+                }
             }
         }
 

@@ -154,6 +154,7 @@ namespace Scripts.HandsLogic
         public void Show()
         {
             gameObject.SetActive(true);
+            ChangeColor(new Color(0.6f, 0.6f, 0.6f, 0.6f), HandShaderProps.EdgeColor);
             Debug.Log("SHOW HAND");
         }
 

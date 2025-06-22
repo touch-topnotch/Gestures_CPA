@@ -9,13 +9,24 @@ using Scripts.HandsLogic;
 using Scripts.Network;
 using Scripts.PlayerLogic;
 using Scripts.Static;
+using Scripts.Systems;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Serialization;
 
 
 namespace Scripts.PlayerLogic
 {
+    public enum PlayerMode
+    {
+        MENU,
+        ACTIVE,
+        DYED,
+        RECORDING,
+        SPECTATOR
+    }
+   
     public enum RigType
     {
         XRRig,
@@ -29,12 +40,11 @@ namespace Scripts.PlayerLogic
 
     public class PlayerData
     {
-        public static PlayerData local;
         public readonly ulong id;
         public readonly BodyAnchors bodyAnchors;
         public readonly PlayerHands hands;
         public readonly GesturesLibrary library;
-
+        public static PlayerData local;
         public PlayerData(ulong id, BodyAnchors bodyAnchors, PlayerHands hands, GesturesLibrary library)
         {
             this.id = id;
@@ -50,7 +60,19 @@ namespace Scripts.PlayerLogic
         [Header("Runtime Settings")] [SerializeField]
         private bool isLocal;
 
-        [Header("Rigs")]
+        private PlayerMode _playerMode;
+        [EnumToggleButtons]
+        [ShowInInspector]
+        public PlayerMode playerMode
+        {
+            get => _playerMode;
+            set
+            {
+                _playerMode = value;
+                onPlayerModeChanged.Invoke(_playerMode);
+            }
+        }
+        
         [InspectorName("Debug Rig")] [SerializeField][EnumToggleButtons][OnValueChanged("ActivateRig")]
         private RigType _rigType;
         public RigType rigType
@@ -64,43 +86,50 @@ namespace Scripts.PlayerLogic
                 ActivateRig();
             }
         }
+        
         [SerializeField] private Rig[] _rigList;
         private Dictionary<RigType, Rig> _rigDict = new Dictionary<RigType, Rig>();
         
         [Header("Components")]
         [FormerlySerializedAs("_characterController")] [SerializeField]
         private CharacterPool _characterPool;
-
-        
         [SerializeField]
         private GestureCombiner _gestureCombiner;
-
-        
         public Rig curRig { get; private set; }
-
 
         [Header("Anchors")]
         [SerializeField] private BodyAnchors _anchors;
 
         [SerializeField] private PlayerHands _hands;
-        [HideInInspector]
-        public PlayerData data;
+
+        [HideInInspector] public PlayerData data => _data ??= SetPlayerData();
+        private PlayerData _data;
         public GestureCombiner gestureCombiner => _gestureCombiner;
         public BodyAnchors anchors => _anchors;
         public Character character => _characterPool.currentCharacter;
         public CharacterPool characterPool => _characterPool;
 
-        
+        public static readonly PlayerMode[] modesWithGestureRecognition = { PlayerMode.MENU, PlayerMode.DYED, PlayerMode.ACTIVE };
+        public UnityEvent<PlayerMode> onPlayerModeChanged = new UnityEvent<PlayerMode>();
+        public PlayerData SetPlayerData()
+        {
+            return new PlayerData(0, _anchors, _hands, _gestureCombiner?.library);
+        }
         private void ActivateRig()
         {
             foreach (var rig in _rigList)
             {
                 rig.gameObject.SetActive(_rigType == rig.type);
+                if(rig.type == _rigType && Application.isPlaying)
+                    rig.Initialize();
             }
         }
 
+       
+        
         private void Awake()
         {
+            AddLoggers();
             _rigDict = new Dictionary<RigType, Rig>();
             foreach (var VARIABLE in _rigList)
             {
@@ -131,10 +160,10 @@ namespace Scripts.PlayerLogic
             
             characterPool.SetAvatarType(AvatarType.Local);
             _gestureCombiner.CreateRecognizer(curRig.RecognitionPropertiesConfig);
-            data.library.onLibraryInitialized += () => { _gestureCombiner.RecognizeWithAllGestures(); };
-            
-
-            
+            if (modesWithGestureRecognition.Contains(playerMode))
+            {
+                data.library.onLibraryInitialized += () => { _gestureCombiner.RecognizeWithAllGestures(); };
+            }
         }
 
         public void SetEnemy(ulong id)
@@ -147,7 +176,7 @@ namespace Scripts.PlayerLogic
         private void InitializeComponents(ulong id)
         {
             _gestureCombiner.Initialize(characterPool);
-            data = new PlayerData(id, anchors, _hands, _gestureCombiner.library);
+            _data = SetPlayerData(); 
             
             characterPool.SetMaterialId((int)id);
             UpdateEvent.Instance.AddListener(UpdateAnchors);
@@ -226,6 +255,10 @@ namespace Scripts.PlayerLogic
                     VARIABLE.SlerpPosition = true;
                 }
             }
+        }
+        private void AddLoggers()
+        {
+            onPlayerModeChanged.AddListener(EventLogger.OnPlayerModeChanger);
         }
     }
 }

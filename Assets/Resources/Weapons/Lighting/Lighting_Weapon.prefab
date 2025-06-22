@@ -40,7 +40,7 @@ Transform:
   - {fileID: 6578129881786605900}
   - {fileID: 6386774159174476738}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6934817223367666101
 MonoBehaviour:
@@ -374,16 +374,22 @@ VisualEffect:
       - m_Value: 1
         m_Name: Power
         m_Overridden: 1
+      - m_Value: 0.22
+        m_Name: OrbSize
+        m_Overridden: 1
+      - m_Value: 1.58
+        m_Name: ElectricitySize
+        m_Overridden: 1
     m_Vector2f:
       m_Array: []
     m_Vector3f:
       m_Array: []
     m_Vector4f:
       m_Array:
-      - m_Value: {x: 7.6844134, y: 9.434052, z: 17.148375, w: 0.78039217}
+      - m_Value: {x: 0.5113684, y: 0.7417351, z: 1.7207953, w: 0.78039217}
         m_Name: SparksColor
         m_Overridden: 1
-      - m_Value: {x: 2.439845, y: 1.4858925, z: 1.0703093, w: 0}
+      - m_Value: {x: 2.6226416, y: 2.780347, z: 4, w: 0}
         m_Name: ElectricityColor
         m_Overridden: 1
     m_Uint:
@@ -790,34 +796,34 @@ VisualEffect:
       - m_Value: {x: 0.030938307, y: 1.1726384, z: 0.5989035}
         m_Name: Pose C
         m_Overridden: 1
-      - m_Value: {x: 0.8930471, y: 1.1835113, z: -6.2681966}
+      - m_Value: {x: -8.791077, y: 1.3522669, z: -9.658391}
         m_Name: L_IndexTip
         m_Overridden: 1
-      - m_Value: {x: 0.86454, y: 1.1952088, z: -6.332461}
+      - m_Value: {x: -8.874089, y: 1.3501518, z: -9.700959}
         m_Name: L_ThumbTip
         m_Overridden: 1
-      - m_Value: {x: 0.9257547, y: 1.1939831, z: -6.26547}
+      - m_Value: {x: -8.738557, y: 1.327046, z: -9.661411}
         m_Name: L_MiddleTip
         m_Overridden: 1
-      - m_Value: {x: 0.94859886, y: 1.1901925, z: -6.278401}
+      - m_Value: {x: -8.728116, y: 1.3386966, z: -9.695117}
         m_Name: L_RingTip
         m_Overridden: 1
-      - m_Value: {x: 0.9753976, y: 1.1829069, z: -6.303733}
+      - m_Value: {x: -8.736336, y: 1.3496193, z: -9.742455}
         m_Name: L_LittleTip
         m_Overridden: 1
-      - m_Value: {x: 0.8975873, y: 1.7928301, z: -6.2810965}
+      - m_Value: {x: -8.786526, y: 1.6401982, z: -9.639105}
         m_Name: R_IndexTip
         m_Overridden: 1
-      - m_Value: {x: 0.9799396, y: 1.7925608, z: -6.316633}
+      - m_Value: {x: -8.72477, y: 1.6250006, z: -9.721476}
         m_Name: R_LittleTip
         m_Overridden: 1
-      - m_Value: {x: 0.930182, y: 1.7820119, z: -6.27837}
+      - m_Value: {x: -8.748749, y: 1.6321652, z: -9.650301}
         m_Name: R_MiddleTip
         m_Overridden: 1
-      - m_Value: {x: 0.9530651, y: 1.78556, z: -6.2913013}
+      - m_Value: {x: -8.7322035, y: 1.62483, z: -9.6799965}
         m_Name: R_RingTip
         m_Overridden: 1
-      - m_Value: {x: 0.86851674, y: 1.7812674, z: -6.3456383}
+      - m_Value: {x: -8.847461, y: 1.6324563, z: -9.694432}
         m_Name: R_ThumbTip
         m_Overridden: 1
       - m_Value: {x: -0.005, y: 1.349, z: 0.434}
@@ -832,12 +838,12 @@ VisualEffect:
       - m_Value: {x: 0, y: 0, z: 0}
         m_Name: New Position_position
         m_Overridden: 0
-      - m_Value: {x: 0, y: 0, z: 0}
+      - m_Value: {x: -8.831833, y: 1.4854498, z: -9.801308}
         m_Name: EnergyOrbPosition
         m_Overridden: 1
     m_Vector4f:
       m_Array:
-      - m_Value: {x: 7.464264, y: 2.641983, z: 1.7956483, w: 1}
+      - m_Value: {x: 16.94838, y: 7.325044, z: 4.0818086, w: 1}
         m_Name: Line Color
         m_Overridden: 1
       - m_Value: {x: 0.86039764, y: 0.3092327, z: 0, w: 1}
@@ -846,7 +852,7 @@ VisualEffect:
       - m_Value: {x: 1.1486983, y: 0.23986392, z: 0, w: 1}
         m_Name: ParticleColor
         m_Overridden: 1
-      - m_Value: {x: 8.027605, y: 14.542152, z: 29.857058, w: 1}
+      - m_Value: {x: 2.2101038, y: 3.2440913, z: 9.1870985, w: 1}
         m_Name: Second Line Color
         m_Overridden: 1
     m_Uint:
