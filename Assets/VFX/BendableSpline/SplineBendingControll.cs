@@ -8,24 +8,37 @@ public class SplineBendingControll : MonoBehaviour
 {
     [SerializeField] Vector3 _Scale;
     
-    [SerializeField] private float _speed = 1f; 
+    [SerializeField] private float _startSpeed = 1f;
+    [SerializeField] private float _baseSpeed = 1f;
+    [SerializeField] private float _endSpeed = 1f;
     [SerializeField] private  float _nodeInterval = 1f; 
 
 
     [SerializeField] Spline _Spline;
     [SerializeField] ExampleContortAlong _ContortAlong;
+    public Vector3 SplineHeadPosition => transform.position + _Spline.nodes[^1].Position;
+    public Vector3 SplineHeadDirection => _Spline.nodes[^1].Position - _Spline.nodes[^2].Position;
     
+    private Vector3 _startDirection;
     private Vector3 _direction;
     private bool _stopped;
     
-    public void StartWaterBend(Vector3 dir)
+    public void StartWaterBend(Vector3 dir, float speed)
     {
-        StartWaterBend(dir, new List<Vector3>());
+        StartWaterBend(dir, speed, speed, speed, new List<Vector3>());
     }
     
-    public void StartWaterBend(Vector3 dir, List<Vector3> initialNodePoses)
+    public void StartWaterBend(Vector3 dir, float speed, float startSpeed, float endSpeed)
     {
-        _direction = dir;
+        StartWaterBend(dir, speed, startSpeed, endSpeed, new List<Vector3>());
+    }
+    
+    public void StartWaterBend(Vector3 dir, float speed, float startSpeed, float endSpeed, List<Vector3> initialNodePoses)
+    {
+        _startDirection = dir.normalized;
+        _startSpeed = startSpeed;
+        _baseSpeed = speed;
+        _endSpeed = endSpeed;
         _stopped = false;
         StopAllCoroutines();
         
@@ -50,7 +63,7 @@ public class SplineBendingControll : MonoBehaviour
         {
             _Spline.RemoveNode(nodes[i]);
         }
-        transform.forward = new Vector3(_direction.x, 0, _direction.z).normalized;
+        transform.forward = new Vector3(_startDirection.x, 0, _startDirection.z).normalized;
         
         SetInitialNodes(initialNodePoses);
         
@@ -71,7 +84,7 @@ public class SplineBendingControll : MonoBehaviour
         // Handle appear scaling
         while (startingLength < targetStartLength)
         {
-            startingLength += Time.deltaTime * _speed;
+            startingLength += Time.deltaTime * _startSpeed;
             _ContortAlong.ScaleMesh(Vector3.Lerp(startScale, targetScale, startingLength / meshLength));
             yield return null;
         }
@@ -81,7 +94,7 @@ public class SplineBendingControll : MonoBehaviour
             if (!_stopped)
             {
                 // Move last node
-                lastNode.Position += _direction * (_speed * Time.deltaTime);
+                lastNode.Position += _direction * (_baseSpeed * Time.deltaTime);
                 lastNode.Direction = lastNode.Position;
             
 
@@ -101,7 +114,7 @@ public class SplineBendingControll : MonoBehaviour
             }
             else if (_stopped) // Handle disappear
             {
-                endingLength += Time.deltaTime * _speed;
+                endingLength += Time.deltaTime * _endSpeed;
                 _ContortAlong.ScaleMesh(Vector3.Lerp(targetScale, Vector3.zero, endingLength / meshLength));
                 var tailPoint = _Spline.Length - _ContortAlong.MeshBender.Source.Length;
                 if (tailPoint < _Spline.Length)
@@ -137,11 +150,11 @@ public class SplineBendingControll : MonoBehaviour
         }
         else
         {
-            var position = transform.position;
-            _Spline.nodes[0].Position = position;
-            _Spline.nodes[0].Direction = position;
-            _Spline.nodes[1].Position = position + _direction * _nodeInterval;
-            _Spline.nodes[1].Direction = position + _direction * _nodeInterval;
+            
+            _Spline.nodes[0].Position = new Vector3();
+            _Spline.nodes[0].Direction = new Vector3();
+            _Spline.nodes[1].Position = _startDirection * _nodeInterval;
+            _Spline.nodes[1].Direction = _startDirection * _nodeInterval;
         }
     }
 }

@@ -13,7 +13,7 @@ public class AuraSound : PrefabSerializedMonoBehaviour
     [Header("Sounds")]
     [SerializeField] private string[] _startSounds;
     [SerializeField] private string[] _startSoundsRandom;
-    [SerializeField] private Dictionary<string, float> _continuousSoundGroups;
+    [SerializeField] private SerializableDictionary<string, float> _continuousSoundGroups;
     [SerializeField] private string[] _endSounds;
     [SerializeField] private string[] _endSoundsRandom;
     

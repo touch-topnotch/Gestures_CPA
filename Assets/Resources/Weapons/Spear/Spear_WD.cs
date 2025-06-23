@@ -62,14 +62,18 @@ public class Spear_WD : WeaponDesign
                 {
                     transform.position = hit.point;
                 }
+                
+                var endScale = _portalVFX.transform.localScale; 
+                _portalVFX.transform.localScale = Vector3.zero;
                 _portalVFX.gameObject.SetActive(true);
                 _portalVFX.transform.localPosition = _portalSpawnLocalPos;
+                
                 _shouldPortalFollowHandPosStop = false;
                 _shouldPortalFollowHandRotZStop = false;
                 _shouldPortalFollowHandRotXStop = false;
                 _portalSoundCoroutine = StartCoroutine(PlayPortalSound());
                 
-                var endScale = _portalVFX.transform.localScale;
+                
                 DOVirtual.Vector3(Vector3.zero, endScale, 2f, v => _portalVFX.transform.localScale = v).SetEase(Ease.OutExpo);
                 break;
             case 1:
