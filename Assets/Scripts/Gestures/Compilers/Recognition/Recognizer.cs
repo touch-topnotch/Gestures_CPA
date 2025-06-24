@@ -124,7 +124,8 @@ namespace Scripts.Gestures
             return false;
         }
 
-        public static bool RecognizeFrame(in RecognitionProperties properties, FrameData frameData, in bool shareFrameBetweenDevices = false)
+        public static bool RecognizeFrame(in RecognitionProperties properties, FrameData frameData,
+            in bool shareFrameBetweenDevices = false)
         {
             return RecognizeFrame(properties, frameData, _hands, shareFrameBetweenDevices);
         }
@@ -135,7 +136,7 @@ namespace Scripts.Gestures
             if (RecognizeHand(frameData.LeftBones, hands.leftHand.points, properties)
                 && RecognizeHand(frameData.RightBones, hands.rightHand.points, properties))
             {
-                if(shareFrameBetweenDevices)
+                if (shareFrameBetweenDevices)
                     onSharedFrameBetweenDevices?.Invoke(frameData.name);
                 return true;
             }
@@ -148,7 +149,7 @@ namespace Scripts.Gestures
         {
             if (bonesData == null || bonesData.rotations?.Length != handSkeleton.Length)
                 return true;
-            
+
             var dist = OptimizedDistance(bonesData.rootPos, handSkeleton[0].localPosition);
             if (1 / props.positionQuality - dist < props.positionQuality)
             {

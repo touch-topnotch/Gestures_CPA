@@ -4,28 +4,20 @@ using UnityEngine;
 
 namespace Scripts.Components
 {
-    public abstract class InheritedComponent<T>: SmartComponent
-    where T: MonoBehaviour
+    public abstract class InheritedComponent<T> : SmartComponent
+        where T : MonoBehaviour
     {
-        [HideIf("inheritedExists")] [SerializeField]
-        public T inherited { get; private set; }
-        
+        [DisableIf("inheritedExists")] [SerializeField]
+        private T _inherited;
+
+        public T inherited => _inherited ??= GetInherited();
+
         protected virtual T GetInherited()
         {
             return gameObject.GetComponentInParent<T>();
         }
 
-        private void Awake()
-        {
-            inherited ??= GetInherited();
-        }
-
-        private void OnValidate()
-        {
-            inherited ??= GetInherited();
-        }
-
-        private bool inheritedExists => inherited ??= GetInherited();
+        protected virtual bool inheritedExists => inherited;
     }
 
     public class WeaponComponent : NetworkInheritedComponent<Weapon>

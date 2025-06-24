@@ -6,21 +6,20 @@ using UnityEngine.Events;
 
 namespace Gesture_Editor_SDK.Realtime
 {
-    public class EmptyRecognizable: RecognizableBehaviour
+    public class EmptyRecognizable : RecognizableBehaviour
     {
         public override void OnFrameRecognized(string name)
         {
             Debug.Log("Executed empty gesture on frame: " + name);
         }
 
-        public override void AbilityCalled()
+        public override void OnGestureCasted()
         {
             AbilityReleased();
         }
 
         protected override void OnAbilityReleased()
         {
-            
         }
     }
 }

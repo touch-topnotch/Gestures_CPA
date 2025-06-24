@@ -82,7 +82,7 @@ namespace Scripts.Gestures
         {
             if (_recognizable != null)
             {
-                _recognizable.AbilityCalled();
+                _recognizable.OnGestureCasted();
                 _recognizable.AbilityReleasedEvent += () => { onAbilityReleasedCallback?.Invoke(); };
             }
         }

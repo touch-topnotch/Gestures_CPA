@@ -1,4 +1,3 @@
-
 using System;
 using Scripts.Gestures;
 using Scripts.HandsLogic;
@@ -12,7 +11,7 @@ namespace Gesture_Editor_SDK.Realtime
         string gestureName { get; }
         PlayerData playerData { get; }
         void OnFrameRecognized(string name);
-        void AbilityCalled();
+        void OnGestureCasted();
         void AbilityReleased();
         event Action AbilityReleasedEvent;
     }

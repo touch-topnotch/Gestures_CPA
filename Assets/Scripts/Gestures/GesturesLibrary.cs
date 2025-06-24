@@ -61,7 +61,8 @@ namespace Scripts.Gestures
 
         private async void AddDictionary()
         {
-            allCharacterGestures.AddDictionary(await GestureMapper.ReadCharacterGestures(_characterPool.charactersDict));
+            allCharacterGestures.AddDictionary(
+                await GestureMapper.ReadCharacterGestures(_characterPool.charactersDict));
             characterGestures = allCharacterGestures.openDict;
             systemGestures = await GestureMapper.ReadFrameDatas("system");
             supportiveGestures = await GestureMapper.ReadFrameDatas("supportive");
@@ -72,23 +73,23 @@ namespace Scripts.Gestures
                     allAvailableFrames.Add(frame.name, frame);
                 }
             }
-            
+
             foreach (var frame in systemGestures)
             {
                 allAvailableFrames.Add(frame.Key, frame.Value);
             }
-            
+
             foreach (var frame in supportiveGestures)
             {
                 allAvailableFrames.Add(frame.Key, frame.Value);
             }
-            
+
             var log = $"Library has initialized! .\n"
                       + $"   All Parsed Gestures: {Debugger.dictionaryToString(allCharacterGestures.openDict, false, true)}"
                       + $"\n   Character Gestures (Now without limitations): {Debugger.dictionaryToString(characterGestures, false, true)}"
                       + $"\n   System Gestures: {Debugger.dictionaryToString(systemGestures, false, true)}"
                       + $"\n   Supportive Gestures: {Debugger.dictionaryToString(supportiveGestures, false, true)}";
-            
+
             Debug.Log(log);
             onLibraryInitialized?.Invoke();
         }
@@ -184,7 +185,7 @@ namespace Scripts.Gestures
             return t;
         }
 
-        public async Task RecordFrame(FrameData frame,  GestureCollections collection,
+        public async Task RecordFrame(FrameData frame, GestureCollections collection,
             string characterName = "")
         {
             if (collection == GestureCollections.system)
@@ -227,7 +228,7 @@ namespace Scripts.Gestures
                     CharacterMapper.SendCharacterStruct(new JsonCharacterStruct()
                         { key = characterName, value = jsonChar });
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     HintWindow.Log(e.Message);
                 }

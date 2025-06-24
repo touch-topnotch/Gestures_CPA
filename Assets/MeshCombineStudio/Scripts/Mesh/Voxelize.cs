@@ -18,13 +18,13 @@ public class Voxelize : MonoBehaviour
     public int voxelizeLayer;
     public float voxelResolution;
     public bool voxelize;
-    
+
 
     public void Update()
     {
         if (voxelize)
         {
-            voxelize = false; 
+            voxelize = false;
             VoxelizeMesh(transform, voxelResolution, voxelizeLayer);
         }
     }
@@ -96,7 +96,8 @@ public class Voxelize : MonoBehaviour
         Bounds bounds = mr.bounds;
 
         Vector3 size = bounds.size;
-        Int3 voxels = new Int3(Mathf.CeilToInt(size.x / voxelResolution), Mathf.CeilToInt(size.y / voxelResolution), Mathf.CeilToInt(size.z / voxelResolution));
+        Int3 voxels = new Int3(Mathf.CeilToInt(size.x / voxelResolution), Mathf.CeilToInt(size.y / voxelResolution),
+            Mathf.CeilToInt(size.z / voxelResolution));
         voxels += new Int3(2, 2, 2);
         int voxelsX = Mathf.CeilToInt(voxels.x / 8f);
 
@@ -114,7 +115,7 @@ public class Voxelize : MonoBehaviour
         ray.direction = Vector3.forward;
         ray2.direction = Vector3.back;
         Vector3 pos = bounds.min;
-        Vector3 pos2 = pos; 
+        Vector3 pos2 = pos;
         pos2.z = bounds.max.z;
 
         Debug.Log(PrintVector3(mr.bounds.size) + " new size " + PrintVector3(size) + " voxels " + voxels.ToString());
@@ -146,7 +147,10 @@ public class Voxelize : MonoBehaviour
                     intersectList.Sort();
 
                     float half = (float)intersectList.Count / 2;
-                    if (half != (int)half) { continue; }
+                    if (half != (int)half)
+                    {
+                        continue;
+                    }
 
                     // Debug.Log(hitInfos.Length + " " + hitInfos2.Length + " " + list.Count);
 
@@ -157,7 +161,9 @@ public class Voxelize : MonoBehaviour
 
                         for (int z = z1; z < z2; z++)
                         {
-                            Vector3 voxelPos = new Vector3(x * voxelResolution, y * voxelResolution, z * voxelResolution) + minBoundsVoxel;
+                            Vector3 voxelPos =
+                                new Vector3(x * voxelResolution, y * voxelResolution, z * voxelResolution) +
+                                minBoundsVoxel;
                             voxelPos = t.TransformPoint(voxelPos);
 
                             volume[xGrid, y, z] |= bit;
@@ -171,7 +177,6 @@ public class Voxelize : MonoBehaviour
                     }
                 }
             }
-
         }
         catch (Exception e)
         {
@@ -400,7 +405,8 @@ public class Voxelize : MonoBehaviour
                 {
                     if ((volume[xGrid, y, z] & bits[bit]) > 0)
                     {
-                        Vector3 localPos = new Vector3(pos.x + (x * voxelResolution), pos.y + (y * voxelResolution), pos.z + (z * voxelResolution)) + halfVoxel;
+                        Vector3 localPos = new Vector3(pos.x + (x * voxelResolution), pos.y + (y * voxelResolution),
+                            pos.z + (z * voxelResolution)) + halfVoxel;
                         Gizmos.DrawWireCube(t.TransformPoint(localPos), voxel);
                     }
                 }

@@ -103,6 +103,5 @@ namespace Scripts.HandsLogic
 
         protected override bool shouldAddMissingComponents =>
             !(leftHand && rightHand);
-        
     }
 }

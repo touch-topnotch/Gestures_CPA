@@ -16,6 +16,7 @@ public class RingMenu : MonoBehaviour
     private readonly List<RingCakePiece> _piecePool = new();
     private RingCakePiece[] _spawnedPieces;
     private string lastOpenedRing;
+
     public void SetRings(List<Ring> list, string first = null)
     {
         _rings.Clear();
@@ -27,11 +28,11 @@ public class RingMenu : MonoBehaviour
             {
                 first ??= e.name;
                 _rings.Add(e.name, e);
-                
             }
         });
         lastOpenedRing = first;
     }
+
     public void OpenRing(string key)
     {
         if (!_rings.ContainsKey(key))
@@ -39,7 +40,8 @@ public class RingMenu : MonoBehaviour
             Debug.Log("Ring " + key + " doesn't exist in dictionary!");
             return;
         }
-        if(lastOpenedRing != key)
+
+        if (lastOpenedRing != key)
             Close();
 
         lastOpenedRing = key;
@@ -70,7 +72,8 @@ public class RingMenu : MonoBehaviour
             //_pieces[i].Icon.transform.localPosition = transformLocalPosition;
             //_pieces[i].Icon.sprite = _currentTabData.Elements[i].Icon;
 
-            RectTransform iconRect = _spawnedPieces[i].Icon.GetComponent<RectTransform>(); // Получаем RectTransform иконки
+            RectTransform
+                iconRect = _spawnedPieces[i].Icon.GetComponent<RectTransform>(); // Получаем RectTransform иконки
             float halfIconHeight = iconRect.sizeDelta.y / 2f; // Половина высоты иконки
 
             _spawnedPieces[i].PieceLabel.transform.localPosition =
@@ -78,7 +81,7 @@ public class RingMenu : MonoBehaviour
 
             _spawnedPieces[i].PieceLabel.text = ring.sectors[i].props.name;
         }
-        
+
         // RectTransform cakePieceRenderer = pieces[0].Icon.GetComponent<RectTransform>();
         // float cakePieceTopY = cakePieceRenderer.position.y; // Верхняя точка CakePiece
         // float screenHeight = Screen.height;
@@ -92,7 +95,7 @@ public class RingMenu : MonoBehaviour
         //
         // _ringTabBar.SetCurrentTabText("Current : " + ring.name);
     }
-    
+
     private void Update()
     {
         if (!isActive)
@@ -111,16 +114,19 @@ public class RingMenu : MonoBehaviour
             else
                 _spawnedPieces[i].CakePiece.color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
         }
+
         if (Input.GetMouseButtonDown(0))
         {
             var props = _rings[lastOpenedRing].sectors[activeElement].props;
             props.onClick?.Invoke(props.name);
         }
     }
+
     public void Close()
     {
         HideElements();
     }
+
     private void HideElements()
     {
         if (_piecePool.IsEmpty())
@@ -130,15 +136,16 @@ public class RingMenu : MonoBehaviour
             var.gameObject.SetActive(false);
         }
     }
+
     private float NormalizeAngle(float a) => (a + 360f) % 360f;
 
     private bool _isActive = false;
+
     public bool isActive
     {
         get => _isActive;
         set
         {
-         
             _isActive = value;
             if (_isActive && _rings.ContainsKey(lastOpenedRing))
             {
@@ -150,6 +157,7 @@ public class RingMenu : MonoBehaviour
             }
         }
     }
+
     private RingCakePiece PoolSector()
     {
         foreach (var piece in _piecePool)

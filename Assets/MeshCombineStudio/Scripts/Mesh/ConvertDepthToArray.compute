@@ -5,9 +5,9 @@ float distance;
 float captureHeight;
 int direction;
 
-[numthreads(8,8,1)] 
+[numthreads(8,8,1)]
 #pragma kernel CSMain
-void CSMain (uint2 id : SV_DispatchThreadID)
+void CSMain(uint2 id : SV_DispatchThreadID)
 {
-	heightBuffer[id.x + (id.y * resolution)] = captureHeight + (((1 - rtDepth[id]) * distance) * direction); 
+    heightBuffer[id.x + (id.y * resolution)] = captureHeight + (((1 - rtDepth[id]) * distance) * direction);
 }

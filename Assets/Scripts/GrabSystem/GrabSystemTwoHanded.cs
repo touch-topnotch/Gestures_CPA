@@ -5,7 +5,7 @@ public class GrabSystemTwoHanded : GrabSystem
 {
     [Header("Secondary Grab Point")] [SerializeField]
     private GrabPoint _secondaryGrabPoint;
-    
+
     [Header("Secondary Grab Boundaries")] [SerializeField]
     private float grabberTwistAngle;
 
@@ -29,7 +29,7 @@ public class GrabSystemTwoHanded : GrabSystem
             if (!RecognizeFrame(_mainGrabPoint.GrabGesture))
             {
                 if (!_mainGrabPoint.IsUnGrabbing && _mainGrabPoint.IsGrabbed)
-                    _mainGrabPoint.UnGrabCoroutine = StartCoroutine(UnGrab(_mainGrabPoint, 
+                    _mainGrabPoint.UnGrabCoroutine = StartCoroutine(UnGrab(_mainGrabPoint,
                         _mainGrabPoint.IsGrabbed && !_secondaryGrabPoint.IsGrabbed));
             }
         }
@@ -52,7 +52,7 @@ public class GrabSystemTwoHanded : GrabSystem
             {
                 if (!_secondaryGrabPoint.IsUnGrabbing && _secondaryGrabPoint.IsGrabbed)
                     _secondaryGrabPoint.UnGrabCoroutine = StartCoroutine(UnGrab(_secondaryGrabPoint,
-                    _secondaryGrabPoint.IsGrabbed && !_mainGrabPoint.IsGrabbed));
+                        _secondaryGrabPoint.IsGrabbed && !_mainGrabPoint.IsGrabbed));
             }
         }
     }
@@ -82,7 +82,8 @@ public class GrabSystemTwoHanded : GrabSystem
 
         grabObjectPos = Vector3.Lerp(grabObjectPos,
             _mainGrabPoint.Grabber.Transform.position +
-            (_secondaryGrabPoint.Grabber.Transform.position - _mainGrabPoint.Grabber.Transform.position).normalized * _mainGrabPoint.GrabPosOffset +
+            (_secondaryGrabPoint.Grabber.Transform.position - _mainGrabPoint.Grabber.Transform.position).normalized *
+            _mainGrabPoint.GrabPosOffset +
             (grabObjectPos - _mainGrabPoint.GrabPointTransform.position), moveLerpSpeed * Time.deltaTime);
 
         grabObjectTransform.position = grabObjectPos;
@@ -102,7 +103,8 @@ public class GrabSystemTwoHanded : GrabSystem
         if (!_mainGrabPoint.IsGrabbed)
             return true;
 
-        var twistAngle = Vector3.Angle(_mainGrabPoint.Grabber.Transform.right, _secondaryGrabPoint.Grabber.Transform.right);
+        var twistAngle = Vector3.Angle(_mainGrabPoint.Grabber.Transform.right,
+            _secondaryGrabPoint.Grabber.Transform.right);
         var angle = Vector3.Angle(-_mainGrabPoint.Grabber.Transform.right,
             _secondaryGrabPoint.Grabber.Transform.position - _mainGrabPoint.Grabber.Transform.position);
 

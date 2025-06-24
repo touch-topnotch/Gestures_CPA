@@ -28,7 +28,7 @@ namespace Scripts.Gestures
             library = new GesturesLibrary(chars);
             OnGestureRecognized = new GestureRecognized();
             OnAbilityFrameRecognized = new FrameRecognized();
-            
+
             if (Player.modesWithGestureRecognition.Contains(inherited.playerMode))
             {
                 OnAbilityFrameRecognized.AddListener((e) =>
@@ -46,7 +46,6 @@ namespace Scripts.Gestures
         public void CreateRecognizer(RecognitionPropertiesConfig config)
         {
             _recognizer = new Recognizer(config);
-            
         }
 
         public void RecognizeWithAllGestures()
@@ -65,7 +64,8 @@ namespace Scripts.Gestures
                 if (gesture.TryGetFrameData(name, out var frame))
                 {
                     Debug.Log("Move hands");
-                    hands.MoveHands(frame.ParentedFrame(inherited.anchors.Body), 4, () => { Debug.Log("Frame Simulated!"); },
+                    hands.MoveHands(frame.ParentedFrame(inherited.anchors.Body), 4,
+                        () => { Debug.Log("Frame Simulated!"); },
                         true);
                 }
             }

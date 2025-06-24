@@ -28,6 +28,7 @@ namespace Scripts.Systems
 
         private List<Condition> conditions;
         private Camera _camera;
+
         private void Awake()
         {
             conditions = new List<Condition>()
@@ -51,7 +52,7 @@ namespace Scripts.Systems
         }
 
         private void OnValidate()
-        { 
+        {
             Initialise();
         }
 
@@ -59,10 +60,6 @@ namespace Scripts.Systems
         {
             trackedHead = transform;
             _camera ??= GetComponent<Camera>();
-            if (_camera && !_camera.enabled)
-            {
-                this.enabled = false;
-            }
         }
 
         private class Condition

@@ -4,15 +4,15 @@ using UnityEngine;
 
 namespace MeshCombineStudio
 {
-    public class LODGroupSetup : MonoBehaviour {
-
+    public class LODGroupSetup : MonoBehaviour
+    {
         public MeshCombiner meshCombiner;
         public LODGroup lodGroup;
         public int lodGroupParentIndex;
         public int lodCount;
 
         LODGroup[] lodGroups;
-        
+
         public void Init(MeshCombiner meshCombiner, int lodGroupParentIndex)
         {
             this.meshCombiner = meshCombiner;
@@ -32,7 +32,7 @@ namespace MeshCombineStudio
 
             lodGroup.animateCrossFading = lodGroupSettings.animateCrossFading;
             lodGroup.fadeMode = lodGroupSettings.fadeMode;
-            
+
             for (int i = 0; i < lods.Length; i++)
             {
                 MeshCombiner.LODSettings lodSettings = lodGroupSettings.lodSettings[i];
@@ -52,7 +52,7 @@ namespace MeshCombineStudio
             if (lodGroups == null) lodGroups = GetComponentsInChildren<LODGroup>();
 
             if (lods.Length != lodCount) return;
-            
+
             bool lodGroupsAreRemoved = false;
 
             if (lodGroupParentIndex == 0)
@@ -73,12 +73,13 @@ namespace MeshCombineStudio
             {
                 for (int i = 0; i < lods.Length; i++)
                 {
-                    meshCombiner.lodGroupsSettings[lodGroupParentIndex].lodSettings[i].screenRelativeTransitionHeight = lods[i].screenRelativeTransitionHeight;
+                    meshCombiner.lodGroupsSettings[lodGroupParentIndex].lodSettings[i].screenRelativeTransitionHeight =
+                        lods[i].screenRelativeTransitionHeight;
                 }
             }
 
             if (lodGroupsAreRemoved) return;
-            
+
             for (int i = 0; i < lodGroups.Length; i++)
             {
                 LOD[] childLods = lodGroups[i].GetLODs();

@@ -8,6 +8,6 @@ public class ShadowDistance : MonoBehaviour
 
     void Awake()
     {
-        QualitySettings.shadowDistance = shadowDistance;    
+        QualitySettings.shadowDistance = shadowDistance;
     }
 }

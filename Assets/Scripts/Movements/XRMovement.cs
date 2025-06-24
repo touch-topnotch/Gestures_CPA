@@ -65,7 +65,8 @@ namespace Scripts.Movements
         {
             if (!_isMoved)
                 return;
-            _velocity = (HeadManipulations.HeadVelocity(xrCameraCenter.position, inherited.anchors.Head.position, XZBoard, YBoard,
+            _velocity = (HeadManipulations.HeadVelocity(xrCameraCenter.position, inherited.anchors.Head.position,
+                XZBoard, YBoard,
                 moveSpeed,
                 jumpSpeed) + Vector3.down * gravity) / 10;
 
@@ -82,7 +83,7 @@ namespace Scripts.Movements
 
         protected override bool shouldAddMissingComponents =>
             !(parentMoveController && xrCameraCenter);
-        
+
         public override void AddMissingComponents()
         {
             xrCameraCenter ??= inherited.anchors.Root.Find("XR_Camera_Center");

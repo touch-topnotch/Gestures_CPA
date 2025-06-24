@@ -25,7 +25,7 @@ namespace MeshCombineStudio
             startPosition = position = transform.position;
             startRotation = rot = transform.rotation;
         }
-         
+
         void OnDestroy()
         {
             RestoreCam();
@@ -83,7 +83,8 @@ namespace MeshCombineStudio
             }
             else Lerp2Way(ref currentSpeed, speed, data.speedUpLerpMulti, data.speedDownLerpMulti);
 
-            position += transform.TransformDirection(currentSpeed * deltaTime) + (transform.forward * scrollWheel * deltaTime);
+            position += transform.TransformDirection(currentSpeed * deltaTime) +
+                        (transform.forward * scrollWheel * deltaTime);
 
             transform.rotation = rot;
             transform.position = position;
@@ -118,7 +119,8 @@ namespace MeshCombineStudio
         void Lerp2Way(ref float v, float targetV, float upMulti, float downMulti)
         {
             float multi;
-            if (Mathf.Abs(v) < Mathf.Abs(targetV)) multi = upMulti; else multi = downMulti;
+            if (Mathf.Abs(v) < Mathf.Abs(targetV)) multi = upMulti;
+            else multi = downMulti;
             v = Mathf.Lerp(v, targetV, multi * deltaTime);
         }
     }

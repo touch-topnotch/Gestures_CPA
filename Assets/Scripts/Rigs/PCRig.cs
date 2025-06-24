@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Scripts.Events;
 using Scripts.Gestures;
+using Scripts.Static.Definitions;
 using Scripts.Static.Extensions;
 using UnityEngine;
 
@@ -23,12 +24,12 @@ namespace Scripts.PlayerLogic
         private WaitForSeconds _waitUntilNextFrame;
         private GesturesLibrary _library;
         private bool isInitialized;
+
         public override void Initialize()
         {
-            
             base.Initialize();
-            
-            if(hands)
+
+            if (hands)
                 hands.OnEnabled();
             _waitUntilNextFrame = new WaitForSeconds(handsProperties.delayOnFrame);
             _library = PlayerData.local.library;
@@ -85,7 +86,8 @@ namespace Scripts.PlayerLogic
         private void SimulateFrame(string key)
         {
             // выход - отдавать КОПИЮ фрейма, а не сам фрейм
-            hands.MoveHands(_library.allAvailableFrames[key].ParentedFrame(inherited.anchors.Body), handsProperties.handSpeed, () => { },
+            hands.MoveHands(_library.allAvailableFrames[key].ParentedFrame(inherited.anchors.Body),
+                handsProperties.handSpeed, () => { },
                 !InputExtension.CtrlOrCmd());
         }
 
@@ -99,7 +101,8 @@ namespace Scripts.PlayerLogic
                 return;
 
             Debug.Log("Simulating " + key);
-            hands.MoveHands(_library.allAvailableFrames[frameName].ParentedFrame(inherited.anchors.Body), handsProperties.handSpeed,
+            hands.MoveHands(_library.allAvailableFrames[frameName].ParentedFrame(inherited.anchors.Body),
+                handsProperties.handSpeed,
                 () => { StartCoroutine(WaitUntilNextFrame(nextFrame)); },
                 !InputExtension.CtrlOrCmd());
         }
@@ -143,13 +146,13 @@ namespace Scripts.PlayerLogic
 
         protected override void Centrize()
         {
-            
         }
 
         private void Update()
         {
             ToggleMenu();
         }
+
         private void ToggleMenu()
         {
             if (InputExtension.GetKeyWithCtrlOrCmd(KeyCode.G))

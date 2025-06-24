@@ -23,6 +23,7 @@ namespace Scripts.Characters
         private readonly Dictionary<string, Weapon> _weapons = new Dictionary<string, Weapon>();
         private AvatarType _currentType = AvatarType.None;
         private HandAppearanceProcessor _handAppearanceProcessor;
+
         public void SpawnCharacters(CharacterData data)
         {
             Debug.Log("SETTING SOURCE " + data.characterName);
@@ -44,6 +45,7 @@ namespace Scripts.Characters
 
             _handAppearanceProcessor = new HandAppearanceProcessor(data.handAppearance);
         }
+
         public void SetWeapons(in List<ulong> weapons)
         {
             _weapons.Clear();
@@ -55,6 +57,7 @@ namespace Scripts.Characters
 
             Debug.Log("Character " + name + " contains " + Debugger.dictionaryToString(_weapons, false, true));
         }
+
         public List<ulong> SpawnWeapons(in Dictionary<string, GameObject> weapons, PlayerData data)
         {
             var spawns = new List<ulong>();
@@ -99,9 +102,11 @@ namespace Scripts.Characters
             Debug.Log("Character " + name + " contains " + Debugger.dictionaryToString(_weapons, false, true));
             return spawns;
         }
+
         public Avatar curAvatar => _currentType == AvatarType.None ? null : _avatarsDictionary[getAvatarType];
         public Dictionary<string, Weapon> weapons => _weapons;
         public AvatarType getAvatarType => _currentType;
+
         public void ChangeAvatarType(AvatarType type, Hands hands)
         {
             _currentType = type;

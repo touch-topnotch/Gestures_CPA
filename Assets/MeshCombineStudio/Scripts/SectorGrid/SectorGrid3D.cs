@@ -68,7 +68,9 @@ namespace MeshCombineStudio
         public Int3 GetSectorIndex(Vector3 pos)
         {
             pos += -sectorGridOffset + halfTotalSize + halfSectorSize;
-            pos.x *= invSectorSize.x; pos.y *= invSectorSize.y; pos.z *= invSectorSize.z;
+            pos.x *= invSectorSize.x;
+            pos.y *= invSectorSize.y;
+            pos.z *= invSectorSize.z;
 
             return new Int3((int)pos.x, (int)pos.y, (int)pos.z);
         }
@@ -83,8 +85,11 @@ namespace MeshCombineStudio
         public Sector3D<T> CreateSector(ref Int3 s)
         {
             var sector = new Sector3D<T>();
-            sector.bounds = new Bounds(new Vector3(s.x * sectorSize.x, s.y * sectorSize.y, s.z * sectorSize.z) + (sectorGridOffset - halfTotalSize), sectorSize);
-            
+            sector.bounds =
+                new Bounds(
+                    new Vector3(s.x * sectorSize.x, s.y * sectorSize.y, s.z * sectorSize.z) +
+                    (sectorGridOffset - halfTotalSize), sectorSize);
+
             sectors[s.x, s.y, s.z] = sector;
             sectorList.Add(sector);
             return sector;

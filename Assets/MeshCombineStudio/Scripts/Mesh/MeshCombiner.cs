@@ -6,7 +6,11 @@ using UnityEngine.Rendering;
 
 namespace MeshCombineStudio
 {
-    public enum CombineMode { StaticObjects, DynamicObjects };//, OneDynamicObject };
+    public enum CombineMode
+    {
+        StaticObjects,
+        DynamicObjects
+    }; //, OneDynamicObject };
 
     [ExecuteInEditMode]
     public class MeshCombiner : MonoBehaviour
@@ -14,10 +18,33 @@ namespace MeshCombineStudio
         public static EventMethod onInit;
         public static List<MeshCombiner> instances = new List<MeshCombiner>();
 
-        public enum ObjectType { Normal, LodGroup, LodRenderer }
-        public enum HandleComponent { Disable, Destroy };
-        public enum ObjectCenter { BoundsCenter, TransformPosition };
-        public enum BackFaceTriangleMode { Transform, Box, Direction, EulerAngles }
+        public enum ObjectType
+        {
+            Normal,
+            LodGroup,
+            LodRenderer
+        }
+
+        public enum HandleComponent
+        {
+            Disable,
+            Destroy
+        };
+
+        public enum ObjectCenter
+        {
+            BoundsCenter,
+            TransformPosition
+        };
+
+        public enum BackFaceTriangleMode
+        {
+            Transform,
+            Box,
+            Direction,
+            EulerAngles
+        }
+
         public delegate void EventMethod(MeshCombiner meshCombiner);
 
 #if UNITY_EDITOR
@@ -29,9 +56,9 @@ namespace MeshCombineStudio
 #endif
         public event EventMethod onCombiningStart;
         public event EventMethod onCombiningAbort;
-        public event EventMethod onCombiningReady; 
+        public event EventMethod onCombiningReady;
 
-        public MeshCombineJobManager.JobSettings jobSettings = new MeshCombineJobManager.JobSettings(); 
+        public MeshCombineJobManager.JobSettings jobSettings = new MeshCombineJobManager.JobSettings();
         public LODGroupSettings[] lodGroupsSettings;
 
         public ComputeShader computeDepthToArray;
@@ -61,7 +88,13 @@ namespace MeshCombineStudio
         public bool removeOriginalMeshReference = false;
         public bool useVertexOutputLimit;
         public int vertexOutputLimit = 64000;
-        public enum RebakeLightingMode { CopyLightmapUvs, RegenarateLightmapUvs };
+
+        public enum RebakeLightingMode
+        {
+            CopyLightmapUvs,
+            RegenarateLightmapUvs
+        };
+
         public RebakeLightingMode rebakeLightingMode;
         public bool copyBakedLighting, validCopyBakedLighting;
         public bool rebakeLighting, validRebakeLighting;
@@ -129,16 +162,18 @@ namespace MeshCombineStudio
         [HideInInspector] public List<Collider> foundColliders = new List<Collider>();
 
         public HashSet<LODGroup> uniqueFoundLodGroups = new HashSet<LODGroup>();
-        
+
         public HashSet<Mesh> unreadableMeshes = new HashSet<Mesh>();
         public HashSet<Mesh> selectImportSettingsMeshes = new HashSet<Mesh>();
         public FoundCombineConditions foundCombineConditions = new FoundCombineConditions();
 
-        public HashSet<MeshCombineJobManager.MeshCombineJob> meshCombineJobs = new HashSet<MeshCombineJobManager.MeshCombineJob>();
+        public HashSet<MeshCombineJobManager.MeshCombineJob> meshCombineJobs =
+            new HashSet<MeshCombineJobManager.MeshCombineJob>();
+
         public int totalMeshCombineJobs;
 
-        public int mrDisabledCount = 0; 
-        
+        public int mrDisabledCount = 0;
+
         public bool combined = false;
         public bool isCombining = false;
         public bool activeOriginal = true;
@@ -146,13 +181,18 @@ namespace MeshCombineStudio
         public bool combinedActive;
         public bool drawGizmos = true;
         public bool drawMeshBounds = true;
-        
+
         public int originalTotalVertices, originalTotalTriangles;
         public int newTotalVertices, newTotalTriangles;
         public int originalDrawCalls, newDrawCalls;
 
         public int originalTotalNormalChannels, originalTotalTangentChannels;
-        public int originalTotalUvChannels, originalTotalUv2Channels, originalTotalUv3Channels, originalTotalUv4Channels;
+
+        public int originalTotalUvChannels,
+            originalTotalUv2Channels,
+            originalTotalUv3Channels,
+            originalTotalUv4Channels;
+
         public int originalTotalColorChannels;
 
         public int newTotalNormalChannels, newTotalTangentChannels;
@@ -166,7 +206,7 @@ namespace MeshCombineStudio
         HashSet<Transform> uniqueLodObjects = new HashSet<Transform>();
 
         [NonSerialized] MeshCombiner thisInstance;
-        
+
         bool hasFoundFirstObject;
         Bounds bounds;
 
@@ -176,8 +216,18 @@ namespace MeshCombineStudio
             public bool foldoutSearchParents = true;
             public bool foldoutSearchConditions = true;
 
-            public enum ComponentCondition { And, Or, Not };
-            public enum LODGroupSearchMode { LodGroup, LodRenderers };
+            public enum ComponentCondition
+            {
+                And,
+                Or,
+                Not
+            };
+
+            public enum LODGroupSearchMode
+            {
+                LodGroup,
+                LodRenderers
+            };
 
             public GameObject parent;
             public GameObject[] parentGOs;
@@ -187,9 +237,9 @@ namespace MeshCombineStudio
             public Bounds searchBoxBounds;
             public bool searchBoxSquare;
             public Vector3 searchBoxPivot;
-            public Vector3 searchBoxSize = new Vector3(25, 25, 25); 
+            public Vector3 searchBoxSize = new Vector3(25, 25, 25);
             public bool useMaxBoundsFactor = true;
-            public float maxBoundsFactor = 1.5f;  
+            public float maxBoundsFactor = 1.5f;
             public bool useVertexInputLimit = true;
             public int vertexInputLimit = 5000;
 
@@ -214,7 +264,7 @@ namespace MeshCombineStudio
                 searchBoxBounds = new Bounds(searchBoxPivot + new Vector3(0, searchBoxSize.y * 0.5f, 0), searchBoxSize);
             }
         }
-       
+
         public void AddMeshColliders()
         {
             try
@@ -258,16 +308,17 @@ namespace MeshCombineStudio
 
             if (onCombiningReady != null) onCombiningReady(this);
         }
-        
+
         void Awake()
         {
             Init();
         }
 
-        void OnEnable() 
+        void OnEnable()
         {
             Init();
         }
+
         void Init()
         {
             if (thisInstance == null)
@@ -284,7 +335,7 @@ namespace MeshCombineStudio
             thisInstance = null;
             instances.Remove(this);
         }
-         
+
         public void InitData()
         {
             if ((searchOptions.parentGOs == null || searchOptions.parentGOs.Length == 0) && searchOptions.parent)
@@ -326,7 +377,7 @@ namespace MeshCombineStudio
 
             // Debug.Log("Start");
             StartRuntime();
-        } 
+        }
         // ==========================================================================================================================
 
         void OnDestroy()
@@ -351,6 +402,7 @@ namespace MeshCombineStudio
             {
                 if (instances[i].gameObject.name == name) return instances[i];
             }
+
             return null;
         }
 
@@ -373,17 +425,19 @@ namespace MeshCombineStudio
             for (int i = 0; i < lodGroupsSettings.Length; i++) lodGroupsSettings[i] = new LODGroupSettings(i);
         }
 
-        private void StartRuntime() 
+        private void StartRuntime()
         {
             if (combineInRuntime)
             {
                 if (combineOnStart) CombineAll();
-                if (useCombineSwapKey && originalMeshRenderers == HandleComponent.Disable && originalLODGroups == HandleComponent.Disable)
+                if (useCombineSwapKey && originalMeshRenderers == HandleComponent.Disable &&
+                    originalLODGroups == HandleComponent.Disable)
                 {
-                    if (SwapCombineKey.instance == null) gameObject.AddComponent<SwapCombineKey>(); else SwapCombineKey.instance.meshCombinerList.Add(this);
+                    if (SwapCombineKey.instance == null) gameObject.AddComponent<SwapCombineKey>();
+                    else SwapCombineKey.instance.meshCombinerList.Add(this);
                 }
             }
-        } 
+        }
         // ==========================================================================================================================
 
         public void DestroyCombinedObjects()
@@ -416,7 +470,7 @@ namespace MeshCombineStudio
 
             uniqueLodObjects.Clear();
             uniqueFoundLodGroups.Clear();
-            
+
             unreadableMeshes.Clear();
             foundCombineConditions.combineConditions.Clear();
 
@@ -439,7 +493,7 @@ namespace MeshCombineStudio
                 meshCombineJob.meshCombiner.isCombining = false;
             }
 
-            ClearMeshCombineJobs(executeAbortEvent); 
+            ClearMeshCombineJobs(executeAbortEvent);
         }
 
         public void ClearMeshCombineJobs(bool executeAbortEvent = true)
@@ -458,7 +512,8 @@ namespace MeshCombineStudio
             if (executeAbortEvent && onCombiningAbort != null) onCombiningAbort(this);
         }
 
-        public void AddObjects(Transform rootT, List<Transform> transforms, bool useSearchOptions, bool checkForLODGroups = true)
+        public void AddObjects(Transform rootT, List<Transform> transforms, bool useSearchOptions,
+            bool checkForLODGroups = true)
         {
             List<LODGroup> lodGroups = new List<LODGroup>();
 
@@ -485,7 +540,8 @@ namespace MeshCombineStudio
 
             if (combineMode == CombineMode.DynamicObjects && data.foundLodObjects.Count > 0)
             {
-                Debug.Log("(MeshCombineStudio) => Lod Groups don't work yet for dynamic objects (they only work on static objects), this feature will be added in the next update.");
+                Debug.Log(
+                    "(MeshCombineStudio) => Lod Groups don't work yet for dynamic objects (they only work on static objects), this feature will be added in the next update.");
                 data.foundLodObjects.Clear();
                 return;
             }
@@ -509,19 +565,22 @@ namespace MeshCombineStudio
             if (foundObjects.Count > 0 || foundLodObjects.Count > 0) octreeContainsObjects = true;
             else
             {
-                Debug.Log("(MeshCombineStudio) => No matching GameObjects with chosen search options are found for combining.");
+                Debug.Log(
+                    "(MeshCombineStudio) => No matching GameObjects with chosen search options are found for combining.");
                 return;
             }
 
             CalcOctreeSize(bounds);
-            
+
             ObjectOctree.MaxCell.maxCellCount = 0;
 
             for (int i = 0; i < foundObjects.Count; i++)
             {
                 CachedGameObject foundObject = foundObjects[i];
 
-                Vector3 position = (searchOptions.objectCenter == ObjectCenter.TransformPosition ? foundObject.t.position : foundObject.mr.bounds.center);
+                Vector3 position = (searchOptions.objectCenter == ObjectCenter.TransformPosition
+                    ? foundObject.t.position
+                    : foundObject.mr.bounds.center);
                 octree.AddObject(position, this, foundObject, 0, 0);
             }
 
@@ -530,19 +589,23 @@ namespace MeshCombineStudio
                 CachedLodGameObject cachedLodGO = foundLodObjects[i];
                 octree.AddObject(cachedLodGO.center, this, cachedLodGO, cachedLodGO.lodCount, cachedLodGO.lodLevel);
             }
-        } 
+        }
         // ==========================================================================================================================
-        
+
         public void ResetOctree()
         {
             // Debug.Log("ResetOctree");
             octreeContainsObjects = false;
 
-            if (octree == null) { octree = new ObjectOctree.Cell(); return; }
+            if (octree == null)
+            {
+                octree = new ObjectOctree.Cell();
+                return;
+            }
 
             BaseOctree.Cell[] cells = octree.cells;
             octree.Reset(ref cells);
-        } 
+        }
         // ==========================================================================================================================
 
         public void CalcOctreeSize(Bounds bounds)
@@ -550,8 +613,9 @@ namespace MeshCombineStudio
             float size;
             int levels;
 
-            Methods.SnapBoundsAndPreserveArea(ref bounds, cellSize, combineMode == CombineMode.StaticObjects ? cellOffset : Vector3.zero);
-            
+            Methods.SnapBoundsAndPreserveArea(ref bounds, cellSize,
+                combineMode == CombineMode.StaticObjects ? cellOffset : Vector3.zero);
+
             if (combineMode == CombineMode.StaticObjects)
             {
                 float areaSize = Mathf.Max(Mathw.GetMax(bounds.size), cellSize);
@@ -563,7 +627,7 @@ namespace MeshCombineStudio
                 size = Mathw.GetMax(bounds.size);
                 levels = 0;
             }
-            
+
             if (levels == 0 && octree is ObjectOctree.Cell) octree = new ObjectOctree.MaxCell();
             else if (levels > 0 && octree is ObjectOctree.MaxCell) octree = new ObjectOctree.Cell();
 
@@ -571,12 +635,13 @@ namespace MeshCombineStudio
             octree.bounds = new Bounds(bounds.center, new Vector3(size, size, size));
 
             // Debug.Log("size " + size + " levels " + levels);
-        } 
+        }
         // ==========================================================================================================================
-        
+
         public void ApplyChanges()
         {
-            validRebakeLighting = rebakeLighting && !validCopyBakedLighting && !Application.isPlaying && Application.isEditor;
+            validRebakeLighting = rebakeLighting && !validCopyBakedLighting && !Application.isPlaying &&
+                                  Application.isEditor;
 
             for (int i = 0; i < changedCells.Count; i++)
             {
@@ -597,7 +662,8 @@ namespace MeshCombineStudio
 
             if (!combineConditionSettings.sameMaterial && combineConditionSettings.material == null)
             {
-                Debug.LogError("(MeshCombineStudio) => You need to assign an output material in 'Combine Conditions' => 'Change Materials'. Keep in mind with this setting you ignore the source materials and combine all meshes into 1 output material.");
+                Debug.LogError(
+                    "(MeshCombineStudio) => You need to assign an output material in 'Combine Conditions' => 'Change Materials'. Keep in mind with this setting you ignore the source materials and combine all meshes into 1 output material.");
                 return;
             }
 
@@ -605,7 +671,8 @@ namespace MeshCombineStudio
             {
                 if (backFaceT == null)
                 {
-                    Debug.LogError("(MeshCombineStudio) => You need to assign the BackFace Transform in 'Output Settings'.");
+                    Debug.LogError(
+                        "(MeshCombineStudio) => You need to assign the BackFace Transform in 'Output Settings'.");
                     return;
                 }
 
@@ -645,37 +712,45 @@ namespace MeshCombineStudio
             }
 #endif
 
-            validRebakeLighting = rebakeLighting && !validCopyBakedLighting && !Application.isPlaying && Application.isEditor;
-           
-            newTotalVertices = newTotalTriangles = originalTotalVertices = originalTotalTriangles = originalDrawCalls = newDrawCalls = 0;
-            originalTotalNormalChannels = originalTotalTangentChannels = originalTotalUvChannels = originalTotalUv2Channels = originalTotalUv3Channels = originalTotalUv4Channels = originalTotalColorChannels = 0;
-            newTotalNormalChannels = newTotalTangentChannels = newTotalUvChannels = newTotalUv2Channels = newTotalUv3Channels = newTotalUv4Channels = newTotalColorChannels = 0;
+            validRebakeLighting = rebakeLighting && !validCopyBakedLighting && !Application.isPlaying &&
+                                  Application.isEditor;
+
+            newTotalVertices = newTotalTriangles =
+                originalTotalVertices = originalTotalTriangles = originalDrawCalls = newDrawCalls = 0;
+            originalTotalNormalChannels = originalTotalTangentChannels = originalTotalUvChannels =
+                originalTotalUv2Channels =
+                    originalTotalUv3Channels = originalTotalUv4Channels = originalTotalColorChannels = 0;
+            newTotalNormalChannels = newTotalTangentChannels = newTotalUvChannels = newTotalUv2Channels =
+                newTotalUv3Channels = newTotalUv4Channels = newTotalColorChannels = 0;
 
             for (int i = 0; i < lodParentHolders.Length; i++)
             {
                 LodParentHolder lodParentHolder = lodParentHolders[i];
                 if (!lodParentHolder.found) continue;
 
-                if (lodParentHolder.go == null && combineMode != CombineMode.DynamicObjects) lodParentHolder.Create(this, i);
-                
+                if (lodParentHolder.go == null && combineMode != CombineMode.DynamicObjects)
+                    lodParentHolder.Create(this, i);
+
                 octree.CombineMeshes(this, i);
             }
 
-            if (MeshCombineJobManager.instance.jobSettings.combineJobMode == MeshCombineJobManager.CombineJobMode.CombineAtOnce) MeshCombineJobManager.instance.ExecuteJobs();
+            if (MeshCombineJobManager.instance.jobSettings.combineJobMode ==
+                MeshCombineJobManager.CombineJobMode.CombineAtOnce) MeshCombineJobManager.instance.ExecuteJobs();
 
             ExecuteHandleObjects(false, HandleComponent.Disable, HandleComponent.Disable);
 
 #if UNITY_EDITOR
             UnityEditor.EditorUtility.SetDirty(this);
 #endif
-        } 
+        }
         // ==========================================================================================================================
-        
+
         void InitAndResetLodParentsCount()
         {
             for (int i = 0; i < lodParentHolders.Length; i++)
             {
-                if (lodParentHolders[i].lods == null || lodParentHolders[i].lods.Length != i + 1) lodParentHolders[i].Init(i + 1);
+                if (lodParentHolders[i].lods == null || lodParentHolders[i].lods.Length != i + 1)
+                    lodParentHolders[i].Init(i + 1);
                 else lodParentHolders[i].Reset();
             }
         }
@@ -684,7 +759,8 @@ namespace MeshCombineStudio
         {
             if (searchOptions.parentGOs == null || searchOptions.parentGOs.Length == 0)
             {
-                Debug.Log("(MeshCombineStudio) => You need to assign at least one Parent GameObject to 'Search Parents' in which meshes will be searched");
+                Debug.Log(
+                    "(MeshCombineStudio) => You need to assign at least one Parent GameObject to 'Search Parents' in which meshes will be searched");
                 return;
             }
 
@@ -693,7 +769,7 @@ namespace MeshCombineStudio
             for (int i = 0; i < parentGOs.Length; i++)
             {
                 GameObject parentGO = parentGOs[i];
-                
+
                 if (parentGO == null) continue;
 
                 Transform parentT = parentGO.transform;
@@ -738,14 +814,16 @@ namespace MeshCombineStudio
                     }
                 }
             }
-        } 
+        }
         // ==========================================================================================================================
 
         void CheckForFoundObjectNotOnOverlapLayerMask(GameObject go)
         {
             if (!Methods.IsLayerInLayerMask(overlapLayerMask, go.layer))
             {
-                Debug.LogError("(MeshCombineStudio) => " + go.name + " on layer " + LayerMask.LayerToName(go.layer) + " is not part of the Overlap LayerMask", go);
+                Debug.LogError(
+                    "(MeshCombineStudio) => " + go.name + " on layer " + LayerMask.LayerToName(go.layer) +
+                    " is not part of the Overlap LayerMask", go);
             }
         }
 
@@ -760,8 +838,10 @@ namespace MeshCombineStudio
                 LODGroup lodGroup = lodGroups[i];
 
                 bool validLodGroup;
-                
-                if (searchOptions.lodGroupSearchMode == SearchOptions.LODGroupSearchMode.LodGroup) validLodGroup = (ValidObject(searchParentT, lodGroup.transform, ObjectType.LodGroup, useSearchOptions, ref cachedGODummy) == 1);
+
+                if (searchOptions.lodGroupSearchMode == SearchOptions.LODGroupSearchMode.LodGroup)
+                    validLodGroup = (ValidObject(searchParentT, lodGroup.transform, ObjectType.LodGroup,
+                        useSearchOptions, ref cachedGODummy) == 1);
                 else
                 {
                     if (searchOptions.onlyActive && !lodGroup.gameObject.activeInHierarchy) continue;
@@ -793,7 +873,8 @@ namespace MeshCombineStudio
                         {
                             CachedGameObject cachedGO = null;
 
-                            int result = ValidObject(searchParentT, r.transform, ObjectType.LodRenderer, useSearchOptions, ref cachedGO);
+                            int result = ValidObject(searchParentT, r.transform, ObjectType.LodRenderer,
+                                useSearchOptions, ref cachedGO);
 
                             if (result == -1) continue;
                             else if (result == -2)
@@ -814,6 +895,7 @@ namespace MeshCombineStudio
                                 rendererCount++;
                             }
                         }
+
                         uniqueLodObjects.Add(r.transform);
                     }
                 }
@@ -834,8 +916,14 @@ namespace MeshCombineStudio
                         {
                             data.lodGroupLookup[lodGroup] = cachedLodGO;
                         }
+
                         cachedLodGO.center = center;
-                        if (!hasFoundFirstObject) { bounds.center = cachedLodGO.mr.bounds.center; hasFoundFirstObject = true; }
+                        if (!hasFoundFirstObject)
+                        {
+                            bounds.center = cachedLodGO.mr.bounds.center;
+                            hasFoundFirstObject = true;
+                        }
+
                         bounds.Encapsulate(cachedLodGO.mr.bounds);
                         foundLodObjects.Add(cachedLodGO);
                         lodParentHolders[lodParentIndex].found = true;
@@ -849,7 +937,7 @@ namespace MeshCombineStudio
 
             data.foundLodGroups = new List<LODGroup>(uniqueFoundLodGroups);
         }
-        
+
         void AddTransforms(Transform searchParentT, Transform[] transforms, bool useSearchConditions = true)
         {
             int uniqueLodObjectsCount = uniqueLodObjects.Count;
@@ -859,7 +947,7 @@ namespace MeshCombineStudio
             for (int i = 0; i < transforms.Length; i++)
             {
                 Transform t = transforms[i];
-                
+
                 if (uniqueLodObjectsCount > 0 && uniqueLodObjects.Contains(t)) continue;
 
                 CachedGameObject cachedGO = null;
@@ -871,20 +959,26 @@ namespace MeshCombineStudio
                         CheckForFoundObjectNotOnOverlapLayerMask(cachedGO.go);
                     }
 
-                    if (!hasFoundFirstObject) { bounds.center = cachedGO.mr.bounds.center; hasFoundFirstObject = true; }
+                    if (!hasFoundFirstObject)
+                    {
+                        bounds.center = cachedGO.mr.bounds.center;
+                        hasFoundFirstObject = true;
+                    }
+
                     bounds.Encapsulate(cachedGO.mr.bounds);
                     foundObjects.Add(cachedGO);
                     lodParentHolders[0].lods[0]++;
                 }
             }
-            
+
             if (foundObjects.Count > 0) lodParentHolders[0].found = true;
             // Debug.Log("Count " + count);
             // Debug.Log(foundObjects.Count);
-        } 
+        }
         // ==========================================================================================================================
 
-        int ValidObject(Transform searchParentT, Transform t, ObjectType objectType, bool useSearchOptions, ref CachedGameObject cachedGameObject)
+        int ValidObject(Transform searchParentT, Transform t, ObjectType objectType, bool useSearchOptions,
+            ref CachedGameObject cachedGameObject)
         {
             if (t == null) return -1;
 
@@ -894,7 +988,8 @@ namespace MeshCombineStudio
             MeshFilter mf = null;
             Mesh mesh = null;
 
-            if (objectType != ObjectType.LodGroup || searchOptions.lodGroupSearchMode == SearchOptions.LODGroupSearchMode.LodRenderers)
+            if (objectType != ObjectType.LodGroup ||
+                searchOptions.lodGroupSearchMode == SearchOptions.LODGroupSearchMode.LodRenderers)
             {
                 mr = t.GetComponent<MeshRenderer>();
                 if (mr == null || (!mr.enabled && searchOptions.onlyActiveMeshRenderers)) return -1;
@@ -911,7 +1006,8 @@ namespace MeshCombineStudio
             {
                 if (searchOptions.onlyActive && !go.activeInHierarchy) return -1;
 
-                if (objectType != ObjectType.LodRenderer || searchOptions.lodGroupSearchMode == SearchOptions.LODGroupSearchMode.LodRenderers)
+                if (objectType != ObjectType.LodRenderer ||
+                    searchOptions.lodGroupSearchMode == SearchOptions.LODGroupSearchMode.LodRenderers)
                 {
                     if (searchOptions.useLayerMask)
                     {
@@ -921,7 +1017,9 @@ namespace MeshCombineStudio
 
 #if UNITY_EDITOR
                     // Debug.Log(go.name + " " + (int)UnityEditor.GameObjectUtility.GetStaticEditorFlags(go) + " " + searchOptions.editorStatic);
-                    if (searchOptions.onlyStatic && !UnityEditor.GameObjectUtility.AreStaticEditorFlagsSet(go, searchOptions.editorStatic)) return -1;
+                    if (searchOptions.onlyStatic &&
+                        !UnityEditor.GameObjectUtility.AreStaticEditorFlagsSet(go, searchOptions.editorStatic))
+                        return -1;
 #else
                     if (searchOptions.onlyStatic && !go.isStatic) return -1;
 #endif
@@ -938,8 +1036,13 @@ namespace MeshCombineStudio
                             bool pass = true;
                             for (int j = 0; j < searchOptions.componentNameList.Count; j++)
                             {
-                                if (t.GetComponent(searchOptions.componentNameList[j]) == null) { pass = false; break; }
+                                if (t.GetComponent(searchOptions.componentNameList[j]) == null)
+                                {
+                                    pass = false;
+                                    break;
+                                }
                             }
+
                             if (!pass) return -1;
                         }
                         else if (searchOptions.componentCondition == SearchOptions.ComponentCondition.Or)
@@ -947,8 +1050,13 @@ namespace MeshCombineStudio
                             bool pass = false;
                             for (int j = 0; j < searchOptions.componentNameList.Count; j++)
                             {
-                                if (t.GetComponent(searchOptions.componentNameList[j]) != null) { pass = true; break; }
+                                if (t.GetComponent(searchOptions.componentNameList[j]) != null)
+                                {
+                                    pass = true;
+                                    break;
+                                }
                             }
+
                             if (!pass) return -1;
                         }
                         else
@@ -956,8 +1064,13 @@ namespace MeshCombineStudio
                             bool pass = true;
                             for (int j = 0; j < searchOptions.componentNameList.Count; j++)
                             {
-                                if (t.GetComponent(searchOptions.componentNameList[j]) != null) { pass = false; break; }
+                                if (t.GetComponent(searchOptions.componentNameList[j]) != null)
+                                {
+                                    pass = false;
+                                    break;
+                                }
                             }
+
                             if (!pass) return -1;
                         }
                     }
@@ -967,8 +1080,13 @@ namespace MeshCombineStudio
                         bool found = false;
                         for (int k = 0; k < searchOptions.nameContainList.Count; k++)
                         {
-                            if (Methods.Contains(t.name, searchOptions.nameContainList[k])) { found = true; break; }
+                            if (Methods.Contains(t.name, searchOptions.nameContainList[k]))
+                            {
+                                found = true;
+                                break;
+                            }
                         }
+
                         if (!found) return -1;
                     }
 
@@ -984,7 +1102,8 @@ namespace MeshCombineStudio
 
                 if (objectType != ObjectType.LodGroup)
                 {
-                    if (searchOptions.useVertexInputLimit && mesh.vertexCount > searchOptions.vertexInputLimit) return -2;
+                    if (searchOptions.useVertexInputLimit && mesh.vertexCount > searchOptions.vertexInputLimit)
+                        return -2;
 
                     if (useVertexOutputLimit && mesh.vertexCount > vertexOutputLimit) return -2;
 
@@ -996,12 +1115,16 @@ namespace MeshCombineStudio
                 }
             }
 
-            if ((objectType != ObjectType.LodGroup || searchOptions.lodGroupSearchMode == SearchOptions.LODGroupSearchMode.LodRenderers) && !mesh.isReadable)
+            if ((objectType != ObjectType.LodGroup ||
+                 searchOptions.lodGroupSearchMode == SearchOptions.LODGroupSearchMode.LodRenderers) && !mesh.isReadable)
             {
                 if (unreadableMeshes.Add(mesh))
                 {
-                    Debug.LogError("(MeshCombineStudio) => Read/Write is disabled on the mesh on GameObject " + go.name + " and can't be combined. Click the 'Make Meshes Readable' in the MCS Inspector to make it automatically readable in the mesh import settings.");
+                    Debug.LogError("(MeshCombineStudio) => Read/Write is disabled on the mesh on GameObject " +
+                                   go.name +
+                                   " and can't be combined. Click the 'Make Meshes Readable' in the MCS Inspector to make it automatically readable in the mesh import settings.");
                 }
+
                 return -1;
             }
 
@@ -1022,7 +1145,10 @@ namespace MeshCombineStudio
 
         public void SwapCombine()
         {
-            if (!combined) { CombineAll(); }
+            if (!combined)
+            {
+                CombineAll();
+            }
             else
             {
                 combinedActive = !combinedActive;
@@ -1046,7 +1172,7 @@ namespace MeshCombineStudio
                     CachedGameObject cachedGO;
                     data.colliderLookup.TryGetValue(collider, out cachedGO);
                     if (cachedGO == null || !cachedGO.excludeCombine) collider.enabled = active;
-                    else Methods.ListRemoveAt(foundColliders, i--); 
+                    else Methods.ListRemoveAt(foundColliders, i--);
                 }
                 else Methods.ListRemoveAt(foundColliders, i--);
             }
@@ -1069,7 +1195,8 @@ namespace MeshCombineStudio
             }
         }
 
-        public void ExecuteHandleObjects(bool active, HandleComponent handleOriginalObjects, HandleComponent handleOriginalLodGroups, bool includeColliders = true, bool onDestroy = false)
+        public void ExecuteHandleObjects(bool active, HandleComponent handleOriginalObjects,
+            HandleComponent handleOriginalLodGroups, bool includeColliders = true, bool onDestroy = false)
         {
             activeOriginal = active;
             Methods.SetChildrenActive(transform, !active);
@@ -1114,6 +1241,7 @@ namespace MeshCombineStudio
                     }
                     else Methods.ListRemoveAt(foundObjects, i--);
                 }
+
                 for (int i = 0; i < foundLodObjects.Count; i++)
                 {
                     CachedLodGameObject cachedLodGO = foundLodObjects[i];
@@ -1126,6 +1254,7 @@ namespace MeshCombineStudio
                     else Methods.ListRemoveAt(foundLodObjects, i--);
                 }
             }
+
             if (handleOriginalObjects == HandleComponent.Destroy)
             {
                 for (int i = 0; i < foundColliders.Count; i++)
@@ -1177,7 +1306,7 @@ namespace MeshCombineStudio
                     if (remove) Methods.ListRemoveAt(foundLodObjects, i--);
                 }
             }
-            
+
             for (int i = 0; i < foundLodGroups.Count; i++)
             {
                 LODGroup lodGroup = foundLodGroups[i];
@@ -1187,7 +1316,8 @@ namespace MeshCombineStudio
                     data.lodGroupLookup.TryGetValue(lodGroup, out cachedGO);
                     if (cachedGO == null || !cachedGO.excludeCombine)
                     {
-                        if (handleOriginalLodGroups == HandleComponent.Disable) lodGroup.enabled = active; else Destroy(lodGroup);
+                        if (handleOriginalLodGroups == HandleComponent.Disable) lodGroup.enabled = active;
+                        else Destroy(lodGroup);
                     }
                     else Methods.ListRemoveAt(foundLodGroups, i--);
                 }
@@ -1220,12 +1350,12 @@ namespace MeshCombineStudio
             }
 
             if (!drawGizmos) return;
-            
+
             if (octree != null && octreeContainsObjects)
             {
                 octree.Draw(this, true, !searchOptions.useSearchBox);
             }
-            
+
             if (searchOptions.useSearchBox)
             {
                 searchOptions.GetSearchBoxBounds();
@@ -1240,7 +1370,7 @@ namespace MeshCombineStudio
         void LogOctreeInfo()
         {
             Console.Log("Cells " + ObjectOctree.MaxCell.maxCellCount + " -> Found Objects: ");
-            
+
             LodParentHolder[] lodParentsCount = lodParentHolders;
 
             if (lodParentsCount == null || lodParentsCount.Length == 0) return;
@@ -1259,17 +1389,18 @@ namespace MeshCombineStudio
                 {
                     text += " " + lods[j].ToString() + " |";
                 }
+
                 Console.Log(text);
             }
         }
-        
+
         [Serializable]
         public class LODGroupSettings
         {
             public bool animateCrossFading;
             public LODFadeMode fadeMode;
             public LODSettings[] lodSettings;
-            
+
             public LODGroupSettings(int lodParentIndex)
             {
                 int lodCount = lodParentIndex + 1;
@@ -1330,12 +1461,14 @@ namespace MeshCombineStudio
             {
                 lods = new int[lodCount];
             }
-            
+
             public void Create(MeshCombiner meshCombiner, int lodParentIndex)
             {
                 if (meshCombiner.data.foundLodGroups.Count == 0)
                 {
-                    go = new GameObject(meshCombiner.combineMode == CombineMode.StaticObjects ? "Cells" : "Combine Parent");
+                    go = new GameObject(meshCombiner.combineMode == CombineMode.StaticObjects
+                        ? "Cells"
+                        : "Combine Parent");
                 }
                 else
                 {

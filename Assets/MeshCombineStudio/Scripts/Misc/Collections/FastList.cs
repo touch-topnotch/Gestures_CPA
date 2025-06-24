@@ -137,7 +137,8 @@ namespace MeshCombineStudio
         public T GetIndex(T item)
         {
             int index = Array.IndexOf(items, item, 0, _count);
-            if (index == -1) return default(T); else return items[index];
+            if (index == -1) return default(T);
+            else return items[index];
         }
 
         // [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -207,7 +208,11 @@ namespace MeshCombineStudio
 
         public virtual void Insert(int index, T item)
         {
-            if (index > _count) { Debug.LogError("Index " + index + " is out of range " + _count); }
+            if (index > _count)
+            {
+                Debug.LogError("Index " + index + " is out of range " + _count);
+            }
+
             if (_count == arraySize) DoubleCapacity();
             if (index < _count) Array.Copy(items, index, items, index + 1, _count - index);
 
@@ -253,7 +258,8 @@ namespace MeshCombineStudio
             {
                 int count = _count;
                 AddRange(threadList);
-                if (fastClear) threadList.FastClear(); else threadList.Clear();
+                if (fastClear) threadList.FastClear();
+                else threadList.Clear();
                 return count;
             }
         }
@@ -288,12 +294,17 @@ namespace MeshCombineStudio
                 Count = _count;
                 return true;
             }
+
             return false;
         }
 
         public virtual void RemoveAt(int index)
         {
-            if (index >= _count) { Debug.LogError("Index " + index + " is out of range. List count is " + _count); return; }
+            if (index >= _count)
+            {
+                Debug.LogError("Index " + index + " is out of range. List count is " + _count);
+                return;
+            }
 
             items[index] = items[--_count];
             items[_count] = default(T);
@@ -359,6 +370,7 @@ namespace MeshCombineStudio
                 {
                     Array.Copy(items, index + length, items, index, _count - index);
                 }
+
                 Array.Clear(items, _count, length);
                 Count = _count;
             }
@@ -439,7 +451,10 @@ namespace MeshCombineStudio
     {
         new public void RemoveAt(int index)
         {
-            if (index >= _count) { Debug.LogError("Index " + index + " is out of range " + _count); }
+            if (index >= _count)
+            {
+                Debug.LogError("Index " + index + " is out of range " + _count);
+            }
 
             _count--;
             if (index < _count) Array.Copy(items, index + 1, items, index, _count - index);
@@ -465,7 +480,6 @@ namespace MeshCombineStudio
 
             if (_count - index < length)
             {
-
                 return;
             }
 
@@ -474,8 +488,8 @@ namespace MeshCombineStudio
             {
                 Array.Copy(items, index + length, items, index, _count - index);
             }
+
             Array.Clear(items, _count, length);
         }
     }
-
 }

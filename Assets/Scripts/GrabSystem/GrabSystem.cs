@@ -18,17 +18,18 @@ public abstract class GrabSystem : InheritedComponent<Player>
     protected Grabber rightHandGrabber;
     protected Grabber lefttHandGrabber;
 
-    [Header("Grab Gestures")] 
-    [SerializeField] protected string rightHandGrabGesture;
+    [Header("Grab Gestures")] [SerializeField]
+    protected string rightHandGrabGesture;
+
     [SerializeField] protected string leftHandGrabGesture;
     [SerializeField] protected float recognizeFailDelay;
 
     [Header("Movement")] [SerializeField] protected float moveLerpSpeed;
     [SerializeField] protected float rotationSlerpSpeed;
 
-    [Header("Main Grab Point")] 
-    [SerializeField] protected GrabPoint _mainGrabPoint;
-    
+    [Header("Main Grab Point")] [SerializeField]
+    protected GrabPoint _mainGrabPoint;
+
     private RecognitionProperties _recognitionProperties = new RecognitionProperties
     {
         positionQuality = 0,
@@ -81,7 +82,8 @@ public abstract class GrabSystem : InheritedComponent<Player>
             float distanceToClosestPoint = Vector3.Distance(grabPoint.GrabPointTransform.position, closestPointOnLine);
 
             // Check if the distance to the closest point on the line is less than the capture area length
-            var grabPointGrabPointLength = grabPoint.IsGrabbed ? grabPoint.GrabPointLength * 1.5f : grabPoint.GrabPointLength;
+            var grabPointGrabPointLength =
+                grabPoint.IsGrabbed ? grabPoint.GrabPointLength * 1.5f : grabPoint.GrabPointLength;
             if (distanceToClosestPoint < grabPointGrabPointLength)
             {
                 grabPoint.GrabPosOffset = (grabPoint.GrabPointTransform.position - closestPointOnLine).magnitude;
@@ -119,7 +121,9 @@ public abstract class GrabSystem : InheritedComponent<Player>
         grabObjectTransform.rotation = Quaternion.Slerp(grabObjectTransform.rotation,
             grabPoint.Grabber.Transform.rotation * localRotation, rotationSlerpSpeed * Time.deltaTime);
         grabObjectPos = Vector3.Lerp(grabObjectPos, grabPoint.Grabber.Transform.position +
-                                                    ((grabPoint.GrabReversed ? grabPoint.Grabber.Transform.right : -grabPoint.Grabber.Transform.right) *
+                                                    ((grabPoint.GrabReversed
+                                                         ? grabPoint.Grabber.Transform.right
+                                                         : -grabPoint.Grabber.Transform.right) *
                                                      grabPoint.GrabPosOffset) +
                                                     (grabObjectPos - grabPoint.GrabPointTransform.position),
             moveLerpSpeed * Time.deltaTime);
@@ -149,7 +153,7 @@ public class GrabPoint
     public Transform GrabPointTransform;
     public float GrabPointRadius;
     public float GrabPointLength;
-    
+
     [NonSerialized] public bool IsGrabbed;
     [NonSerialized] public bool GrabReversed;
     [NonSerialized] public float GrabPosOffset;

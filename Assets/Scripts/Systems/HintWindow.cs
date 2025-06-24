@@ -1,28 +1,30 @@
 using System;
-using UnityEditor.PackageManager;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Scripts.Systems
 {
+    public struct HintWindowProps
+    {
+    }
 
- 
-    public struct HintWindowProps{}
-    public class HintWindow: MonoBehaviour, ILogger
+    public class HintWindow : MonoBehaviour, ILogger
     {
         private static HintWindow _instance;
         public static HintWindow instance => _instance ??= HintWindow.CreateNew(new HintWindowProps());
+
         public static HintWindow CreateNew(in HintWindowProps props)
-        { 
+        {
             var g = new GameObject("HintWindow");
             var c = g.AddComponent<HintWindow>();
             return c;
         }
+
         public static void Error(string text)
         {
-            instance.LogWarning("" ,text);
-           
+            instance.LogWarning("", text);
         }
+
         public static void Log(string text)
         {
             instance.Log(text);

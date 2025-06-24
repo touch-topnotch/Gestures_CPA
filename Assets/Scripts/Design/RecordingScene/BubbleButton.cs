@@ -51,7 +51,7 @@ namespace Design.RecordingScene
         {
             step = 0;
             AnimateByStep();
-           // xrSimpleInteractable.selectEntered.Invoke();
+            // xrSimpleInteractable.selectEntered.Invoke();
         }
     }
 }

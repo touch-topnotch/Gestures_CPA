@@ -1,10 +1,12 @@
 using Gesture_Editor_SDK.ReadOnly;
+using Scripts.Components;
+using Scripts.Static.Definitions;
 using UnityEngine;
 
 namespace Scripts.Weapons
 {
     [RequireComponent(typeof(Rigidbody))]
-    public class Blade : MonoBehaviour, Hittable
+    public class Blade : TriggerBehaviour //, Hittable
     {
         [SerializeField] private Transform bladePoint;
 
@@ -16,17 +18,23 @@ namespace Scripts.Weapons
         public Vector3 speedVec => _speed;
         private bool lastTrigger = false;
         private bool isTrigging = false;
-        private string lastName = "";
+        private Affected lastAffected;
 
-        public void OnTriggerEnter(Collider other)
+        private void Awake()
+        {
+            TriggerEnterEvent.AddListener(OnAffectedEnter);
+            TriggerExitEvent.AddListener(OnAffectedExit);
+        }
+
+        public void OnAffectedEnter(Affected other)
         {
             lastTrigger = true;
             isTrigging = true;
-            lastName = other.tag;
+            lastAffected = other;
             Debug.Log("Trigger Enter");
         }
 
-        public void OnTriggerExit(Collider other)
+        public void OnAffectedExit(Affected other)
         {
             isTrigging = false;
             Debug.Log("Trigger Exit");
@@ -39,10 +47,8 @@ namespace Scripts.Weapons
             _prevPosition = position;
         }
 
-        public bool onHitImpact(out string tag)
+        public bool onHitImpact(Affected affected)
         {
-            tag = lastName;
-
             if (lastTrigger && isTrigging)
             {
                 lastTrigger = false;

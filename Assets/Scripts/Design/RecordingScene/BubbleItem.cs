@@ -35,6 +35,7 @@ namespace Design.RecordingScene
 
         protected abstract void OnHoverEntered();
         protected abstract void OnHoverExited();
+
         private void Awake()
         {
             defaultSize = transform.localScale.x;

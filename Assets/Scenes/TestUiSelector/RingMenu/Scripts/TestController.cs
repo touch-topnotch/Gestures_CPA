@@ -8,12 +8,12 @@ public class TestController : MonoBehaviour
 {
     [SerializeField] private RingMenu ringMenu;
     private GesturesLibrary _library;
+
     private void Start()
     {
         _library = PlayerData.local.library;
     }
-    
-   
+
 
     public void SimulateFrame(string e)
     {

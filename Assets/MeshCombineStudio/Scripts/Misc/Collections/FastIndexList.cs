@@ -22,26 +22,46 @@ namespace MeshCombineStudio
                 items[i].List = null;
                 items[i] = default(T);
             }
+
             Count = _count = 0;
         }
 
         public void SetItem(int index, T item)
         {
-            if (item.List != null) { Debug.LogError("Is already in another list!"); return; }
+            if (item.List != null)
+            {
+                Debug.LogError("Is already in another list!");
+                return;
+            }
+
             if (index >= items.Length) SetCapacity(index * 2);
             else if (index >= _count) _count = Count = index + 1;
 
             items[index] = item;
             item.ListIndex = index;
             item.List = this;
-        } 
+        }
 
         new public int Add(T item)
         {
             var list = item.List;
-            if (list == this) { Debug.LogError("Item is already in this list"); return item.ListIndex; }
-            if (list != null) { Debug.LogError("Is already in another list!"); return -1; }
-            if (item.ListIndex != -1) { Debug.Log("Item already added"); return -1; }
+            if (list == this)
+            {
+                Debug.LogError("Item is already in this list");
+                return item.ListIndex;
+            }
+
+            if (list != null)
+            {
+                Debug.LogError("Is already in another list!");
+                return -1;
+            }
+
+            if (item.ListIndex != -1)
+            {
+                Debug.Log("Item already added");
+                return -1;
+            }
 
             if (_count == items.Length) DoubleCapacity();
 
@@ -59,23 +79,41 @@ namespace MeshCombineStudio
 
             for (int i = 0; i < newItems.Length; i++)
             {
-                if (newItems[i].List != null) { Debug.LogError("Is already in another list!"); continue; }
-                if (newItems[i].ListIndex != -1) { Debug.Log("Item already added"); continue; }
+                if (newItems[i].List != null)
+                {
+                    Debug.LogError("Is already in another list!");
+                    continue;
+                }
+
+                if (newItems[i].ListIndex != -1)
+                {
+                    Debug.Log("Item already added");
+                    continue;
+                }
 
                 items[_count] = newItems[i];
                 newItems[i].ListIndex = _count++;
                 newItems[i].List = this;
             }
+
             Count = _count;
         }
 
         new public bool RemoveAt(int index)
         {
-            if (index >= _count) { Debug.LogError("Index " + index + " is out of range. List count is " + _count); return false; }
+            if (index >= _count)
+            {
+                Debug.LogError("Index " + index + " is out of range. List count is " + _count);
+                return false;
+            }
 
             T item = items[index];
 
-            if (item.ListIndex == -1) { Debug.Log("Item already removed"); return false; }
+            if (item.ListIndex == -1)
+            {
+                Debug.Log("Item already removed");
+                return false;
+            }
 
             items[index] = items[--_count];
             items[index].ListIndex = index;
@@ -101,10 +139,15 @@ namespace MeshCombineStudio
 
         public bool Remove(IFastIndex item)
         {
-            if (item == null || item.List != this) return false;// Debug.LogError("Item is not an element of this list"); return; }
+            if (item == null || item.List != this)
+                return false; // Debug.LogError("Item is not an element of this list"); return; }
 
             int listIndex = item.ListIndex;
-            if (listIndex == -1) { Debug.Log("Item already removed"); return false; }
+            if (listIndex == -1)
+            {
+                Debug.Log("Item already removed");
+                return false;
+            }
 
             items[listIndex] = items[--_count];
             items[listIndex].ListIndex = listIndex;

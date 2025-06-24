@@ -48,17 +48,17 @@ namespace Scripts.PlayerLogic
             var eulerAngles = _cameraTarget.localEulerAngles;
 
             anchors.Head.localPosition = //Vector3.Lerp(anchors.Head.localPosition,
-                new Vector3(0, centrisedPosition.y, 0);//, 10* Time.deltaTime);
+                new Vector3(0, centrisedPosition.y, 0); //, 10* Time.deltaTime);
 
             anchors.Head.localRotation = // Quaternion.Lerp(anchors.Head.localRotation,
-                Quaternion.Euler(eulerAngles.x, 0, eulerAngles.z);//, 10 * Time.deltaTime);
+                Quaternion.Euler(eulerAngles.x, 0, eulerAngles.z); //, 10 * Time.deltaTime);
 
             anchors.Body.localPosition = //Vector3.Lerp(anchors.Body.localPosition,
-                new Vector3(centrisedPosition.x, 0, centrisedPosition.z);//, 10 * Time.deltaTime);
+                new Vector3(centrisedPosition.x, 0, centrisedPosition.z); //, 10 * Time.deltaTime);
 
             anchors.Body.localRotation = //Quaternion.Lerp(anchors.Body.localRotation ,
                 Quaternion.Euler(0, eulerAngles.y, 0); //, 10 * Time.deltaTime);
-        } 
+        }
 
         private static Vector3 ClampRotation(Vector3 rotation)
         {
@@ -76,7 +76,7 @@ namespace Scripts.PlayerLogic
             _movement.Centrize();
         }
         // мы двигаем голову, нужно двигать все, кроме тела
-        
+
         public override void AddMissingComponents()
         {
             base.AddMissingComponents();
@@ -87,7 +87,6 @@ namespace Scripts.PlayerLogic
         }
 
         protected override bool shouldAddMissingComponents => base.shouldAddMissingComponents ||
-                                                                !(_cameraTarget && _movement);
-
+                                                              !(_cameraTarget && _movement);
     }
 }

@@ -38,16 +38,16 @@ namespace Scripts.Rigs
     [HelpURL("https://developer.oculus.com/reference/unity/latest/class_o_v_r_camera_rig")]
     public class OVRRig : Rig
     {
-
         [Header("OVR Rig Components")] [SerializeField]
         private XRMovement _movement;
-        
-        [Range(0.01f, 3f)] [SerializeField]
-        private float _bodyHeightOffset = 1.8f;
+
+        [Range(0.01f, 3f)] [SerializeField] private float _bodyHeightOffset = 1.8f;
 
         [SerializeField] private bool _lerpBody = true;
+
         [Range(0.1f, 10f)] [SerializeField] [ShowIf("_lerpBody")]
         private float _bodyLerpSpeed = 2f;
+
         protected virtual void FixedUpdate()
         {
             SynchronizeBodyAnchors();
@@ -55,7 +55,6 @@ namespace Scripts.Rigs
 
         protected virtual void Update()
         {
-            
         }
 
 
@@ -76,17 +75,16 @@ namespace Scripts.Rigs
                 anchors.Body.rotation = Quaternion.Euler(0, anchors.Head.eulerAngles.y, 0);
             }
         }
-        
+
 
         public override bool isMoved() => _movement.isMoved();
 
         public override void StartMove() => _movement.StartMove();
-        
+
         public override void StopMove() => _movement.StopMove();
-        
+
         protected override void Centrize()
         {
-            
             Update();
             _movement.Centrize();
         }

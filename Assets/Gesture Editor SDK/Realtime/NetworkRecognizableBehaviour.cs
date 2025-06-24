@@ -12,9 +12,9 @@ namespace Gesture_Editor_SDK.Realtime
         public PlayerData playerData => inherited.data;
         public abstract void OnFrameRecognized(string name);
 
-        public abstract void AbilityCalled();
+        public abstract void OnGestureCasted();
         protected abstract void OnAbilityReleased();
-    
+
         public void AbilityReleased()
         {
             OnAbilityReleased();

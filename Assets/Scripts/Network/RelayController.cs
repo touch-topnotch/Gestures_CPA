@@ -8,7 +8,6 @@ namespace Network
         [SerializeField] private LobbyConnector lobbyConnector;
         [SerializeField] private RelayJoiner relayJoiner;
         [SerializeField] private RelayCreator relayCreator;
-        [SerializeField] private GameObject _selectorEventSystem;
 
         private const int MAX_PLAYERS = 4;
 
@@ -28,14 +27,12 @@ namespace Network
         {
             await UniTask.SwitchToMainThread();
             await relayJoiner.AutojoinRelayWithLobby(obj);
-            _selectorEventSystem.SetActive(false);
         }
 
         private async void OnLobbyConnectedAsHost(string obj)
         {
             await UniTask.SwitchToMainThread();
             var code = await relayCreator.CreateRelay(MAX_PLAYERS);
-            _selectorEventSystem.SetActive(false);
             lobbyConnector.SetCodeAsRelayCode(code);
         }
     }

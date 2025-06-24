@@ -28,11 +28,10 @@ namespace Scripts.HandsLogic
 
         [Header("Types")] [SerializeField] private HandMaterialType _handMaterialType;
         [SerializeField] private HandType _handType;
-        [Space] [Header("Transforms")] 
-        public Transform grabPoint;
+        [Space] [Header("Transforms")] public Transform grabPoint;
         public Transform palmCenter;
         public Transform[] points;
-   
+
         [SerializeField] private List<Material> _materials = new List<Material>();
 
         public Material HandMaterial
@@ -120,6 +119,7 @@ namespace Scripts.HandsLogic
                 StopMoveHand();
                 return;
             }
+
             var dist = Vector3.Distance(points[0].localPosition, _target.rootPos);
             var a1 = Quaternion.Angle(points[0].localRotation, _target.rotations[0]);
             var a2 = Quaternion.Angle(points[13].localRotation, _target.rotations[13]);

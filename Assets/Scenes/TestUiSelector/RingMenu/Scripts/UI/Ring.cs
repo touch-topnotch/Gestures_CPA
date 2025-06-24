@@ -7,6 +7,7 @@ public class Ring
 {
     public string name { get; set; }
     public List<RingSector> sectors { get; set; }
+
     public Ring(
         string name,
         List<RingProps> elements)
@@ -21,6 +22,7 @@ public class Ring
         }
     }
 }
+
 public class RingProps
 {
     public string name;
@@ -32,17 +34,18 @@ public class RingProps
         this.onClick = onClick;
     }
 
-    public static List<RingProps> GetFromDictionary<T>(in Dictionary<string, T> dictionary, in UnityAction<string> onClick)
+    public static List<RingProps> GetFromDictionary<T>(in Dictionary<string, T> dictionary,
+        in UnityAction<string> onClick)
     {
         if (dictionary == null || dictionary.Count == 0)
             return null;
-        
+
         var list = new List<RingProps>();
         foreach (var VARIABLE in dictionary.Keys)
         {
             list.Add(new RingProps(VARIABLE, onClick));
         }
-        
+
         return list;
     }
 }
@@ -50,6 +53,7 @@ public class RingProps
 public class RingSector
 {
     public RingProps props;
+
     public RingSector(RingProps ringProps)
     {
         props = ringProps;

@@ -6,7 +6,12 @@ namespace Gesture_Editor_SDK.EditorAttributes.DropDownAttribute
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     public class DropdownAttribute : PropertyAttribute
     {
-        public enum MethodLocation { PropertyClass, StaticClass }
+        public enum MethodLocation
+        {
+            PropertyClass,
+            StaticClass
+        }
+
         public MethodLocation Location { get; private set; }
         public string MethodName { get; private set; }
         public Type MethodOwnerType { get; private set; }

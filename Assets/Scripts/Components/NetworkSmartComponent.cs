@@ -3,10 +3,8 @@ using Unity.Netcode;
 
 namespace Scripts.Components
 {
-    public abstract class NetworkSmartComponent: NetworkBehaviour
+    public abstract class NetworkSmartComponent : NetworkBehaviour
     {
-        protected abstract bool shouldAddMissingComponents { get; }
-      
 #if UNITY_EDITOR
         [ShowIf("shouldAddMissingComponents")]
         [Button("Add Missing Components")]
@@ -15,6 +13,10 @@ namespace Scripts.Components
             AddMissingComponents();
         }
 #endif
-        public virtual void AddMissingComponents() { }
+        public virtual void AddMissingComponents()
+        {
+        }
+
+        protected virtual bool shouldAddMissingComponents { get; }
     }
 }

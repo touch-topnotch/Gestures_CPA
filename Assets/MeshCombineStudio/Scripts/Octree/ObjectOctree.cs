@@ -27,12 +27,14 @@ namespace MeshCombineStudio
             {
                 LOD[] lods = new LOD[lodLevels.Length];
                 int lodGroupParentIndex = lods.Length - 1;
-                
+
                 for (int i = 0; i < lodLevels.Length; i++)
                 {
                     LODLevel lodLevel = lodLevels[i];
                     // Debug.Log(i + " " + lodLevel.newMeshRenderers.Count);
-                    lods[i] = new LOD(meshCombiner.lodGroupsSettings[lodGroupParentIndex].lodSettings[i].screenRelativeTransitionHeight, lodLevel.newMeshRenderers.ToArray());
+                    lods[i] = new LOD(
+                        meshCombiner.lodGroupsSettings[lodGroupParentIndex].lodSettings[i]
+                            .screenRelativeTransitionHeight, lodLevel.newMeshRenderers.ToArray());
                 }
 
                 lodGroup.SetLODs(lods);
@@ -54,16 +56,15 @@ namespace MeshCombineStudio
             public FastList<MeshObjectsHolder> changedMeshObjectsHolders;
             public FastList<MeshRenderer> newMeshRenderers = new FastList<MeshRenderer>();
             public int vertCount, objectCount = 0;
-           
+
             public void ApplyChanges(MeshCombiner meshCombiner)
             {
                 for (int i = 0; i < changedMeshObjectsHolders.Count; i++)
                 {
                     MeshObjectsHolder meshObjectHolder = changedMeshObjectsHolders.items[i];
                     meshObjectHolder.hasChanged = false;
-
-
                 }
+
                 changedMeshObjectsHolders.Clear();
             }
         }
@@ -87,8 +88,13 @@ namespace MeshCombineStudio
         {
             public Cell[] cells;
 
-            public Cell() { }
-            public Cell(Vector3 position, Vector3 size, int maxLevels) : base(position, size, maxLevels) { }
+            public Cell()
+            {
+            }
+
+            public Cell(Vector3 position, Vector3 size, int maxLevels) : base(position, size, maxLevels)
+            {
+            }
 
             public MaxCell GetCell(Vector3 position)
             {
@@ -112,28 +118,32 @@ namespace MeshCombineStudio
                 }
             }
 
-            public CachedGameObject AddObject(Vector3 position, MeshCombiner meshCombiner, CachedGameObject cachedGO, int lodParentIndex, int lodLevel, bool isChangeMode = false)
+            public CachedGameObject AddObject(Vector3 position, MeshCombiner meshCombiner, CachedGameObject cachedGO,
+                int lodParentIndex, int lodLevel, bool isChangeMode = false)
             {
                 if (InsideBounds(position))
                 {
                     AddObjectInternal(meshCombiner, cachedGO, position, lodParentIndex, lodLevel, isChangeMode);
                     return cachedGO;
                 }
+
                 return null;
             }
 
-            void AddObjectInternal(MeshCombiner meshCombiner, CachedGameObject cachedGO, Vector3 position, int lodParentIndex, int lodLevel, bool isChangeMode)
+            void AddObjectInternal(MeshCombiner meshCombiner, CachedGameObject cachedGO, Vector3 position,
+                int lodParentIndex, int lodLevel, bool isChangeMode)
             {
                 if (level == maxLevels)
                 {
                     MaxCell thisCell = (MaxCell)this;
 
                     if (thisCell.lodParents == null) thisCell.lodParents = new LODParent[10];
-                    if (thisCell.lodParents[lodParentIndex] == null) thisCell.lodParents[lodParentIndex] = new LODParent(lodParentIndex + 1);
+                    if (thisCell.lodParents[lodParentIndex] == null)
+                        thisCell.lodParents[lodParentIndex] = new LODParent(lodParentIndex + 1);
 
                     LODParent lodParent = thisCell.lodParents[lodParentIndex];
                     LODLevel lod = lodParent.lodLevels[lodLevel];
-                    
+
                     lod.cachedGOs.Add(cachedGO);
                     if (isChangeMode)
                     {
@@ -145,6 +155,7 @@ namespace MeshCombineStudio
                                 if (meshCombiner.changedCells == null) meshCombiner.changedCells = new List<MaxCell>();
                                 meshCombiner.changedCells.Add(thisCell);
                             }
+
                             if (!lodParent.hasChanged)
                             {
                                 lodParent.hasChanged = true;
@@ -163,10 +174,11 @@ namespace MeshCombineStudio
                     bool maxCellCreated;
                     int index = AddCell<Cell, MaxCell>(ref cells, position, out maxCellCreated);
                     if (maxCellCreated) MaxCell.maxCellCount++;
-                    cells[index].AddObjectInternal(meshCombiner, cachedGO, position, lodParentIndex, lodLevel, isChangeMode);
+                    cells[index].AddObjectInternal(meshCombiner, cachedGO, position, lodParentIndex, lodLevel,
+                        isChangeMode);
                 }
             }
-            
+
             public void SortObjects(MeshCombiner meshCombiner)
             {
                 if (level == maxLevels)
@@ -183,7 +195,7 @@ namespace MeshCombineStudio
                         for (int j = 0; j < lodParent.lodLevels.Length; j++)
                         {
                             LODLevel lod = lodParent.lodLevels[j];
-                            
+
                             if (lod == null || lod.cachedGOs.Count == 0) return;
 
                             for (int k = 0; k < lod.cachedGOs.Count; ++k)
@@ -207,11 +219,13 @@ namespace MeshCombineStudio
                 }
             }
 
-            public bool SortObject(MeshCombiner meshCombiner, LODLevel lod, CachedGameObject cachedGO, bool isChangeMode = false)
+            public bool SortObject(MeshCombiner meshCombiner, LODLevel lod, CachedGameObject cachedGO,
+                bool isChangeMode = false)
             {
                 if (cachedGO.mr == null) return false;
 
-                if (lod.meshObjectsHoldersLookup == null) lod.meshObjectsHoldersLookup = new Dictionary<CombineCondition, MeshObjectsHolder>();
+                if (lod.meshObjectsHoldersLookup == null)
+                    lod.meshObjectsHoldersLookup = new Dictionary<CombineCondition, MeshObjectsHolder>();
 
                 CombineConditionSettings combineConditions = meshCombiner.combineConditionSettings;
                 Material[] mats = cachedGO.mr.sharedMaterials;
@@ -244,7 +258,9 @@ namespace MeshCombineStudio
                     else mat = combineConditions.material;
 
                     CombineCondition combineCondition = new CombineCondition();
-                    combineCondition.ReadFromGameObject(rootInstanceId, combineConditions, meshCombiner.copyBakedLighting && meshCombiner.validCopyBakedLighting, cachedGO.go, cachedGO.t, cachedGO.mr, mat);
+                    combineCondition.ReadFromGameObject(rootInstanceId, combineConditions,
+                        meshCombiner.copyBakedLighting && meshCombiner.validCopyBakedLighting, cachedGO.go, cachedGO.t,
+                        cachedGO.mr, mat);
 
                     MeshObjectsHolder meshObjectHolder;
                     if (!lod.meshObjectsHoldersLookup.TryGetValue(combineCondition, out meshObjectHolder))
@@ -262,7 +278,7 @@ namespace MeshCombineStudio
                         lod.changedMeshObjectsHolders.Add(meshObjectHolder);
                     }
                 }
-                
+
                 return true;
             }
 
@@ -271,7 +287,7 @@ namespace MeshCombineStudio
                 if (level == maxLevels)
                 {
                     MaxCell thisCell = (MaxCell)this;
-                    
+
                     LODParent lodParent = thisCell.lodParents[lodParentIndex];
                     if (lodParent == null) return;
 
@@ -279,7 +295,9 @@ namespace MeshCombineStudio
 
                     if (combineMode != CombineMode.DynamicObjects)
                     {
-                        lodParent.cellGO = new GameObject(meshCombiner.combineMode == CombineMode.StaticObjects ? "Cell " + bounds.center : "Combined Objects");
+                        lodParent.cellGO = new GameObject(meshCombiner.combineMode == CombineMode.StaticObjects
+                            ? "Cell " + bounds.center
+                            : "Combined Objects");
                         lodParent.cellT = lodParent.cellGO.transform;
                         lodParent.cellT.position = bounds.center;
                         lodParent.cellT.parent = meshCombiner.lodParentHolders[lodParentIndex].t;
@@ -311,8 +329,11 @@ namespace MeshCombineStudio
                         {
                             sortedMeshes.lodParent = lodParent;
                             sortedMeshes.lodLevel = i;
-                            Vector3 position = (combineMode == CombineMode.DynamicObjects ? sortedMeshes.meshObjects.items[0].cachedGO.rootT.position : bounds.center);
-                            MeshCombineJobManager.instance.AddJob(meshCombiner, sortedMeshes, lodParentIndex > 0 ? lodT : lodParent.cellT, position);
+                            Vector3 position = (combineMode == CombineMode.DynamicObjects
+                                ? sortedMeshes.meshObjects.items[0].cachedGO.rootT.position
+                                : bounds.center);
+                            MeshCombineJobManager.instance.AddJob(meshCombiner, sortedMeshes,
+                                lodParentIndex > 0 ? lodT : lodParent.cellT, position);
                         }
                     }
                 }
@@ -324,7 +345,7 @@ namespace MeshCombineStudio
                     }
                 }
             }
-            
+
             public void Draw(MeshCombiner meshCombiner, bool onlyMaxLevel, bool drawLevel0)
             {
                 if (!onlyMaxLevel || level == maxLevels || (drawLevel0 && level == 0))
@@ -355,15 +376,20 @@ namespace MeshCombineStudio
                                         Gizmos.DrawWireCube(meshBounds.center, meshBounds.size);
                                     }
                                 }
+
                                 Gizmos.color = Color.white;
                             }
+
                             return;
                         }
                     }
                 }
 
-                if (cells == null || cellsUsed == null) { return; }
-                
+                if (cells == null || cellsUsed == null)
+                {
+                    return;
+                }
+
                 for (int i = 0; i < 8; i++)
                 {
                     if (cellsUsed[i]) cells[i].Draw(meshCombiner, onlyMaxLevel, drawLevel0);
@@ -382,8 +408,8 @@ namespace MeshCombineStudio
         public Material mat;
         public bool hasChanged;
         public CombineCondition combineCondition;
-        
-        
+
+
         public MeshObjectsHolder(ref CombineCondition combineCondition, Material mat)
         {
             // Debug.Log(useForLightmapping);
@@ -397,7 +423,17 @@ namespace MeshCombineStudio
     {
         public HashSet<CombineCondition> combineConditions = new HashSet<CombineCondition>();
         public int combineConditionsCount;
-        public int matCount, lightmapIndexCount, shadowCastingCount, receiveShadowsCount, lightmapScale, receiveGICount, lightProbeUsageCount, reflectionProbeUsageCount, probeAnchorCount;
+
+        public int matCount,
+            lightmapIndexCount,
+            shadowCastingCount,
+            receiveShadowsCount,
+            lightmapScale,
+            receiveGICount,
+            lightProbeUsageCount,
+            reflectionProbeUsageCount,
+            probeAnchorCount;
+
         public int motionVectorGenerationModeCount, layerCount, staticEditorFlagsCount;
     }
 
@@ -411,7 +447,7 @@ namespace MeshCombineStudio
         public ShadowCastingMode shadowCastingMode;
         public bool receiveShadows;
         public float lightmapScale;
-        
+
         public LightProbeUsage lightProbeUsage;
         public ReflectionProbeUsage reflectionProbeUsage;
         public Transform probeAnchor;
@@ -457,45 +493,136 @@ namespace MeshCombineStudio
 
         public static void MakeFoundReport(FoundCombineConditions fcc)
         {
-            countSet.Clear(); foreach (var combineCondition in fcc.combineConditions) { countSet.Add(combineCondition.matInstanceId); } fcc.matCount = countSet.Count;
-            countSet.Clear(); foreach (var combineCondition in fcc.combineConditions) { countSet.Add(combineCondition.lightmapIndex); } fcc.lightmapIndexCount = countSet.Count;
-            countSet.Clear(); foreach (var combineCondition in fcc.combineConditions) { countSet.Add(combineCondition.shadowCastingMode); } fcc.shadowCastingCount = countSet.Count;
-            countSet.Clear(); foreach (var combineCondition in fcc.combineConditions) { countSet.Add(combineCondition.receiveShadows); } fcc.receiveShadowsCount = countSet.Count;                
-            countSet.Clear(); foreach (var combineCondition in fcc.combineConditions) { countSet.Add(combineCondition.lightmapScale); } fcc.lightmapScale = countSet.Count; 
-            countSet.Clear(); foreach (var combineCondition in fcc.combineConditions) { countSet.Add(combineCondition.lightProbeUsage); } fcc.lightProbeUsageCount = countSet.Count;
-            countSet.Clear(); foreach (var combineCondition in fcc.combineConditions) { countSet.Add(combineCondition.reflectionProbeUsage); } fcc.reflectionProbeUsageCount = countSet.Count;
-            countSet.Clear(); foreach (var combineCondition in fcc.combineConditions) { countSet.Add(combineCondition.probeAnchor); } fcc.probeAnchorCount = countSet.Count;
-            countSet.Clear(); foreach (var combineCondition in fcc.combineConditions) { countSet.Add(combineCondition.motionVectorGenerationMode); } fcc.motionVectorGenerationModeCount = countSet.Count;
-            countSet.Clear(); foreach (var combineCondition in fcc.combineConditions) { countSet.Add(combineCondition.layer); } fcc.layerCount = countSet.Count;
+            countSet.Clear();
+            foreach (var combineCondition in fcc.combineConditions)
+            {
+                countSet.Add(combineCondition.matInstanceId);
+            }
+
+            fcc.matCount = countSet.Count;
+            countSet.Clear();
+            foreach (var combineCondition in fcc.combineConditions)
+            {
+                countSet.Add(combineCondition.lightmapIndex);
+            }
+
+            fcc.lightmapIndexCount = countSet.Count;
+            countSet.Clear();
+            foreach (var combineCondition in fcc.combineConditions)
+            {
+                countSet.Add(combineCondition.shadowCastingMode);
+            }
+
+            fcc.shadowCastingCount = countSet.Count;
+            countSet.Clear();
+            foreach (var combineCondition in fcc.combineConditions)
+            {
+                countSet.Add(combineCondition.receiveShadows);
+            }
+
+            fcc.receiveShadowsCount = countSet.Count;
+            countSet.Clear();
+            foreach (var combineCondition in fcc.combineConditions)
+            {
+                countSet.Add(combineCondition.lightmapScale);
+            }
+
+            fcc.lightmapScale = countSet.Count;
+            countSet.Clear();
+            foreach (var combineCondition in fcc.combineConditions)
+            {
+                countSet.Add(combineCondition.lightProbeUsage);
+            }
+
+            fcc.lightProbeUsageCount = countSet.Count;
+            countSet.Clear();
+            foreach (var combineCondition in fcc.combineConditions)
+            {
+                countSet.Add(combineCondition.reflectionProbeUsage);
+            }
+
+            fcc.reflectionProbeUsageCount = countSet.Count;
+            countSet.Clear();
+            foreach (var combineCondition in fcc.combineConditions)
+            {
+                countSet.Add(combineCondition.probeAnchor);
+            }
+
+            fcc.probeAnchorCount = countSet.Count;
+            countSet.Clear();
+            foreach (var combineCondition in fcc.combineConditions)
+            {
+                countSet.Add(combineCondition.motionVectorGenerationMode);
+            }
+
+            fcc.motionVectorGenerationModeCount = countSet.Count;
+            countSet.Clear();
+            foreach (var combineCondition in fcc.combineConditions)
+            {
+                countSet.Add(combineCondition.layer);
+            }
+
+            fcc.layerCount = countSet.Count;
 #if UNITY_EDITOR
 #if !UNITY_2017 && !UNITY_2018 && !UNITY_2019_1
-            countSet.Clear(); foreach (var combineCondition in fcc.combineConditions) { countSet.Add(combineCondition.receiveGI); } fcc.receiveGICount = countSet.Count;
-#endif           
-            countSet.Clear(); foreach (var combineCondition in fcc.combineConditions) { countSet.Add(combineCondition.staticEditorFlags); } fcc.staticEditorFlagsCount = countSet.Count;
+            countSet.Clear();
+            foreach (var combineCondition in fcc.combineConditions)
+            {
+                countSet.Add(combineCondition.receiveGI);
+            }
+
+            fcc.receiveGICount = countSet.Count;
+#endif
+            countSet.Clear();
+            foreach (var combineCondition in fcc.combineConditions)
+            {
+                countSet.Add(combineCondition.staticEditorFlags);
+            }
+
+            fcc.staticEditorFlagsCount = countSet.Count;
 #endif
             fcc.combineConditionsCount = fcc.combineConditions.Count;
         }
 
-        public void ReadFromGameObject(int rootInstanceId, CombineConditionSettings combineConditions, bool copyBakedLighting, GameObject go, Transform t, MeshRenderer mr, Material mat)
+        public void ReadFromGameObject(int rootInstanceId, CombineConditionSettings combineConditions,
+            bool copyBakedLighting, GameObject go, Transform t, MeshRenderer mr, Material mat)
         {
-            matInstanceId = (combineConditions.sameMaterial ? mat.GetInstanceID() : combineConditions.combineCondition.matInstanceId);
+            matInstanceId = (combineConditions.sameMaterial
+                ? mat.GetInstanceID()
+                : combineConditions.combineCondition.matInstanceId);
             lightmapIndex = (copyBakedLighting ? mr.lightmapIndex : lightmapIndex = -1);
-            shadowCastingMode = (combineConditions.sameShadowCastingMode ? mr.shadowCastingMode : combineConditions.combineCondition.shadowCastingMode);
-            receiveShadows = (combineConditions.sameReceiveShadows ? mr.receiveShadows : combineConditions.combineCondition.receiveShadows);
-            lightmapScale = (combineConditions.sameLightmapScale ? GetLightmapScale(mr) : combineConditions.combineCondition.lightmapScale);
-            
-            lightProbeUsage = (combineConditions.sameLightProbeUsage ? mr.lightProbeUsage : combineConditions.combineCondition.lightProbeUsage);
-            reflectionProbeUsage = (combineConditions.sameReflectionProbeUsage ? mr.reflectionProbeUsage : combineConditions.combineCondition.reflectionProbeUsage);
-            probeAnchor = (combineConditions.sameProbeAnchor ? mr.probeAnchor : combineConditions.combineCondition.probeAnchor);
+            shadowCastingMode = (combineConditions.sameShadowCastingMode
+                ? mr.shadowCastingMode
+                : combineConditions.combineCondition.shadowCastingMode);
+            receiveShadows = (combineConditions.sameReceiveShadows
+                ? mr.receiveShadows
+                : combineConditions.combineCondition.receiveShadows);
+            lightmapScale = (combineConditions.sameLightmapScale
+                ? GetLightmapScale(mr)
+                : combineConditions.combineCondition.lightmapScale);
 
-            motionVectorGenerationMode = (combineConditions.sameMotionVectorGenerationMode ? mr.motionVectorGenerationMode : combineConditions.combineCondition.motionVectorGenerationMode);
+            lightProbeUsage = (combineConditions.sameLightProbeUsage
+                ? mr.lightProbeUsage
+                : combineConditions.combineCondition.lightProbeUsage);
+            reflectionProbeUsage = (combineConditions.sameReflectionProbeUsage
+                ? mr.reflectionProbeUsage
+                : combineConditions.combineCondition.reflectionProbeUsage);
+            probeAnchor = (combineConditions.sameProbeAnchor
+                ? mr.probeAnchor
+                : combineConditions.combineCondition.probeAnchor);
+
+            motionVectorGenerationMode = (combineConditions.sameMotionVectorGenerationMode
+                ? mr.motionVectorGenerationMode
+                : combineConditions.combineCondition.motionVectorGenerationMode);
 
             layer = (combineConditions.sameLayer ? go.layer : combineConditions.combineCondition.layer);
 #if UNITY_EDITOR
 #if !UNITY_2017 && !UNITY_2018 && !UNITY_2019_1
             receiveGI = (combineConditions.sameReceiveGI ? mr.receiveGI : combineConditions.combineCondition.receiveGI);
 #endif
-            staticEditorFlags = (combineConditions.sameStaticEditorFlags ? UnityEditor.GameObjectUtility.GetStaticEditorFlags(go) : combineConditions.combineCondition.staticEditorFlags);
+            staticEditorFlags = (combineConditions.sameStaticEditorFlags
+                ? UnityEditor.GameObjectUtility.GetStaticEditorFlags(go)
+                : combineConditions.combineCondition.staticEditorFlags);
 #endif
             this.rootInstanceId = rootInstanceId;
             // Debug.Log(go.name + " " + shadowCastingMode);
@@ -615,7 +742,8 @@ namespace MeshCombineStudio
         public bool excludeCombine;
         public bool mrEnabled;
 
-        public CachedGameObject(Transform searchParentT, GameObject go, Transform t, MeshRenderer mr, MeshFilter mf, Mesh mesh)
+        public CachedGameObject(Transform searchParentT, GameObject go, Transform t, MeshRenderer mr, MeshFilter mf,
+            Mesh mesh)
         {
             this.searchParentT = searchParentT;
             this.go = go;
@@ -653,7 +781,8 @@ namespace MeshCombineStudio
         public Vector3 center;
         public int lodCount, lodLevel;
 
-        public CachedLodGameObject(CachedGameObject cachedGO, int lodCount, int lodLevel) : base(cachedGO.searchParentT, cachedGO.go, cachedGO.t, cachedGO.mr, cachedGO.mf, cachedGO.mesh)
+        public CachedLodGameObject(CachedGameObject cachedGO, int lodCount, int lodLevel) : base(cachedGO.searchParentT,
+            cachedGO.go, cachedGO.t, cachedGO.mr, cachedGO.mf, cachedGO.mesh)
         {
             this.lodCount = lodCount;
             this.lodLevel = lodLevel;

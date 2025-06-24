@@ -10,6 +10,7 @@ namespace Scripts.PlayerLogic
         public Transform Head;
 
         protected override bool shouldAddMissingComponents => !(Root && Body && Head);
+
         public override void AddMissingComponents()
         {
             if (Root == null)

@@ -9,33 +9,32 @@ using Random = UnityEngine.Random;
 public class AuraSound : PrefabSerializedMonoBehaviour
 {
     [SerializeField] private AudioProcessor _audioProcessor;
-   
-    [Header("Sounds")]
-    [SerializeField] private string[] _startSounds;
+
+    [Header("Sounds")] [SerializeField] private string[] _startSounds;
     [SerializeField] private string[] _startSoundsRandom;
     [SerializeField] private Dictionary<string, float> _continuousSoundGroups;
     [SerializeField] private string[] _endSounds;
     [SerializeField] private string[] _endSoundsRandom;
-    
+
     void OnEnable()
     {
         foreach (var sound in _startSounds)
             _audioProcessor.ActivateResource(sound);
-        
+
         foreach (var sound in _startSoundsRandom)
             _audioProcessor.ActivateRandomResource(sound);
-        
+
         foreach (var soundGroup in _continuousSoundGroups)
             StartCoroutine(ProduceRandomSounds(soundGroup.Key, soundGroup.Value));
     }
-    
+
     private void OnDisable()
     {
         StopAllCoroutines();
-        
+
         foreach (var sound in _endSounds)
             _audioProcessor.ActivateResource(sound);
-        
+
         foreach (var sound in _endSoundsRandom)
             _audioProcessor.ActivateRandomResource(sound);
     }

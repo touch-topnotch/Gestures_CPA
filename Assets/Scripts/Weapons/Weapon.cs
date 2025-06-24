@@ -1,235 +1,296 @@
 using System;
-using System.Collections.Generic;
 using Components;
 using Gesture_Editor_SDK.Realtime;
-using Scripts.Events;
-using Scripts.PlayerLogic;
-using Sirenix.OdinInspector;
+using Scripts.Static.Definitions;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Serialization;
 
 namespace Scripts.Weapons
 {
-    public enum State
-    {
-        HitHolds,
-        HitCalled,
-        HitImpact,
-    }
-
-    public enum WeaponClass
-    {
-        Melee,
-        Magic,
-        Range,
-        Custom
-    }
-
-
+    /// <remarks>
+    /// Важно - теперь это не SERVER-ONLY эвенты, т.е. вы можете вызывать их на любой платформе. Т.е. вы в праве самостоятельно
+    /// решать, где и что должно проверяться и запускаться. Например, игрок поднял оружие - смотрим на клиенте, Снимаем врагу хп
+    /// - на сервере. Основной плюс в том, что платформу можно поменять за секунду.
+    /// Например:
+    /// if( IsClient and IsOwner and  grabbs the weapon) then WeaponActivatedEvent.Invoke()
+    ///</remarks>
+    
     /// <summary>
-    /// This class describes all SERVER logic of the weapon. Don't try to use it as front-part of weapon, only hit logic,
-    /// which involves other players.
-    /// For managing gesture side of this logic (for example, hit condition is (player gesture == palm)) - manipulate
-    /// of all calculations in the client side inside inherited script and call serverRPC method for change condition
-    /// when you want to make a hit.
-    /// More simple:
-    /// <example>
-    /// private onHit;
-    /// hitConditionServerRPC(bool onHit) => this.onHit = onHit;
-    /// hitCondition = onHit;
-    /// update()
-    ///     if(isClient && isOwner && gesture == palm)
-    ///         hitConditionServerRPC(true);
-    /// </example>
+    /// Я реализовал это просто настолько, насколько возможно. Все описанные ивенты синхронизированы между клиентом и сервером.
+    /// Это значит, что вам вообще не нужно думать, какая часть логики должна произойти на платформе, вызовется ли функция +
+    /// можно быстро валидировать нагрузку на процессор между игроком и сервером, обрабатывая ивенты в первом или втором
+    /// месте
     /// </summary>
+    /// <param name="CastStartedEvent">Invokes automatically, when first frame recognized</param>
+    /// <param name="CastCancelledEvent">Invokes automatically, or by implementation - when player spent a lot of time for cast</param>
+    /// <param name="GestureCastedEvent">Invokes, when dynamic gesture recognized</param>
+    /// <param name="ActivatedEvent">Invoke it, when you want to activate it (Grab, Take, Push the button)</param>
+    /// <param name="DeactivatedEvent">Invoke it, when you want to deactivate it (Throw, Put, Push the button)</param>
+    /// <param name="HitStartedEvent">Invoke it, when the weapon is possible to take damage (katana speed > 0, switch turn on, spell sayed)</param>
+    /// <param name="HitStoppedEvent">Invoke it, when the weapons is not possible to take damage (katana speed  == 0, switch turn off) </param>
+    /// <param name="AbilityDestroyedEvent">Invoke it, when the weapon should be destroyed</param>
+    /// <param name="FrameRecognizedEvent">Invokes automatically, when the frame for cast is recognized</param>
+    /// <param name="ImpactEvent">Invoke it, when the weapon hit someone/something</param>
+    /// <param name="state"> NONE, Initialized, Casting, Cancelled, Deactivated, Activated, Destroyed</param>
+    /// <param name="invokeAvailable">Permission, which provides to invoke events (In base case
+    /// you can invoke events in server or is owner client. </param>
     public abstract class Weapon : NetworkRecognizableComponent
     {
-        [Header("Weapons components")] [SerializeField]
-        protected WeaponDesign weaponDesign;
-
-        protected int _power = 100;
-
-
-        private bool _canHitCall;
-        protected virtual bool CanHitCall => _canHitCall;
-
-        private State _state;
-        protected  State state
+        public class WeaponEvent
         {
-            get => _state;
-            set
+            private readonly ushort unityEventId;
+            private readonly Action<ushort> callServerRpc;
+            private readonly UnityEvent unityEvent;
+            public WeaponEvent(UnityEvent unityEvent, Action<ushort> callServerRpc, ushort unityEventId, bool isInvokeAvailable)
             {
-                _state = value;
-                if (value != State.HitCalled)
+                this.unityEvent = unityEvent;
+                this.callServerRpc = callServerRpc;
+                this.unityEventId = unityEventId;
+            }
+            public void AddListener(UnityAction a) => unityEvent.AddListener(a);
+            public void RemoveListener(UnityAction a) => unityEvent.RemoveListener(a);
+            public void Invoke()
+            {
+                callServerRpc(unityEventId);
+            }
+        }
+        public class WeaponEvent<T>
+        {
+            private readonly ushort unityEventId;
+            private readonly Action<T, ushort> callServerRpc;
+            private readonly UnityEvent<T> unityEvent;
+            private readonly bool isInvokeAvailable;
+            public WeaponEvent(UnityEvent<T> unityEvent, Action<T, ushort> callServerRpc, ushort unityEventId, bool isInvokeAvailable)
+            {
+                this.unityEvent = unityEvent;
+                this.callServerRpc = callServerRpc;
+                this.unityEventId = unityEventId;
+                this.isInvokeAvailable = isInvokeAvailable;
+            }
+            public void AddListener(UnityAction<T> a) => unityEvent.AddListener(a);
+            public void RemoveListener(UnityAction<T> a) => unityEvent.RemoveListener(a);
+            public void Invoke(T value)
+            {
+                if (isInvokeAvailable)
                 {
-                    _canHitCall = true;
-                }
-            }
-        }
-        protected UpdateEvent _onUpdate => UpdateEvent.Instance;
-
- 
-        /// <summary>
-        /// <remarks>
-        /// Server-Only! Don't use a lot of memory and time inside, иначе придется продать почку на хостинг сервера
-        ///</remarks>
-        /// This function is called when the player grabs the weapon and it able to shoot
-        /// </summary>
-        protected virtual void OnWeaponGrabbed(){}
-        
-        /// <summary>
-        /// <remarks>
-        /// Server-Only! Don't use a lot of memory and time inside, иначе придется продать почку на хостинг сервера
-        ///</remarks>
-        /// The hit call ability.
-        /// <example>
-        /// katana speed is higher than minimum speed
-        /// </example>
-        /// </summary>
-        protected abstract bool HitCondition();
-        
-        /// <summary>
-        /// <remarks>
-        /// Server-Only! Don't use a lot of memory and time inside, иначе придется продать почку на хостинг сервера
-        ///</remarks>
-        /// <example>
-        /// bullet inside the target, player in hammer-hit area
-        /// </example>
-        /// This function describes the hit impact ability.
-        /// </summary>
-        /// <param name="affected"> affected object tag (Player/Floor/Map/Others..)</param>
-        /// <returns></returns>
-        protected abstract bool ImpactCondition(out string affected);
-
-        /// <summary>
-        /// This function is called when player tried to hit
-        /// <example>
-        /// Player moves katana, press the pistol button, make some gesture
-        /// </example>
-        /// </summary>
-        protected virtual void OnHit(){}
-
-        /// <summary>
-        /// This function is called when weapon hit condition is met. For example, when bullet hit the target.
-        /// </summary>
-        /// <param name="affected"> affected object tag (Player/Floor/Map/Others..)</param>
-        protected virtual void OnImpact(string affected) {}
-
-        [ClientRpc]
-        private void PlayWeaponDesignClientRpc(string props)
-        {
-            if (!IsClient)
-                return;
-            
-            var keywords = props.Split();
-         
-            switch (keywords[0])
-            {
-                case "L":
-                    weaponDesign.OnHitHolds();
-                    return;
-                case "H":
-                    weaponDesign.OnHit();
-                    return;
-                case "I":
-                    if (keywords.Length < 2)
-                        return;
-                    weaponDesign.OnImpact(keywords[1]);
-                    return;
-                case "A":
-                    weaponDesign.OnAbilityReleased();
-                    return;
-                
-            }
-        }
-        [ServerRpc]
-        protected void StartShootingServerRPC()
-        {
-            if (!IsServer)
-                return;
-            OnWeaponGrabbed();
-            PlayWeaponDesignClientRpc("L");            
-            state = State.HitHolds;
-            _onUpdate.AddListener(AbilityShootingProcess);
-        }
-
-        private void AbilityShootingProcess()
-        {
-            switch (state)
-            {
-                case State.HitHolds: // ожидаем выстрела
-                    HandleHitCall();
-                    return;
-                case State.HitCalled: //  нажали на курок
-                    if (!CanHitCall) 
-                        return;
-                    PlayWeaponDesignClientRpc("H");
-                    _canHitCall = false;
-                    HandleHitImpact();
-                    return;
-                case State.HitImpact: // попали
-                    _onUpdate.RemoveListener(AbilityShootingProcess);
-                    return;
-            }
-        }
-
-        private void HandleHitCall()
-        {
-            if (HitCondition())
-            {
-                if (HitCondition() && state == State.HitHolds)
-                {
-                    state = State.HitCalled;
+                    callServerRpc(value, unityEventId);
                 }
                 else
                 {
-                    state = State.HitHolds;
+                    Debug.LogWarning("No permissions to invoke in this platform! Check Weapon.invokeAvailable");
                 }
+               
             }
         }
 
-        private void HandleHitImpact()
+        [Header("Weapons components")]
+        [SerializeField]
+        protected WeaponDesign weaponDesign;
+        
+        [Range(0, 100)] 
+        protected int power = 100;
+        
+        public WeaponState state { get; private set; } 
+        
+        protected virtual bool invokeAvailable => IsServer || (IsClient && IsOwner && !IsServer);
+        
+        #region Events
+
+        /// <summary>
+        /// This event invokes, when player starts to cast the weapon
+        /// </summary>
+        protected WeaponEvent CastStartedEvent { get; private set; }
+        
+        /// <summary>
+        /// This event invokes, when player cancel to cast the weapon
+        /// </summary>
+        protected WeaponEvent CastCancelledEvent { get; private set; }
+        
+        /// <summary>
+        /// This event invokes, when all frames was recognized
+        /// </summary>
+        protected WeaponEvent GestureCastedEvent { get; private set; }
+       
+
+        /// <summary>
+        /// This event invokes, when the player casts Gesture and takes/grabs/casts weapon (it's able to shoot)
+        /// </summary>
+        protected WeaponEvent ActivatedEvent { get; private set; }
+
+        /// <summary>
+        /// This function is called when the player throws/loses the weapon
+        /// </summary>
+        protected WeaponEvent DeactivatedEvent { get; private set; }
+    
+        /// <summary>
+        /// <example>
+        /// Sword speed more than 5, gesture palm detected, someone near of the player
+        /// </example>
+        /// This function describes the start of hit 
+        /// </summary>
+        protected WeaponEvent StartHitEvent { get; private set; }
+
+        /// <summary>
+        /// <example>
+        /// Sword speed less than 5, gesture palm is not recognized, someone too far from the player
+        /// </example>
+        /// This function describes the end of hit
+        /// </summary>
+        protected WeaponEvent StopHitEvent { get; private set; }
+
+        /// <summary>
+        /// <example>
+        /// Sword crashed, bullets count == 0, delay ended
+        /// </example>
+        /// This function describes the destroy of ability
+        /// </summary>
+        protected WeaponEvent AbilityDestroyedEvent { get; private set; }
+
+
+        /// <summary>
+        /// This event invokes, when the frame was recognized
+        /// </summary>
+        protected WeaponEvent<string> FrameRecognizedEvent { get; private set; }
+        
+        /// <example>
+        /// bullet inside the target, player in hammer-hit area, the magic spell has found the enemy
+        /// </example>
+        /// This function describes the hit impact ability.
+        /// <returns>UnityEvent of type Affected for handling impact events.</returns>
+        protected WeaponEvent<string> ImpactEvent { get; private set; }
+
+      
+        private UnityEvent _CastStarted;
+        private UnityEvent _CastCancelled;
+        private UnityEvent _GestureCasted;
+        private UnityEvent _Activated;
+        private UnityEvent _Deactivated;
+        private UnityEvent _StartHit;
+        private UnityEvent _StopHit;
+        private UnityEvent _AbilityDestroyed;
+        
+        private UnityEvent<string> _FrameRecognized;
+        private UnityEvent<string> _Impact;
+        
+        private WeaponEvent[] _weaponEvents;
+        private WeaponEvent<string>[] _weaponParamEvents;
+        private UnityEvent[] _unityEvents;
+        private UnityEvent<string>[] _unityParamEvents;
+        #endregion
+
+        #region RpcCalls
+        
+        // Retranslators - provide the synchronization of event between platforms
+        [ClientRpc]
+        private void CallEventClientRpc(ushort eventId)
         {
-            if ((IsServer) && ImpactCondition(out string affected))
+            _unityEvents[eventId]?.Invoke();
+        }
+        [ClientRpc]
+        private void CallEventClientRpc(string value, ushort eventId)
+        {
+            _unityParamEvents[eventId]?.Invoke(value);
+        }
+        [ServerRpc]
+        private void CallEventServerRpc(ushort eventId)
+        {
+            _unityEvents[eventId]?.Invoke();
+        }
+        [ServerRpc]
+        private void CallEventServerRpc(string value, ushort eventId)
+        {
+            _unityParamEvents[eventId]?.Invoke(value);
+        }
+
+        
+
+        #endregion
+    
+        private void SubscribeEvents() 
+        {
+        _weaponEvents = new[]
             {
-                state = State.HitImpact;
-                OnImpact(affected);
-                PlayWeaponDesignClientRpc("I " + affected);
-            }
-            else if (!HitCondition())
+                CastStartedEvent,
+                CastCancelledEvent,
+                GestureCastedEvent,
+                ActivatedEvent,
+                DeactivatedEvent,
+                StartHitEvent,
+                StopHitEvent,
+                AbilityDestroyedEvent
+            };
+            _weaponParamEvents = new[] { FrameRecognizedEvent, ImpactEvent };
+            _unityEvents = new[]
             {
-                StartShootingServerRPC();
+                _CastStarted,
+                _CastCancelled,
+                _GestureCasted,
+                _Activated,
+                _Deactivated,
+                _StartHit,
+                _StopHit,
+                _AbilityDestroyed
+            };
+   
+            
+            _unityParamEvents = new[] { _FrameRecognized, _Impact };
+            try
+            {
+                for (ushort i = 0; i < _weaponEvents.Length; i++)
+                {
+                    _weaponEvents[i] = new WeaponEvent(_unityEvents[i], CallEventServerRpc, i, invokeAvailable);
+                    if (IsClient)
+                    {
+                        _unityEvents[i].AddListener(weaponDesign.actions[i]);
+                    }
+                }
+
+                for (ushort i = 0; i < _weaponParamEvents.Length; i++)
+                {
+                    _weaponParamEvents[i] =
+                        new WeaponEvent<string>(_unityParamEvents[i], CallEventServerRpc, i, invokeAvailable);
+                    if (IsClient)
+                    {
+                        _unityParamEvents[i].AddListener(weaponDesign.paramActions[i]);
+                    }
+                }
+
             }
+            catch
+            {
+                state = WeaponState.NONE;
+                Debug.LogError("The weapon events and unity events are different!");
+                return;
+            }
+
+            state = WeaponState.Initialized;
+            _CastStarted.AddListener(() => { state = WeaponState.Casting;});
+            _CastCancelled.AddListener(() => { state = WeaponState.Cancelled;});
+            _Activated.AddListener(() => { state = WeaponState.Activated; });
+            _Deactivated.AddListener(() => { state = WeaponState.Deactivated; });
+            _AbilityDestroyed.AddListener(() => { state = WeaponState.Destroyed;});
         }
 
         public sealed override void OnFrameRecognized(string name)
         {
-            if (IsClient)
-                weaponDesign.OnFrameRecognized(name);
+            FrameRecognizedEvent?.Invoke(name);
         }
 
-        public sealed override void AbilityCalled()
+        public sealed override void OnNetworkSpawn()
         {
-            _power = 100;
-            if (IsClient)
-                weaponDesign.OnGestureDetected();
+            base.OnNetworkSpawn();
+            SubscribeEvents();
         }
 
-        protected sealed override void OnAbilityReleased()
+        protected override void OnAbilityReleased()
         {
-            _onUpdate.RemoveListener(AbilityShootingProcess);
-            if (IsClient)
-                weaponDesign.OnAbilityReleased();
+            AbilityDestroyedEvent?.Invoke();
         }
-        // write implementation here
-        protected override bool shouldAddMissingComponents { get; }
-        //
-        
-        // write implementation here
-        public override void AddMissingComponents()
+
+        public override void OnGestureCasted()
         {
+            DeactivatedEvent?.Invoke();
         }
     }
 }

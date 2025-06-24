@@ -9,6 +9,7 @@ using Scripts.Design;
 using Scripts.Events;
 using Scripts.PlayerLogic;
 using Scripts.Static;
+using Scripts.Static.Definitions;
 using Scripts.Weapons;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor;

@@ -29,7 +29,7 @@ namespace Scripts.Tests
             TYPE,
             NONE
         }
-        
+
         public BubbleToggle leftToggle;
         public BubbleToggle rightToggle;
         public XRInputField nameInput;
@@ -50,13 +50,13 @@ namespace Scripts.Tests
             get => _recordedHandStruct.name;
             set
             {
-                
                 if (collectionLabel.text == "character")
                 {
                     var words = value.Split('_');
                     if (!int.TryParse(words[^1], out var suff))
                         _recordedHandStruct.name += "_0";
                 }
+
                 _recordedHandStruct.name = value;
                 gestureLabel.text = _recordedHandStruct.name;
                 LockButtons();
@@ -73,7 +73,7 @@ namespace Scripts.Tests
             if (text == null)
                 return GestureRecordingCommand.NONE;
             var tokens = text.Split('@');
-            
+
             if (Enum.TryParse(typeof(GestureRecordingCommand), tokens[0].Substring(1).ToUpper(), out var v))
             {
                 return (GestureRecordingCommand)v;
@@ -81,8 +81,9 @@ namespace Scripts.Tests
 
             return GestureRecordingCommand.NONE;
         }
+
         private void OnMessageReceived(Message message)
-        {       
+        {
             // /char 
             bool getCommand;
             getCommand = lastCommand == GestureRecordingCommand.NONE;
@@ -108,14 +109,15 @@ namespace Scripts.Tests
                         lastCommand = GestureRecordingCommand.NONE;
                         break;
                 }
+
                 return;
             }
 
 
             var text = message.Text;
-            if(text.IsNullOrEmpty())
+            if (text.IsNullOrEmpty())
                 return;
-            
+
             switch (lastCommand)
             {
                 case GestureRecordingCommand.CHAR:
@@ -135,7 +137,6 @@ namespace Scripts.Tests
                     lastCommand = GestureRecordingCommand.NONE;
                     break;
             }
-            
         }
 
         private void Start()
@@ -174,13 +175,12 @@ namespace Scripts.Tests
             //  Name = Calculations.RandomString(6)+ "_0";
             //   characterNameInput.inputString = Calculations.RandomString(8);
         }
-        
+
 
         private void ReloadToggles()
         {
-
             // мы отправляем аудио в нейронку, которая переводит в текст
-                
+
             _recordedHandStruct.LeftBones = null;
             _recordedHandStruct.RightBones = null;
             leftToggle.isOn = false;
@@ -199,7 +199,7 @@ namespace Scripts.Tests
         public async void NewGestureGroup()
         {
             _sequencedHandVisualizer.Spawn(_recordedHandStruct);
-            
+
             await SendToCompiler(_recordedHandStruct);
             ReloadToggles();
             Name = "";
@@ -213,9 +213,11 @@ namespace Scripts.Tests
             }
             catch
             {
-                HintWindow.Log("Oops, it looks like you couldn't save the gesture(  Don't worry, just connect the Internet and try to send it again. All frames remained in place)");
+                HintWindow.Log(
+                    "Oops, it looks like you couldn't save the gesture(  Don't worry, just connect the Internet and try to send it again. All frames remained in place)");
                 return;
             }
+
             ReloadToggles();
             AddIndexToName();
         }
@@ -235,7 +237,7 @@ namespace Scripts.Tests
             {
                 coll = GestureCollections.system;
             }
-            
+
             await _player.gestureCombiner.library.RecordFrame(handStruct, coll, characterLabel.text);
         }
 
@@ -284,7 +286,6 @@ namespace Scripts.Tests
             if (isOn)
             {
                 _sequencedHandVisualizer.rightHandVisualizer.Spawn(_recordedHandStruct.RightBones);
-           
             }
             else
             {
