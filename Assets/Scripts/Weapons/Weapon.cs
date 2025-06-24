@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Components;
 using Gesture_Editor_SDK.Realtime;
 using Scripts.Static.Definitions;
@@ -160,18 +161,18 @@ namespace Scripts.Weapons
         /// <returns>UnityEvent of type Affected for handling impact events.</returns>
         protected WeaponEvent<string> ImpactEvent { get; private set; }
 
-      
-        private UnityEvent _CastStarted;
-        private UnityEvent _CastCancelled;
-        private UnityEvent _GestureCasted;
-        private UnityEvent _Activated;
-        private UnityEvent _Deactivated;
-        private UnityEvent _StartHit;
-        private UnityEvent _StopHit;
-        private UnityEvent _AbilityDestroyed;
-        
-        private UnityEvent<string> _FrameRecognized;
-        private UnityEvent<string> _Impact;
+
+        private readonly UnityEvent _CastStarted = new UnityEvent();
+        private readonly UnityEvent _CastCancelled = new UnityEvent();
+        private readonly UnityEvent _GestureCasted = new UnityEvent();
+        private readonly UnityEvent _Activated = new UnityEvent();
+        private readonly UnityEvent _Deactivated = new UnityEvent();
+        private readonly UnityEvent _StartHit = new UnityEvent();
+        private readonly UnityEvent _StopHit = new UnityEvent();
+        private readonly UnityEvent _AbilityDestroyed = new UnityEvent();
+
+        private readonly UnityEvent<string> _FrameRecognized = new UnityEvent<string>();
+        private readonly UnityEvent<string> _Impact = new UnityEvent<string>();
         
         private WeaponEvent[] _weaponEvents;
         private WeaponEvent<string>[] _weaponParamEvents;
@@ -186,42 +187,41 @@ namespace Scripts.Weapons
         private void CallEventClientRpc(ushort eventId)
         {
             _unityEvents[eventId]?.Invoke();
+            Debug.Log("CallEventClientRpc(ushort eventId");
         }
         [ClientRpc]
         private void CallEventClientRpc(string value, ushort eventId)
         {
             _unityParamEvents[eventId]?.Invoke(value);
+            Debug.Log("CallEventClientRpc(string " + value + ", ushort eventId");
         }
         [ServerRpc]
         private void CallEventServerRpc(ushort eventId)
         {
             _unityEvents[eventId]?.Invoke();
+            Debug.Log("CallEventServerRpc(ushort eventId)");
         }
         [ServerRpc]
         private void CallEventServerRpc(string value, ushort eventId)
         {
             _unityParamEvents[eventId]?.Invoke(value);
+            Debug.Log("CallEventServerRpc(string " + value + ", ushort eventId");
         }
 
         
 
         #endregion
-    
+
+        protected virtual void OnInitialized()
+        {
+        }
+
         private void SubscribeEvents() 
         {
-        _weaponEvents = new[]
-            {
-                CastStartedEvent,
-                CastCancelledEvent,
-                GestureCastedEvent,
-                ActivatedEvent,
-                DeactivatedEvent,
-                StartHitEvent,
-                StopHitEvent,
-                AbilityDestroyedEvent
-            };
-            _weaponParamEvents = new[] { FrameRecognizedEvent, ImpactEvent };
-            _unityEvents = new[]
+            Debug.Log("ON NETWORK SPAWN_____________");
+            _weaponEvents = new WeaponEvent[8];
+            _weaponParamEvents = new WeaponEvent<string>[2];
+            _unityEvents = new []
             {
                 _CastStarted,
                 _CastCancelled,
@@ -232,28 +232,27 @@ namespace Scripts.Weapons
                 _StopHit,
                 _AbilityDestroyed
             };
-   
+            _unityParamEvents = new [] { _FrameRecognized, _Impact };
             
-            _unityParamEvents = new[] { _FrameRecognized, _Impact };
             try
             {
                 for (ushort i = 0; i < _weaponEvents.Length; i++)
                 {
+               
                     _weaponEvents[i] = new WeaponEvent(_unityEvents[i], CallEventServerRpc, i, invokeAvailable);
-                    if (IsClient)
-                    {
-                        _unityEvents[i].AddListener(weaponDesign.actions[i]);
-                    }
+                    // if (IsClient)
+                    // {
+                    //     _unityEvents[i].AddListener(weaponDesign.actions[i]);
+                    // }
                 }
 
                 for (ushort i = 0; i < _weaponParamEvents.Length; i++)
                 {
-                    _weaponParamEvents[i] =
-                        new WeaponEvent<string>(_unityParamEvents[i], CallEventServerRpc, i, invokeAvailable);
-                    if (IsClient)
-                    {
-                        _unityParamEvents[i].AddListener(weaponDesign.paramActions[i]);
-                    }
+                    _weaponParamEvents[i] = new WeaponEvent<string>(_unityParamEvents[i], CallEventServerRpc, i, invokeAvailable);
+                    // if (IsClient)
+                    // {
+                    //     _unityParamEvents[i].AddListener(weaponDesign.paramActions[i]);
+                    // }
                 }
 
             }
@@ -264,12 +263,25 @@ namespace Scripts.Weapons
                 return;
             }
 
+            CastStartedEvent = _weaponEvents[0];
+            CastCancelledEvent = _weaponEvents[1];
+            GestureCastedEvent = _weaponEvents[2];
+            ActivatedEvent = _weaponEvents[3];
+            DeactivatedEvent = _weaponEvents[4];
+            StartHitEvent = _weaponEvents[5];
+            StopHitEvent = _weaponEvents[6];
+            AbilityDestroyedEvent = _weaponEvents[7];
+            FrameRecognizedEvent = _weaponParamEvents[0];
+            ImpactEvent = _weaponParamEvents[1];
+            
+            
             state = WeaponState.Initialized;
             _CastStarted.AddListener(() => { state = WeaponState.Casting;});
             _CastCancelled.AddListener(() => { state = WeaponState.Cancelled;});
             _Activated.AddListener(() => { state = WeaponState.Activated; });
             _Deactivated.AddListener(() => { state = WeaponState.Deactivated; });
             _AbilityDestroyed.AddListener(() => { state = WeaponState.Destroyed;});
+            OnInitialized();
         }
 
         public sealed override void OnFrameRecognized(string name)
