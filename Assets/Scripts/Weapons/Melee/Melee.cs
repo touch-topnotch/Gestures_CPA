@@ -13,19 +13,7 @@ namespace Scripts.Weapons
         
         [SerializeField] private Rigidbody _rigidbody;
 
-        public int capacity
-        {
-            get => _power;
-            protected set
-            {
-                _power = value;
-                if (_power <= 0)
-                {
-                    AbilityReleased();
-                    _power = 0;
-                }
-            }
-        }
+        
 
         private Vector3 _previousBladePointPosition;
 
@@ -65,11 +53,11 @@ namespace Scripts.Weapons
             {
                 case "Player":
                     Debug.Log("Melee weapon hit player!");
-                    capacity -= 10;
+                    Power -= 10;
                     break;
                 case "Map":
                     Debug.Log("Melee weapon hit solid object");
-                    capacity -= 5;
+                    Power -= 5;
                     break;
             }
         }

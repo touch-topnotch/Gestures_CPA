@@ -1313,6 +1313,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1930021325919542999}
   - component: {fileID: 6511275423927783264}
+  - component: {fileID: 4504385688257694469}
   m_Layer: 0
   m_Name: SpearAura
   m_TagString: Untagged
@@ -1373,6 +1374,21 @@ MonoBehaviour:
   _endSounds:
   - End_Aura
   _endSoundsRandom: []
+--- !u!114 &4504385688257694469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6657744914178785833}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1056956db9a3ffd4cb79ca9362692804, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _buffDelay: 10
+  _buffAmount: 0.1
+  _buffRadius: 10
 --- !u!1 &7294392403267531644
 GameObject:
   m_ObjectHideFlags: 0

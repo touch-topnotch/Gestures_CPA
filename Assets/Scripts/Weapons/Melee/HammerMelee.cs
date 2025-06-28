@@ -9,10 +9,10 @@ namespace Scripts
             switch (affected)
             {
                 case "Player":
-                    capacity -= 5;
+                    Power -= 5;
                     break;
                 case "Floor":
-                    capacity -= 10;
+                    Power -= 10;
                     if(IsServer)
                         SpawnStanSphere();
                     break;

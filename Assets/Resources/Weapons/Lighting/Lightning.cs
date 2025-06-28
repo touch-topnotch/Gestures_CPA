@@ -26,15 +26,15 @@ namespace Scripts
             {
                 case "Player":
                     Debug.Log("Melee weapon hit player!");
-                    mana -= 10;
+                    Power -= 10;
                     break;
                 case "Map":
                     Debug.Log("Melee weapon hit solid object");
-                    mana -= 5;
+                    Power -= 5;
                     break;
                 default:
                     Debug.Log("Melee weapon hit something");
-                    mana -= 5;
+                    Power -= 5;
                     break;
             }
         }

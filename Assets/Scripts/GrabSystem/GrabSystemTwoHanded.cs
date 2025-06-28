@@ -110,7 +110,7 @@ public class GrabSystemTwoHanded : GrabSystem
             && angle < angleBetweenGrabbers || 180 - angle < angleBetweenGrabbers);
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         Gizmos.DrawWireSphere(_mainGrabPoint.GrabPointTransform.position, _mainGrabPoint.GrabPointRadius);
         Gizmos.DrawRay(_mainGrabPoint.GrabPointTransform.position, _mainGrabPoint.GrabPointTransform.right);

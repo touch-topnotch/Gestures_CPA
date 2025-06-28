@@ -7,20 +7,6 @@ namespace Scripts
 {
     public class Magic : Weapon
     {
-        public int mana
-        {
-            
-            get => _power;
-            protected set
-            {
-                _power = value;
-                if (_power <= 0)
-                {
-                    AbilityReleased();
-                    _power = 0;
-                }
-            }
-        }
         protected override bool CanHitCall => true; //
 
         protected override bool HitCondition() => true;

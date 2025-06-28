@@ -49,7 +49,21 @@ namespace Scripts.Weapons
         [Header("Weapons components")] [SerializeField]
         protected WeaponDesign weaponDesign;
 
-        protected int _power = 100;
+        protected float _power = 100;
+        public float Power
+        {
+            get => _power;
+            set
+            {
+                _power = value;
+                Debug.Log(_power);
+                if (_power <= 0)
+                {
+                    AbilityReleased();
+                    _power = 0;
+                }
+            }
+        }
 
 
         private bool _canHitCall;
