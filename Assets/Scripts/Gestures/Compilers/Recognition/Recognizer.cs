@@ -26,8 +26,9 @@ namespace Scripts.Gestures
             _config = config;
         }
 
+        
         public IEnumerator RecognizeDynamicGesture(Dictionary<string, DynamicGesture> possibleGestures,
-            GestureRecognized onGestureRecognized, FrameRecognized onFrameRecognized)
+            Action<string> onGestureRecognized, Action<string> onFrameRecognized)
         {
             // Initialize possible gestures
             var v_possibleGestures = new List<DynamicGesture>(possibleGestures.Values);
@@ -93,7 +94,7 @@ namespace Scripts.Gestures
             }
 
             //  v_possibleGestures[v_curGesture].AllFramesDetected();
-            onGestureRecognized?.Invoke(v_possibleGestures[v_curGesture].Name);
+            onGestureRecognized?.Invoke(v_possibleGestures[v_curGesture].name);
             _hands.handVisualiser.ManipulateAll(e => e.Hide());
 
             void LogPossibleFrames()

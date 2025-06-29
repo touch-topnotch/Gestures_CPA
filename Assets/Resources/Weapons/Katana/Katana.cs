@@ -95,7 +95,7 @@ public class Katana : WeaponDesign
     // public override void OnHitHolds()
     // {
     // }
-    public override void OnCastStarted()
+    public override void OnReadyToBeCasted()
     {
         throw new System.NotImplementedException();
     }

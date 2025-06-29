@@ -11,7 +11,7 @@ public class TestController : MonoBehaviour
 
     private void Start()
     {
-        _library = PlayerData.local.library;
+        _library = PlayerData.local.gesturesLibrary;
     }
 
 

@@ -1,8 +1,5 @@
-using System;
 using Scripts.PlayerLogic;
-using Scripts.Static.Definitions;
 using Scripts.Systems;
-using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -21,12 +18,15 @@ namespace Components
     /// </summary>
     public abstract class WeaponDesign : PrefabSerializedMonoBehaviour
     {
+        [Header("Components")]
         public AudioProcessor audioProcessor;
         public VFXProcessor vfxProcessor;
-        [HideInInspector] protected PlayerData playerData => PlayerData.local;
+        [HideInInspector] public PlayerData playerData;
+        [HideInInspector]
         public UnityAction[] actions;
+        [HideInInspector]
         public UnityAction<string>[] paramActions;
-        public abstract void OnCastStarted();
+        public abstract void OnReadyToBeCasted();
         public abstract void OnCastCancelled();
         public abstract void OnGestureCasted();
         public abstract void OnActivated();
@@ -45,7 +45,7 @@ namespace Components
         {
             actions = new UnityAction[]
             {
-                OnCastStarted,
+                OnReadyToBeCasted,
                 OnCastCancelled,
                 OnGestureCasted,
                 OnActivated,
@@ -60,5 +60,7 @@ namespace Components
                 OnImpact
             };
         }
+
+        protected override bool shouldAddMissingComponents => !(vfxProcessor && audioProcessor);
     }
 }

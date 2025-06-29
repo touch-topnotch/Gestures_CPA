@@ -1,26 +1,26 @@
 using System.Collections.Generic;
-using Scripts.GameControllers;
+using System.Linq;
+using Scripts.Events;
+using Scripts.Gesture_Editor_SDK.Realtime;
 using Scripts.Gestures;
-using Scripts.Network;
 using Scripts.Static;
-using Scripts.Weapons;
-using Sirenix.OdinInspector;
+using Scripts.Static.Definitions;
+using Scripts.Systems;
 using Unity.Netcode;
-using Unity.VisualScripting;
 using UnityEngine;
-using ClientTransform = Scripts.Network.ClientTransform;
+using UnityEngine.Events;
 
 namespace Scripts.PlayerLogic
 {
     [RequireComponent(typeof(Player))]
     public class NetworkPlayerProcessor : NetworkBehaviour
     {
-        private Player _player;
+        private Player  _player;
 
         private bool _isSynchronized;
 
-        public Player localPlayer => _player;
-
+        public PlayerData data => _player.data;
+        public UnityEvent onPoolPrefabs = new UpdateEvent();
 
         private void Awake()
         {
@@ -34,10 +34,10 @@ namespace Scripts.PlayerLogic
             var IsPlayer = IsClient || IsHost;
             transform.name = $"Player {OwnerClientId}";
 
-            _player.characterPool.SpawnCharacters();
-
             if (IsServer)
-                OnWeaponsInitializedClientRpc(JsonUtility.ToJson(_player.characterPool.SpawnWeapons()));
+            {
+                data.onComponentsInitialized.AddListener(PoolPrefabsServerRpc);
+            }
 
             if (IsPlayer && !IsOwner)
             {
@@ -47,7 +47,7 @@ namespace Scripts.PlayerLogic
             if (IsPlayer && IsOwner)
             {
                 _player.SetOwner(OwnerClientId);
-                _player.curRig.anchors.Body.position = new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10));
+                _player.data.rig.anchors.Body.position = new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10));
                 Recognizer.onSharedFrameBetweenDevices.AddListener((frame) =>
                 {
                     OnLocalClientFrameRecognizedServerRpc(frame, OwnerClientId);
@@ -57,16 +57,46 @@ namespace Scripts.PlayerLogic
             if (IsServer && !IsHost)
             {
                 _player.SetEnemy(OwnerClientId);
-                _player.characterPool.SetAvatarType(AvatarType.None);
+                _player.data.characterController.SetAvatarType(AvatarType.None);
             }
         }
-
-        [ClientRpc]
-        public void OnWeaponsInitializedClientRpc(string weapons)
+        [ServerRpc]
+        public void PoolPrefabsServerRpc()
         {
-            if (!IsOwner)
-                _player.characterPool.SetWeapons(
-                    JsonUtility.FromJson<List<KeyValuePair<string, List<ulong>>>>(weapons));
+            // spawn characters
+            data.characterController.SpawnCharacters();
+            // spawn abilities
+            data.abilityController.SpawnWeapons(data.characterController.characterConfigs, this.transform);
+            
+            Dictionary<string, ulong[]> dict = new();
+            foreach (var key in data.abilityController.abilitiesLib.characterAbilities.Keys)
+            {
+                var names = data.abilityController.abilitiesLib.characterAbilities[key].Keys.ToArray();
+                ulong[] ids= new ulong[names.Length];
+            
+                for(int i = 0; i < names.Length; i ++)
+                {
+                    if(data.abilityController.abilitiesLib.characterAbilities[key][names[i]].TryGetNetcodeId(out ulong id))
+                        ids[i] = id;
+                }
+                dict.Add(key, ids);
+            }
+            // say client to spawn characters and abilities
+            PoolPrefabsClientRpc(JsonUtility.ToJson(dict));
+            UpdateCharacterServerRpc(_player.debugCharacter.ToString());
+            onPoolPrefabs?.Invoke();
+            
+        }
+        [ClientRpc] public void PoolPrefabsClientRpc(string weapons)
+        {
+            if (!IsServer)
+            {
+                data.characterController.SpawnCharacters();
+                _player.data.abilityController.SetSpawnedWeapons(JsonUtility.FromJson<Dictionary<string, ulong[]>>(weapons));
+                onPoolPrefabs?.Invoke();
+            }
+
+            _player.isInitialized = true;
         }
 
         [ServerRpc]
@@ -75,7 +105,7 @@ namespace Scripts.PlayerLogic
             if (!IsOwner)
             {
                 Debug.Log("Play Gesture Frame of player " + _player.name);
-                _player.gestureCombiner.SimulateFrame(_player.data.hands, frameName);
+                _player.data.abilityController.SimulateFrame(_player.data.hands, frameName);
             }
 
             CallFrameRecognizedClientRpc(frameName, client);
@@ -90,7 +120,23 @@ namespace Scripts.PlayerLogic
             if (OwnerClientId == client && !IsOwner)
             {
                 Debug.Log("Play Gesture Frame of player " + _player.name);
-                _player.gestureCombiner.SimulateFrame(_player.data.hands, frameName);
+                _player.data.abilityController.SimulateFrame(_player.data.hands, frameName);
+            }
+        }
+        [ServerRpc]
+        public void UpdateCharacterServerRpc(string characterName)
+        {
+            data.characterController.SetCharacter(characterName);
+            data.abilityController.AddCharacterToInventory(characterName);
+            UpdateCharacterClientRpc(characterName);
+        }
+        [ClientRpc]
+        public void UpdateCharacterClientRpc(string characterName)
+        {
+            if (!IsServer)
+            {
+                data.characterController.SetCharacter(characterName);
+                data.abilityController.AddCharacterToInventory(characterName);
             }
         }
     }

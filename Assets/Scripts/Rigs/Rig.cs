@@ -37,8 +37,7 @@ namespace Scripts.PlayerLogic
             if (!transform.gameObject.activeSelf)
                 return;
 
-
-            inherited.onPlayerModeChanged?.AddListener(OnPlayerStateChanged);
+            inherited.data.onPlayerModeChanged?.AddListener(OnPlayerStateChanged);
             headInteraction.onHeadInteraction += (headInteractionType) =>
             {
                 Debug.Log("Recognized " + headInteractionType);
@@ -65,5 +64,10 @@ namespace Scripts.PlayerLogic
 
         protected override bool shouldAddMissingComponents =>
             !(anchors && _recognitionProperties && _headInteraction);
+
+        public virtual void OnDisable()
+        {
+            
+        }
     }
 }

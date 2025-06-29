@@ -4,8 +4,9 @@ using System.Threading.Tasks;
 using Characters;
 using Scripts.Characters;
 using Scripts.Databases;
-using Scripts.Events;
+using Scripts.Gesture_Editor_SDK.Realtime;
 using Scripts.Static;
+using Scripts.Static.Definitions;
 using Scripts.Systems;
 using UnityEngine;
 
@@ -28,9 +29,6 @@ namespace Scripts.Gestures
         public event Action onLibraryInitialized;
         private readonly RestrictiveDictionary<string, DynamicGesture> allCharacterGestures = new();
 
-
-        private CharacterPool _characterPool;
-
         FrameData this[string name]
         {
             get
@@ -44,14 +42,14 @@ namespace Scripts.Gestures
             }
         }
 
-        public GesturesLibrary(CharacterPool characterPool)
-        {
-            _characterPool = characterPool;
-            // _characterPool.characterChangedEvent.AddListener(OnCharacterChanged);
+        // вот это не надо тут делать с CharacterControllerом
+        public GesturesLibrary()
+        { 
+            //_CharacterController.characterChangedEvent.AddListener(OnCharacterChanged);
             Debug.Log("Trying to invoke");
-            if (!EventInitializer.Instance.isInitialized)
+            if (!Global.eventManager.isInitialized)
             {
-                EventInitializer.Instance.onServicesInitilalised += () => { AddDictionary(); };
+                Global.eventManager.onServicesInitilalised += () => { AddDictionary(); };
             }
             else
             {
@@ -59,10 +57,21 @@ namespace Scripts.Gestures
             }
         }
 
+        public List<DynamicGesture> FromArsenal(GestureType type, Dictionary<string, IGestureAbility> arsenal)
+        {
+            var g = new List<DynamicGesture>();
+            foreach (var ability in arsenal)
+            {
+                if(characterGestures.ContainsKey(ability.Key))
+                 g.Add(characterGestures[ability.Key]);
+            }
+            return g;
+        }
+
         private async void AddDictionary()
         {
             allCharacterGestures.AddDictionary(
-                await GestureMapper.ReadCharacterGestures(_characterPool.charactersDict));
+                await GestureMapper.ReadCharacterGestures());
             characterGestures = allCharacterGestures.openDict;
             systemGestures = await GestureMapper.ReadFrameDatas("system");
             supportiveGestures = await GestureMapper.ReadFrameDatas("supportive");
@@ -112,7 +121,7 @@ namespace Scripts.Gestures
 
             if (!hasDynamic)
             {
-                gestures.Add(CreateNewFrame(frameData));
+                gestures.Add(CreateNewFrame(AbilityType.Character, frameData));
             }
 
             return new JsonCharacterProperties()
@@ -155,7 +164,7 @@ namespace Scripts.Gestures
             };
         }
 
-        private static JsonFrameStruct CreateNewFrame(FrameData frameData)
+        private static JsonFrameStruct CreateNewFrame(AbilityType type, FrameData frameData)
         {
             int index = GestureMapper.IndexOfName(frameData.name);
             List<string[]> frames = new List<string[]>();
@@ -179,7 +188,7 @@ namespace Scripts.Gestures
                 value = new JsonFrameProperty()
                 {
                     Frames = frames,
-                    Type = (int)GestureType.Weapon
+                    Type = (int)type
                 }
             };
             return t;
@@ -219,7 +228,7 @@ namespace Scripts.Gestures
                         RootFolder = "Resources/Characters/" + characterName,
                         Gestures = new List<JsonFrameStruct>()
                         {
-                            CreateNewFrame(frame)
+                            CreateNewFrame(AbilityType.Character, frame)
                         }
                     }
                     : AddFrameToChar(frame, dictionary[characterName]);

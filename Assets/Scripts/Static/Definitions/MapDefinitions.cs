@@ -4,7 +4,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace Scripts.Static.Definitions
 {
-    public struct Affected
+    public readonly struct Affected
     {
         public readonly PhysicLayer physicLayer;
         public readonly SurfaceType surfaceType;
@@ -46,6 +46,7 @@ namespace Scripts.Static.Definitions
         {
             return (int)physicLayer + " " + (int)surfaceType;
         }
+        public string toString => (int)physicLayer + " " + (int)surfaceType;
     }
 
     public enum PhysicLayer: byte

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Scripts.Events;
 using Scripts.Network;
 using Scripts.PlayerLogic;
@@ -13,7 +14,7 @@ using Unity.Services.Multiplay;
 
 namespace Scripts.GameControllers
 {
-    public class GameController : NetworkBehaviour
+    public class GameController : NetworkManager
     {
         public const int targetFPS = 60;
 
@@ -24,8 +25,6 @@ namespace Scripts.GameControllers
             _playersDict = new Dictionary<ulong, NetworkPlayerProcessor>();
 
         [SerializeField] private GameObject ServerInputSystem;
-
-        [SerializeField] private NetworkManager _networkManager;
         public Dictionary<ulong, NetworkPlayerProcessor> PlayersDict => _playersDict;
 
 #if DEDICATED_SERVER
@@ -107,45 +106,66 @@ namespace Scripts.GameControllers
 
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = targetFPS;
-
-            SessionManager.ReadCommandArgs(_networkManager);
+            SessionManager.ReadCommandArgs(this);
+            
 #if DEDICATED_SERVER
             EventInitializer.Instance.onServicesInitilalised += ListenServerEvents;
 #endif
+            
 #if !DEDICATED_SERVER
 
             ServerBrowser.ConnectToServer();
 #endif
 
 
-            _networkManager.OnClientConnectedCallback += ClientConnected;
-            _networkManager.OnClientDisconnectCallback += ClientDisconnected;
+            OnClientConnectedCallback += ClientConnected;
+            
+            OnClientDisconnectCallback += ClientDisconnected;
         }
 
         private void ClientConnected(ulong clientId)
         {
-            if (!_networkManager.IsServer)
-            {
-                l.rl(_networkManager.LocalClient.PlayerObject.name + " constructed!");
-            }
+          
 
-            if (_networkManager.IsServer)
+            if (IsServer)
             {
-                var client = _networkManager.ConnectedClients[clientId];
+                var client = ConnectedClients[clientId];
                 var player = client.PlayerObject.GetComponent<NetworkPlayerProcessor>();
-
+                // глобальная логика плеера и сразу какая-то странная инициализация оружий
                 _playersDict.Add(clientId, player);
+                _playersDict[clientId].onPoolPrefabs.AddListener(StartGameSession);
+                
                 l.rl("position: " + client.PlayerObject.transform.position);
+            }
+            if (!IsServer)
+            {
+                l.rl(LocalClient.PlayerObject.name + " constructed!");
+            }
+            
+        }
+
+        private void StartGameSession()
+        {
+            foreach (var player in _playersDict.Keys)
+            {
+                StartGameSessionClientRpc(player);
             }
         }
 
+        [ClientRpc]
+        private void StartGameSessionClientRpc(ulong playerId)
+        {
+            if(_playersDict[playerId].IsOwner)
+                  _playersDict[playerId].data.abilityController.UseCharacterAbilities();
+        }
+        
+        
         private void ClientDisconnected(ulong clientId)
         {
             if (_playersDict.ContainsKey(clientId))
                 _playersDict.Remove(clientId);
             l.rl(clientId + " disconnected!");
         }
-
         private void Update()
         {
 #if DEDICATED_SERVER

@@ -22,8 +22,8 @@ public class RingMenu : MonoBehaviour
         _rings.Clear();
         list.ForEach(e =>
         {
-            if (e.sectors == null)
-                Debug.Log("Ring " + e.name + " doesn't contain sectors!");
+            if (e.sectors ==
+                null) Debug.Log("Ring " + e.name + " doesn't contain sectors!");
             else
             {
                 first ??= e.name;

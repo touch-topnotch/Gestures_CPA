@@ -1,15 +1,18 @@
 using System;
+using Scripts.Static;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
 
 namespace Scripts.Events
 {
-    public class EventInitializer : MonoBehaviour
+    
+ 
+    public class EventManager : MonoBehaviour
     {
+        public UpdateEvent updateEvent = new UpdateEvent();
         public bool isInitialized;
         public event Action onServicesInitilalised;
-
         private async void CheckServicesInitialization()
         {
             if (UnityServices.State != ServicesInitializationState.Initialized)
@@ -24,19 +27,8 @@ namespace Scripts.Events
                 onServicesInitilalised?.Invoke();
             }
         }
-
-        public static EventInitializer Instance;
-
         private void Awake()
         {
-            if (Instance != null)
-                Destroy(this);
-            else
-            {
-                Instance = this;
-                DontDestroyOnLoad(this);
-            }
-
             Debug.Log("Event system initialized");
 
             onServicesInitilalised += () => { isInitialized = true; };
@@ -45,7 +37,7 @@ namespace Scripts.Events
 
         private void Update()
         {
-            UpdateEvent.Instance?.Invoke();
+            updateEvent?.Invoke();
         }
     }
 }

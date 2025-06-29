@@ -1,7 +1,8 @@
-using System;
-using System.Collections.Generic;
 using Components;
 using Gesture_Editor_SDK.Realtime;
+using Scripts.Events;
+using Scripts.Gestures;
+using Scripts.PlayerLogic;
 using Scripts.Static.Definitions;
 using Unity.Netcode;
 using UnityEngine;
@@ -23,85 +24,40 @@ namespace Scripts.Weapons
     /// можно быстро валидировать нагрузку на процессор между игроком и сервером, обрабатывая ивенты в первом или втором
     /// месте
     /// </summary>
-    /// <param name="CastStartedEvent">Invokes automatically, when first frame recognized</param>
+    
+    /// <param name="ReadyToBeCastedEvent">Invokes automatically, when the weapon might be casted (by gameplay) - do reset functions here. Like mana = 100, setActive(false), position = (0,0,0)</param>
     /// <param name="CastCancelledEvent">Invokes automatically, or by implementation - when player spent a lot of time for cast</param>
-    /// <param name="GestureCastedEvent">Invokes, when dynamic gesture recognized</param>
-    /// <param name="ActivatedEvent">Invoke it, when you want to activate it (Grab, Take, Push the button)</param>
-    /// <param name="DeactivatedEvent">Invoke it, when you want to deactivate it (Throw, Put, Push the button)</param>
-    /// <param name="HitStartedEvent">Invoke it, when the weapon is possible to take damage (katana speed > 0, switch turn on, spell sayed)</param>
-    /// <param name="HitStoppedEvent">Invoke it, when the weapons is not possible to take damage (katana speed  == 0, switch turn off) </param>
-    /// <param name="AbilityDestroyedEvent">Invoke it, when the weapon should be destroyed</param>
-    /// <param name="FrameRecognizedEvent">Invokes automatically, when the frame for cast is recognized</param>
-    /// <param name="ImpactEvent">Invoke it, when the weapon hit someone/something</param>
-    /// <param name="state"> NONE, Initialized, Casting, Cancelled, Deactivated, Activated, Destroyed</param>
+    /// <param name="GestureCastedEvent">Invokes automatically when dynamic gesture recognized</param>
+    /// <param name="ActivatedEvent">Must be invoked, when you want to activate it (Grab, Take, Push the button)</param>
+    /// <param name="DeactivatedEvent">Must be invoked, when you want to deactivate it (Throw, Put, Push the button)</param>
+    /// <param name="HitStartedEvent">Must be invoked, when the weapon is possible to take damage (katana speed > 0, switch turn on, spell sayed)</param>
+    /// <param name="HitStoppedEvent">Must be invoked, when the weapons is not possible to take damage (katana speed  == 0, switch turn off) </param>
+    /// <param name="AbilityDestroyedEvent">Must be invoked, when the weapon should be destroyed</param>
+    /// <param name="FrameRecognizedEvent<string>">Invokes automatically, when the frame for cast is recognized</param>
+    /// <param name="ImpactEvent<string>">Must be invoked, when the weapon hit someone/something. string - affected</param>
+
+    /// <param name="state"> Sets automatically, by calling Events. States: NONE, Initialized, Casting, Cancelled, Deactivated, Activated, Destroyed</param>
     /// <param name="invokeAvailable">Permission, which provides to invoke events (In base case
     /// you can invoke events in server or is owner client. </param>
-    public abstract class Weapon : NetworkRecognizableComponent
+    public class Weapon : NetworkRecognizableComponent
     {
-        public class WeaponEvent
-        {
-            private readonly ushort unityEventId;
-            private readonly Action<ushort> callServerRpc;
-            private readonly UnityEvent unityEvent;
-            public WeaponEvent(UnityEvent unityEvent, Action<ushort> callServerRpc, ushort unityEventId, bool isInvokeAvailable)
-            {
-                this.unityEvent = unityEvent;
-                this.callServerRpc = callServerRpc;
-                this.unityEventId = unityEventId;
-            }
-            public void AddListener(UnityAction a) => unityEvent.AddListener(a);
-            public void RemoveListener(UnityAction a) => unityEvent.RemoveListener(a);
-            public void Invoke()
-            {
-                callServerRpc(unityEventId);
-            }
-        }
-        public class WeaponEvent<T>
-        {
-            private readonly ushort unityEventId;
-            private readonly Action<T, ushort> callServerRpc;
-            private readonly UnityEvent<T> unityEvent;
-            private readonly bool isInvokeAvailable;
-            public WeaponEvent(UnityEvent<T> unityEvent, Action<T, ushort> callServerRpc, ushort unityEventId, bool isInvokeAvailable)
-            {
-                this.unityEvent = unityEvent;
-                this.callServerRpc = callServerRpc;
-                this.unityEventId = unityEventId;
-                this.isInvokeAvailable = isInvokeAvailable;
-            }
-            public void AddListener(UnityAction<T> a) => unityEvent.AddListener(a);
-            public void RemoveListener(UnityAction<T> a) => unityEvent.RemoveListener(a);
-            public void Invoke(T value)
-            {
-                if (isInvokeAvailable)
-                {
-                    callServerRpc(value, unityEventId);
-                }
-                else
-                {
-                    Debug.LogWarning("No permissions to invoke in this platform! Check Weapon.invokeAvailable");
-                }
-               
-            }
-        }
 
         [Header("Weapons components")]
         [SerializeField]
         protected WeaponDesign weaponDesign;
-        
-        [Range(0, 100)] 
-        protected int power = 100;
-        
         public WeaponState state { get; private set; } 
         
         protected virtual bool invokeAvailable => IsServer || (IsClient && IsOwner && !IsServer);
-        
+
+        protected bool isSubscribed { get; private set; }
+        public override string abilityName => transform.name.Split('_')[0];
+        public override AbilityType type => AbilityType.Character;
         #region Events
 
         /// <summary>
         /// This event invokes, when player starts to cast the weapon
         /// </summary>
-        protected WeaponEvent CastStartedEvent { get; private set; }
+        protected WeaponEvent ReadyToBeCastedEvent { get; private set; }
         
         /// <summary>
         /// This event invokes, when player cancel to cast the weapon
@@ -160,9 +116,10 @@ namespace Scripts.Weapons
         /// This function describes the hit impact ability.
         /// <returns>UnityEvent of type Affected for handling impact events.</returns>
         protected WeaponEvent<string> ImpactEvent { get; private set; }
-
-
-        private readonly UnityEvent _CastStarted = new UnityEvent();
+        
+        #region UnityEvents
+        
+        private readonly UnityEvent _ReadyToBeCasted = new UnityEvent();
         private readonly UnityEvent _CastCancelled = new UnityEvent();
         private readonly UnityEvent _GestureCasted = new UnityEvent();
         private readonly UnityEvent _Activated = new UnityEvent();
@@ -179,6 +136,8 @@ namespace Scripts.Weapons
         private UnityEvent[] _unityEvents;
         private UnityEvent<string>[] _unityParamEvents;
         #endregion
+        
+        #endregion
 
         #region RpcCalls
         
@@ -186,26 +145,32 @@ namespace Scripts.Weapons
         [ClientRpc]
         private void CallEventClientRpc(ushort eventId)
         {
+            if (IsServer)
+                return;
             _unityEvents[eventId]?.Invoke();
             Debug.Log("CallEventClientRpc(ushort eventId");
         }
         [ClientRpc]
         private void CallEventClientRpc(string value, ushort eventId)
         {
+            if (IsServer)
+                return;
             _unityParamEvents[eventId]?.Invoke(value);
-            Debug.Log("CallEventClientRpc(string " + value + ", ushort eventId");
+            Debug.Log($"CallEventClientRpc(string {value}, ushort eventId");
         }
         [ServerRpc]
         private void CallEventServerRpc(ushort eventId)
         {
             _unityEvents[eventId]?.Invoke();
+            CallEventClientRpc(eventId);
             Debug.Log("CallEventServerRpc(ushort eventId)");
         }
         [ServerRpc]
         private void CallEventServerRpc(string value, ushort eventId)
         {
             _unityParamEvents[eventId]?.Invoke(value);
-            Debug.Log("CallEventServerRpc(string " + value + ", ushort eventId");
+            CallEventClientRpc(value, eventId);
+            Debug.Log($"CallEventClientRpc(string {value}, ushort eventId");
         }
 
         
@@ -215,15 +180,14 @@ namespace Scripts.Weapons
         protected virtual void OnInitialized()
         {
         }
-
+        
         private void SubscribeEvents() 
         {
-            Debug.Log("ON NETWORK SPAWN_____________");
             _weaponEvents = new WeaponEvent[8];
             _weaponParamEvents = new WeaponEvent<string>[2];
             _unityEvents = new []
             {
-                _CastStarted,
+                _ReadyToBeCasted,
                 _CastCancelled,
                 _GestureCasted,
                 _Activated,
@@ -240,21 +204,20 @@ namespace Scripts.Weapons
                 {
                
                     _weaponEvents[i] = new WeaponEvent(_unityEvents[i], CallEventServerRpc, i, invokeAvailable);
-                    // if (IsClient)
-                    // {
-                    //     _unityEvents[i].AddListener(weaponDesign.actions[i]);
-                    // }
+                    if (IsClient)
+                    {
+                        _unityEvents[i].AddListener(weaponDesign.actions[i]);
+                    }
                 }
 
                 for (ushort i = 0; i < _weaponParamEvents.Length; i++)
                 {
                     _weaponParamEvents[i] = new WeaponEvent<string>(_unityParamEvents[i], CallEventServerRpc, i, invokeAvailable);
-                    // if (IsClient)
-                    // {
-                    //     _unityParamEvents[i].AddListener(weaponDesign.paramActions[i]);
-                    // }
+                    if (IsClient)
+                    {
+                        _unityParamEvents[i].AddListener(weaponDesign.paramActions[i]);
+                    }
                 }
-
             }
             catch
             {
@@ -263,7 +226,7 @@ namespace Scripts.Weapons
                 return;
             }
 
-            CastStartedEvent = _weaponEvents[0];
+            ReadyToBeCastedEvent = _weaponEvents[0];
             CastCancelledEvent = _weaponEvents[1];
             GestureCastedEvent = _weaponEvents[2];
             ActivatedEvent = _weaponEvents[3];
@@ -276,33 +239,44 @@ namespace Scripts.Weapons
             
             
             state = WeaponState.Initialized;
-            _CastStarted.AddListener(() => { state = WeaponState.Casting;});
+            _FrameRecognized.AddListener((e) => { state =  WeaponState.Casting;});
             _CastCancelled.AddListener(() => { state = WeaponState.Cancelled;});
             _Activated.AddListener(() => { state = WeaponState.Activated; });
             _Deactivated.AddListener(() => { state = WeaponState.Deactivated; });
             _AbilityDestroyed.AddListener(() => { state = WeaponState.Destroyed;});
+            _AbilityDestroyed.AddListener( () =>{ AbilityReleasedEvent.Invoke(); });
+            isSubscribed = true;
+        }
+
+        
+    
+        public override void Initialize(PlayerData data, DynamicGesture gesture)
+        {
+            base.Initialize(data, gesture);
+            SubscribeEvents();
+            weaponDesign.playerData = data;
             OnInitialized();
+        }
+
+        public override void ReadyToBeRecognized()
+        {
+            ReadyToBeCastedEvent?.Invoke();
         }
 
         public sealed override void OnFrameRecognized(string name)
         {
             FrameRecognizedEvent?.Invoke(name);
         }
-
-        public sealed override void OnNetworkSpawn()
+        public sealed override void OnGestureCasted()
         {
-            base.OnNetworkSpawn();
-            SubscribeEvents();
+            GestureCastedEvent?.Invoke();
         }
 
-        protected override void OnAbilityReleased()
-        {
-            AbilityDestroyedEvent?.Invoke();
-        }
+        public override UnityEvent AbilityReleasedEvent { get; set; }
 
-        public override void OnGestureCasted()
+        public override void AddMissingComponents()
         {
-            DeactivatedEvent?.Invoke();
+            weaponDesign ??= GetComponent<WeaponDesign>();
         }
     }
 }

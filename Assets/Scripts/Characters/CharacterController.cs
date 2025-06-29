@@ -4,28 +4,24 @@ using Characters;
 using Gesture_Editor_SDK.EditorAttributes.InspectorButtonAttribute;
 using Scripts.Design;
 using Scripts.HandsLogic;
-using Scripts.PlayerLogic;
 using Scripts.Static;
+using Scripts.Static.Definitions;
 using Scripts.Systems;
-using Scripts.Tests;
-using Scripts.Weapons;
 using Sirenix.OdinInspector;
-using Unity.Netcode;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace Scripts.Characters
 {
-    public class CharacterPool : MonoBehaviour
+    public class CharacterController : MonoBehaviour
     {
-        [Header("Properties")] [SerializeField]
-        private string _currentCharacterName = "";
+        private AvatarType _currentType;
+        
+        [BoxGroup("Object pool")] 
+        public List<CharacterData> characterConfigs;
 
-        [EnumToggleButtons] [SerializeField] private AvatarType _currentType;
-
-        [BoxGroup("Object pool")] public List<CharacterData> characterConfigs;
-        public Dictionary<string, Character> charactersDict { get; private set; }
+        public Dictionary<string, Character> charactersDict = new Dictionary<string, Character>();
 
         [BoxGroup("Object pool")] [SerializeField]
         private List<MaterialPair> _materials = new List<MaterialPair>();
@@ -33,10 +29,14 @@ namespace Scripts.Characters
         [SerializeField] private Hands _hands;
 
         [Header("Events")] public UnityEvent<string> characterChangedEvent = new();
+        public UnityEvent onCharactersSpawn = new();
+        private string _currentCharacterName = CharacterType.Anger.ToString();
+        private bool _isInitialized;
 
         public Character currentCharacter => charactersDict.ContainsKey(_currentCharacterName)
             ? charactersDict[_currentCharacterName]
             : null;
+        
 
         #region Unity Inspectors tools
 
@@ -159,39 +159,10 @@ namespace Scripts.Characters
             foreach (var VARIABLE in characterConfigs)
             {
                 charactersDict.Add(VARIABLE.characterName, InitialiseCharacter(VARIABLE));
+                
             }
-        }
-
-
-        public List<KeyValuePair<string, List<ulong>>> SpawnWeapons()
-        {
-            var all_weapons = new List<KeyValuePair<string, List<ulong>>>();
-            foreach (var VARIABLE in characterConfigs)
-            {
-                var spawns = charactersDict[VARIABLE.characterName].SpawnWeapons(VARIABLE.weapons, PlayerData.local);
-                all_weapons.Add(new(VARIABLE.characterName, spawns));
-            }
-
-            return all_weapons;
-        }
-
-        public void SetWeapons(List<KeyValuePair<string, List<ulong>>> weapons)
-        {
-            foreach (var char_weapons in weapons)
-            {
-                charactersDict[char_weapons.Key].SetWeapons(char_weapons.Value);
-                // foreach (var VARIABLE in char_weapons.Value)
-                // {
-                //     NetworkManager.Singleton.SpawnManager.SpawnedObjects[VARIABLE].GetComponent<Weapon>()
-                //         .Initialize(PlayerData.local);
-                // }
-            }
-        }
-
-
-        private void Start()
-        {
-            characterChangedEvent.AddListener(LogCharacter);
+            Debug.Log("Character spawned: " + Debugger.dictionaryToString(charactersDict, false, true));
+            onCharactersSpawn?.Invoke();
         }
 
         private Character InitialiseCharacter(CharacterData data)
@@ -200,7 +171,7 @@ namespace Scripts.Characters
             charInstance.transform.SetParent(this.transform, false);
             charInstance.name = data.characterName;
             var character = charInstance.AddComponent<Character>();
-            character.SpawnCharacters(data);
+            character.SpawnCharacter(data);
             return character;
         }
 
@@ -216,6 +187,7 @@ namespace Scripts.Characters
             _currentType = type;
             if (currentCharacter != null)
                 currentCharacter.ChangeAvatarType(type, _hands);
+            
         }
 
         public void SetCharacter(string name)
@@ -280,8 +252,7 @@ namespace Scripts.Characters
 
             if (_hands && currentCharacter)
             {
-                currentCharacter.RefreshAvatars();
-                currentCharacter.ChangeMaterials(_hands.HandMaterialPair, _currentType);
+                currentCharacter.ChangeAvatarType(_currentType, _hands);
             }
         }
     }

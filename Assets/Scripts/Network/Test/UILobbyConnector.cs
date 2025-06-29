@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Scripts.Events;
+using Scripts.Static;
 using Unity.Netcode;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
@@ -27,7 +28,7 @@ namespace Network.Test
         {
             if (CreateOnAwake || Application.platform == RuntimePlatform.Android)
             {
-                EventInitializer.Instance.onServicesInitilalised += CreateLobby;
+                Global.eventManager.onServicesInitilalised += CreateLobby;
             }
         }
 

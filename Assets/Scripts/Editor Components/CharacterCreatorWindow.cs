@@ -16,6 +16,7 @@ using Sirenix.OdinInspector.Editor;
 using UnityEditor;
 using UnityEngine;
 using Avatar = Scripts.PlayerLogic.Avatar;
+using CharacterController = Scripts.Characters.CharacterController;
 
 public class CharacterCreatorWindow : OdinEditorWindow
 {
@@ -165,21 +166,21 @@ public class CharacterCreatorWindow : OdinEditorWindow
         AssetDatabase.SaveAssets();
 
 
-        var characterPoolAsset = AssetDatabase.LoadAssetAtPath<GameObject>(CustomPaths.CharacterManager);
-        var characterPoolInstance =
-            (PrefabUtility.InstantiatePrefab(characterPoolAsset) as GameObject);
-        if (characterPoolInstance)
+        var characterControllerAsset = AssetDatabase.LoadAssetAtPath<GameObject>(CustomPaths.CharacterManager);
+        var characterControllerInstance =
+            (PrefabUtility.InstantiatePrefab(characterControllerAsset) as GameObject);
+        if (characterControllerInstance)
         {
-            var characterPool = characterPoolInstance.GetComponent<CharacterPool>();
-            if (characterPool)
+            var characterController = characterControllerInstance.GetComponent<CharacterController>();
+            if (characterController)
             {
                 var isReplaced = false;
-                for (int i = 0; i < characterPool.characterConfigs.Count; i++)
+                for (int i = 0; i < characterController.characterConfigs.Count; i++)
                 {
-                    if (characterPool.characterConfigs[i]?.characterName == characterName)
+                    if (characterController.characterConfigs[i]?.characterName == characterName)
                     {
                         isReplaced = true;
-                        characterPool.characterConfigs[i] =
+                        characterController.characterConfigs[i] =
                             AssetDatabase.LoadAssetAtPath<CharacterData>(path + "/CharData_" + characterName +
                                                                          ".asset");
                         break;
@@ -187,16 +188,16 @@ public class CharacterCreatorWindow : OdinEditorWindow
                 }
 
                 if (!isReplaced)
-                    characterPool.characterConfigs.Add(characterData);
+                    characterController.characterConfigs.Add(characterData);
             }
 
-            PrefabUtility.SaveAsPrefabAssetAndConnect(characterPoolInstance,
+            PrefabUtility.SaveAsPrefabAssetAndConnect(characterControllerInstance,
                 "Assets/Prefabs/Managers/CharacterController.prefab", InteractionMode.AutomatedAction);
         }
 
         DestroyImmediate(modelInstance);
-        DestroyImmediate(characterPoolAsset);
-        DestroyImmediate(characterPoolInstance);
+        DestroyImmediate(characterControllerAsset);
+        DestroyImmediate(characterControllerInstance);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
 

@@ -143,7 +143,7 @@ namespace Scripts.Tests
         {
             TelegramBotProcessor.Instance.StartReceiving();
             TelegramBotProcessor.onMessageReceived += OnMessageReceived;
-            _player.curRig.headInteraction.onHeadInteraction += (type) =>
+            _player.data.rig.headInteraction.onHeadInteraction += (type) =>
             {
                 switch (type)
                 {
@@ -238,7 +238,7 @@ namespace Scripts.Tests
                 coll = GestureCollections.system;
             }
 
-            await _player.gestureCombiner.library.RecordFrame(handStruct, coll, characterLabel.text);
+            await _player.data.gesturesLibrary.RecordFrame(handStruct, coll, characterLabel.text);
         }
 
         public virtual void RecordName(string name)

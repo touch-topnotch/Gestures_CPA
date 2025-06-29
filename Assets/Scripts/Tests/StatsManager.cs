@@ -14,7 +14,7 @@ namespace Scripts.Tests
         [Inject] private Rig rig;
         private bool isActive = true;
         private Vector3 lastPostion;
-        private UpdateEvent onUpdate => UpdateEvent.Instance;
+        private UpdateEvent onUpdate => Global.updateEvent;
 
         private void Start()
         {

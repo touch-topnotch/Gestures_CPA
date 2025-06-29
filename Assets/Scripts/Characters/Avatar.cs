@@ -1,17 +1,11 @@
 using System;
+using Scripts.Static.Definitions;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;
 
 namespace Scripts.PlayerLogic
 {
-    public enum AvatarType
-    {
-        Local,
-        Enemy,
-        None
-    }
-
     public class Avatar : MonoBehaviour
     {
         public AvatarType type;

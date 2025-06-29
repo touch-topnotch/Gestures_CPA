@@ -133,7 +133,7 @@ public abstract class GrabSystem : InheritedComponent<Player>
     protected bool RecognizeFrame(string grabGesture)
     {
         return Recognizer.RecognizeFrame(_recognitionProperties,
-            _playerData.library.supportiveGestures[grabGesture]);
+            _playerData.gesturesLibrary.supportiveGestures[grabGesture]);
     }
 
     protected IEnumerator UnGrab(GrabPoint grabPoint, bool needOnGrabEndedRaise)

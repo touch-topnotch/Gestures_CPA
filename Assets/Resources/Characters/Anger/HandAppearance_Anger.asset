@@ -23,11 +23,12 @@ MonoBehaviour:
     SerializationNodes:
     - Name: handStages
       Entry: 7
-      Data: 0|System.Collections.Generic.Dictionary`2[[Scripts.PlayerLogic.AvatarType,
-        Assembly-CSharp],[Scripts.Design.HandStageProps, Assembly-CSharp]], mscorlib
+      Data: 0|System.Collections.Generic.Dictionary`2[[Scripts.Static.Definitions.AvatarType,
+        Assembly-CSharp],[Scripts.Static.Definitions.HandStageProps, Assembly-CSharp]],
+        mscorlib
     - Name: comparer
       Entry: 7
-      Data: 1|System.Collections.Generic.EnumEqualityComparer`1[[Scripts.PlayerLogic.AvatarType,
+      Data: 1|System.Collections.Generic.EnumEqualityComparer`1[[Scripts.Static.Definitions.AvatarType,
         Assembly-CSharp]], mscorlib
     - Name: 
       Entry: 12
@@ -49,7 +50,7 @@ MonoBehaviour:
       Data: 0
     - Name: $v
       Entry: 7
-      Data: Scripts.Design.HandStageProps, Assembly-CSharp
+      Data: Scripts.Static.Definitions.HandStageProps, Assembly-CSharp
     - Name: MainColor
       Entry: 7
       Data: UnityEngine.Color, UnityEngine.CoreModule
@@ -232,7 +233,7 @@ MonoBehaviour:
       Data: 1
     - Name: $v
       Entry: 7
-      Data: Scripts.Design.HandStageProps, Assembly-CSharp
+      Data: Scripts.Static.Definitions.HandStageProps, Assembly-CSharp
     - Name: MainColor
       Entry: 7
       Data: UnityEngine.Color, UnityEngine.CoreModule
@@ -416,4 +417,4 @@ MonoBehaviour:
   mainColor: {r: 0.6415094, g: 0.3595557, b: 0, a: 0.6}
   accentColor: {r: 1, g: 0.5, b: 0, a: 0.8}
   fingerColor: {r: 0.6037736, g: 0.26601684, b: 0, a: 0.6}
-  tempType: 1
+  tempType: 0

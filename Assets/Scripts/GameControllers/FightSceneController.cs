@@ -5,13 +5,13 @@ namespace Scripts.GameControllers
     public class FightSceneController : MonoBehaviour
     {
         // private NetworkPlayer _networkPlayer;
-        // private GestureCombiner _gestureCombiner;
+        // private abilityController _abilityController;
         //
         // [Inject]
-        // private void Construct(NetworkPlayer networkPlayer, GestureCombiner gestureCombiner)
+        // private void Construct(NetworkPlayer networkPlayer, abilityController abilityController)
         // {
         //     _networkPlayer = networkPlayer;
-        //     _gestureCombiner = gestureCombiner;
+        //     _abilityController = abilityController;
         // }
     }
 }

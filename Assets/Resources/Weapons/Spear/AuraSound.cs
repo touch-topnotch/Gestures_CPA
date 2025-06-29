@@ -47,4 +47,6 @@ public class AuraSound : PrefabSerializedMonoBehaviour
             _audioProcessor.ActivateRandomResource(name);
         }
     }
+
+    protected override bool shouldAddMissingComponents { get; }
 }

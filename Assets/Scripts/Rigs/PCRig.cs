@@ -31,11 +31,13 @@ namespace Scripts.PlayerLogic
 
             if (hands)
                 hands.OnEnabled();
+            
             _waitUntilNextFrame = new WaitForSeconds(handsProperties.delayOnFrame);
-            _library = PlayerData.local.library;
-
+            _library = inherited.data.gesturesLibrary;
+            
             _library.onLibraryInitialized += PrepareRingData;
-            inherited.onPlayerModeChanged.AddListener(ps => { gestureMenu.isActive = ps == PlayerMode.MENU; });
+            inherited.data.onPlayerModeChanged.AddListener(ps => { gestureMenu.isActive = ps == PlayerMode.MENU; });
+            
             inherited.playerMode = PlayerMode.ACTIVE;
         }
 
@@ -86,7 +88,7 @@ namespace Scripts.PlayerLogic
         private void SimulateFrame(string key)
         {
             // выход - отдавать КОПИЮ фрейма, а не сам фрейм
-            hands.MoveHands(_library.allAvailableFrames[key].ParentedFrame(inherited.anchors.Body),
+            hands.MoveHands(_library.allAvailableFrames[key].ParentedFrame(inherited.data.bodyAnchors.Body),
                 handsProperties.handSpeed, () => { },
                 !InputExtension.CtrlOrCmd());
         }
@@ -101,7 +103,7 @@ namespace Scripts.PlayerLogic
                 return;
 
             Debug.Log("Simulating " + key);
-            hands.MoveHands(_library.allAvailableFrames[frameName].ParentedFrame(inherited.anchors.Body),
+            hands.MoveHands(_library.allAvailableFrames[frameName].ParentedFrame(inherited.data.bodyAnchors.Body),
                 handsProperties.handSpeed,
                 () => { StartCoroutine(WaitUntilNextFrame(nextFrame)); },
                 !InputExtension.CtrlOrCmd());
@@ -164,6 +166,12 @@ namespace Scripts.PlayerLogic
 
             if (inherited.playerMode == PlayerMode.MENU)
                 _personController.cameraCanMove = Input.GetKey(KeyCode.LeftShift);
+        }
+
+        public override void OnDisable()
+        {
+            base.OnDisable();
+            gestureMenu.isActive = false;
         }
     }
 }

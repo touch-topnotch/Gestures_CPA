@@ -43,7 +43,6 @@ MonoBehaviour:
   - {fileID: 114350483966675027}
   - {fileID: 114350483966675033}
   - {fileID: 114350483966675048}
-  - {fileID: 114350483966675080}
   - {fileID: 114350483966675094}
   - {fileID: 114350483966675098}
   - {fileID: 114350483966675100}
@@ -301,7 +300,7 @@ MonoBehaviour:
     serializedVersion: 2
     x: -38
     y: 512
-    width: 3473
+    width: 3472
     height: 2096
 --- !u!114 &114350483966674978
 MonoBehaviour:
@@ -1352,7 +1351,7 @@ MonoBehaviour:
   m_Parent: {fileID: 114350483966674976}
   m_Children:
   - {fileID: 114350483966675024}
-  m_UIPosition: {x: 889, y: 1809}
+  m_UIPosition: {x: 889, y: 1815}
   m_UICollapsed: 0
   m_UISuperCollapsed: 0
   m_InputSlots:
@@ -1421,7 +1420,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0,
           Culture=neutral, PublicKeyToken=null
-      m_SerializableObject: '{"obj":{"fileID":10307,"guid":"0000000000000000f000000000000000","type":0}}'
+      m_SerializableObject: '{"obj":{"fileID":10300,"guid":"0000000000000000f000000000000000","type":0}}'
     m_Space: 2147483647
   m_Property:
     name: mainTexture
@@ -2859,65 +2858,6 @@ MonoBehaviour:
         PublicKeyToken=b77a5c561934e089
   m_Direction: 1
   m_LinkedSlots: []
---- !u!114 &114350483966675080
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 87cb5bd24541ed041b011b1ffa05dae5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_UIIgnoredErrors: []
-  m_Parent: {fileID: 114350483966674976}
-  m_Children: []
-  m_UIPosition: {x: -38, y: 1731}
-  m_UICollapsed: 0
-  m_UISuperCollapsed: 0
-  m_InputSlots: []
-  m_OutputSlots:
-  - {fileID: 114350483966675081}
-  attribute: HandsDistance
-  location: 0
-  AttributeType: 0
---- !u!114 &114350483966675081
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f780aa281814f9842a7c076d436932e7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_UIIgnoredErrors: []
-  m_Parent: {fileID: 0}
-  m_Children: []
-  m_UIPosition: {x: 0, y: 0}
-  m_UICollapsed: 1
-  m_UISuperCollapsed: 0
-  m_MasterSlot: {fileID: 114350483966675081}
-  m_MasterData:
-    m_Owner: {fileID: 114350483966675080}
-    m_Value:
-      m_Type:
-        m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
-          PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: 0
-    m_Space: 2147483647
-  m_Property:
-    name: HandsDistance
-    m_serializedType:
-      m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
-        PublicKeyToken=b77a5c561934e089
-  m_Direction: 1
-  m_LinkedSlots:
-  - {fileID: 114350483966675483}
 --- !u!114 &114350483966675094
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2933,7 +2873,7 @@ MonoBehaviour:
   m_UIIgnoredErrors: []
   m_Parent: {fileID: 114350483966674976}
   m_Children: []
-  m_UIPosition: {x: 710, y: 1162}
+  m_UIPosition: {x: 729, y: 1175}
   m_UICollapsed: 0
   m_UISuperCollapsed: 0
   m_InputSlots:
@@ -3268,7 +3208,7 @@ MonoBehaviour:
   m_UIIgnoredErrors: []
   m_Parent: {fileID: 114350483966674976}
   m_Children: []
-  m_UIPosition: {x: 300, y: 1830}
+  m_UIPosition: {x: 362, y: 1716}
   m_UICollapsed: 0
   m_UISuperCollapsed: 0
   m_InputSlots:
@@ -3579,7 +3519,7 @@ MonoBehaviour:
   - {fileID: 114350483966675115}
   - {fileID: 114350483966675116}
   m_UIPosition: {x: 0, y: 0}
-  m_UICollapsed: 1
+  m_UICollapsed: 0
   m_UISuperCollapsed: 0
   m_MasterSlot: {fileID: 114350483966675113}
   m_MasterData:
@@ -3983,10 +3923,10 @@ MonoBehaviour:
   - m_Id: 0
     linkedSlots:
     - outputSlot: {fileID: 114350483966675124}
-      inputSlot: {fileID: 114350483966675025}
-    - outputSlot: {fileID: 114350483966675124}
       inputSlot: {fileID: 114350483966675455}
-    position: {x: 754.5, y: 2232.5}
+    - outputSlot: {fileID: 114350483966675124}
+      inputSlot: {fileID: 114350483966675025}
+    position: {x: 718, y: 2344}
     expandedSlots: []
     expanded: 0
 --- !u!114 &114350483966675124
@@ -4023,8 +3963,8 @@ MonoBehaviour:
         PublicKeyToken=b77a5c561934e089
   m_Direction: 1
   m_LinkedSlots:
-  - {fileID: 114350483966675025}
   - {fileID: 114350483966675455}
+  - {fileID: 114350483966675025}
 --- !u!114 &114350483966675125
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4970,16 +4910,16 @@ MonoBehaviour:
       inputSlot: {fileID: 114350483966675386}
     - outputSlot: {fileID: 114350483966675155}
       inputSlot: {fileID: 114350483966675520}
-    position: {x: 710, y: 1395.5}
+    position: {x: 631, y: 1613}
     expandedSlots: []
-    expanded: 0
+    expanded: 1
   - m_Id: 1
     linkedSlots:
     - outputSlot: {fileID: 114350483966675155}
       inputSlot: {fileID: 114350483966675459}
     - outputSlot: {fileID: 114350483966675155}
       inputSlot: {fileID: 114350483966675509}
-    position: {x: 691.5, y: 1962}
+    position: {x: 828, y: 2414}
     expandedSlots: []
     expanded: 0
 --- !u!114 &114350483966675155
@@ -10597,7 +10537,7 @@ MonoBehaviour:
   m_Parent: {fileID: 114350483966674976}
   m_Children:
   - {fileID: 114350483966675411}
-  m_UIPosition: {x: 1455, y: 1866}
+  m_UIPosition: {x: 1455, y: 1886}
   m_UICollapsed: 0
   m_UISuperCollapsed: 0
   m_InputSlots:
@@ -11006,7 +10946,7 @@ MonoBehaviour:
   m_UIIgnoredErrors: []
   m_Parent: {fileID: 114350483966674976}
   m_Children: []
-  m_UIPosition: {x: 425, y: 2157}
+  m_UIPosition: {x: 397, y: 2040}
   m_UICollapsed: 0
   m_UISuperCollapsed: 0
   m_InputSlots:
@@ -11152,7 +11092,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: 1.5
+      m_SerializableObject: 2.49
     m_Space: 2147483647
   m_Property:
     name: Lacunarity
@@ -11186,7 +11126,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: 8
+      m_SerializableObject: 2
     m_Space: 2147483647
   m_Property:
     name: Octaves
@@ -11742,7 +11682,7 @@ MonoBehaviour:
       m_Type:
         m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
           PublicKeyToken=b77a5c561934e089
-      m_SerializableObject: 0.8
+      m_SerializableObject: 0.5
     m_Space: 2147483647
   m_Property:
     name: b
@@ -12190,8 +12130,7 @@ MonoBehaviour:
       m_SerializableType: System.Single, mscorlib, Version=4.0.0.0, Culture=neutral,
         PublicKeyToken=b77a5c561934e089
   m_Direction: 0
-  m_LinkedSlots:
-  - {fileID: 114350483966675081}
+  m_LinkedSlots: []
 --- !u!114 &114350483966675484
 MonoBehaviour:
   m_ObjectHideFlags: 0

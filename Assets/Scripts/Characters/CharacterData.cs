@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Scripts.Design;
 using Scripts.PlayerLogic;
+using Scripts.Static.Definitions;
 using Sirenix.OdinInspector;
 using UnityEngine;
 

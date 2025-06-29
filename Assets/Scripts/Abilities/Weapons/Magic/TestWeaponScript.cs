@@ -12,7 +12,7 @@ namespace Scripts.Weapons.Magic
         protected override void OnInitialized()
         {
             testCastStart.onClick.AddListener(
-                () => {CastStartedEvent.Invoke();});
+                () => {ReadyToBeCastedEvent.Invoke();});
             testFrameRecognized.onClick.AddListener(
                 ()=>{FrameRecognizedEvent.Invoke("piska");});
         }

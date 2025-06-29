@@ -213,7 +213,7 @@ public class Spear_WD : WeaponDesign
     //     base.OnGrabbed();
     //     _spearAura.SetActive(false);
     // }
-    public override void OnCastStarted()
+    public override void OnReadyToBeCasted()
     {
         throw new System.NotImplementedException();
     }

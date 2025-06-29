@@ -6,6 +6,7 @@ using Scripts.Design;
 using Scripts.Events;
 using Scripts.Gestures;
 using Scripts.PlayerLogic;
+using Scripts.Static;
 using Scripts.Systems;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -50,7 +51,7 @@ namespace Scripts.HandsLogic
 
         private readonly List<PinPongProp> _pinPongs = new();
 
-        private UpdateEvent onUpdate => UpdateEvent.Instance;
+        private UpdateEvent onUpdate => Global.updateEvent;
 
         private bool _isPlaced;
         private Action _onPlaced;
@@ -155,7 +156,6 @@ namespace Scripts.HandsLogic
         {
             gameObject.SetActive(true);
             ChangeColor(new Color(0.6f, 0.6f, 0.6f, 0.6f), HandShaderProps.EdgeColor);
-            Debug.Log("SHOW HAND");
         }
 
 

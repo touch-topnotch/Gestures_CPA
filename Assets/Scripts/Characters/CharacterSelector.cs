@@ -1,33 +1,23 @@
-using System;
-using Scripts.Characters;
-using Scripts.PlayerLogic;
 using UnityEngine;
 
-namespace Characters
+namespace Scripts.Characters
 {
     public class CharacterSelector : MonoBehaviour
     {
-        enum DebugCharacters
-        {
-            Anger,
-            Grief,
-            Bravery
-        }
-
-        [SerializeField] private DebugCharacters currentCharacter;
-        [SerializeField] private CharacterPool _characterPool;
+        
+        [SerializeField] private CharacterController _characterController;
 
         private void OnValidate()
         {
-            if (_characterPool == null)
+            if (_characterController == null)
             {
-                _characterPool = this.gameObject.GetComponentInChildren<CharacterPool>();
+                _characterController = this.gameObject.GetComponentInChildren<CharacterController>();
             }
         }
 
         private void Start()
         {
-            _characterPool.SetCharacter(currentCharacter.ToString());
+         //   _characterController.SetCharacter(currentCharacter.ToString());
         }
     }
 }

@@ -28,6 +28,7 @@ namespace Scripts
         }
     }
 
+    [ExecuteInEditMode]
     public class VFXPropertyFinder : MonoBehaviour
     {
         public List<VFXProperty> properties = new List<VFXProperty>();
@@ -89,22 +90,22 @@ namespace Scripts
             }
         }
     }
-#if UNITY_EDITOR
-
-    [CustomEditor(typeof(VFXPropertyFinder))]
-    public class VFXPropertyFinderEditor : Editor
-    {
-        public override void OnInspectorGUI()
-        {
-            base.OnInspectorGUI();
-            var finder = ((VFXPropertyFinder)target);
-            if (GUILayout.Button("Add Missing Components"))
-            {
-                finder.AddBindings();
-            }
-
-            ((VFXPropertyFinder)target).Update();
-        }
-    }
-#endif
+// #if UNITY_EDITOR
+//
+//     [CustomEditor(typeof(VFXPropertyFinder))]
+//     public class VFXPropertyFinderEditor : Editor
+//     {
+//         public override void OnInspectorGUI()
+//         {
+//             base.OnInspectorGUI();
+//             var finder = ((VFXPropertyFinder)target);
+//             if (GUILayout.Button("Add Missing Components"))
+//             {
+//                 finder.AddBindings();
+//             }
+//
+//             ((VFXPropertyFinder)target).Update();
+//         }
+//     }
+// #endif
 }

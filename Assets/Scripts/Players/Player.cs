@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Scrips.Components;
+using Scripts.Abilities;
 using Scripts.Characters;
 using Scripts.Components;
 using Scripts.Events;
@@ -16,112 +17,123 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
+using CharacterController = Scripts.Characters.CharacterController;
 
 
 namespace Scripts.PlayerLogic
 {
+    // public class PlayerData
+    // {
+    //     public readonly ulong id;
+    //     public readonly BodyAnchors bodyAnchors;
+    //     public readonly PlayerHands hands;
+    //     public readonly GesturesLibrary library;
+    //     public static PlayerData local;
+    //
+    //     public PlayerData(ulong id, BodyAnchors bodyAnchors, PlayerHands hands, GesturesLibrary library)
+    //     {
+    //         this.id = id;
+    //         this.bodyAnchors = bodyAnchors;
+    //         this.hands = hands;
+    //         this.gesturesLib = library;
+    //     }
+    // }
+
+    [Serializable]
     public class PlayerData
     {
-        public readonly ulong id;
-        public readonly BodyAnchors bodyAnchors;
-        public readonly PlayerHands hands;
-        public readonly GesturesLibrary library;
+        [DisableInEditorMode]
+        public ulong id;
+        public BodyAnchors bodyAnchors;
+        public PlayerHands hands;
+        public AbilityController abilityController;
+        public CharacterController characterController;
+        [HideInEditorMode]
+        public Rig rig;
+        [BoxGroup("Events")]
+        public UnityEvent onComponentsInitialized = new UnityEvent();
+        [BoxGroup("Events")]
+        public UnityEvent<PlayerMode> onPlayerModeChanged = new UnityEvent<PlayerMode>();
+        [BoxGroup("Events")]
+        public UnityEvent<RigType> onPlayerRigChanged = new UnityEvent<RigType>();
+        
+        public Character character => characterController.currentCharacter;
+        public Avatar avatar => character.curAvatar;
+        public GesturesLibrary gesturesLibrary => abilityController.gesturesLib;
+        
         public static PlayerData local;
-
-        public PlayerData(ulong id, BodyAnchors bodyAnchors, PlayerHands hands, GesturesLibrary library)
-        {
-            this.id = id;
-            this.bodyAnchors = bodyAnchors;
-            this.hands = hands;
-            this.library = library;
-        }
+        public static readonly PlayerMode[] modesWithGestureRecognition =
+            { PlayerMode.MENU, PlayerMode.DYED, PlayerMode.ACTIVE };
     }
 
 
     public class Player : SmartComponent
     {
-        [Header("Runtime Settings")] [SerializeField]
+        public bool isInitialized { get; set; }
+        [BoxGroup("Runtime Settings")] [SerializeField][DisableInPlayMode]
         private bool isLocal;
-
+        [BoxGroup("Runtime Settings")][SerializeField][EnumToggleButtons][ShowInInspector][OnValueChanged("ActivateRig")][Space()][DisableInPlayMode]
+        private RigType _rigType;
+        [BoxGroup("Runtime Settings")][SerializeField][EnumToggleButtons][ShowInInspector][Space()][DisableInPlayMode]
         private PlayerMode _playerMode;
+  
+        [BoxGroup("Runtime Settings")][EnumToggleButtons][SerializeField][Space()][OnValueChanged("ChangeAvatarFromInspector")]
+        private AvatarType _debugAvatar;
+        [BoxGroup("Runtime Settings")][SerializeField][ShowInInspector][Space()][DisableInPlayMode]
+        public CharacterType debugCharacter;
 
-        [EnumToggleButtons]
-        [ShowInInspector]
+        [SerializeField]
+        private PlayerData _data;
+        [SerializeField] 
+        private Rig[] _rigList;
+        
+        private Dictionary<RigType, Rig> _rigDict = new ();
+        
+        
         public PlayerMode playerMode
         {
             get => _playerMode;
             set
             {
                 _playerMode = value;
-                onPlayerModeChanged.Invoke(_playerMode);
+                data.onPlayerModeChanged?.Invoke(_playerMode);
             }
         }
-
-        [InspectorName("Debug Rig")] [SerializeField] [EnumToggleButtons] [OnValueChanged("ActivateRig")]
-        private RigType _rigType;
 
         public RigType rigType
         {
             get => _rigType;
             set
             {
-                Debug.Log("Rig type changed on " + value);
                 _rigType = value;
-                curRig = _rigDict[_rigType];
                 ActivateRig();
+             
             }
         }
-
-        [SerializeField] private Rig[] _rigList;
-        private Dictionary<RigType, Rig> _rigDict = new Dictionary<RigType, Rig>();
-
-        [Header("Components")] [FormerlySerializedAs("_characterController")] [SerializeField]
-        private CharacterPool _characterPool;
-
-        [SerializeField] private GestureCombiner _gestureCombiner;
-        public Rig curRig { get; private set; }
-
-        [Header("Anchors")] [SerializeField] private BodyAnchors _anchors;
-
-        [SerializeField] private PlayerHands _hands;
-
-        [HideInInspector] public PlayerData data => _data ??= SetPlayerData();
-        private PlayerData _data;
-        public GestureCombiner gestureCombiner => _gestureCombiner;
-        public BodyAnchors anchors => _anchors;
-        public Character character => _characterPool.currentCharacter;
-        public CharacterPool characterPool => _characterPool;
-
-        public static readonly PlayerMode[] modesWithGestureRecognition =
-            { PlayerMode.MENU, PlayerMode.DYED, PlayerMode.ACTIVE };
-
-        public UnityEvent<PlayerMode> onPlayerModeChanged = new UnityEvent<PlayerMode>();
-
-        public PlayerData SetPlayerData()
-        {
-            return new PlayerData(0, _anchors, _hands, _gestureCombiner?.library);
-        }
-
+        public PlayerData data => _data;
         private void ActivateRig()
         {
             foreach (var rig in _rigList)
             {
                 rig.gameObject.SetActive(_rigType == rig.type);
+  
                 if (rig.type == _rigType && Application.isPlaying)
+                {
                     rig.Initialize();
+                    _data.rig = rig;
+                }
             }
         }
 
 
         private void OnDisable()
         {
-            Debug.Log("Player disabled");
+            data.rig.OnDisable();
         }
 
         private void Awake()
         {
-            Debug.Log("Player Initialized");
-            AddLoggers();
+          
             _rigDict = new Dictionary<RigType, Rig>();
             foreach (var VARIABLE in _rigList)
             {
@@ -132,17 +144,14 @@ namespace Scripts.PlayerLogic
 
             if (isLocal)
             {
-                _characterPool.SpawnCharacters();
                 SetOwner(0);
             }
         }
-
+        
         public void SetOwner(ulong id)
         {
-            InitializeComponents(id);
-
             PlayerData.local = data;
-
+            InitializeComponents(id);
 #if UNITY_EDITOR
             rigType = _rigType;
 #elif PLATFORM_ANDROID
@@ -150,33 +159,30 @@ namespace Scripts.PlayerLogic
 #else
             rigType = _rigType;
 #endif
-
-            characterPool.SetAvatarType(AvatarType.Local);
-            _gestureCombiner.CreateRecognizer(curRig.RecognitionPropertiesConfig);
-            if (modesWithGestureRecognition.Contains(playerMode))
-            {
-                data.library.onLibraryInitialized += () => { _gestureCombiner.RecognizeWithAllGestures(); };
-            }
+      
+            data.characterController.SetAvatarType(_debugAvatar);
+            data.abilityController.CreateRecognizer(data.rig.RecognitionPropertiesConfig);
         }
 
         public void SetEnemy(ulong id)
         {
-            rigType = RigType.NoRig;
             InitializeComponents(id);
-            characterPool.SetAvatarType(AvatarType.Enemy);
+            rigType = RigType.NoRig;
+ 
+            data.characterController.SetAvatarType(AvatarType.Enemy);
         }
 
         private void InitializeComponents(ulong id)
         {
-            _gestureCombiner.Initialize(characterPool);
-            _data = SetPlayerData();
-
-            characterPool.SetMaterialId((int)id);
-            UpdateEvent.Instance.AddListener(UpdateAnchors);
-            Debug.Log($"Player {id} initialized. RigType = {rigType}");
+            data.characterController.SetMaterialId((int)id);
+            data.abilityController.Initialize();
+            
+            AddLoggers();
+            
+            Global.updateEvent.AddListener(UpdateAnchors);
+            data.abilityController.gesturesLib.onLibraryInitialized += data.onComponentsInitialized.Invoke;
+            Debug.Log($"Player {id} initialized.");
         }
-
-
         private bool isAnyNull()
         {
             var allRigTypes = Enum.GetValues(typeof(RigType)).Cast<RigType>().ToList();
@@ -195,32 +201,35 @@ namespace Scripts.PlayerLogic
 
         protected void UpdateAnchors()
         {
+            if (!isInitialized)
+                return;
+                
             if (_rigType != RigType.NoRig)
             {
                 // updating 
-                BodyAnchors.EquateAnchors(curRig.anchors,
-                    ref _anchors); // нельзя прокинуть _anchors в риг напрямую, потому-что в риге находится камера.
+                BodyAnchors.EquateAnchors(data.rig.anchors,
+                    ref data.bodyAnchors); // нельзя прокинуть _anchors в риг напрямую, потому-что в риге находится камера.
             }
 
-            if (character.curAvatar)
-                BodyAnchors.EquateAnchors(_anchors, ref character.curAvatar.Anchors);
+            if (data.avatar)
+                BodyAnchors.EquateAnchors(data.bodyAnchors, ref data.avatar.Anchors);
         }
 
         protected override bool shouldAddMissingComponents =>
-            !(_characterPool && _anchors && _hands && _gestureCombiner);
+            !(data.characterController && data.bodyAnchors && data.hands && data.abilityController);
 
         public override void AddMissingComponents()
         {
-            _characterPool = GetComponentInChildren<CharacterPool>();
-            _anchors = transform.Find("Anchors").GetComponent<BodyAnchors>();
-            _anchors.AddMissingComponents();
-            _hands = _anchors.transform.GetComponentInChildren<PlayerHands>();
+            data.characterController = GetComponentInChildren<CharacterController>();
+            data.bodyAnchors = transform.Find("Anchors").GetComponent<BodyAnchors>();
+            data.bodyAnchors.AddMissingComponents();
+            data.hands = data.bodyAnchors.transform.GetComponentInChildren<PlayerHands>();
             foreach (var VARIABLE in _rigList)
             {
                 VARIABLE.AddMissingComponents();
             }
 
-            _gestureCombiner = transform.Find("GestureCombiner").GetComponent<GestureCombiner>();
+            data.abilityController = transform.Find("AbilityController").GetComponent<AbilityController>();
 
             if (!isLocal)
             {
@@ -228,10 +237,10 @@ namespace Scripts.PlayerLogic
 
                 List<ClientTransform> transforms = new()
                 {
-                    Calculations.AddComponentSmart<ClientTransform>(anchors.Body),
-                    Calculations.AddComponentSmart<ClientTransform>(anchors.Head),
-                    Calculations.AddComponentSmart<ClientTransform>(_hands.rightHand.points[0]),
-                    Calculations.AddComponentSmart<ClientTransform>(_hands.leftHand.points[0]),
+                    Calculations.AddComponentSmart<ClientTransform>(data.bodyAnchors.Body),
+                    Calculations.AddComponentSmart<ClientTransform>(data.bodyAnchors.Head),
+                    Calculations.AddComponentSmart<ClientTransform>(data.hands.rightHand.points[0]),
+                    Calculations.AddComponentSmart<ClientTransform>(data.hands.leftHand.points[0]),
                 };
 
                 foreach (var VARIABLE in transforms)
@@ -254,7 +263,15 @@ namespace Scripts.PlayerLogic
 
         private void AddLoggers()
         {
-            onPlayerModeChanged.AddListener(EventLogger.OnPlayerModeChanger);
+            data.onPlayerModeChanged.AddListener(EventLogger.OnPlayerModeChanged);
+            data.characterController.characterChangedEvent.AddListener(EventLogger.OnCharacterChanged);
         }
+
+        public void ChangeAvatarFromInspector()
+        {
+            if(Application.isPlaying)
+                data.characterController.SetAvatarType(_debugAvatar);
+        }
+        
     }
 }

@@ -209,7 +209,7 @@ public class Hammer_WD : WeaponDesign
     //     base.OnGrabbed();
     // }
     
-    public override void OnCastStarted()
+    public override void OnReadyToBeCasted()
     {
         throw new System.NotImplementedException();
     }

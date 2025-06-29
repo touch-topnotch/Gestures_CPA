@@ -1,0 +1,193 @@
+using System.Collections.Generic;
+using System.Linq;
+using Characters;
+using Scrips.Components;
+using Scripts.Events;
+using Scripts.Gesture_Editor_SDK.Realtime;
+using Scripts.Gestures;
+using Scripts.HandsLogic;
+using Scripts.Libraries;
+using Scripts.PlayerLogic;
+using Scripts.Static;
+using Scripts.Static.Definitions;
+using Scripts.Systems;
+using Scripts.Weapons;
+using Sirenix.Utilities;
+using Unity.Netcode;
+using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.Rendering;
+
+namespace Scripts.Abilities
+{
+    public class AbilityController : PlayerComponent
+    {
+        // TODO: change types of access
+        // TODO: сервер выбирает арсенал из доступных оружий для игрока. Ему подается запрос - AbilitiesInitializedServerRpc(string[] abilitynames) - он возвращает содержимое арсенала
+        // где связать сервер? GameController? Ну да, ура, ты до него дошел
+        public Inventory inventory = new Inventory();
+        public AbilitiesLibrary abilitiesLib;
+        public GesturesLibrary gesturesLib;
+        public UnityEvent OnWeaponsInitialized = new UnityEvent();
+
+        private FrameRecognized OnAbilityFrameRecognized;
+        private GestureRecognized OnGestureRecognized;
+        
+        private Recognizer _recognizer;
+
+        public void Initialize()
+        {
+            abilitiesLib = new AbilitiesLibrary();
+            gesturesLib = new GesturesLibrary();
+            OnGestureRecognized = new GestureRecognized();
+            OnAbilityFrameRecognized = new FrameRecognized();
+       
+
+            // TODO: че тут написано вообще?
+            
+            if(PlayerData.modesWithGestureRecognition.Contains(inherited.playerMode))
+            {
+                OnAbilityFrameRecognized.AddListener((e) =>
+                {
+                 //   abilitiesLib[AbilityType.Character][GestureMapper.PrefixOfName(e)].OnFrameRecognized(e);
+                });
+                OnGestureRecognized.AddListener((e) =>
+                {
+                 //   gesturesLib.characterGestures[e].AllFramesDetected(RecognizeWithAllGestures);
+                });
+            }
+        }
+
+        public void CreateRecognizer(RecognitionPropertiesConfig config)
+        {
+            _recognizer = new Recognizer(config);
+        }
+
+        public void AddCharacterToInventory(string character)
+        {
+            inventory.characterAbilities = abilitiesLib.characterAbilities[character];
+            
+            Debug.Log("Inventory character abilities: " + Debugger.dictionaryToString(abilitiesLib.characterAbilities[character], false, true));
+        }
+        public void UseCharacterAbilities()
+        {
+            Debug.Log("Starting to UseCharacterAbilities");
+            StartCoroutine(_recognizer.RecognizeDynamicGesture(inventory.characterAbilities.ToGestureDict(),
+                (e) =>
+                {
+                    inventory.characterAbilities[e].OnGestureCasted();
+                }
+                , (e) =>
+                {
+                    inventory.characterAbilities[GestureMapper.PrefixOfName(e)]?.OnFrameRecognized(e);
+                }));
+        }
+        
+        
+        // Simulate frame - is a specific function, which needs to simulate Hands movement on other (enemy) client device.
+        public void SimulateFrame(PlayerHands hands, string name)
+        {
+            if (gesturesLib.TryGetDynamicGesture(name, out var gesture))
+            {
+                if (gesture.TryGetFrameData(name, out var frame))
+                {
+                    Debug.Log("Move hands");
+                    hands.MoveHands(frame.ParentedFrame(inherited.data.bodyAnchors.Body), 4,
+                        () => { Debug.Log("Frame Simulated!"); },
+                        true);
+                }
+            }
+        }
+
+        protected override bool shouldAddMissingComponents => false;
+
+        
+        public void SpawnWeapons(List<CharacterData> characterConfigs, Transform parent)
+         {
+            
+            foreach (var characterData in characterConfigs)
+            {
+                var weapons = new Arsenal();
+                foreach (var weaponStruct in characterData.weapons)
+                {
+                    var key = weaponStruct.Key;
+                    var prefab = weaponStruct.Value;
+                    if (weapons.ContainsKey(key))
+                    {
+                        Debug.Log($"Was found a weapon with the same key {key}");
+                        continue;
+                    }
+
+                    if (!prefab)
+                    {
+                        Debug.Log($"Prefab {key} is null");
+                        continue;
+                    }
+
+                    if (!prefab.GetComponent<Weapon>())
+                    {
+                        Debug.Log($"Prefab {key} doesn't contain Weapon script");
+                        continue;
+                    }
+
+                    if (!gesturesLib.characterGestures.ContainsKey(key))
+                    {
+                        Debug.Log($"Gesture library doesn't contain {key}");
+                        continue;
+                    }
+
+                    var spawnedWeapon = Instantiate(prefab).GetComponent<Weapon>();
+                    spawnedWeapon.NetworkObject.Spawn();
+                    if (!spawnedWeapon.NetworkObject.TrySetParent(parent))
+                    {
+                        Debug.Log($"Can't set parent for {key}");
+                        continue;
+                    }
+                    spawnedWeapon.Initialize(inherited.data, gesturesLib.characterGestures[key]);
+                    weapons.AddReplace(spawnedWeapon.abilityName, spawnedWeapon);
+                    
+                }
+                abilitiesLib.characterAbilities.AddReplace(characterData.characterName, weapons);
+            }
+
+            
+            Debug.Log("Weapons initialized: ");
+            foreach (var VARIABLE in abilitiesLib.characterAbilities)
+            {
+                Debug.Log(VARIABLE.Key + " " + Debugger.dictionaryToString(VARIABLE.Value, false, false));
+            }
+            OnWeaponsInitialized?.Invoke();
+         }
+
+        public void SetSpawnedWeapons(Dictionary<string, ulong[]> allSpawnedWeapons)
+        {
+            foreach (var characterWeapons in allSpawnedWeapons)
+            {
+                var weapons = new Arsenal();
+                foreach (var weapon_ulong in characterWeapons.Value)
+                {
+                    if(NetworkManager.Singleton.SpawnManager.SpawnedObjects.ContainsKey(weapon_ulong))
+                    {
+                        Debug.Log($"Weapon with id {weapon_ulong} was not found");
+                        continue;
+                    }
+                    var nO = NetworkManager.Singleton.SpawnManager.SpawnedObjects[weapon_ulong].GetComponent<Weapon>();
+               
+                    if(!gesturesLib.characterGestures.ContainsKey(nO.name))
+                    {
+                        Debug.Log($"Gesture library doesn't contain {nO.name}");
+                        continue;
+                    }
+                    
+                    nO.Initialize(inherited.data, gesturesLib.characterGestures[nO.name]);
+                    weapons.Add(nO.name.Split('_')[0], nO);
+                 
+                }
+                abilitiesLib.characterAbilities.AddReplace(characterWeapons.Key, weapons);
+            }
+            Debug.Log("Weapons initialized: " +
+                      Debugger.dictionaryToString(abilitiesLib.characterAbilities, true, true));
+            OnWeaponsInitialized?.Invoke();
+        }
+    }
+}
