@@ -143,7 +143,7 @@ namespace Scripts.Tests
         {
             TelegramBotProcessor.Instance.StartReceiving();
             TelegramBotProcessor.onMessageReceived += OnMessageReceived;
-            _player.data.rig.headInteraction.onHeadInteraction += (type) =>
+            _player.data.onHeadInteraction.AddListener((type) =>
             {
                 switch (type)
                 {
@@ -161,7 +161,7 @@ namespace Scripts.Tests
                         ContinueRecording();
                         break;
                 }
-            };
+            });
             _sequencedHandVisualizer = _player.data.hands.handVisualiser;
 
             leftToggle.onValueChanged.AddListener(RecordLeft);

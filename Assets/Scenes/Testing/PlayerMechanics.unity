@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.09630863, g: 0.097275175, b: 0.1428421, a: 1}
+  m_IndirectSpecularColor: {r: 0.09617658, g: 0.09700921, b: 0.14271364, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -885,7 +885,7 @@ PrefabInstance:
         type: 3}
       propertyPath: LobbyComponents
       value: 
-      objectReference: {fileID: 1038261735}
+      objectReference: {fileID: 13134203}
     - target: {fileID: 1463395751525147186, guid: 9fd0df6f36f84c745a7ffa3f5cd18b03,
         type: 3}
       propertyPath: LobbyActionVariants
@@ -1627,12 +1627,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 956783731}
   m_CullTransparentMesh: 1
---- !u!1 &1038261735 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4063053922155676836, guid: 1e3fbdbda288e4656bcacf97400f90e0,
-    type: 3}
-  m_PrefabInstance: {fileID: 1461570556}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1080430045
 GameObject:
   m_ObjectHideFlags: 0
@@ -2588,6 +2582,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1383466367236318195, guid: 1e3fbdbda288e4656bcacf97400f90e0,
+        type: 3}
+      propertyPath: playerProperties.character
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3293495255014716745, guid: 1e3fbdbda288e4656bcacf97400f90e0,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -2954,7 +2953,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7802441}
   m_HandleRect: {fileID: 7802440}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -3794,3 +3793,7 @@ MonoBehaviour:
     EnableNetworkLogs: 1
     OldPrefabList: []
   ServerInputSystem: {fileID: 0}
+  lastPlayerProperties:
+    rig: 0
+    avatar: 0
+    character: 0

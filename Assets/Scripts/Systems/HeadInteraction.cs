@@ -21,7 +21,7 @@ namespace Scripts.Systems
     {
         [SerializeField] private Transform trackedHead;
         [SerializeField] [Range(0.1f, 3f)] private float trackedTime = 1;
-        public event Action<HeadInteractionType> onHeadInteraction;
+        public UnityEvent<HeadInteractionType> onHeadInteraction;
         private List<Vector3> lastActions;
 
         private bool isInvoked;

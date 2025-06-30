@@ -52,7 +52,7 @@ namespace Scripts.Rigs
         public override void Initialize()
         {
             base.Initialize();
-            headInteraction.onHeadInteraction += (e) =>
+            headInteraction.onHeadInteraction.AddListener((e) =>
             {
                 if (e == HeadInteractionType.Shaking)
                 {
@@ -64,7 +64,7 @@ namespace Scripts.Rigs
                         _movement.StartMove();
                     }
                 }
-            };
+            });
         }
         protected virtual void FixedUpdate()
         {

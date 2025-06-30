@@ -25,7 +25,7 @@ namespace Scripts.PlayerLogic
         public override void Initialize()
         {
             base.Initialize();
-            headInteraction.onHeadInteraction += (e) =>
+            headInteraction.onHeadInteraction.AddListener((e) =>
             {
                 if (e == HeadInteractionType.Shaking)
                 {
@@ -37,7 +37,7 @@ namespace Scripts.PlayerLogic
                         _movement.StartMove();
                     }
                 }
-            };
+            });
         }
 
         private void Update()

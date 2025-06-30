@@ -25,7 +25,7 @@ namespace Scripts.Abilities
         // TODO: change types of access
         // TODO: сервер выбирает арсенал из доступных оружий для игрока. Ему подается запрос - AbilitiesInitializedServerRpc(string[] abilitynames) - он возвращает содержимое арсенала
         // где связать сервер? GameController? Ну да, ура, ты до него дошел
-        public Inventory inventory = new Inventory();
+        public Inventory inventory;
         public AbilitiesLibrary abilitiesLib;
         public GesturesLibrary gesturesLib;
         public UnityEvent OnWeaponsInitialized = new UnityEvent();
@@ -39,13 +39,14 @@ namespace Scripts.Abilities
         {
             abilitiesLib = new AbilitiesLibrary();
             gesturesLib = new GesturesLibrary();
+            inventory = new Inventory();
             OnGestureRecognized = new GestureRecognized();
             OnAbilityFrameRecognized = new FrameRecognized();
        
 
             // TODO: че тут написано вообще?
             
-            if(PlayerData.modesWithGestureRecognition.Contains(inherited.playerMode))
+            if(Player.modesWithGestureRecognition.Contains(inherited.playerMode))
             {
                 OnAbilityFrameRecognized.AddListener((e) =>
                 {
@@ -66,12 +67,11 @@ namespace Scripts.Abilities
         public void AddCharacterToInventory(string character)
         {
             inventory.characterAbilities = abilitiesLib.characterAbilities[character];
-            
             Debug.Log("Inventory character abilities: " + Debugger.dictionaryToString(abilitiesLib.characterAbilities[character], false, true));
         }
         public void UseCharacterAbilities()
         {
-            Debug.Log("Starting to UseCharacterAbilities");
+            Debug.Log(Debugger.dictionaryToString(inventory.characterAbilities, false, true));
             StartCoroutine(_recognizer.RecognizeDynamicGesture(inventory.characterAbilities.ToGestureDict(),
                 (e) =>
                 {
@@ -92,7 +92,7 @@ namespace Scripts.Abilities
                 if (gesture.TryGetFrameData(name, out var frame))
                 {
                     Debug.Log("Move hands");
-                    hands.MoveHands(frame.ParentedFrame(inherited.data.bodyAnchors.Body), 4,
+                    hands.MoveHands(frame.ParentedFrame(inherited.data.anchors.Body), 4,
                         () => { Debug.Log("Frame Simulated!"); },
                         true);
                 }

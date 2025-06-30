@@ -37,11 +37,11 @@ namespace Scripts.PlayerLogic
             if (!transform.gameObject.activeSelf)
                 return;
 
-            inherited.data.onPlayerModeChanged?.AddListener(OnPlayerStateChanged);
-            headInteraction.onHeadInteraction += (headInteractionType) =>
+            inherited.onPlayerModeChanged?.AddListener(OnPlayerStateChanged);
+            headInteraction.onHeadInteraction.AddListener((headInteractionType) =>
             {
                 Debug.Log("Recognized " + headInteractionType);
-            };
+            });
         }
 
         protected virtual void OnPlayerStateChanged(PlayerMode state)

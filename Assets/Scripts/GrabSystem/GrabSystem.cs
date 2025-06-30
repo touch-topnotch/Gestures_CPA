@@ -3,6 +3,7 @@ using System.Collections;
 using Scripts.Components;
 using Scripts.Gestures;
 using Scripts.PlayerLogic;
+using Scripts.Players;
 using UnityEngine;
 
 public abstract class GrabSystem : InheritedComponent<Player>

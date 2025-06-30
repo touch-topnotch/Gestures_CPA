@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using Scripts.Gesture_Editor_SDK.Realtime;
 using Scripts.HandsLogic;
 using Scripts.PlayerLogic;
+using Scripts.Players;
 using UnityEngine;
 using UnityEngine.XR;
 
@@ -146,7 +147,7 @@ namespace Scripts.Gestures
 
         public FrameData AttachedToPlayer()
         {
-            return ParentedFrame(PlayerData.local.bodyAnchors.Body);
+            return ParentedFrame(PlayerData.local.anchors.Body);
         }
     }
 }

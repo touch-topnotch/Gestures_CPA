@@ -3,6 +3,7 @@ using System.Linq;
 using Scripts.Events;
 using Scripts.Network;
 using Scripts.PlayerLogic;
+using Scripts.Players;
 using Scripts.Static;
 using Unity.Netcode;
 using UnityEngine;
@@ -26,7 +27,8 @@ namespace Scripts.GameControllers
 
         [SerializeField] private GameObject ServerInputSystem;
         public Dictionary<ulong, NetworkPlayerProcessor> PlayersDict => _playersDict;
-
+        [HideInInspector]
+        public Player oldPlayer;
 #if DEDICATED_SERVER
         private IServerQueryHandler _serverQueryHandler;
         private async void ListenServerEvents()
@@ -107,6 +109,8 @@ namespace Scripts.GameControllers
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = targetFPS;
             SessionManager.ReadCommandArgs(this);
+            oldPlayer = FindObjectOfType<Player>();
+       
             
 #if DEDICATED_SERVER
             EventInitializer.Instance.onServicesInitilalised += ListenServerEvents;
@@ -155,8 +159,11 @@ namespace Scripts.GameControllers
         [ClientRpc]
         private void StartGameSessionClientRpc(ulong playerId)
         {
-            if(_playersDict[playerId].IsOwner)
-                  _playersDict[playerId].data.abilityController.UseCharacterAbilities();
+            if (_playersDict[playerId].IsOwner)
+            {
+                _playersDict[playerId].data.abilityController.AddCharacterToInventory(_playersDict[playerId].data.characterController.currentCharacter.name);
+                _playersDict[playerId].data.abilityController.UseCharacterAbilities();
+            }
         }
         
         

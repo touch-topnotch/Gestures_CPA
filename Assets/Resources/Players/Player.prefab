@@ -192,27 +192,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b183c26e43d4df688baed769e97972e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerProperties:
+    rig: 1
+    avatar: 0
+    character: 0
+  id: 0
   isLocal: 1
-  _rigType: 2
-  _playerMode: 4
-  debugAvatar: 0
-  debugCharacter: 1
-  _data:
-    id: 0
-    bodyAnchors: {fileID: 737178903872759620}
-    hands: {fileID: 6240724812944433049}
-    abilityController: {fileID: 4530653102073058457}
-    characterController: {fileID: 2693647376701947088}
-    rig: {fileID: 0}
-    onComponentsInitialized:
-      m_PersistentCalls:
-        m_Calls: []
-    onPlayerModeChanged:
-      m_PersistentCalls:
-        m_Calls: []
-    onPlayerRigChanged:
-      m_PersistentCalls:
-        m_Calls: []
+  isInitialized: 0
+  anchors: {fileID: 737178903872759620}
+  hands: {fileID: 6240724812944433049}
+  abilityController: {fileID: 4530653102073058457}
+  characterController: {fileID: 2693647376701947088}
+  onPlayerInitialized:
+    m_PersistentCalls:
+      m_Calls: []
+  onPlayerModeChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  onPlayerRigChanged:
+    m_PersistentCalls:
+      m_Calls: []
   _rigList:
   - {fileID: 51490735460249259}
   - {fileID: 1680094943110864572}

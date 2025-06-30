@@ -2,6 +2,7 @@ using Scripts.Components;
 using Scripts.Gesture_Editor_SDK.Realtime;
 using Scripts.Gestures;
 using Scripts.PlayerLogic;
+using Scripts.Players;
 using Scripts.Static.Definitions;
 using UnityEngine.Events;
 

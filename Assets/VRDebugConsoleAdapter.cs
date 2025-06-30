@@ -26,7 +26,7 @@ public class VRDebugConsoleAdapter : MonoBehaviour
     private void Awake()
     {
         _debugLogManager = GetComponent<DebugLogManager>();
-        headInteraction.onHeadInteraction += e =>
+        headInteraction.onHeadInteraction.AddListener( e =>
         {
             if (e != toggleConsole)
                 return;
@@ -36,6 +36,6 @@ public class VRDebugConsoleAdapter : MonoBehaviour
             {
                 _debugLogManager.ShowLogWindow();
             }
-        };
+        });
     }
 }

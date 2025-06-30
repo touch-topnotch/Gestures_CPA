@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Scripts.Design;
 using Scripts.Events;
 using Scripts.HandsLogic;
-using Scripts.PlayerLogic;
+using Scripts.Players;
 using Scripts.Systems;
 using UnityEngine;
 

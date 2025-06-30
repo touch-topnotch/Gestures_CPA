@@ -34,8 +34,8 @@ namespace Scripts.PlayerLogic
             
             _waitUntilNextFrame = new WaitForSeconds(handsProperties.delayOnFrame);
             _library = inherited.data.gesturesLibrary;
-            
-            _library.onLibraryInitialized += PrepareRingData;
+
+            PrepareRingData();
             inherited.data.onPlayerModeChanged.AddListener(ps => { gestureMenu.isActive = ps == PlayerMode.MENU; });
             
             inherited.playerMode = PlayerMode.ACTIVE;
@@ -88,7 +88,7 @@ namespace Scripts.PlayerLogic
         private void SimulateFrame(string key)
         {
             // выход - отдавать КОПИЮ фрейма, а не сам фрейм
-            hands.MoveHands(_library.allAvailableFrames[key].ParentedFrame(inherited.data.bodyAnchors.Body),
+            hands.MoveHands(_library.allAvailableFrames[key].ParentedFrame(inherited.data.anchors.Body),
                 handsProperties.handSpeed, () => { },
                 !InputExtension.CtrlOrCmd());
         }
@@ -103,7 +103,7 @@ namespace Scripts.PlayerLogic
                 return;
 
             Debug.Log("Simulating " + key);
-            hands.MoveHands(_library.allAvailableFrames[frameName].ParentedFrame(inherited.data.bodyAnchors.Body),
+            hands.MoveHands(_library.allAvailableFrames[frameName].ParentedFrame(inherited.data.anchors.Body),
                 handsProperties.handSpeed,
                 () => { StartCoroutine(WaitUntilNextFrame(nextFrame)); },
                 !InputExtension.CtrlOrCmd());
