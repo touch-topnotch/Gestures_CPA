@@ -66,19 +66,22 @@ namespace Scripts.PlayerLogic
             { PlayerMode.MENU, PlayerMode.DYED, PlayerMode.ACTIVE };
     }
 
-
+  
     public class Player : SmartComponent
     {
         public bool isInitialized { get; set; }
         [BoxGroup("Runtime Settings")] [SerializeField][DisableInPlayMode]
         private bool isLocal;
+        
         [BoxGroup("Runtime Settings")][SerializeField][EnumToggleButtons][ShowInInspector][OnValueChanged("ActivateRig")][Space()][DisableInPlayMode]
         private RigType _rigType;
+        
         [BoxGroup("Runtime Settings")][SerializeField][EnumToggleButtons][ShowInInspector][Space()][DisableInPlayMode]
         private PlayerMode _playerMode;
-  
+        
         [BoxGroup("Runtime Settings")][EnumToggleButtons][SerializeField][Space()][OnValueChanged("ChangeAvatarFromInspector")]
-        private AvatarType _debugAvatar;
+        public AvatarType debugAvatar;
+        
         [BoxGroup("Runtime Settings")][SerializeField][ShowInInspector][Space()][DisableInPlayMode]
         public CharacterType debugCharacter;
 
@@ -153,14 +156,13 @@ namespace Scripts.PlayerLogic
             PlayerData.local = data;
             InitializeComponents(id);
 #if UNITY_EDITOR
-            rigType = _rigType;
+            this.rigType = _rigType;
 #elif PLATFORM_ANDROID
             rigType = RigType.OVRRig;
 #else
             rigType = _rigType;
 #endif
-      
-            data.characterController.SetAvatarType(_debugAvatar);
+            data.characterController.SetAvatarType(debugAvatar);
             data.abilityController.CreateRecognizer(data.rig.RecognitionPropertiesConfig);
         }
 
@@ -270,7 +272,7 @@ namespace Scripts.PlayerLogic
         public void ChangeAvatarFromInspector()
         {
             if(Application.isPlaying)
-                data.characterController.SetAvatarType(_debugAvatar);
+                data.characterController.SetAvatarType(debugAvatar);
         }
         
     }

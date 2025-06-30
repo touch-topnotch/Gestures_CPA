@@ -95,6 +95,7 @@ namespace Scripts
         
             if (state <= 2)
             {
+                
                 var leftPalmPos = playerData.hands.leftHand.palmCenter.position;
                 var rightPalmPos = playerData.hands.rightHand.palmCenter.position;
                 var distance = Vector3.Distance(leftPalmPos, rightPalmPos);
@@ -106,6 +107,7 @@ namespace Scripts
                 var xzCoef = Math.Clamp((boardingXZ - xzDistance) / boardingXZ * 6, 0, 1);
         
                 var power = yCoef * xzCoef;
+                arc.transform.position = (leftPalmPos + rightPalmPos) / 2;
 
                 To(orb, "Power", 0.4f);
                 To(arc, "Power", 1);

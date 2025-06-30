@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Scripts.Adapter
@@ -37,16 +38,20 @@ namespace Scripts.Adapter
             {
                 if (!plug)
                 {
-                    var p = transform.Find("PlugAnchor")?.gameObject;
+                    var p = this.transform.Find("PlugAnchor")?.gameObject;
                     if (!p)
-                        p = new GameObject("PlugAnchor");
+                    {
+                        Debug.Log("Plug anchor is not found!");
+                        
+                    }
+
+                
                     plug = p;
                 }
 
                 anchor = plug.transform;
             }
-
-            anchor.parent = (root != null) ? root : transform;
+;
             anchor.localScale = Vector3.one;
             anchor.localPosition = Vector3.zero;
             anchor.localRotation = Quaternion.identity;
