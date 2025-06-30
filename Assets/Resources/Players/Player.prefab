@@ -39,7 +39,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1056234946955645876}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3ab3ef9470ae4fd6aeeeb5c7fd3f7cfa, type: 3}
   m_Name: 
@@ -320,7 +320,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6567062641632906118}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3ab3ef9470ae4fd6aeeeb5c7fd3f7cfa, type: 3}
   m_Name: 
@@ -1040,7 +1040,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1465474673217612774}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3ab3ef9470ae4fd6aeeeb5c7fd3f7cfa, type: 3}
   m_Name: 
@@ -1136,7 +1136,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8468511454707987873}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3ab3ef9470ae4fd6aeeeb5c7fd3f7cfa, type: 3}
   m_Name: 
@@ -1169,9 +1169,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 309327087926365380, guid: 4165f206a00aa4e7b84ca383c61af5ea,
         type: 3}
+      propertyPath: _inherited
+      value: 
+      objectReference: {fileID: 51490735460249259}
+    - target: {fileID: 309327087926365380, guid: 4165f206a00aa4e7b84ca383c61af5ea,
+        type: 3}
       propertyPath: m_PlayerHands
       value: 
       objectReference: {fileID: 6240724812944433049}
+    - target: {fileID: 309327087926365380, guid: 4165f206a00aa4e7b84ca383c61af5ea,
+        type: 3}
+      propertyPath: positionSpeed
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 309327087926365380, guid: 4165f206a00aa4e7b84ca383c61af5ea,
         type: 3}
       propertyPath: m_OnEnabled.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -1287,6 +1297,61 @@ PrefabInstance:
       propertyPath: _trackingOriginType
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3899418920169235048, guid: 4165f206a00aa4e7b84ca383c61af5ea,
+        type: 3}
+      propertyPath: yBoard
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3899418920169235048, guid: 4165f206a00aa4e7b84ca383c61af5ea,
+        type: 3}
+      propertyPath: gravity
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3899418920169235048, guid: 4165f206a00aa4e7b84ca383c61af5ea,
+        type: 3}
+      propertyPath: xzBoard
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3899418920169235048, guid: 4165f206a00aa4e7b84ca383c61af5ea,
+        type: 3}
+      propertyPath: jumpSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3899418920169235048, guid: 4165f206a00aa4e7b84ca383c61af5ea,
+        type: 3}
+      propertyPath: moveSpeed
+      value: 8.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 3899418920169235048, guid: 4165f206a00aa4e7b84ca383c61af5ea,
+        type: 3}
+      propertyPath: _inherited
+      value: 
+      objectReference: {fileID: 51490735460249259}
+    - target: {fileID: 3899418920169235048, guid: 4165f206a00aa4e7b84ca383c61af5ea,
+        type: 3}
+      propertyPath: _velocity.x
+      value: -0.000625409
+      objectReference: {fileID: 0}
+    - target: {fileID: 3899418920169235048, guid: 4165f206a00aa4e7b84ca383c61af5ea,
+        type: 3}
+      propertyPath: _velocity.y
+      value: -0.04492393
+      objectReference: {fileID: 0}
+    - target: {fileID: 3899418920169235048, guid: 4165f206a00aa4e7b84ca383c61af5ea,
+        type: 3}
+      propertyPath: _velocity.z
+      value: 0.006874581
+      objectReference: {fileID: 0}
+    - target: {fileID: 3899418920169235048, guid: 4165f206a00aa4e7b84ca383c61af5ea,
+        type: 3}
+      propertyPath: velocityBoard.x
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 3899418920169235048, guid: 4165f206a00aa4e7b84ca383c61af5ea,
+        type: 3}
+      propertyPath: velocityBoard.y
+      value: 0.05
+      objectReference: {fileID: 0}
     - target: {fileID: 4029663954266511552, guid: 4165f206a00aa4e7b84ca383c61af5ea,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -1322,6 +1387,16 @@ PrefabInstance:
       propertyPath: _inherited
       value: 
       objectReference: {fileID: 1383466367236318195}
+    - target: {fileID: 4728930324103167599, guid: 4165f206a00aa4e7b84ca383c61af5ea,
+        type: 3}
+      propertyPath: _bodyLerpSpeed
+      value: 7.37
+      objectReference: {fileID: 0}
+    - target: {fileID: 4728930324103167599, guid: 4165f206a00aa4e7b84ca383c61af5ea,
+        type: 3}
+      propertyPath: _bodyHeightOffset
+      value: 1.27
+      objectReference: {fileID: 0}
     - target: {fileID: 4748640837830770101, guid: 4165f206a00aa4e7b84ca383c61af5ea,
         type: 3}
       propertyPath: m_RootOrder
@@ -1487,7 +1562,8 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3189782340887037208, guid: 4165f206a00aa4e7b84ca383c61af5ea, type: 3}
     m_RemovedGameObjects:
     - {fileID: 7215154924646946590, guid: 4165f206a00aa4e7b84ca383c61af5ea, type: 3}
     - {fileID: 3088463327338989421, guid: 4165f206a00aa4e7b84ca383c61af5ea, type: 3}

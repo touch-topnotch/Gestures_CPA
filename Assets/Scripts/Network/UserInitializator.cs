@@ -13,7 +13,7 @@ public class UserInitializator : MonoBehaviour
         {
             Debug.Log($"Signed in {AuthenticationService.Instance.PlayerId}");
         };
-
-        await AuthenticationService.Instance.SignInAnonymouslyAsync();
+        if (!(AuthenticationService.Instance.IsAuthorized || AuthenticationService.Instance.IsSignedIn))
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();
     }
 }
