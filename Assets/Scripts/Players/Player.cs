@@ -148,7 +148,9 @@ namespace Scripts.PlayerLogic
             if (isLocal)
             {
                 SetOwner(0);
+                LocalInitializing();
             }
+            
         }
         
         public void SetOwner(ulong id)
@@ -162,8 +164,15 @@ namespace Scripts.PlayerLogic
 #else
             rigType = _rigType;
 #endif
-            data.characterController.SetAvatarType(debugAvatar);
+          
             data.abilityController.CreateRecognizer(data.rig.RecognitionPropertiesConfig);
+        }
+
+        public void LocalInitializing()
+        {
+            data.characterController.SpawnCharacters();
+            data.characterController.SetCharacter(debugCharacter.ToString());
+            data.characterController.SetAvatarType(debugAvatar);
         }
 
         public void SetEnemy(ulong id)
@@ -182,7 +191,13 @@ namespace Scripts.PlayerLogic
             AddLoggers();
             
             Global.updateEvent.AddListener(UpdateAnchors);
+            data.onComponentsInitialized.AddListener(()=>
+            {
+                isInitialized = true;
+            });
             data.abilityController.gesturesLib.onLibraryInitialized += data.onComponentsInitialized.Invoke;
+           
+            
             Debug.Log($"Player {id} initialized.");
         }
         private bool isAnyNull()

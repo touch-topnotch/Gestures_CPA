@@ -1,71 +1,51 @@
+using System;
+using Scripts.Gestures;
+using Scripts.PlayerLogic;
 using Scripts.Static.Definitions;
 using UnityEngine;
+using UnityEngine.Rendering;
+using Sirenix.OdinInspector;
+using Unity.Netcode;
 
 namespace Scripts.Weapons
 {
-    // public class Melee : Weapon, IGrabable
-    // {
-    //     [field: SerializeField] public GrabSystem GrabSystem { get; set; }
-    //
-    //     [Header("Melee components")] [SerializeField]
-    //     protected float _bladeMinSpeed;
-    //
-    //     [SerializeField] protected Blade _blade;
-    //
-    //     [SerializeField] private Rigidbody _rigidbody;
-    //
-    //     public int capacity
-    //     {
-    //         get => _power;
-    //         protected set
-    //         {
-    //             _power = value;
-    //             if (_power <= 0)
-    //             {
-    //                 AbilityReleased();
-    //                 _power = 0;
-    //             }
-    //         }
-    //     }
-    //
-    //     private Vector3 _previousBladePointPosition;
-    //
-    //     private bool _bladeTriggered;
-    //
-    //     public void Start()
-    //     {
-    //     }
-    //
-    //     public void SetGrabSystem()
-    //     {
-    //         GrabSystem.OnGrabStart +=
-    //             OnGrabbed;
-    //         GrabSystem.OnGrabEnd += OnUnGrabbed;
-    //     }
-    //
-    //
-    //     protected override bool ImpactCondition(out string affected) => _blade.onHitImpact(out affected);
-    //
-    //
-    //     protected virtual void OnImpact(Affected affected)
-    //     {
-    //         switch (affected.physicLayer)
-    //         {
-    //             case PhysicLayer.Player:
-    //                 Debug.Log("Melee weapon hit player!");
-    //                 capacity -= 10;
-    //                 break;
-    //             case PhysicLayer.Map:
-    //                 Debug.Log("Melee weapon hit solid object");
-    //                 capacity -= 5;
-    //                 break;
-    //         }
-    //     }
-    //
-    //     protected override void OnAbilityReleased()
-    //     {
-    //         throw new System.NotImplementedException();
-    //     }
-    //     // }
-    // }
+     public class Melee : Weapon, IGrabable
+     {
+          [Range(0, 1000)] protected float maxCapacityValue;
+          protected NetworkVariable<float> Capacity = new NetworkVariable<float>();
+          
+          public override void Initialize(PlayerData data, DynamicGesture gesture)
+          {
+               base.Initialize(data, gesture);
+               //ActivatedEvent
+               //StartHitEvent
+          }
+
+          [SerializeField]
+          private GrabSystem _grabSystem;
+          
+          public GrabSystem GrabSystem
+          {
+               get => _grabSystem;
+               set => _grabSystem = value;
+          }
+
+          public void SetGrabSystem()
+          {
+               if (_grabSystem != null)
+               {
+                    Debug.Log("Вы конченные");
+               }
+          }
+          
+          public void OnGrabbed()
+          {
+               ActivatedEvent.Invoke();
+          }
+
+          public void OnUnGrabbed()
+          {
+               DeactivatedEvent.Invoke();
+          }
+     }
 }

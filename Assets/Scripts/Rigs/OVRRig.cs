@@ -25,6 +25,7 @@
 using System;
 using Scripts.Movements;
 using Scripts.PlayerLogic;
+using Scripts.Systems;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Node = UnityEngine.XR.XRNode;
@@ -48,6 +49,23 @@ namespace Scripts.Rigs
         [Range(0.1f, 10f)] [SerializeField] [ShowIf("_lerpBody")]
         private float _bodyLerpSpeed = 2f;
 
+        public override void Initialize()
+        {
+            base.Initialize();
+            headInteraction.onHeadInteraction += (e) =>
+            {
+                if (e == HeadInteractionType.Shaking)
+                {
+                    if (_movement.isMoved())
+                        _movement.StopMove();
+                    else
+                    {
+                        Centrize();
+                        _movement.StartMove();
+                    }
+                }
+            };
+        }
         protected virtual void FixedUpdate()
         {
             SynchronizeBodyAnchors();

@@ -12,8 +12,8 @@ namespace Scripts.Movements
 
         [Range(0, 3f)] [SerializeField] protected float xzBoard;
         [Range(0, 3f)] [SerializeField] protected float yBoard;
-        [Range(0, 1f)] [SerializeField] protected float jumpSpeed;
-        [Range(0, 1f)] [SerializeField] protected float moveSpeed;
+        [Range(0, 10f)] [SerializeField] protected float jumpSpeed;
+        [Range(0, 10f)] [SerializeField] protected float moveSpeed;
         [SerializeField] protected Vector2 velocityBoard;
 
         [SerializeField] protected Transform xrCameraCenter;
