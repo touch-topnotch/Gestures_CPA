@@ -118,7 +118,7 @@ namespace Scripts.PlayerLogic
 
         private void OnDisable()
         {
-            _rig.OnDisable();
+            _rig?.OnDisable();
         }
 
         private void Awake()
@@ -146,9 +146,10 @@ namespace Scripts.PlayerLogic
             characterController.SpawnCharacters();
             abilityController.Initialize();
        
+            characterController.SetMaterialId((int)_id);
             characterController.SetCharacter(_playerProps.character.ToString());
             characterController.SetAvatarType(_playerProps.avatar);
-            characterController.SetMaterialId((int)_id);
+           
             
             rigType = _playerProps.rig;
             

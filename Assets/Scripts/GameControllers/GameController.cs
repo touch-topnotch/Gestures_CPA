@@ -146,12 +146,6 @@ namespace Scripts.GameControllers
                 
                 // l.rl("position: " + client.PlayerObject.transform.position);
             }
-
-            if (_playersDict[clientId].IsOwner)
-            {
-                _playersDict[clientId].GetComponent<Player>().rig.anchors.Root.position =
-                    gameProperties.spawnPoints[clientId].position;
-            }
             if (!IsServer)
             {
                 l.rl(LocalClient.PlayerObject.name + " constructed!");

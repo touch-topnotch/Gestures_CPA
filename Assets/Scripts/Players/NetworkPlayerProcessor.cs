@@ -6,6 +6,7 @@ using Scripts.Gestures;
 using Scripts.Players;
 using Scripts.Static.Definitions;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using UnityEngine.Events;
@@ -57,6 +58,10 @@ namespace Scripts.PlayerLogic
                 {
                     OnLocalClientFrameRecognizedServerRpc(frame, OwnerClientId);
                 });
+
+                _player.rig.anchors.Root.position =
+                    NetworkManager.GetComponent<GameController>().gameProperties.spawnPoints[OwnerClientId].position;
+
             }
             
             if (IsServer && !IsHost)
