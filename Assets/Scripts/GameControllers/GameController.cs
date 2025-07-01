@@ -142,8 +142,15 @@ namespace Scripts.GameControllers
                 // глобальная логика плеера и сразу какая-то странная инициализация оружий
                 _playersDict.Add(clientId, player);
                 _playersDict[clientId].onPoolPrefabs.AddListener(StartGameSession);
+              
                 
-               // l.rl("position: " + client.PlayerObject.transform.position);
+                // l.rl("position: " + client.PlayerObject.transform.position);
+            }
+
+            if (_playersDict[clientId].IsOwner)
+            {
+                _playersDict[clientId].GetComponent<Player>().rig.anchors.Root.position =
+                    gameProperties.spawnPoints[clientId].position;
             }
             if (!IsServer)
             {

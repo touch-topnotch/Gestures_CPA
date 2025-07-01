@@ -53,7 +53,6 @@ namespace Scripts.PlayerLogic
                     PlayerData.local = _player.data;
                 });
                 _player.onPlayerInitialized.AddListener(_player.CreateRecognizer);
-                _player.rig.anchors.Body.position = new Vector3(Random.Range(-10, 10), 0, Random.Range(-10, 10));
                 Recognizer.onSharedFrameBetweenDevices.AddListener((frame) =>
                 {
                     OnLocalClientFrameRecognizedServerRpc(frame, OwnerClientId);
