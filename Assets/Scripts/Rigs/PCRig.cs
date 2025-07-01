@@ -170,8 +170,8 @@ namespace Scripts.PlayerLogic
 
         public override void OnDisable()
         {
-            base.OnDisable();
             gestureMenu.isActive = false;
+            base.OnDisable();
         }
     }
 }

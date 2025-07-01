@@ -10,5 +10,7 @@ namespace Scripts.GameControllers
         [SerializeField] public Player player;
         [InspectorName("Use next character abilities")]
         [SerializeField] public CharacterType[] debugCharacterAbilities;
+
+        public Transform[] spawnPoints;
     }
 }
