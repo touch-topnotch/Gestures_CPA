@@ -5,6 +5,7 @@ using Scripts.Network;
 using Scripts.PlayerLogic;
 using Scripts.Players;
 using Scripts.Static;
+using Scripts.Static.Definitions;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -15,6 +16,7 @@ using Unity.Services.Multiplay;
 
 namespace Scripts.GameControllers
 {
+    [RequireComponent(typeof(GameProperties))]
     public class GameController : NetworkManager
     {
         public const int targetFPS = 60;
@@ -27,8 +29,10 @@ namespace Scripts.GameControllers
 
         [SerializeField] private GameObject ServerInputSystem;
         public Dictionary<ulong, NetworkPlayerProcessor> PlayersDict => _playersDict;
-        [HideInInspector]
-        public Player oldPlayer;
+        public GameProperties gameProperties;
+
+
+     
 #if DEDICATED_SERVER
         private IServerQueryHandler _serverQueryHandler;
         private async void ListenServerEvents()
@@ -109,11 +113,11 @@ namespace Scripts.GameControllers
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = targetFPS;
             SessionManager.ReadCommandArgs(this);
-            oldPlayer = FindObjectOfType<Player>();
-       
-            
+            gameProperties = GetComponent<GameProperties>();
+
+
 #if DEDICATED_SERVER
-            EventInitializer.Instance.onServicesInitilalised += ListenServerEvents;
+            Global.eventManager.onServicesInitilalised += ListenServerEvents;
 #endif
             
 #if !DEDICATED_SERVER
@@ -139,7 +143,7 @@ namespace Scripts.GameControllers
                 _playersDict.Add(clientId, player);
                 _playersDict[clientId].onPoolPrefabs.AddListener(StartGameSession);
                 
-                l.rl("position: " + client.PlayerObject.transform.position);
+               // l.rl("position: " + client.PlayerObject.transform.position);
             }
             if (!IsServer)
             {
@@ -159,9 +163,17 @@ namespace Scripts.GameControllers
         [ClientRpc]
         private void StartGameSessionClientRpc(ulong playerId)
         {
-            if (_playersDict[playerId].IsOwner)
-            {
+            if (_playersDict[playerId].IsOwner){
+                
                 _playersDict[playerId].data.abilityController.AddCharacterToInventory(_playersDict[playerId].data.characterController.currentCharacter.name);
+     
+                if (gameProperties != null && gameProperties.debugCharacterAbilities != null)
+                {
+                    foreach (var VARIABLE in gameProperties.debugCharacterAbilities)
+                    {
+                        _playersDict[playerId].data.abilityController.AddCharacterToInventory(VARIABLE.ToString());
+                    }
+                }
                 _playersDict[playerId].data.abilityController.UseCharacterAbilities();
             }
         }

@@ -66,12 +66,16 @@ namespace Scripts.Abilities
 
         public void AddCharacterToInventory(string character)
         {
-            inventory.characterAbilities = abilitiesLib.characterAbilities[character];
-            Debug.Log("Inventory character abilities: " + Debugger.dictionaryToString(abilitiesLib.characterAbilities[character], false, true));
+            if (abilitiesLib.characterAbilities.ContainsKey(character) && abilitiesLib.characterAbilities[character] != null)
+            {
+                inventory.characterAbilities.AddReplace(abilitiesLib.characterAbilities[character]);
+                //Debug.Log("Inventory " + character+" abilities: " + Debugger.dictionaryToString(abilitiesLib.characterAbilities[character], false, true));
+            }
+          
         }
         public void UseCharacterAbilities()
         {
-            Debug.Log(Debugger.dictionaryToString(inventory.characterAbilities, false, true));
+            Debug.Log("Start to use next inventory abilities "+Debugger.dictionaryToString(inventory.characterAbilities, false, true));
             StartCoroutine(_recognizer.RecognizeDynamicGesture(inventory.characterAbilities.ToGestureDict(),
                 (e) =>
                 {
@@ -150,12 +154,13 @@ namespace Scripts.Abilities
                 abilitiesLib.characterAbilities.AddReplace(characterData.characterName, weapons);
             }
 
-            
-            Debug.Log("Weapons initialized: ");
+            var log = "Weapons initialized: ";
+
             foreach (var VARIABLE in abilitiesLib.characterAbilities)
             {
-                Debug.Log(VARIABLE.Key + " " + Debugger.dictionaryToString(VARIABLE.Value, false, false));
+                log += VARIABLE.Key + " contains " + Debugger.dictionaryToString(VARIABLE.Value, false, false) + "; ";
             }
+            Debug.Log(log);
             OnWeaponsInitialized?.Invoke();
          }
 

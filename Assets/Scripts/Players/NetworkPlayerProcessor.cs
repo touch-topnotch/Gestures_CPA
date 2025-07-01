@@ -29,7 +29,8 @@ namespace Scripts.PlayerLogic
         public override void OnNetworkSpawn()
         {
             Debug.Log("NETWORK SPAWN");
-            var oldPlayer = NetworkManager.GetComponent<GameController>().oldPlayer;
+            var oldPlayer = NetworkManager.GetComponent<GameController>().gameProperties.player;
+            
 
             PlayerProperties lastPlayerProperties = oldPlayer ? oldPlayer.playerProperties
                 : new PlayerProperties(RigType.NoRig, AvatarType.Enemy, CharacterType.Anger);

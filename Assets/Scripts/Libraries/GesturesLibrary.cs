@@ -46,7 +46,6 @@ namespace Scripts.Gestures
         public GesturesLibrary()
         { 
             //_CharacterController.characterChangedEvent.AddListener(OnCharacterChanged);
-            Debug.Log("Trying to invoke");
             if (!Global.eventManager.isInitialized)
             {
                 Global.eventManager.onServicesInitilalised += () => { AddDictionary(); };
@@ -93,7 +92,7 @@ namespace Scripts.Gestures
                 allAvailableFrames.Add(frame.Key, frame.Value);
             }
 
-            var log = $"Library has initialized! .\n"
+            var log = $"Library has initialized!\n"
                       + $"   All Parsed Gestures: {Debugger.dictionaryToString(allCharacterGestures.openDict, false, true)}"
                       + $"\n   Character Gestures (Now without limitations): {Debugger.dictionaryToString(characterGestures, false, true)}"
                       + $"\n   System Gestures: {Debugger.dictionaryToString(systemGestures, false, true)}"

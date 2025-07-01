@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using DG.Tweening;
 using Scripts.Design;
 using Scripts.Events;
@@ -34,7 +35,7 @@ namespace Scripts.HandsLogic
         public Transform[] points;
 
         [SerializeField] private List<Material> _materials = new List<Material>();
-
+        [SerializeField] private AnimationCurve handMovementCurve;
         public Material HandMaterial
         {
             get => _meshRenderer.sharedMaterials[1];
@@ -56,10 +57,12 @@ namespace Scripts.HandsLogic
         private bool _isPlaced;
         private Action _onPlaced;
         private float _speed;
+        private float _progress;
         private bool _isMoved;
         private BonesData _target;
         private Tween _tween;
         private bool _changePosition;
+
 #if UNITY_EDITOR
         [Button("Add missing components")]
         public void AddMissingComponents()
@@ -114,6 +117,14 @@ namespace Scripts.HandsLogic
 
         private void MoveHand()
         {
+            _progress += Time.deltaTime * _speed;
+            if (_isPlaced)
+            {
+                _progress = 0;
+                return;
+            }
+                
+            
             if (_target == null || _target.rotations == null || _target.rotations?.Length != 26)
             {
                 _onPlaced = null;
@@ -124,30 +135,31 @@ namespace Scripts.HandsLogic
             var dist = Vector3.Distance(points[0].localPosition, _target.rootPos);
             var a1 = Quaternion.Angle(points[0].localRotation, _target.rotations[0]);
             var a2 = Quaternion.Angle(points[13].localRotation, _target.rotations[13]);
-            if (a1 < 0.05f && a2 < 0.05f)
+            if (a1 < 0.001f && a2 < 0.001f)
             {
-                if (!_isPlaced && (!_changePosition || dist < 0.05f))
+                if (!_changePosition || dist < 0.05f) 
+                {
                     StopMoveHand();
-                return;
+                }
             }
-
             if (_changePosition)
                 points[0].localPosition =
-                    Vector3.Lerp(points[0].localPosition, _target.rootPos, _speed * Time.deltaTime);
+                    Vector3.Lerp(points[0].localPosition, _target.rootPos, handMovementCurve.Evaluate(_progress));
 
             for (int i = 0; i < points.Length; i++)
             {
                 points[i].localRotation =
-                    Quaternion.Lerp(points[i].localRotation, _target.rotations[i], _speed * Time.deltaTime);
+                    Quaternion.Lerp(points[i].localRotation, _target.rotations[i],handMovementCurve.Evaluate(_progress));
             }
         }
 
 
         private void StopMoveHand()
         {
+            _progress = 0;
             _onPlaced?.Invoke();
             _isPlaced = true;
-            //onUpdate.RemoveListener(MoveHand);
+            onUpdate.RemoveListener(MoveHand);
         }
 
         public bool IsActive() => gameObject.activeSelf;
@@ -194,6 +206,7 @@ namespace Scripts.HandsLogic
             _onPlaced = onPlaced;
             _changePosition = changePosition;
             _isPlaced = false;
+            _progress = 0;
             if (!_isMoved)
                 onUpdate.AddListener(MoveHand);
         }

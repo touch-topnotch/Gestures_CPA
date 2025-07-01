@@ -195,7 +195,7 @@ MonoBehaviour:
   playerProperties:
     rig: 1
     avatar: 0
-    character: 0
+    character: 1
   id: 0
   isLocal: 1
   isInitialized: 0
@@ -511,6 +511,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3609715668009691620, guid: c76451da51e3c4ef2b76fbf871b11ae7,
+        type: 3}
+      propertyPath: _inherited
+      value: 
+      objectReference: {fileID: 1383466367236318195}
+    - target: {fileID: 3609715668009691620, guid: c76451da51e3c4ef2b76fbf871b11ae7,
+        type: 3}
+      propertyPath: handsProperties.handSpeed
+      value: 1.05
+      objectReference: {fileID: 0}
     - target: {fileID: 7359939035537570990, guid: c76451da51e3c4ef2b76fbf871b11ae7,
         type: 3}
       propertyPath: m_Name
@@ -793,6 +803,21 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 3951760367619761799, guid: 4d23eebc62fbd4841aa8854fdd078ff0,
+        type: 3}
+      propertyPath: handMovementCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3951760367619761799, guid: 4d23eebc62fbd4841aa8854fdd078ff0,
+        type: 3}
+      propertyPath: handMovementCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3951760367619761799, guid: 4d23eebc62fbd4841aa8854fdd078ff0,
+        type: 3}
+      propertyPath: handMovementCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4393773129123455991, guid: 4d23eebc62fbd4841aa8854fdd078ff0,
         type: 3}
       propertyPath: m_Layer
@@ -827,6 +852,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4769579139214597576, guid: 4d23eebc62fbd4841aa8854fdd078ff0,
+        type: 3}
+      propertyPath: handMovementCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4769579139214597576, guid: 4d23eebc62fbd4841aa8854fdd078ff0,
+        type: 3}
+      propertyPath: handMovementCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4769579139214597576, guid: 4d23eebc62fbd4841aa8854fdd078ff0,
+        type: 3}
+      propertyPath: handMovementCurve.m_Curve.Array.data[1].value
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5287759186449703788, guid: 4d23eebc62fbd4841aa8854fdd078ff0,
         type: 3}

@@ -4,7 +4,7 @@ namespace Scripts.Abilities
 {
     public class Inventory
     {
-        public Arsenal characterAbilities;
-        public Arsenal systemAbilities;
+        public Arsenal characterAbilities = new Arsenal();
+        public Arsenal systemAbilities = new Arsenal();
     }
 }
