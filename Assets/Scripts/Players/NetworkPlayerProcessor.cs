@@ -59,8 +59,8 @@ namespace Scripts.PlayerLogic
                     OnLocalClientFrameRecognizedServerRpc(frame, OwnerClientId);
                 });
 
-                _player.rig.anchors.Root.position =
-                    NetworkManager.GetComponent<GameController>().gameProperties.spawnPoints[OwnerClientId].position;
+                var spawnPoints = NetworkManager.GetComponent<GameController>().gameProperties.spawnPoints;
+                _player.rig.anchors.Root.position = spawnPoints[(int)OwnerClientId%spawnPoints.Length].position;
 
             }
             
