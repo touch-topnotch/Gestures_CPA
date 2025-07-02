@@ -17,6 +17,14 @@ namespace Components
             // }
         }
 
+        public void PlaySequencedSound(string key, int id)
+        {
+            ActivateSequencedResource(key, id, (e) =>
+            {
+                _audioSource.clip = e;
+                _audioSource.Play();
+            });
+        }
         protected override bool shouldAddMissingComponents { get; }
 
         protected override void ManipulateResource(AudioClip resource)

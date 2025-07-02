@@ -32,7 +32,7 @@ namespace Scripts.GameControllers
         public GameProperties gameProperties;
 
 
-     
+
 #if DEDICATED_SERVER
         private IServerQueryHandler _serverQueryHandler;
         private async void ListenServerEvents()
@@ -119,7 +119,7 @@ namespace Scripts.GameControllers
 #if DEDICATED_SERVER
             Global.eventManager.onServicesInitilalised += ListenServerEvents;
 #endif
-            
+
 #if !DEDICATED_SERVER
 
             ServerBrowser.ConnectToServer();
@@ -127,13 +127,13 @@ namespace Scripts.GameControllers
 
 
             OnClientConnectedCallback += ClientConnected;
-            
+
             OnClientDisconnectCallback += ClientDisconnected;
         }
 
         private void ClientConnected(ulong clientId)
         {
-          
+
 
             if (IsServer)
             {
@@ -141,19 +141,23 @@ namespace Scripts.GameControllers
                 var player = client.PlayerObject.GetComponent<NetworkPlayerProcessor>();
                 // глобальная логика плеера и сразу какая-то странная инициализация оружий
                 _playersDict.Add(clientId, player);
-                _playersDict[clientId].onPoolPrefabs.AddListener(StartGameSession);
-              
-                
+
+                if (ConnectedClients.Count >= gameProperties.playerCount)
+                {
+                    _playersDict[clientId].onPoolPrefabs.AddListener(StartGameSessionServerRpc);
+                }
+
                 // l.rl("position: " + client.PlayerObject.transform.position);
             }
+
             if (!IsServer)
             {
                 l.rl(LocalClient.PlayerObject.name + " constructed!");
             }
-            
-        }
 
-        private void StartGameSession()
+        }
+        [ServerRpc]
+        private void StartGameSessionServerRpc()
         {
             foreach (var player in _playersDict.Keys)
             {
@@ -164,22 +168,24 @@ namespace Scripts.GameControllers
         [ClientRpc]
         private void StartGameSessionClientRpc(ulong playerId)
         {
-            if (_playersDict[playerId].IsOwner){
-                
-                _playersDict[playerId].data.abilityController.AddCharacterToInventory(_playersDict[playerId].data.characterController.currentCharacter.name);
-     
-                if (gameProperties != null && gameProperties.debugCharacterAbilities != null)
-                {
-                    foreach (var VARIABLE in gameProperties.debugCharacterAbilities)
-                    {
-                        _playersDict[playerId].data.abilityController.AddCharacterToInventory(VARIABLE.ToString());
-                    }
-                }
-                _playersDict[playerId].data.abilityController.UseCharacterAbilities();
+            if (!_playersDict[playerId].IsOwner)
+            {
+                return;
             }
+
+            _playersDict[playerId].data.abilityController
+                .AddCharacterToInventory(_playersDict[playerId].data.characterController.currentCharacter.name);
+
+            if (gameProperties != null && gameProperties.debugCharacterAbilities != null)
+            {
+                foreach (var VARIABLE in gameProperties.debugCharacterAbilities)
+                {
+                    _playersDict[playerId].data.abilityController.AddCharacterToInventory(VARIABLE.ToString());
+                }
+            }
+
+            _playersDict[playerId].data.abilityController.UseCharacterAbilities();
         }
-        
-        
         private void ClientDisconnected(ulong clientId)
         {
             if (_playersDict.ContainsKey(clientId))

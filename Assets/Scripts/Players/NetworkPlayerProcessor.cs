@@ -72,7 +72,11 @@ namespace Scripts.PlayerLogic
             {
                 _player.onPlayerInitialized.AddListener(PoolNetworkPrefabs);
             }
-            oldPlayer.gameObject.SetActive(false);
+
+            _player.onPlayerInitialized.AddListener(() =>
+            {
+                oldPlayer.gameObject.SetActive(false);
+            });
         }
         public void PoolNetworkPrefabs()
         {

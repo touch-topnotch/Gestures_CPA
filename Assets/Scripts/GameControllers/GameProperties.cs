@@ -12,5 +12,7 @@ namespace Scripts.GameControllers
         [SerializeField] public CharacterType[] debugCharacterAbilities;
 
         public Transform[] spawnPoints;
+
+        public ushort playerCount;
     }
 }

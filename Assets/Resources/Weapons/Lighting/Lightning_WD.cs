@@ -19,7 +19,7 @@ namespace Scripts
 
         [SerializeField] private VisualEffect arc;
         [SerializeField] private VisualEffect orb;
-        
+
         [Header("Properties")]
         [SerializeField] private float yCenter;
         [SerializeField] private float yWidth;
@@ -40,7 +40,7 @@ namespace Scripts
         
         private void Start()
         {
-            _lightningObject.SetActive(false);
+            orb.gameObject.SetActive(false);
             arc.gameObject.SetActive(false);
         }
         
@@ -65,9 +65,11 @@ namespace Scripts
         
                     orb.gameObject.SetActive(true);
                     arc.gameObject.SetActive(true);
-                    orb.transform.position = (left[0].position + right[0].position) / 2;
                     orb.SetFloat("Power", 0);
                     arc.SetFloat("Power", 0);
+                    break;
+                case 1:
+                    audioProcessor.PlaySequencedSound("Frames", state);
                     break;
             }
         }

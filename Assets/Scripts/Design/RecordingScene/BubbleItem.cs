@@ -43,7 +43,7 @@ namespace Design.RecordingScene
             emissive = new(1, 0);
             _xrSimpleInteractable ??= GetComponent<XRSimpleInteractable>();
             if (!_mat)
-                _mat = GetComponent<MeshRenderer>().sharedMaterial;
+                _mat = GetComponent<MeshRenderer>().material;
             _xrSimpleInteractable.hoverEntered.AddListener((a) =>
             {
                 if (_interactable)

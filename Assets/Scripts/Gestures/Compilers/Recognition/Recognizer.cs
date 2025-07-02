@@ -54,10 +54,10 @@ namespace Scripts.Gestures
                 if (TryRecognizeFrameInAnyPossibles(_config.SupportiveProperties, v_possibleFrames,
                         out var curSuppRec, false) && drawnSuppLast != curSuppRec)
                 {
-                    _hands.handVisualiser.ShowHands();
-                    _hands.handVisualiser.Move(v_possibleFrames[curSuppRec], 4, null);
-                    _hands.handVisualiser.ManipulateLasts((m) => m.ChangeColorPinPong(_colorActive, _colorPassive,
-                        new ColorParams(HandShaderProps.EdgeColor, 1, false)));
+                     _hands.handVisualiser.ShowHands();
+                      _hands.handVisualiser.Move(v_possibleFrames[curSuppRec], 4, null);
+                      _hands.handVisualiser.ManipulateLasts((m) => m.ChangeColorPinPong(_colorActive, _colorPassive,
+                         new ColorParams(HandShaderProps.EdgeColor, 1, false)));
                     drawnSuppLast = curSuppRec;
                 }
 
@@ -80,8 +80,7 @@ namespace Scripts.Gestures
                     if (!wasDrawn && RecognizeFrame(_config.SupportiveProperties, possibleFrame, _hands, false))
                     {
                         _hands.handVisualiser.Move(possibleFrame, 4, null);
-                        _hands.handVisualiser.ManipulateLasts((m) => m.ChangeColorPinPong(_colorActive, _colorPassive,
-                            new ColorParams(HandShaderProps.EdgeColor, 1, false)));
+                        _hands.handVisualiser.ManipulateLasts((m) => m.ChangeColorPinPong(_colorActive, _colorPassive, new ColorParams(HandShaderProps.EdgeColor, 1, false)));
                         wasDrawn = true;
                     }
 
@@ -95,7 +94,7 @@ namespace Scripts.Gestures
 
             //  v_possibleGestures[v_curGesture].AllFramesDetected();
             onGestureRecognized?.Invoke(v_possibleGestures[v_curGesture].name);
-            _hands.handVisualiser.ManipulateAll(e => e.Hide());
+            _hands.handVisualiser.ManipulateAll(e => e.Hide(true));
 
             void LogPossibleFrames()
             {

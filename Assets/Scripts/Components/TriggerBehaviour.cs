@@ -1,17 +1,28 @@
 using System;
 using Scripts.Static.Definitions;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace Scripts.Components
 {
-    [RequireComponent(typeof(Rigidbody))]
     public class TriggerBehaviour : SmartComponent
     {
-        public Rigidbody rigidBody { get; protected set; }
+
+        public Rigidbody rigidBody;
+        public Collider orbCollider; 
         public UnityEvent<Affected> TriggerEnterEvent;
         public UnityEvent<Affected> TriggerExitEvent;
         public virtual bool ImpactCondition() => true;
+
+        public void EnableComponents()
+        {
+            orbCollider.enabled = true;
+        }
+        public void DisableComponents()
+        {
+            orbCollider.enabled = false;
+        }
 
         public void OnTriggerEnter(Collider other)
         {
@@ -33,11 +44,35 @@ namespace Scripts.Components
                 TriggerExitEvent?.Invoke(ph);
         }
 
-        protected override bool shouldAddMissingComponents => !rigidBody;
+        protected override bool shouldAddMissingComponents => !(rigidBody && orbCollider);
 
         public override void AddMissingComponents()
         {
-            rigidBody ??= GetComponent<Rigidbody>();
+            if (!rigidBody)
+            {
+                if (GetComponent<Rigidbody>())
+                    rigidBody = GetComponent<Rigidbody>();
+                else
+                {
+                    var r = transform.AddComponent<Rigidbody>();
+                    r.isKinematic = true;
+                    r.useGravity = false;
+                    rigidBody = r;
+                }
+            }
+            
+            if (!orbCollider)
+            {
+                if (GetComponent<Collider>())
+                    orbCollider = GetComponent<Collider>();
+                else
+                {
+                    var sc = transform.AddComponent<SphereCollider>();
+                    sc.isTrigger = true;
+                    sc.radius = 0.2f;
+                    orbCollider = sc;
+                }
+            }
         }
     }
 }
