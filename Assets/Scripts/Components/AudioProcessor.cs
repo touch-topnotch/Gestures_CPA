@@ -17,6 +17,8 @@ namespace Components
             // }
         }
 
+        protected override bool shouldAddMissingComponents { get; }
+
         protected override void ManipulateResource(AudioClip resource)
         {
             _audioSource.PlayOneShot(resource);

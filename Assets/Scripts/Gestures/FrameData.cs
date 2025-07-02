@@ -1,7 +1,9 @@
 using System;
 using JetBrains.Annotations;
+using Scripts.Gesture_Editor_SDK.Realtime;
 using Scripts.HandsLogic;
 using Scripts.PlayerLogic;
+using Scripts.Players;
 using UnityEngine;
 using UnityEngine.XR;
 
@@ -51,21 +53,23 @@ namespace Scripts.Gestures
             LeftBones = left;
             RightBones = right;
         }
+
         public FrameData(FrameData previous)
         {
             this.name = previous.name;
             LeftBones = isNullOrEmpty(previous.LeftBones) ? null : new BonesData(HandType.left, previous.LeftBones);
-            RightBones = isNullOrEmpty(previous.RightBones) ? null : new BonesData(HandType.right ,previous.RightBones);
+            RightBones = isNullOrEmpty(previous.RightBones) ? null : new BonesData(HandType.right, previous.RightBones);
         }
+
         public FrameData(FrameData previous, Transform parent)
         {
             this.name = previous.name;
             LeftBones = isNullOrEmpty(previous.LeftBones) ? null : new BonesData(HandType.left, previous.LeftBones);
-            RightBones = isNullOrEmpty(previous.RightBones) ? null : new BonesData(HandType.right ,previous.RightBones);
+            RightBones = isNullOrEmpty(previous.RightBones) ? null : new BonesData(HandType.right, previous.RightBones);
             LeftBones?.SetParent(parent);
             RightBones?.SetParent(parent);
         }
-        
+
 
         public BonesData LeftBones
         {
@@ -73,9 +77,8 @@ namespace Scripts.Gestures
             set
             {
                 _left = value;
-               HandUsed = RefreshType();
+                HandUsed = RefreshType();
             }
-            
         }
 
         public BonesData RightBones
@@ -86,16 +89,15 @@ namespace Scripts.Gestures
                 _right = value;
                 HandUsed = RefreshType();
             }
-
         }
 
-        public bool isNullOrEmpty(BonesData data) => data == null || !data.Exists(); 
+        public bool isNullOrEmpty(BonesData data) => data == null || !data.Exists();
 
         private HandUsedType RefreshType()
         {
             var left = _left != null && _left.Exists();
             var right = _right != null && _right.Exists();
-            
+
             if (left && right)
                 return HandUsedType.LEFTNRIGHT;
             if (right)
@@ -104,7 +106,7 @@ namespace Scripts.Gestures
                 return HandUsedType.LEFT;
             return HandUsedType.NULL;
         }
-        
+
         public delegate void HandManipulation<T>(T item, BonesData data);
 
         public static void SwitchManipulation<T>(FrameData target, HandManipulation<T> manipulate, T left, T right,
@@ -131,10 +133,11 @@ namespace Scripts.Gestures
         public void SwitchManipulation<T>(HandManipulation<T> manipulate, T left, T right,
             Action nullCallback = null) =>
             SwitchManipulation(this, manipulate, left, right, nullCallback);
-        
+
         public override string ToString()
         {
-            return $"FrameData {name} has {HandUsed},\n leftBones = {LeftBones?.ToString()}, \n rightBones = {RightBones?.ToString()}";
+            return
+                $"FrameData {name} has {HandUsed},\n leftBones = {LeftBones?.ToString()}, \n rightBones = {RightBones?.ToString()}";
         }
 
         public FrameData ParentedFrame(Transform parent)
@@ -144,7 +147,7 @@ namespace Scripts.Gestures
 
         public FrameData AttachedToPlayer()
         {
-            return ParentedFrame(PlayerData.local.bodyAnchors.Body);
+            return ParentedFrame(PlayerData.local.anchors.Body);
         }
     }
 }

@@ -8,6 +8,7 @@ namespace MeshCombineStudio
     public class CamGeometryCapture : MonoBehaviour
     {
         public ComputeShader computeDepthToArray;
+
         public Int2 resolution = new Int2(1024, 1024);
         // public bool capture;
         // public float radius = 0.5f;
@@ -18,7 +19,7 @@ namespace MeshCombineStudio
         public RenderTexture rtCapture;
 
         float[] heights;
-        
+
         Bounds bounds;
 
         float maxSize;
@@ -55,11 +56,11 @@ namespace MeshCombineStudio
 
             rt.Release();
 
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             DestroyImmediate(rt);
-            #else
-            Destroy(rt);    
-            #endif
+#else
+            Destroy(rt);
+#endif
 
             rt = null;
         }
@@ -70,7 +71,8 @@ namespace MeshCombineStudio
             DisposeRenderTexture(ref rtCapture);
         }
 
-        public void RemoveTrianglesBelowSurface(Transform t, MeshCombineJobManager.MeshCombineJob meshCombineJob, MeshCache.SubMeshCache newMeshCache, ref byte[] vertexIsBelow)
+        public void RemoveTrianglesBelowSurface(Transform t, MeshCombineJobManager.MeshCombineJob meshCombineJob,
+            MeshCache.SubMeshCache newMeshCache, ref byte[] vertexIsBelow)
         {
             if (vertexIsBelow == null) vertexIsBelow = new byte[65534];
 
@@ -126,10 +128,14 @@ namespace MeshCombineStudio
                             else
                             {
                                 vertexIsBelow[vertexIndex] = isBelow = aboveSurface;
-                            } 
+                            }
                         }
 
-                        if (isBelow != belowSurface) { isAboveSurface = true; break; }
+                        if (isBelow != belowSurface)
+                        {
+                            isAboveSurface = true;
+                            break;
+                        }
                     }
 
                     if (!isAboveSurface)
@@ -149,7 +155,8 @@ namespace MeshCombineStudio
             {
                 if (rtCapture != null) DisposeRTCapture();
 
-                rtCapture = new RenderTexture(resolution.x, resolution.y, 16, RenderTextureFormat.Depth, RenderTextureReadWrite.Linear);
+                rtCapture = new RenderTexture(resolution.x, resolution.y, 16, RenderTextureFormat.Depth,
+                    RenderTextureReadWrite.Linear);
             }
 
             bounds.size *= 1.1f;

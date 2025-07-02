@@ -33,7 +33,7 @@ namespace Gesture_Editor_SDK.EditorAttributes
     }
 
     [Serializable]
-    public class ListedDictionary : SpecialDictionary<string , List<AudioClip>>
+    public class ListedDictionary : SpecialDictionary<string, List<AudioClip>>
     {
     }
 }

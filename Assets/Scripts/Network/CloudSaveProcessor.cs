@@ -16,19 +16,6 @@ namespace Scripts.Network
     {
         private const string projectId = CustomPaths.projectId;
         private const string environmentId = CustomPaths.environmentId;
-        public static CloudSaveProcessor Instance { get; private set; }
-
-        private void Awake()
-        {
-            if (Instance == null)
-            {
-                Instance = this;
-            }
-            else
-            {
-                Destroy(gameObject);
-            }
-        }
 
         public static void GetAllCustomItems(Action<string> onSuccess)
         {

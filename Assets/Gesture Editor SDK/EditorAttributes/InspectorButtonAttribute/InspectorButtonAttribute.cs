@@ -1,6 +1,5 @@
 namespace Gesture_Editor_SDK.EditorAttributes.InspectorButtonAttribute
 {
-    
     using System;
 
     [AttributeUsage(AttributeTargets.Method, Inherited = true, AllowMultiple = false)]
@@ -10,6 +9,7 @@ namespace Gesture_Editor_SDK.EditorAttributes.InspectorButtonAttribute
         public readonly string Row;
         public readonly float Space;
         public readonly bool HasRow;
+
         public InspectorButtonAttribute(string name = default, string row = default, float space = default)
         {
             Row = row;
@@ -17,6 +17,5 @@ namespace Gesture_Editor_SDK.EditorAttributes.InspectorButtonAttribute
             Name = name;
             Space = space;
         }
-    
     }
 }

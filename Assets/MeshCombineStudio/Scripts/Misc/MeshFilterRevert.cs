@@ -19,7 +19,7 @@ namespace MeshCombineStudio
 
             string path = UnityEditor.AssetDatabase.GetAssetPath(m);
             if (path == null || path == string.Empty) return false;
-            
+
             // Debug.Log(path);
 
             guid = UnityEditor.AssetDatabase.AssetPathToGUID(path);
@@ -36,7 +36,7 @@ namespace MeshCombineStudio
             if (guid == string.Empty) return;
 
             string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
-            
+
             var meshes = UnityEditor.AssetDatabase.LoadAllAssetsAtPath(path);
 
             for (int i = 0; i < meshes.Length; i++)

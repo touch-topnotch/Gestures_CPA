@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Scripts.PlayerLogic;
+using Scripts.Static.Definitions;
 using Scripts.Tests;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -34,25 +34,7 @@ namespace Scripts.Design
         public static readonly int[] AllColors = new[]
             { MainColor, EdgeColor, ThumbColor, FingerColor1, FingerColor2, FingerColor3, FingerColor4 };
     }
-
-
-    [Serializable]
-    public struct HandStageProps
-    {
-        public Color MainColor;
-        public Color EdgeColor;
-        public float EdgeHighlightPower;
-        public Color ThumbColor;
-        public Color FingerColor1;
-        public Color FingerColor2;
-        public Color FingerColor3;
-        public Color FingerColor4;
-        public Vector3 FadeCenter;
-        public Vector3 FadeScale;
-        public float FadeStart;
-        public float NoiseScale;
-        public float NoiseStrength;
-    }
+    
 
     [InlineEditor()]
     [CreateAssetMenu(fileName = "HandAppearance_", menuName = "Character/HandAppearance")]

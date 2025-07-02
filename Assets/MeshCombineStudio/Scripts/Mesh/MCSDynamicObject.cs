@@ -2,6 +2,7 @@
 
 namespace MeshCombineStudio
 {
-    public class MCSDynamicObject : MonoBehaviour { }
+    public class MCSDynamicObject : MonoBehaviour
+    {
+    }
 }
-

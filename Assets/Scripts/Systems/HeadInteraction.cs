@@ -21,13 +21,14 @@ namespace Scripts.Systems
     {
         [SerializeField] private Transform trackedHead;
         [SerializeField] [Range(0.1f, 3f)] private float trackedTime = 1;
-        public event Action<HeadInteractionType> onHeadInteraction;
+        public UnityEvent<HeadInteractionType> onHeadInteraction;
         private List<Vector3> lastActions;
 
         private bool isInvoked;
 
         private List<Condition> conditions;
         private Camera _camera;
+
         private void Awake()
         {
             conditions = new List<Condition>()
@@ -51,7 +52,7 @@ namespace Scripts.Systems
         }
 
         private void OnValidate()
-        { 
+        {
             Initialise();
         }
 
@@ -59,10 +60,6 @@ namespace Scripts.Systems
         {
             trackedHead = transform;
             _camera ??= GetComponent<Camera>();
-            if (_camera && !_camera.enabled)
-            {
-                this.enabled = false;
-            }
         }
 
         private class Condition

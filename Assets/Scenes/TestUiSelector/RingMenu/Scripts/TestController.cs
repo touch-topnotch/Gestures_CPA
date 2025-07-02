@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Scripts.Gestures;
 using Scripts.PlayerLogic;
+using Scripts.Players;
 using UnityEngine;
 
 
@@ -8,12 +9,12 @@ public class TestController : MonoBehaviour
 {
     [SerializeField] private RingMenu ringMenu;
     private GesturesLibrary _library;
+
     private void Start()
     {
-        _library = PlayerData.local.library;
+        _library = PlayerData.local.gesturesLibrary;
     }
-    
-   
+
 
     public void SimulateFrame(string e)
     {

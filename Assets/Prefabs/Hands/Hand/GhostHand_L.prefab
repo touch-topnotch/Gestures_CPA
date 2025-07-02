@@ -167,6 +167,7 @@ MonoBehaviour:
   _handMaterialType: 0
   _handType: 0
   grabPoint: {fileID: 0}
+  palmCenter: {fileID: 0}
   points:
   - {fileID: 8883627351471152935}
   - {fileID: 4530430382407047232}
@@ -197,6 +198,30 @@ MonoBehaviour:
   _materials:
   - {fileID: 2100000, guid: b7a4c763eef7a4d55b70b37313323a2c, type: 2}
   - {fileID: 2100000, guid: 41be6f1aca4582946a6893d5117a54d3, type: 2}
+  handMovementCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   _meshRenderer: {fileID: 3603104821891361969}
 --- !u!4 &2527595821431893158 stripped
 Transform:

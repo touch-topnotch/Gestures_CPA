@@ -26,7 +26,7 @@ namespace MeshCombineStudio
         bool showUnityLog = true, showInputLog = true;
         MeshCombiner[] meshCombiners;
         MeshCombiner selectedMeshCombiner;
-        
+
         void Awake()
         {
             instance = this;
@@ -50,7 +50,7 @@ namespace MeshCombineStudio
             if (meshCombiners != null && meshCombiners.Length > 0) SelectMeshCombiner(meshCombiners[0].name);
             Log("");
             Log("Type '?' to show commands");
-            
+
             // ExecuteCommand("?");
         }
 
@@ -65,14 +65,22 @@ namespace MeshCombineStudio
             if (selectedMeshCombiner != null)
             {
                 Log("Selected MCS -> " + selectedMeshCombiner.name);
-            } 
+            }
         }
 
         void ReportMeshCombiner(MeshCombiner meshCombiner, bool foundText = false)
         {
-            Log((foundText ? "Found MCS -> " : "") + meshCombiner.name + " (" + (meshCombiner.combined ? "*color-green#Combined" : "*color-blue#Uncombined" ) + ")" + " -> Cell Size " + meshCombiner.cellSize + (meshCombiner.searchOptions.useMaxBoundsFactor ? " | Max Bounds Factor " + meshCombiner.searchOptions.maxBoundsFactor : "")
-                    + (meshCombiner.searchOptions.useVertexInputLimit ? " | Vertex Input Limit " + (meshCombiner.searchOptions.useVertexInputLimit ? meshCombiner.searchOptions.vertexInputLimit : 65534) : ""),
-                    0, null, meshCombiner);
+            Log((foundText ? "Found MCS -> " : "") + meshCombiner.name + " (" +
+                (meshCombiner.combined ? "*color-green#Combined" : "*color-blue#Uncombined") + ")" + " -> Cell Size " +
+                meshCombiner.cellSize + (meshCombiner.searchOptions.useMaxBoundsFactor
+                    ? " | Max Bounds Factor " + meshCombiner.searchOptions.maxBoundsFactor
+                    : "")
+                + (meshCombiner.searchOptions.useVertexInputLimit
+                    ? " | Vertex Input Limit " + (meshCombiner.searchOptions.useVertexInputLimit
+                        ? meshCombiner.searchOptions.vertexInputLimit
+                        : 65534)
+                    : ""),
+                0, null, meshCombiner);
         }
 
         public int SelectMeshCombiner(string name)
@@ -84,10 +92,15 @@ namespace MeshCombineStudio
                 MeshCombiner meshCombiner = meshCombiners[i];
                 if (meshCombiner.name == name)
                 {
-                    Log("Selected MCS -> " + meshCombiner.name + " (" + (meshCombiner.combined ? "*color-green#Combined" : "*color-blue#Uncombined") + ")", 0, null, meshCombiner); 
-                    selectedMeshCombiner = meshCombiner; return 2;
+                    Log(
+                        "Selected MCS -> " + meshCombiner.name + " (" +
+                        (meshCombiner.combined ? "*color-green#Combined" : "*color-blue#Uncombined") + ")", 0, null,
+                        meshCombiner);
+                    selectedMeshCombiner = meshCombiner;
+                    return 2;
                 }
             }
+
             return 0;
         }
 
@@ -106,7 +119,8 @@ namespace MeshCombineStudio
             instance = null;
         }
 
-        static public void Log(string logString, int commandType = 0, GameObject go = null, MeshCombiner meshCombiner = null)
+        static public void Log(string logString, int commandType = 0, GameObject go = null,
+            MeshCombiner meshCombiner = null)
         {
             instance.logs.Add(new LogEntry(logString, "", LogType.Log, false, commandType, go, meshCombiner));
         }
@@ -141,7 +155,7 @@ namespace MeshCombineStudio
                 setFocus = true;
             }
         }
-        
+
         void ExecuteCommand(string cmd)
         {
             logs.Add(new LogEntry(cmd, "", LogType.Log, false, 1));
@@ -166,25 +180,49 @@ namespace MeshCombineStudio
                 System.GC.Collect();
                 log.commandType = 2;
             }
-            else if (cmd == "dir") { Dir(); log.commandType = 2; }
-            else if (cmd == "components") { Components(log); }
+            else if (cmd == "dir")
+            {
+                Dir();
+                log.commandType = 2;
+            }
+            else if (cmd == "components")
+            {
+                Components(log);
+            }
             else if (cmd.Contains("lines "))
             {
                 int.TryParse(cmd.Replace("lines ", ""), out lines);
                 lines = Mathf.Clamp(lines, 5, 50);
                 log.commandType = 2;
             }
-            else if (cmd == "cd..") { CD(log, ".."); }
-            else if (cmd == "cd\\") { CD(log, "\\"); }
-            else if (cmd.Contains("cd ")) { CD(log, cmd.Replace("cd ", "")); }
+            else if (cmd == "cd..")
+            {
+                CD(log, "..");
+            }
+            else if (cmd == "cd\\")
+            {
+                CD(log, "\\");
+            }
+            else if (cmd.Contains("cd "))
+            {
+                CD(log, cmd.Replace("cd ", ""));
+            }
             else if (cmd.Contains("show "))
             {
                 Transform t = Methods.Find<Transform>(selectGO, cmd.Replace("show ", ""));
-                if (t != null) { t.gameObject.SetActive(true); log.commandType = 2; }
+                if (t != null)
+                {
+                    t.gameObject.SetActive(true);
+                    log.commandType = 2;
+                }
             }
             else if (cmd == "show")
             {
-                if (selectGO != null) { selectGO.SetActive(true); log.commandType = 2; }
+                if (selectGO != null)
+                {
+                    selectGO.SetActive(true);
+                    log.commandType = 2;
+                }
             }
             else if (cmd.Contains("showAll "))
             {
@@ -194,7 +232,11 @@ namespace MeshCombineStudio
             else if (cmd.Contains("hide "))
             {
                 GameObject go = GameObject.Find(cmd.Replace("hide ", ""));
-                if (go != null) { go.SetActive(false); log.commandType = 2; }
+                if (go != null)
+                {
+                    go.SetActive(false);
+                    log.commandType = 2;
+                }
             }
             else if (cmd.Contains("hideAll "))
             {
@@ -203,13 +245,36 @@ namespace MeshCombineStudio
             }
             else if (cmd == "hide")
             {
-                if (selectGO != null) { selectGO.SetActive(false); log.commandType = 2; }
+                if (selectGO != null)
+                {
+                    selectGO.SetActive(false);
+                    log.commandType = 2;
+                }
             }
-            else if (cmd.Contains("clear")) { Clear(log, cmd.Replace("clear ", "")); }
-            else if (cmd.Contains("dir ")) { DirContains(cmd.Replace("dir ", "")); log.commandType = 2; }
-            else if (cmd == "dirAll") { DirAll(); log.commandType = 2; }
-            else if (cmd.Contains("dirSort ")) { DirSort(cmd.Replace("dirSort ", "")); log.commandType = 2; }
-            else if (cmd == "dirSort") { DirSort(); log.commandType = 2; }
+            else if (cmd.Contains("clear"))
+            {
+                Clear(log, cmd.Replace("clear ", ""));
+            }
+            else if (cmd.Contains("dir "))
+            {
+                DirContains(cmd.Replace("dir ", ""));
+                log.commandType = 2;
+            }
+            else if (cmd == "dirAll")
+            {
+                DirAll();
+                log.commandType = 2;
+            }
+            else if (cmd.Contains("dirSort "))
+            {
+                DirSort(cmd.Replace("dirSort ", ""));
+                log.commandType = 2;
+            }
+            else if (cmd == "dirSort")
+            {
+                DirSort();
+                log.commandType = 2;
+            }
             else if (cmd.Contains("cell size "))
             {
                 int cellSize;
@@ -219,6 +284,7 @@ namespace MeshCombineStudio
                     Log("cell size should be bigger than 4");
                     return;
                 }
+
                 if (selectedMeshCombiner != null)
                 {
                     selectedMeshCombiner.cellSize = cellSize;
@@ -290,6 +356,7 @@ namespace MeshCombineStudio
                     Log("max bounds factor needs to be bigger than 1");
                     return;
                 }
+
                 if (selectedMeshCombiner != null)
                 {
                     selectedMeshCombiner.searchOptions.useMaxBoundsFactor = true;
@@ -320,6 +387,7 @@ namespace MeshCombineStudio
                     Log("vertex input limit needs to be bigger than 1");
                     return;
                 }
+
                 if (selectedMeshCombiner != null)
                 {
                     selectedMeshCombiner.searchOptions.useVertexInputLimit = true;
@@ -348,6 +416,7 @@ namespace MeshCombineStudio
             {
                 if (Methods.Contains(gos[i].name, name)) sortedGos.Add(gos[i]);
             }
+
             SortLog(sortedGos.ToArray());
         }
 
@@ -368,7 +437,11 @@ namespace MeshCombineStudio
                 int index = -1;
                 for (int j = 0; j < list.Count; j++)
                 {
-                    if (list[j].name == name) { index = j; break; }
+                    if (list[j].name == name)
+                    {
+                        index = j;
+                        break;
+                    }
                 }
 
                 if (index == -1)
@@ -390,6 +463,7 @@ namespace MeshCombineStudio
                 string text = list[i].name + " -> " + amountList[i] + " " + GetMeshInfo(list[i], ref temp);
                 Log(text);
             }
+
             Log("Total amount " + count + " Total items " + list.Count + " Total shared meshes " + meshCount);
         }
 
@@ -405,6 +479,7 @@ namespace MeshCombineStudio
                     return "(vertices " + m.vertexCount + ", combine " + Mathf.FloorToInt(65000 / m.vertexCount) + ")";
                 }
             }
+
             return "";
         }
 
@@ -425,13 +500,18 @@ namespace MeshCombineStudio
 
         void Clear(LogEntry log, string cmd)
         {
-            if (cmd == "clear") { logs.Clear(); log.commandType = 2; }
+            if (cmd == "clear")
+            {
+                logs.Clear();
+                log.commandType = 2;
+            }
             else if (cmd == "input")
             {
                 for (int i = 0; i < logs.Count; i++)
                 {
                     if (!logs[i].unityLog) logs.RemoveAt(i--);
                 }
+
                 log.commandType = 2;
             }
             else if (cmd == "unity")
@@ -440,6 +520,7 @@ namespace MeshCombineStudio
                 {
                     if (logs[i].unityLog) logs.RemoveAt(i--);
                 }
+
                 log.commandType = 2;
             }
         }
@@ -448,7 +529,9 @@ namespace MeshCombineStudio
         {
             GameObject[] gos = Methods.Search<GameObject>(selectGO);
             int meshCount = 0;
-            for (int i = 0; i < gos.Length; i++) Log(GetPath(gos[i]) + "\\" + gos[i].transform.childCount + " " + GetMeshInfo(gos[i], ref meshCount), 0, gos[i]);
+            for (int i = 0; i < gos.Length; i++)
+                Log(GetPath(gos[i]) + "\\" + gos[i].transform.childCount + " " + GetMeshInfo(gos[i], ref meshCount), 0,
+                    gos[i]);
             Log(gos.Length + " (meshes " + meshCount + ")\\..");
         }
 
@@ -458,7 +541,9 @@ namespace MeshCombineStudio
             if (selectGO == null)
             {
                 GameObject[] gos = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
-                for (int i = 0; i < gos.Length; i++) Log(gos[i].name + "\\" + gos[i].transform.childCount + " " + GetMeshInfo(gos[i], ref meshCount), 0, gos[i]);
+                for (int i = 0; i < gos.Length; i++)
+                    Log(gos[i].name + "\\" + gos[i].transform.childCount + " " + GetMeshInfo(gos[i], ref meshCount), 0,
+                        gos[i]);
                 Log(gos.Length + " (meshes " + meshCount + ")\\..");
             }
             else
@@ -468,15 +553,21 @@ namespace MeshCombineStudio
                 for (int i = 0; i < selectT.childCount; i++)
                 {
                     Transform child = selectT.GetChild(i);
-                    Log(child.name + "\\" + child.childCount + " " + GetMeshInfo(child.gameObject, ref meshCount), 0, child.gameObject);
+                    Log(child.name + "\\" + child.childCount + " " + GetMeshInfo(child.gameObject, ref meshCount), 0,
+                        child.gameObject);
                 }
+
                 Log(selectT.childCount + " (meshes " + meshCount + ")\\..");
             }
         }
 
         void Components(LogEntry log)
         {
-            if (selectGO == null) { log.commandType = 1; return; }
+            if (selectGO == null)
+            {
+                log.commandType = 1;
+                return;
+            }
 
             Component[] components = selectGO.GetComponents<Component>();
 
@@ -485,13 +576,15 @@ namespace MeshCombineStudio
             {
                 if (components[i] != null) Log(components[i].GetType().Name);
             }
+
             log.commandType = 2;
         }
 
         void ShowPath(bool showLines = true)
         {
             string path = GetPath(selectGO);
-            if (path != "") Log(path); else Log("Root\\");
+            if (path != "") Log(path);
+            else Log("Root\\");
             if (showLines) Log("---------------------------------");
         }
 
@@ -507,8 +600,10 @@ namespace MeshCombineStudio
                     path = path.Insert(0, t.parent.name + "\\");
                     t = t.parent;
                 }
+
                 return path;
             }
+
             return "";
         }
 
@@ -526,7 +621,12 @@ namespace MeshCombineStudio
                     return;
                 }
             }
-            else if (name == "\\") { selectGO = null; log.commandType = 2; return; }
+            else if (name == "\\")
+            {
+                selectGO = null;
+                log.commandType = 2;
+                return;
+            }
 
             Transform t = Methods.Find<Transform>(selectGO, name);
 
@@ -548,13 +648,15 @@ namespace MeshCombineStudio
                 if (Methods.Contains(gos[i].name, textContains))
                 {
                     // we shouldn't hide GUI elements :)
-                    if (gos[i].transform.parent.name.IndexOf("GUI") == 0 || gos[i].transform.parent.parent == null || gos[i].transform.parent.parent.name.IndexOf("GUI") == 0)
+                    if (gos[i].transform.parent.name.IndexOf("GUI") == 0 || gos[i].transform.parent.parent == null ||
+                        gos[i].transform.parent.parent.name.IndexOf("GUI") == 0)
                     {
                         gos[i].SetActive(active);
                         ++count;
                     }
                 }
             }
+
             Log("Total amount set to " + active + " : " + count);
         }
 
@@ -565,8 +667,13 @@ namespace MeshCombineStudio
             int count = 0;
             for (int i = 0; i < gos.Length; i++)
             {
-                if (Methods.Contains(gos[i].name, textContains)) { Log(gos[i].name, 0, gos[i]); ++count; }
+                if (Methods.Contains(gos[i].name, textContains))
+                {
+                    Log(gos[i].name, 0, gos[i]);
+                    ++count;
+                }
             }
+
             Log("Total amount: " + count);
         }
 
@@ -609,6 +716,7 @@ namespace MeshCombineStudio
                         SetConsoleActive(!showConsole);
                     }
                 }
+
                 if (setFocus)
                 {
                     setFocus = false;
@@ -616,16 +724,20 @@ namespace MeshCombineStudio
                 }
             }
 
-            if (showInputLog) GUI.color = Color.green; else GUI.color = Color.grey;
+            if (showInputLog) GUI.color = Color.green;
+            else GUI.color = Color.grey;
             if (GUI.Button(new Rect(window.xMin + 5, window.yMin + 5, 75, 20), "Input Log"))
             {
                 showInputLog = !showInputLog;
             }
-            if (showUnityLog) GUI.color = Color.green; else GUI.color = Color.grey;
+
+            if (showUnityLog) GUI.color = Color.green;
+            else GUI.color = Color.grey;
             if (GUI.Button(new Rect(window.xMin + 85, window.yMin + 5, 75, 20), "Unity Log"))
             {
                 showUnityLog = !showUnityLog;
             }
+
             GUI.color = Color.white;
 
             if (!showInputLog && !showUnityLog) showInputLog = true;
@@ -645,7 +757,8 @@ namespace MeshCombineStudio
             if (showLast && Event.current.type != EventType.Repaint) scrollPos = logs.Count;
 
             GUI.changed = false;
-            scrollPos = GUI.VerticalScrollbar(vScrollRect, scrollPos, size > logs.Count - 1 ? logs.Count - 1 : size - 1, 0, logs.Count - 1);
+            scrollPos = GUI.VerticalScrollbar(vScrollRect, scrollPos, size > logs.Count - 1 ? logs.Count - 1 : size - 1,
+                0, logs.Count - 1);
             if (GUI.changed)
             {
                 showLast = false;
@@ -667,7 +780,6 @@ namespace MeshCombineStudio
 
                 if ((log.unityLog && showUnityLog) || (!log.unityLog && showInputLog))
                 {
-
                     if (log.logType == LogType.Warning) AnimateColor(Color.yellow, log, 0.75f);
                     else if (log.logType == LogType.Error) AnimateColor(Color.red, log, 0.75f);
                     else if (log.logType == LogType.Exception) AnimateColor(Color.magenta, log, 0.75f);
@@ -680,8 +792,16 @@ namespace MeshCombineStudio
 
                     if (text.Contains("*color-"))
                     {
-                        if (text.Contains("*color-green#")) { text = text.Replace("*color-green#", ""); GUI.color = Color.green; }
-                        else if (text.Contains("*color-blue#")) { text = text.Replace("*color-blue#", ""); GUI.color = Color.blue; }
+                        if (text.Contains("*color-green#"))
+                        {
+                            text = text.Replace("*color-green#", "");
+                            GUI.color = Color.green;
+                        }
+                        else if (text.Contains("*color-blue#"))
+                        {
+                            text = text.Replace("*color-blue#", "");
+                            GUI.color = Color.blue;
+                        }
                     }
 
                     GUI.Label(logRect, i + ") ");
@@ -714,7 +834,8 @@ namespace MeshCombineStudio
             public GameObject go;
             public MeshCombiner meshCombiner;
 
-            public LogEntry(string logString, string stackTrace, LogType logType, bool unityLog = false, int commandType = 0, GameObject go = null, MeshCombiner meshCombiner = null)
+            public LogEntry(string logString, string stackTrace, LogType logType, bool unityLog = false,
+                int commandType = 0, GameObject go = null, MeshCombiner meshCombiner = null)
             {
                 this.logString = logString;
                 this.stackTrace = stackTrace;
@@ -726,6 +847,5 @@ namespace MeshCombineStudio
                 // tStamp = Time.time;
             }
         }
-
     }
 }

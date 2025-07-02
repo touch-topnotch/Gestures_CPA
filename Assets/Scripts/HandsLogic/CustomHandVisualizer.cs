@@ -26,7 +26,6 @@ namespace Scripts.HandsLogic
             "If this is enabled, this component will enable the Input System internal feature flag 'USE_OPTIMIZED_CONTROLS'. You must have at least version 1.5.0 of the Input System and have its backend enabled for this to take effect.")]
         bool m_UseOptimizedControls;
 
-   
 
         [SerializeField] private PlayerHands m_PlayerHands;
 
@@ -77,9 +76,6 @@ namespace Scripts.HandsLogic
                 InputSystem.settings.SetInternalFeatureFlag("USE_OPTIMIZED_CONTROLS", true);
 #endif // ENABLE_INPUT_SYSTEM
         }
-
-        
-        
 
 
         protected void OnEnable()
@@ -244,7 +240,6 @@ namespace Scripts.HandsLogic
             }
 
             m_LeftHandGameObjects.UpdateJoints(
-            
                 subsystem.leftHand,
                 (updateSuccessFlags & XRHandSubsystem.UpdateSuccessFlags.LeftHandJoints) != 0,
                 m_DrawMeshes,
@@ -255,7 +250,6 @@ namespace Scripts.HandsLogic
                 m_LeftHandGameObjects.UpdateRootPose(subsystem.leftHand);
 
             m_RightHandGameObjects.UpdateJoints(
-         
                 subsystem.rightHand,
                 (updateSuccessFlags & XRHandSubsystem.UpdateSuccessFlags.RightHandJoints) != 0,
                 m_DrawMeshes,
@@ -453,7 +447,6 @@ namespace Scripts.HandsLogic
             }
 
             public void UpdateJoints(
-              
                 XRHand hand,
                 bool areJointsTracked,
                 bool drawMeshes,
@@ -521,7 +514,8 @@ namespace Scripts.HandsLogic
                 }
 
                 var inverseParentRotation = Quaternion.Inverse(parentPose.rotation);
-                xform.localPosition =  Vector3.Lerp(xform.localPosition, inverseParentRotation * (pose.position - parentPose.position), Time.deltaTime * m_positionSpeed);
+                xform.localPosition = Vector3.Lerp(xform.localPosition,
+                    inverseParentRotation * (pose.position - parentPose.position), Time.deltaTime * m_positionSpeed);
                 xform.localRotation = inverseParentRotation * pose.rotation;
                 if (cacheParentPose)
                     parentPose = pose;
@@ -561,6 +555,7 @@ namespace Scripts.HandsLogic
 
         protected override bool shouldAddMissingComponents =>
             !(m_PlayerHands);
+
         public override void AddMissingComponents()
         {
             m_PlayerHands ??= transform.GetComponentInChildren<PlayerHands>();
@@ -568,5 +563,4 @@ namespace Scripts.HandsLogic
             m_OnDisabled.AddListener(m_PlayerHands.OnDisabled);
         }
     }
-    
 }

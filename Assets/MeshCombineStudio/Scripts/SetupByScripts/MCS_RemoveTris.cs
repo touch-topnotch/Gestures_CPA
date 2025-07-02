@@ -10,7 +10,7 @@ namespace MeshCombineStudio
     {
         HashSet<GameObjectLayer> gos = new HashSet<GameObjectLayer>();
 
-        bool hasRegistered; 
+        bool hasRegistered;
 
         void Awake()
         {
@@ -19,13 +19,13 @@ namespace MeshCombineStudio
 
         void OnEnable()
         {
-            Register(false); 
+            Register(false);
         }
 
         void Register(bool first)
         {
             if (hasRegistered) return;
-            
+
             if (first)
             {
                 if (MeshCombiner.instances.Count == 0) return;
@@ -38,7 +38,6 @@ namespace MeshCombineStudio
             else MeshCombiner.onInit += Init;
 
             hasRegistered = true;
-
         }
 
         void Init(MeshCombiner meshCombiner)
@@ -84,7 +83,8 @@ namespace MeshCombineStudio
 
             int layer;
 
-            if (this is MCS_RemoveTrisBelowSurface) layer = Methods.GetFirstLayerInLayerMask(meshCombiner.surfaceLayerMask);
+            if (this is MCS_RemoveTrisBelowSurface)
+                layer = Methods.GetFirstLayerInLayerMask(meshCombiner.surfaceLayerMask);
             else layer = Methods.GetFirstLayerInLayerMask(meshCombiner.overlapLayerMask);
 
             if (layer == -1) return;
@@ -98,9 +98,10 @@ namespace MeshCombineStudio
                 go.layer = layer;
             }
         }
+
         void OnCombineReady(MeshCombiner meshCombiner)
         {
-            foreach(var goLayer in gos)
+            foreach (var goLayer in gos)
             {
                 goLayer.RestoreLayer();
             }

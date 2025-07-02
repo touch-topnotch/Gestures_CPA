@@ -4,12 +4,19 @@ namespace MeshCombineStudio
 {
     public class MCS_FPSCounter : MonoBehaviour
     {
-
         static public MCS_FPSCounter instance;
 
-        [Header("___ Settings ___________________________________________________________________________________________________________")]
+        [Header(
+            "___ Settings ___________________________________________________________________________________________________________")]
         public float interval = 0.25f;
-        public enum GUIType { DisplayRunning, DisplayResults, DisplayNothing }
+
+        public enum GUIType
+        {
+            DisplayRunning,
+            DisplayResults,
+            DisplayNothing
+        }
+
         public GUIType displayType = GUIType.DisplayRunning;
         public Vector2 gradientRange = new Vector2(15, 60);
         public Font fontRun;
@@ -20,8 +27,10 @@ namespace MeshCombineStudio
         public bool acceptInput = true;
         public bool reset;
 
-        [Header("___ Results ___________________________________________________________________________________________________________")]
+        [Header(
+            "___ Results ___________________________________________________________________________________________________________")]
         public float currentFPS = 0;
+
         public float averageFPS = 0;
         public float minimumFPS = 0;
         public float maximumFPS = 0;
@@ -33,12 +42,25 @@ namespace MeshCombineStudio
         // GUI-------------------------------------------
         string currentFPSText, avgFPSText, minFPSText, maxFSPText;
 
-        GUIStyle bigStyle = new GUIStyle(); GUIStyle bigStyleShadow;
-        GUIStyle smallStyle = new GUIStyle(); GUIStyle smallStyleShadow; GUIStyle smallStyleLabel;
+        GUIStyle bigStyle = new GUIStyle();
+        GUIStyle bigStyleShadow;
+        GUIStyle smallStyle = new GUIStyle();
+        GUIStyle smallStyleShadow;
+        GUIStyle smallStyleLabel;
         GUIStyle headerStyle = new GUIStyle();
 
-        Rect[] rectsRun = { new Rect(), new Rect(), new Rect(), new Rect(), new Rect(), new Rect(), new Rect(), new Rect(), new Rect(), new Rect(), new Rect(), new Rect(), new Rect(), new Rect() };
-        Rect[] rectsResult = { new Rect(), new Rect(), new Rect(), new Rect(), new Rect(), new Rect(), new Rect(), new Rect(), new Rect(), new Rect() };
+        Rect[] rectsRun =
+        {
+            new Rect(), new Rect(), new Rect(), new Rect(), new Rect(), new Rect(), new Rect(), new Rect(), new Rect(),
+            new Rect(), new Rect(), new Rect(), new Rect(), new Rect()
+        };
+
+        Rect[] rectsResult =
+        {
+            new Rect(), new Rect(), new Rect(), new Rect(), new Rect(), new Rect(), new Rect(), new Rect(), new Rect(),
+            new Rect()
+        };
+
         Gradient gradient = new Gradient();
 
         const float line1 = 4;
@@ -69,6 +91,7 @@ namespace MeshCombineStudio
         const string runLabelMax = "Max:";
 
         Vector2 screenSize = new Vector2(0, 0);
+
         GUIType oldDisplayType = GUIType.DisplayNothing;
         //-----------------------------------------------
 
@@ -76,17 +99,29 @@ namespace MeshCombineStudio
         {
             instance = this;
 
-            gradient.colorKeys = new GradientColorKey[] { new GradientColorKey(new Color(1, 0, 0, 1), 0), new GradientColorKey(new Color(1, 1, 0, 1), 0.5f), new GradientColorKey(new Color(0, 1, 0, 1), 1f) };
+            gradient.colorKeys = new GradientColorKey[]
+            {
+                new GradientColorKey(new Color(1, 0, 0, 1), 0), new GradientColorKey(new Color(1, 1, 0, 1), 0.5f),
+                new GradientColorKey(new Color(0, 1, 0, 1), 1f)
+            };
         }
 
-        void OnDestroy() { if (instance == this) instance = null; }
+        void OnDestroy()
+        {
+            if (instance == this) instance = null;
+        }
 
         void OnGUI()
         {
             if (displayType == GUIType.DisplayNothing) return;
             else if (displayType == GUIType.DisplayRunning)
             {
-                if (Screen.width != screenSize.x || Screen.height != screenSize.y) { screenSize.x = Screen.width; screenSize.y = Screen.height; SetRectsRun(); }
+                if (Screen.width != screenSize.x || Screen.height != screenSize.y)
+                {
+                    screenSize.x = Screen.width;
+                    screenSize.y = Screen.height;
+                    SetRectsRun();
+                }
 
                 // TEXT DROPSHADOWS ----------------------------------------------------------
                 GUI.Label(rectsRun[0], currentFPSText, bigStyleShadow); // Result Current FPS
@@ -110,7 +145,12 @@ namespace MeshCombineStudio
             }
             else
             {
-                if (Screen.width != screenSize.x || Screen.height != screenSize.y) { screenSize.x = Screen.width; screenSize.y = Screen.height; SetRectsResult(); }
+                if (Screen.width != screenSize.x || Screen.height != screenSize.y)
+                {
+                    screenSize.x = Screen.width;
+                    screenSize.y = Screen.height;
+                    SetRectsResult();
+                }
 
                 if (showLogoOnResultsScreen) GUI.DrawTexture(rectsResult[8], logo);
 
@@ -128,6 +168,7 @@ namespace MeshCombineStudio
                 GUI.Label(rectsResult[9], instructions, smallStyleLabel); // Instructions
             }
         } //==============================================================================================================
+
         void SetRectsRun()
         {
             columnRight = Screen.width - (labelWidth + paddingH);
@@ -138,7 +179,8 @@ namespace MeshCombineStudio
 
 
             // TEXT DROPSHADOWS ----------------------------------------------------------
-            rectsRun[0].Set(Screen.width - (40 + paddingH) + 1, editorOffset + line1 + 2, 40, lineHeight); // Result Current FPS
+            rectsRun[0].Set(Screen.width - (40 + paddingH) + 1, editorOffset + line1 + 2, 40,
+                lineHeight); // Result Current FPS
             rectsRun[1].Set(columnRight + 1, editorOffset + line2 + 2, labelWidth, lineHeight); // Result Average FPS
             rectsRun[2].Set(columnRight + 1, editorOffset + line3 + 2, labelWidth, lineHeight); // ReSult Minimum FPS
             rectsRun[3].Set(columnRight + 1, editorOffset + line4 + 2, labelWidth, lineHeight); // Result Maximum FPS
@@ -161,22 +203,33 @@ namespace MeshCombineStudio
         void SetRectsResult()
         {
             float totalHeight = 512 / 2;
-            rectsResult[8].Set((Screen.width / 2) - (logo.width / 2), (Screen.height / 2) - totalHeight, logo.width, logo.height); // Drone Logo
+            rectsResult[8].Set((Screen.width / 2) - (logo.width / 2), (Screen.height / 2) - totalHeight, logo.width,
+                logo.height); // Drone Logo
 
             Vector2 size = headerStyle.CalcSize(resultHeaderGUI);
-            rectsResult[0].Set((Screen.width / 2) - (size.x / 2), (Screen.height / 2) - (totalHeight - 256), size.x, size.y); // Header
+            rectsResult[0].Set((Screen.width / 2) - (size.x / 2), (Screen.height / 2) - (totalHeight - 256), size.x,
+                size.y); // Header
             size.x += 10;
-            rectsResult[1].Set((Screen.width / 2) - (size.x / 2), (Screen.height / 2) - (totalHeight - 256 - 30), size.x, 1); // Line
+            rectsResult[1].Set((Screen.width / 2) - (size.x / 2), (Screen.height / 2) - (totalHeight - 256 - 30),
+                size.x, 1); // Line
 
-            rectsResult[2].Set((Screen.width / 2) - 200, (Screen.height / 2) - (totalHeight - 256 - 30 - 30), 200, 24); // Label Average FPS
-            rectsResult[4].Set((Screen.width / 2) - 200, (Screen.height / 2) - (totalHeight - 256 - 30 - 30 - 20), 200, 24); // Label Minimum FPS
-            rectsResult[6].Set((Screen.width / 2) - 200, (Screen.height / 2) - (totalHeight - 256 - 30 - 30 - 20 - 20), 200, 24); // Label Maximum FPS
+            rectsResult[2].Set((Screen.width / 2) - 200, (Screen.height / 2) - (totalHeight - 256 - 30 - 30), 200,
+                24); // Label Average FPS
+            rectsResult[4].Set((Screen.width / 2) - 200, (Screen.height / 2) - (totalHeight - 256 - 30 - 30 - 20), 200,
+                24); // Label Minimum FPS
+            rectsResult[6].Set((Screen.width / 2) - 200, (Screen.height / 2) - (totalHeight - 256 - 30 - 30 - 20 - 20),
+                200, 24); // Label Maximum FPS
 
-            rectsResult[3].Set((Screen.width / 2), (Screen.height / 2) - (totalHeight - 256 - 30 - 18), 65, 24); // Result Average FPS
-            rectsResult[5].Set((Screen.width / 2), (Screen.height / 2) - (totalHeight - 256 - 30 - 30 - 20), 65, 24); // ReSult Minimum FPS
-            rectsResult[7].Set((Screen.width / 2), (Screen.height / 2) - (totalHeight - 256 - 30 - 30 - 20 - 20), 65, 24); // Result Maximum FPS
+            rectsResult[3]
+                .Set((Screen.width / 2), (Screen.height / 2) - (totalHeight - 256 - 30 - 18), 65,
+                    24); // Result Average FPS
+            rectsResult[5].Set((Screen.width / 2), (Screen.height / 2) - (totalHeight - 256 - 30 - 30 - 20), 65,
+                24); // ReSult Minimum FPS
+            rectsResult[7].Set((Screen.width / 2), (Screen.height / 2) - (totalHeight - 256 - 30 - 30 - 20 - 20), 65,
+                24); // Result Maximum FPS
             size = smallStyleLabel.CalcSize(instructions);
-            rectsResult[9].Set((Screen.width / 2) - (size.x / 2), (Screen.height / 2) - (totalHeight - 256 - 30 - 30 - 20 - 20 - 40), size.x, size.y); // Instructions
+            rectsResult[9].Set((Screen.width / 2) - (size.x / 2),
+                (Screen.height / 2) - (totalHeight - 256 - 30 - 30 - 20 - 20 - 40), size.x, size.y); // Instructions
         } //==============================================================================================================
 
 
@@ -223,6 +276,7 @@ namespace MeshCombineStudio
                     Reset();
                     SetRectsRun();
                 }
+
                 oldDisplayType = displayType;
             }
 
@@ -234,7 +288,11 @@ namespace MeshCombineStudio
 
             if (displayType == GUIType.DisplayNothing) return;
             else if (displayType == GUIType.DisplayRunning) GetFPS();
-            if (reset) { reset = false; Reset(); }
+            if (reset)
+            {
+                reset = false;
+                Reset();
+            }
         } //==============================================================================================================
 
 
@@ -300,6 +358,9 @@ namespace MeshCombineStudio
         } //==============================================================================================================
 
 
-        Color EvaluateGradient(float f) { return gradient.Evaluate(Mathf.Clamp01((f - gradientRange.x) / (gradientRange.y - gradientRange.x))); }
+        Color EvaluateGradient(float f)
+        {
+            return gradient.Evaluate(Mathf.Clamp01((f - gradientRange.x) / (gradientRange.y - gradientRange.x)));
+        }
     }
 }

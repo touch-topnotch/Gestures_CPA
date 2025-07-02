@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Scripts.Events;
+using Scripts.Static;
+using Unity.Netcode;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 
@@ -26,7 +28,7 @@ namespace Network.Test
         {
             if (CreateOnAwake || Application.platform == RuntimePlatform.Android)
             {
-                EventInitializer.Instance.onServicesInitilalised += CreateLobby;
+                Global.eventManager.onServicesInitilalised += CreateLobby;
             }
         }
 
@@ -50,11 +52,15 @@ namespace Network.Test
         {
             if (!AuthenticationService.Instance.IsAuthorized)
                 return;
-            LobbyComponents.SetActive(false);
+
             LobbyActionVariants.SetActive(false);
             loading.gameObject.SetActive(true);
             await lobbyConnector.CreateLobby(MAX_PLAYERS);
+
             await UniTask.SwitchToMainThread();
+
+            NetworkManager.Singleton.OnClientStarted += () => { LobbyComponents.SetActive(false); };
+
             ShowLobbies();
         }
 

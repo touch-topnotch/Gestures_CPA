@@ -1,39 +1,39 @@
 {
-    "format": {
-        "version": "1.0"
-    },
-    "shaders": {
-        "Main shader": {
-            "parameters": {
-                "Common Parameters": {
-                    "alpha_dither": false,
-                    "alpha_threshold": 0.33000001311302185,
-                    "ao_intensity": 0.75,
-                    "emissive_intensity": 1,
-                    "horizonFade": 1.2999999523162842,
-                    "nbSamples": 16
-                },
-                "Subsurface Scattering Parameters": {
-                    "sssColor": [
-                        0.7009999752044678,
-                        0.3009999990463257,
-                        0.3050000071525574
-                    ],
-                    "sssEnabled": true,
-                    "sssScale": 0.5,
-                    "sssType": 1
-                }
-            },
-            "shader": "pbr-metal-rough-anisotropy-angle",
-            "shaderInstance": "Main shader"
-        }
-    },
-    "texturesets": {
-        "Amulet": {
-            "shader": "Main shader"
+  "format": {
+    "version": "1.0"
+  },
+  "shaders": {
+    "Main shader": {
+      "parameters": {
+        "Common Parameters": {
+          "alpha_dither": false,
+          "alpha_threshold": 0.33000001311302185,
+          "ao_intensity": 0.75,
+          "emissive_intensity": 1,
+          "horizonFade": 1.2999999523162842,
+          "nbSamples": 16
         },
-        "Feathers": {
-            "shader": "Main shader"
+        "Subsurface Scattering Parameters": {
+          "sssColor": [
+            0.7009999752044678,
+            0.3009999990463257,
+            0.3050000071525574
+          ],
+          "sssEnabled": true,
+          "sssScale": 0.5,
+          "sssType": 1
         }
+      },
+      "shader": "pbr-metal-rough-anisotropy-angle",
+      "shaderInstance": "Main shader"
     }
+  },
+  "texturesets": {
+    "Amulet": {
+      "shader": "Main shader"
+    },
+    "Feathers": {
+      "shader": "Main shader"
+    }
+  }
 }

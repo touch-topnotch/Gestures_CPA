@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [ExecuteInEditMode]
-public class ListMeshVertCount : MonoBehaviour {
-
+public class ListMeshVertCount : MonoBehaviour
+{
     public bool includeInActive;
     public bool listVertCount;
-    
-	void Update()
+
+    void Update()
     {
         if (listVertCount)
         {

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Scripts.Adapter
@@ -5,11 +6,13 @@ namespace Scripts.Adapter
     public class A_OVRCameraRig : OVRCameraRig
     {
         protected GameObject plug;
+
         protected override void FixedUpdate()
         {
             if (useFixedUpdateForTracking)
                 UpdateAnchors(true, false);
         }
+
         protected override void Update()
         {
             _skipUpdate = false;
@@ -21,6 +24,7 @@ namespace Scripts.Adapter
             CheckForAnchorsInParent();
 #endif
         }
+
         protected override Transform ConfigureAnchor(Transform root, string name)
         {
             Transform anchor = (root != null) ? root.Find(name) : null;
@@ -34,14 +38,20 @@ namespace Scripts.Adapter
             {
                 if (!plug)
                 {
-                    var p = transform.Find("PlugAnchor")?.gameObject;
-                    if(!p)
-                        p = new GameObject("PlugAnchor");
+                    var p = this.transform.Find("PlugAnchor")?.gameObject;
+                    if (!p)
+                    {
+                        Debug.Log("Plug anchor is not found!");
+                        
+                    }
+
+                
                     plug = p;
                 }
+
                 anchor = plug.transform;
             }
-            anchor.parent = (root != null) ? root : transform;
+;
             anchor.localScale = Vector3.one;
             anchor.localPosition = Vector3.zero;
             anchor.localRotation = Quaternion.identity;

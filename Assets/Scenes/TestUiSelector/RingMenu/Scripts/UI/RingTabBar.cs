@@ -14,10 +14,12 @@ public class RingTabBar : MonoBehaviour
     {
         TabsCountText.text = s;
     }
+
     public void SetCurrentTabText(string s)
     {
         currentTabText.text = s;
     }
+
     public void SetNextTabText(string s)
     {
         nextTabText.text = s;

@@ -43,7 +43,10 @@ namespace MeshCombineStudio
         static public void SetTag(GameObject go, string tag)
         {
             Transform[] tArray = go.GetComponentsInChildren<Transform>();
-            for (int i = 0; i < tArray.Length; i++) { tArray[i].tag = tag; }
+            for (int i = 0; i < tArray.Length; i++)
+            {
+                tArray[i].tag = tag;
+            }
         }
 
         static public void SetTagWhenCollider(GameObject go, string tag)
@@ -59,7 +62,11 @@ namespace MeshCombineStudio
         {
             // Debug.Log("Layer " + layer);
             Transform[] tArray = go.GetComponentsInChildren<Transform>();
-            for (int i = 0; i < tArray.Length; i++) { tArray[i].tag = tag; tArray[i].gameObject.layer = layer; }
+            for (int i = 0; i < tArray.Length; i++)
+            {
+                tArray[i].tag = tag;
+                tArray[i].gameObject.layer = layer;
+            }
         }
 
         static public void SetLayer(GameObject go, int layer)
@@ -95,12 +102,18 @@ namespace MeshCombineStudio
 
                 if (index != -1)
                 {
-                    if (index != 0) { cuts.Add(name.Substring(0, index)); }
-                    if (index != name.Length - 1) { name = name.Substring(index + 1); }
+                    if (index != 0)
+                    {
+                        cuts.Add(name.Substring(0, index));
+                    }
+
+                    if (index != name.Length - 1)
+                    {
+                        name = name.Substring(index + 1);
+                    }
                     else break;
                 }
-            }
-            while (index != -1);
+            } while (index != -1);
 
             cuts.Add(name);
 
@@ -109,6 +122,7 @@ namespace MeshCombineStudio
                 //Debug.Log(cuts.items[i] +" " + compare);
                 if (!compare.Contains(cuts[i])) return false;
             }
+
             //Debug.Log("Passed");
             return true;
         }
@@ -116,7 +130,8 @@ namespace MeshCombineStudio
         static public T[] Search<T>(GameObject parentGO = null)
         {
             GameObject[] gos = null;
-            if (parentGO == null) {
+            if (parentGO == null)
+            {
                 gos = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
             }
 
@@ -132,6 +147,7 @@ namespace MeshCombineStudio
                     Transform[] transforms = gos[i].GetComponentsInChildren<Transform>(true);
                     for (int j = 0; j < transforms.Length; j++) list.Add(transforms[j].gameObject);
                 }
+
                 return list.ToArray() as T[];
             }
             else
@@ -143,6 +159,7 @@ namespace MeshCombineStudio
                     {
                         list.AddRange(gos[i].GetComponentsInChildren<T>(true));
                     }
+
                     return list.ToArray();
                 }
                 else return parentGO.GetComponentsInChildren<T>(true);
@@ -178,7 +195,8 @@ namespace MeshCombineStudio
             return parentGO.GetComponentsInChildren<T>(searchInActiveGameObjects);
         }
 
-        static public T[] SearchScene<T>(UnityEngine.SceneManagement.Scene scene, bool searchInActiveGameObjects) where T : Component
+        static public T[] SearchScene<T>(UnityEngine.SceneManagement.Scene scene, bool searchInActiveGameObjects)
+            where T : Component
         {
             var gos = scene.GetRootGameObjects();
 
@@ -213,6 +231,7 @@ namespace MeshCombineStudio
             {
                 if (gos[i].name == name) return gos[i];
             }
+
             return null;
         }
 
@@ -274,7 +293,7 @@ namespace MeshCombineStudio
             if (go == null) return;
 
 #if UNITY_EDITOR
-                GameObject.DestroyImmediate(go);
+            GameObject.DestroyImmediate(go);
 #else
                 GameObject.Destroy(go);
 #endif
@@ -317,7 +336,8 @@ namespace MeshCombineStudio
         {
             Type type = component.GetType();
             target.AddComponent(type);
-            PropertyInfo[] propInfo = type.GetProperties(BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance);
+            PropertyInfo[] propInfo =
+                type.GetProperties(BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance);
             foreach (var property in propInfo)
             {
                 property.SetValue(target.GetComponent(type), property.GetValue(component, null), null);

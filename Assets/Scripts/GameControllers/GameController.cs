@@ -1,8 +1,11 @@
 using System.Collections.Generic;
+using System.Linq;
 using Scripts.Events;
 using Scripts.Network;
 using Scripts.PlayerLogic;
+using Scripts.Players;
 using Scripts.Static;
+using Scripts.Static.Definitions;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -13,7 +16,8 @@ using Unity.Services.Multiplay;
 
 namespace Scripts.GameControllers
 {
-    public class GameController : NetworkBehaviour
+    [RequireComponent(typeof(GameProperties))]
+    public class GameController : NetworkManager
     {
         public const int targetFPS = 60;
 
@@ -24,10 +28,11 @@ namespace Scripts.GameControllers
             _playersDict = new Dictionary<ulong, NetworkPlayerProcessor>();
 
         [SerializeField] private GameObject ServerInputSystem;
-
-        [SerializeField] private NetworkManager _networkManager;
         public Dictionary<ulong, NetworkPlayerProcessor> PlayersDict => _playersDict;
+        public GameProperties gameProperties;
 
+
+     
 #if DEDICATED_SERVER
         private IServerQueryHandler _serverQueryHandler;
         private async void ListenServerEvents()
@@ -107,45 +112,80 @@ namespace Scripts.GameControllers
 
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = targetFPS;
+            SessionManager.ReadCommandArgs(this);
+            gameProperties = GetComponent<GameProperties>();
 
-            SessionManager.ReadCommandArgs(_networkManager);
+
 #if DEDICATED_SERVER
-            EventInitializer.Instance.onServicesInitilalised += ListenServerEvents;
+            Global.eventManager.onServicesInitilalised += ListenServerEvents;
 #endif
+            
 #if !DEDICATED_SERVER
 
             ServerBrowser.ConnectToServer();
 #endif
 
 
-            _networkManager.OnClientConnectedCallback += ClientConnected;
-            _networkManager.OnClientDisconnectCallback += ClientDisconnected;
+            OnClientConnectedCallback += ClientConnected;
+            
+            OnClientDisconnectCallback += ClientDisconnected;
         }
 
         private void ClientConnected(ulong clientId)
         {
-            if (!_networkManager.IsServer)
-            {
-                l.rl(_networkManager.LocalClient.PlayerObject.name + " constructed!");
-            }
+          
 
-            if (_networkManager.IsServer)
+            if (IsServer)
             {
-                var client = _networkManager.ConnectedClients[clientId];
+                var client = ConnectedClients[clientId];
                 var player = client.PlayerObject.GetComponent<NetworkPlayerProcessor>();
-
+                // глобальная логика плеера и сразу какая-то странная инициализация оружий
                 _playersDict.Add(clientId, player);
-                l.rl("position: " + client.PlayerObject.transform.position);
+                _playersDict[clientId].onPoolPrefabs.AddListener(StartGameSession);
+              
+                
+                // l.rl("position: " + client.PlayerObject.transform.position);
+            }
+            if (!IsServer)
+            {
+                l.rl(LocalClient.PlayerObject.name + " constructed!");
+            }
+            
+        }
+
+        private void StartGameSession()
+        {
+            foreach (var player in _playersDict.Keys)
+            {
+                StartGameSessionClientRpc(player);
             }
         }
 
+        [ClientRpc]
+        private void StartGameSessionClientRpc(ulong playerId)
+        {
+            if (_playersDict[playerId].IsOwner){
+                
+                _playersDict[playerId].data.abilityController.AddCharacterToInventory(_playersDict[playerId].data.characterController.currentCharacter.name);
+     
+                if (gameProperties != null && gameProperties.debugCharacterAbilities != null)
+                {
+                    foreach (var VARIABLE in gameProperties.debugCharacterAbilities)
+                    {
+                        _playersDict[playerId].data.abilityController.AddCharacterToInventory(VARIABLE.ToString());
+                    }
+                }
+                _playersDict[playerId].data.abilityController.UseCharacterAbilities();
+            }
+        }
+        
+        
         private void ClientDisconnected(ulong clientId)
         {
             if (_playersDict.ContainsKey(clientId))
                 _playersDict.Remove(clientId);
             l.rl(clientId + " disconnected!");
         }
-
         private void Update()
         {
 #if DEDICATED_SERVER

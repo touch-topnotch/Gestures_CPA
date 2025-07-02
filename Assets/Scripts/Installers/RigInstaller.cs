@@ -1,5 +1,6 @@
 using Scripts.PlayerLogic;
 using Scripts.Static;
+using Scripts.Static.Definitions;
 using UnityEngine;
 using Zenject;
 

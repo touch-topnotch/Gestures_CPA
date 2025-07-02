@@ -48,16 +48,33 @@ namespace MeshCombineStudio
             }
         }
 
-        public enum CombineJobMode { CombineAtOnce, CombinePerFrame };
-        public enum ThreadAmountMode { AllThreads, HalfThreads, Custom };
-        public enum ThreadState { isFree, isReady, isRunning, hasError };
+        public enum CombineJobMode
+        {
+            CombineAtOnce,
+            CombinePerFrame
+        };
+
+        public enum ThreadAmountMode
+        {
+            AllThreads,
+            HalfThreads,
+            Custom
+        };
+
+        public enum ThreadState
+        {
+            isFree,
+            isReady,
+            isRunning,
+            hasError
+        };
 
         [NonSerialized] public FastList<NewMeshObject> newMeshObjectsPool = new FastList<NewMeshObject>();
         public Dictionary<Mesh, MeshCache> meshCacheDictionary = new Dictionary<Mesh, MeshCache>();
-        
+
         [NonSerialized] public int totalNewMeshObjects;
-        
-        public Queue<MeshCombineJob> meshCombineJobs = new Queue<MeshCombineJob>(); 
+
+        public Queue<MeshCombineJob> meshCombineJobs = new Queue<MeshCombineJob>();
 
         public MeshCombineJobsThread[] meshCombineJobsThreads;
         public CamGeometryCapture camGeometryCapture;
@@ -80,9 +97,9 @@ namespace MeshCombineStudio
                 instance.camGeometryCapture.computeDepthToArray = meshCombiner.computeDepthToArray;
                 return instance;
             }
-            
+
             GameObject go = new GameObject("MCS Job Manager");
-            
+
             instance = go.AddComponent<MeshCombineJobManager>();
             instance.SetJobMode(meshCombiner.jobSettings);
 
@@ -109,14 +126,14 @@ namespace MeshCombineStudio
             instance = this;
             gameObject.hideFlags = HideFlags.DontSave | HideFlags.HideInHierarchy;
             // gameObject.hideFlags = HideFlags.None;
-            Init();  
-            
-            #if UNITY_EDITOR
-                if (!Application.isPlaying) UnityEditor.EditorApplication.update += MyUpdate;
-            #endif
+            Init();
+
+#if UNITY_EDITOR
+            if (!Application.isPlaying) UnityEditor.EditorApplication.update += MyUpdate;
+#endif
         }
 
-        public void Init() 
+        public void Init()
         {
             // Debug.Log("Init");
 
@@ -125,16 +142,17 @@ namespace MeshCombineStudio
             if (meshCombineJobsThreads == null || meshCombineJobsThreads.Length != cores)
             {
                 meshCombineJobsThreads = new MeshCombineJobsThread[cores];
-                for (int i = 0; i < meshCombineJobsThreads.Length; i++) meshCombineJobsThreads[i] = new MeshCombineJobsThread(i);
+                for (int i = 0; i < meshCombineJobsThreads.Length; i++)
+                    meshCombineJobsThreads[i] = new MeshCombineJobsThread(i);
             }
         }
 
         void OnDisable()
         {
             // Debug.Log("Disable");
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             if (!Application.isPlaying) UnityEditor.EditorApplication.update -= MyUpdate;
-            #endif
+#endif
         }
 
         void OnDestroy()
@@ -157,17 +175,21 @@ namespace MeshCombineStudio
         {
             if (newJobSettings.combineMeshesPerFrame < 1)
             {
-                Debug.LogError("(MeshCombineStudio) => CombineMeshesPerFrame is " + newJobSettings.combineMeshesPerFrame + " and should be 1 or higher.");
+                Debug.LogError("(MeshCombineStudio) => CombineMeshesPerFrame is " +
+                               newJobSettings.combineMeshesPerFrame + " and should be 1 or higher.");
                 return;
             }
             else if (newJobSettings.combineMeshesPerFrame > 128)
             {
-                Debug.LogError("(MeshCombineStudio) => CombineMeshesPerFrame is " + newJobSettings.combineMeshesPerFrame + " and should be 128 or lower.");
+                Debug.LogError("(MeshCombineStudio) => CombineMeshesPerFrame is " +
+                               newJobSettings.combineMeshesPerFrame + " and should be 128 or lower.");
                 return;
             }
+
             if (newJobSettings.customThreadAmount < 1)
             {
-                Debug.LogError("(MeshCombineStudio) => customThreadAmount is " + newJobSettings.combineMeshesPerFrame + " and should be 1 or higher.");
+                Debug.LogError("(MeshCombineStudio) => customThreadAmount is " + newJobSettings.combineMeshesPerFrame +
+                               " and should be 1 or higher.");
                 return;
             }
             else if (newJobSettings.customThreadAmount > cores) newJobSettings.customThreadAmount = cores;
@@ -180,7 +202,8 @@ namespace MeshCombineStudio
 
                 if (jobSettings.threadAmountMode == ThreadAmountMode.Custom)
                 {
-                    if (jobSettings.customThreadAmount > cores - startThreadId) jobSettings.customThreadAmount = cores - startThreadId;
+                    if (jobSettings.customThreadAmount > cores - startThreadId)
+                        jobSettings.customThreadAmount = cores - startThreadId;
                     threadAmount = jobSettings.customThreadAmount;
                 }
                 else
@@ -200,7 +223,8 @@ namespace MeshCombineStudio
             }
 
             int totalNewCacheMeshesNeeded;
-            if (jobSettings.combineJobMode == CombineJobMode.CombinePerFrame) totalNewCacheMeshesNeeded = jobSettings.combineMeshesPerFrame;
+            if (jobSettings.combineJobMode == CombineJobMode.CombinePerFrame)
+                totalNewCacheMeshesNeeded = jobSettings.combineMeshesPerFrame;
             else totalNewCacheMeshesNeeded = threadAmount;
 
             while (newMeshObjectsPool.Count > totalNewCacheMeshesNeeded)
@@ -209,14 +233,17 @@ namespace MeshCombineStudio
                 // Debug.LogError("Remove!!");
             }
         }
-        
-        public void AddJob(MeshCombiner meshCombiner, MeshObjectsHolder meshObjectsHolder, Transform parent, Vector3 position)
+
+        public void AddJob(MeshCombiner meshCombiner, MeshObjectsHolder meshObjectsHolder, Transform parent,
+            Vector3 position)
         {
             FastList<MeshObject> meshObjects = meshObjectsHolder.meshObjects;
             if (meshObjects.Count == 0) return;
 
 
-            if (meshObjects.Count < 2 && meshObjects.items[0].cachedGO.mr.sharedMaterials.Length == 1 && !meshCombiner.removeTrianglesBelowSurface && !meshCombiner.removeOverlappingTriangles && !meshCombiner.removeBackFaceTriangles)
+            if (meshObjects.Count < 2 && meshObjects.items[0].cachedGO.mr.sharedMaterials.Length == 1 &&
+                !meshCombiner.removeTrianglesBelowSurface && !meshCombiner.removeOverlappingTriangles &&
+                !meshCombiner.removeBackFaceTriangles)
             {
                 if (meshCombiner.excludeSingleMeshes)
                 {
@@ -232,7 +259,8 @@ namespace MeshCombineStudio
                 else if (meshObjects.Count == 1)
                 {
                     MeshObject meshObject = meshObjects.items[0];
-                    GameObject go = (GameObject)Instantiate(meshCombiner.instantiatePrefab, meshObject.position, meshObject.rotation, parent);
+                    GameObject go = (GameObject)Instantiate(meshCombiner.instantiatePrefab, meshObject.position,
+                        meshObject.rotation, parent);
                     go.transform.localScale = meshObject.cachedGO.t.lossyScale;
                     Mesh mesh = meshObject.cachedGO.mf.sharedMesh;
                     go.name = "SingleMesh " + mesh.name;
@@ -253,7 +281,7 @@ namespace MeshCombineStudio
 
                 return;
             }
-            
+
             int totalVertices = 0, totalTriangles = 0;
             int startIndex = 0;
             int length = 0;
@@ -264,7 +292,7 @@ namespace MeshCombineStudio
             MeshCache meshCache = null;
 
             int maxVertices = meshCombiner.useVertexOutputLimit ? meshCombiner.vertexOutputLimit : 64000;
-            
+
             for (int i = 0; i < meshObjects.Count; i++)
             {
                 MeshObject meshObject = meshObjects.items[i];
@@ -273,7 +301,7 @@ namespace MeshCombineStudio
                 meshCombiner.originalDrawCalls++;
 
                 Mesh mesh = meshObject.cachedGO.mesh;
-                
+
                 if (mesh != meshOld)
                 {
                     if (!meshCacheDictionary.TryGetValue(mesh, out meshCache))
@@ -282,22 +310,24 @@ namespace MeshCombineStudio
                         meshCacheDictionary.Add(mesh, meshCache);
                     }
                 }
-                meshOld = mesh; 
+
+                meshOld = mesh;
 
                 meshObject.meshCache = meshCache;
 
                 int vertexCount = meshCache.subMeshCache[meshObject.subMeshIndex].vertexCount;
                 int triangleCount = meshCache.subMeshCache[meshObject.subMeshIndex].triangleCount;
 
-                meshCombiner.originalTotalVertices += vertexCount; 
+                meshCombiner.originalTotalVertices += vertexCount;
                 meshCombiner.originalTotalTriangles += triangleCount;
 
-                if (totalVertices + vertexCount > maxVertices) 
+                if (totalVertices + vertexCount > maxVertices)
                 {
                     // Debug.Log(">AddJob StartIndex " + startIndex + " length " + length);
-                    var meshCombineJob = new MeshCombineJob(meshCombiner, meshObjectsHolder, parent, position, startIndex, length, firstMesh, intersectsSurface);
+                    var meshCombineJob = new MeshCombineJob(meshCombiner, meshObjectsHolder, parent, position,
+                        startIndex, length, firstMesh, intersectsSurface);
                     EnqueueJob(meshCombiner, meshCombineJob);
-                    
+
                     firstMesh = intersectsSurface = false;
                     totalVertices = totalTriangles = length = 0;
                     startIndex = i;
@@ -325,13 +355,18 @@ namespace MeshCombineStudio
                     else
                     {
                         meshObject.intersectsSurface = false;
-                        if (intersect == -1) { meshObject.skip = true; ++length; continue; }
+                        if (intersect == -1)
+                        {
+                            meshObject.skip = true;
+                            ++length;
+                            continue;
+                        }
                         else meshObject.skip = false;
                     }
                 }
 
                 totalVertices += vertexCount;
-                totalTriangles += triangleCount; 
+                totalTriangles += triangleCount;
 
                 ++length;
             }
@@ -339,7 +374,8 @@ namespace MeshCombineStudio
             if (totalVertices > 0)
             {
                 // Debug.Log("*AddJob2 StartIndex " + startIndex + " length " + length);
-                var meshCombineJob = new MeshCombineJob(meshCombiner, meshObjectsHolder, parent, position, startIndex, length, firstMesh, intersectsSurface);
+                var meshCombineJob = new MeshCombineJob(meshCombiner, meshObjectsHolder, parent, position, startIndex,
+                    length, firstMesh, intersectsSurface);
 
                 EnqueueJob(meshCombiner, meshCombineJob);
             }
@@ -352,7 +388,7 @@ namespace MeshCombineStudio
 
             meshCombineJobs.Enqueue(meshCombineJob);
         }
-        
+
         public int MeshIntersectsSurface(MeshCombiner meshCombiner, CachedGameObject cachedGO)
         {
             // -1 = below, 0 = intersect, 1 = above 
@@ -366,7 +402,9 @@ namespace MeshCombineStudio
             float rayLength = meshCombiner.maxSurfaceHeight - pos.y;
 
             ray.origin = new Vector3(pos.x, maxTerrainHeight, pos.z);
-            if (Physics.Raycast(ray, out hitInfo, rayLength, terrainLayerMask)) if (pos.y < hitInfo.point.y) return -1;
+            if (Physics.Raycast(ray, out hitInfo, rayLength, terrainLayerMask))
+                if (pos.y < hitInfo.point.y)
+                    return -1;
 
             return 1;
         }
@@ -379,7 +417,7 @@ namespace MeshCombineStudio
             }
 
             meshCombineJobs.Clear();
-            
+
             for (int i = 0; i < meshCombineJobsThreads.Length; i++)
             {
                 MeshCombineJobsThread meshCombineJobsThread = meshCombineJobsThreads[i];
@@ -392,12 +430,12 @@ namespace MeshCombineStudio
                     }
 
                     meshCombineJobsThread.meshCombineJobs.Clear();
-                } 
+                }
             }
 
             // newMeshObjectsPool.Clear();
             totalNewMeshObjects = 0;
-            abort = true; 
+            abort = true;
         }
 
         public void ExecuteJobs()
@@ -433,7 +471,7 @@ namespace MeshCombineStudio
                 do
                 {
                     jobsPending = false;
-                    
+
                     if (jobSettings.useMultiThreading)
                     {
                         for (int i = 1; i < endThreadId; i++)
@@ -447,20 +485,27 @@ namespace MeshCombineStudio
                                 {
                                     if (instance.jobSettings.combineJobMode == CombineJobMode.CombinePerFrame)
                                     {
-                                        if (instance.totalNewMeshObjects + 1 > instance.jobSettings.combineMeshesPerFrame) break;
+                                        if (instance.totalNewMeshObjects + 1 >
+                                            instance.jobSettings.combineMeshesPerFrame) break;
                                     }
 
                                     meshCombineJobsThread.threadState = ThreadState.isRunning;
                                     ThreadPool.QueueUserWorkItem(meshCombineJobsThread.ExecuteJobsThread);
                                 }
-                                if (meshCombineJobsThread.threadState == ThreadState.hasError) { AbortJobs(); goto exitLoop; }
+
+                                if (meshCombineJobsThread.threadState == ThreadState.hasError)
+                                {
+                                    AbortJobs();
+                                    goto exitLoop;
+                                }
                             }
                         }
 
                         for (int i = 1; i < endThreadId; i++)
                         {
                             MeshCombineJobsThread meshCombineJobsThread = meshCombineJobsThreads[i];
-                            if (meshCombineJobsThread.threadState == ThreadState.isReady) CombineMeshesDone(meshCombineJobsThreads[i]);
+                            if (meshCombineJobsThread.threadState == ThreadState.isReady)
+                                CombineMeshesDone(meshCombineJobsThreads[i]);
                         }
                     }
 
@@ -474,13 +519,13 @@ namespace MeshCombineStudio
                             meshCombineJobsThread.threadState = ThreadState.isRunning;
                             meshCombineJobsThread.ExecuteJobsThread(null);
 
-                            if (meshCombineJobsThread.threadState == ThreadState.isReady) CombineMeshesDone(meshCombineJobsThread);
+                            if (meshCombineJobsThread.threadState == ThreadState.isReady)
+                                CombineMeshesDone(meshCombineJobsThread);
                         }
                     }
-                }
-                while (jobSettings.combineJobMode == CombineJobMode.CombineAtOnce && jobsPending);
+                } while (jobSettings.combineJobMode == CombineJobMode.CombineAtOnce && jobsPending);
 
-                exitLoop:;
+                exitLoop: ;
             }
             catch (Exception e)
             {
@@ -488,7 +533,7 @@ namespace MeshCombineStudio
                 AbortJobs();
             }
         }
-     
+
         public void CombineMeshesDone(MeshCombineJobsThread meshCombineJobThread)
         {
             var newMeshObjectsDone = meshCombineJobThread.newMeshObjectsDone;
@@ -496,13 +541,13 @@ namespace MeshCombineStudio
             int count = 0;
 
             // Debug.LogError(newMeshObjectsPool.Count);
-            
-            while(newMeshObjectsDone.Count > 0)
+
+            while (newMeshObjectsDone.Count > 0)
             {
                 NewMeshObject newMeshObject = newMeshObjectsDone.Dequeue();
 
                 MeshCombiner meshCombiner = newMeshObject.meshCombineJob.meshCombiner;
-                
+
                 if (!abort && !newMeshObject.meshCombineJob.abort)
                 {
                     meshCombiner.meshCombineJobs.Remove(newMeshObject.meshCombineJob);
@@ -523,14 +568,16 @@ namespace MeshCombineStudio
                         instance.AbortJobs();
                     }
                 }
-                
+
                 lock (newMeshObjectsPool)
                 {
                     newMeshObjectsPool.Add(newMeshObject);
                 }
+
                 Interlocked.Decrement(ref totalNewMeshObjects);
 
-                if (jobSettings.combineJobMode == CombineJobMode.CombinePerFrame && ++count > jobSettings.combineMeshesPerFrame && !abort)
+                if (jobSettings.combineJobMode == CombineJobMode.CombinePerFrame &&
+                    ++count > jobSettings.combineMeshesPerFrame && !abort)
                 {
                     break;
                 }
@@ -580,7 +627,7 @@ namespace MeshCombineStudio
                     //}
 
                     MeshCombineJob meshCombineJob;
-                        
+
                     lock (meshCombineJobs)
                     {
                         meshCombineJob = meshCombineJobs.Dequeue();
@@ -603,7 +650,7 @@ namespace MeshCombineStudio
 
                     newMeshObject.newPosition = meshCombineJob.position;
                     newMeshObject.Combine(meshCombineJob);
-                        
+
                     lock (newMeshObjectsDone)
                     {
                         newMeshObjectsDone.Enqueue(newMeshObject);
@@ -619,13 +666,16 @@ namespace MeshCombineStudio
                         {
                             instance.newMeshObjectsPool.Add(newMeshObject);
                         }
+
                         Interlocked.Decrement(ref instance.totalNewMeshObjects);
                     }
+
                     lock (meshCombineJobs)
                     {
                         meshCombineJobs.Clear();
                     }
-                    Debug.LogError("(MeshCombineStudio) => Mesh Combine Studio thread error -> " + e.ToString()); 
+
+                    Debug.LogError("(MeshCombineStudio) => Mesh Combine Studio thread error -> " + e.ToString());
                     threadState = ThreadState.hasError;
                     return;
                 }
@@ -645,8 +695,9 @@ namespace MeshCombineStudio
             public int backFaceTrianglesRemoved, trianglesRemoved;
             public bool abort;
             public string name;
-            
-            public MeshCombineJob(MeshCombiner meshCombiner, MeshObjectsHolder meshObjectsHolder, Transform parent, Vector3 position, int startIndex, int length, bool firstMesh, bool intersectsSurface)
+
+            public MeshCombineJob(MeshCombiner meshCombiner, MeshObjectsHolder meshObjectsHolder, Transform parent,
+                Vector3 position, int startIndex, int length, bool firstMesh, bool intersectsSurface)
             {
                 this.meshCombiner = meshCombiner;
                 this.meshObjectsHolder = meshObjectsHolder;
@@ -660,7 +711,7 @@ namespace MeshCombineStudio
                 name = GetHashCode().ToString();
             }
         }
-        
+
         public class NewMeshObject
         {
             public static FastList<Vector3> weldVertices;
@@ -668,16 +719,16 @@ namespace MeshCombineStudio
             public MeshCache.SubMeshCache newMeshCache = new MeshCache.SubMeshCache();
             public bool allSkipped;
             public Vector3 newPosition;
-            
+
             byte[] vertexIsBelow;
-            
+
             const byte belowSurface = 1, aboveSurface = 2;
-            
+
             public NewMeshObject()
             {
                 newMeshCache.Init();
             }
-            
+
             public void Combine(MeshCombineJob meshCombineJob)
             {
                 this.meshCombineJob = meshCombineJob;
@@ -698,13 +749,14 @@ namespace MeshCombineStudio
                 CombineMode combineMode = meshCombiner.combineMode;
                 bool copyBakedLighting = meshCombiner.validCopyBakedLighting;
                 bool rebakeLighting = meshCombiner.validRebakeLighting;
-                bool regenarateLightingUvs = meshCombiner.rebakeLightingMode == MeshCombiner.RebakeLightingMode.RegenarateLightmapUvs;
+                bool regenarateLightingUvs = meshCombiner.rebakeLightingMode ==
+                                             MeshCombiner.RebakeLightingMode.RegenarateLightmapUvs;
 
                 int tiles = 0;
                 int tileX = 0;
                 int tileY = 0;
                 float tilesInv = 0;
-                
+
                 if (rebakeLighting)
                 {
                     tiles = Mathf.CeilToInt(Mathf.Sqrt(meshCount));
@@ -720,14 +772,21 @@ namespace MeshCombineStudio
                     MeshCache.SubMeshCache subMeshCache = meshObject.meshCache.subMeshCache[subMeshIndex];
                     int vertexCount = subMeshCache.vertexCount;
 
-                    HasArray(ref newMeshCache.hasNormals, subMeshCache.hasNormals, ref newMeshCache.normals, subMeshCache.normals, vertexCount, totalVertices);
-                    HasArray(ref newMeshCache.hasTangents, subMeshCache.hasTangents, ref newMeshCache.tangents, subMeshCache.tangents, vertexCount, totalVertices, true, new Vector4(1, 1, 1, 1));
+                    HasArray(ref newMeshCache.hasNormals, subMeshCache.hasNormals, ref newMeshCache.normals,
+                        subMeshCache.normals, vertexCount, totalVertices);
+                    HasArray(ref newMeshCache.hasTangents, subMeshCache.hasTangents, ref newMeshCache.tangents,
+                        subMeshCache.tangents, vertexCount, totalVertices, true, new Vector4(1, 1, 1, 1));
 
-                    HasArray(ref newMeshCache.hasUv, subMeshCache.hasUv, ref newMeshCache.uv, subMeshCache.uv, vertexCount, totalVertices);
-                    HasArray(ref newMeshCache.hasUv2, subMeshCache.hasUv2, ref newMeshCache.uv2, subMeshCache.uv2, vertexCount, totalVertices);
-                    HasArray(ref newMeshCache.hasUv3, subMeshCache.hasUv3, ref newMeshCache.uv3, subMeshCache.uv3, vertexCount, totalVertices);
-                    HasArray(ref newMeshCache.hasUv4, subMeshCache.hasUv4, ref newMeshCache.uv4, subMeshCache.uv4, vertexCount, totalVertices);
-                    HasArray(ref newMeshCache.hasColors, subMeshCache.hasColors, ref newMeshCache.colors32, subMeshCache.colors32, vertexCount, totalVertices, true, new Color32(1, 1, 1, 1));
+                    HasArray(ref newMeshCache.hasUv, subMeshCache.hasUv, ref newMeshCache.uv, subMeshCache.uv,
+                        vertexCount, totalVertices);
+                    HasArray(ref newMeshCache.hasUv2, subMeshCache.hasUv2, ref newMeshCache.uv2, subMeshCache.uv2,
+                        vertexCount, totalVertices);
+                    HasArray(ref newMeshCache.hasUv3, subMeshCache.hasUv3, ref newMeshCache.uv3, subMeshCache.uv3,
+                        vertexCount, totalVertices);
+                    HasArray(ref newMeshCache.hasUv4, subMeshCache.hasUv4, ref newMeshCache.uv4, subMeshCache.uv4,
+                        vertexCount, totalVertices);
+                    HasArray(ref newMeshCache.hasColors, subMeshCache.hasColors, ref newMeshCache.colors32,
+                        subMeshCache.colors32, vertexCount, totalVertices, true, new Color32(1, 1, 1, 1));
 
                     totalVertices += vertexCount;
                 }
@@ -738,7 +797,7 @@ namespace MeshCombineStudio
                 {
                     MeshObject meshObject = meshObjects.items[i];
                     if (meshObject.skip) continue;
-                    
+
                     allSkipped = false;
 
                     MeshCache meshCache = meshObject.meshCache;
@@ -747,7 +806,7 @@ namespace MeshCombineStudio
                     MeshCache.SubMeshCache subMeshCache = meshCache.subMeshCache[subMeshIndex];
 
                     Vector3 scale = meshObject.scale;
-                   
+
                     bool flipTriangles = false;
 
                     if (scale.x < 0) flipTriangles = !flipTriangles;
@@ -768,9 +827,9 @@ namespace MeshCombineStudio
                     Color32[] colors32 = subMeshCache.colors32;
 
                     int[] triangles = subMeshCache.triangles;
-                    
+
                     int vertexCount = subMeshCache.vertexCount;
-                    
+
                     int[] newTriangles = newMeshCache.triangles;
 
                     Vector3[] newVertices = newMeshCache.vertices;
@@ -799,7 +858,8 @@ namespace MeshCombineStudio
                         for (int j = 0; j < vertices.Length; j++)
                         {
                             int vertexIndex = j + totalVertices;
-                            newVertices[vertexIndex] = Vector3.Scale(mt.MultiplyPoint3x4(vertices[j]) - position, rootTScale);
+                            newVertices[vertexIndex] =
+                                Vector3.Scale(mt.MultiplyPoint3x4(vertices[j]) - position, rootTScale);
                         }
                     }
                     else
@@ -857,7 +917,8 @@ namespace MeshCombineStudio
                             for (int j = 0; j < vertices.Length; j++)
                             {
                                 int vertexIndex = j + totalVertices;
-                                newUv2[vertexIndex] = new Vector2(uv2[j].x * uvScale.x , uv2[j].y * uvScale.y) + uvOffset;
+                                newUv2[vertexIndex] =
+                                    new Vector2(uv2[j].x * uvScale.x, uv2[j].y * uvScale.y) + uvOffset;
                             }
                         }
                         else if (rebakeLighting)
@@ -899,12 +960,12 @@ namespace MeshCombineStudio
                     else if (newMeshCache.hasColors)
                     {
                         int length = totalVertices + vertexCount;
-                        for (int j = totalVertices; j < length; j++)  
+                        for (int j = totalVertices; j < length; j++)
                         {
                             newColors32[j] = new Color32(255, 255, 255, 255);
                         }
                     }
-                    
+
                     if (flipTriangles)
                     {
                         for (int j = 0; j < triangles.Length; j += 3)
@@ -921,10 +982,14 @@ namespace MeshCombineStudio
                             newTriangles[j + totalTriangles] = triangles[j] + totalVertices;
                         }
                     }
-                    
+
                     totalVertices += vertexCount;
                     totalTriangles += triangles.Length;
-                    if (++tileX >= tiles) { tileX = 0; ++tileY; }
+                    if (++tileX >= tiles)
+                    {
+                        tileX = 0;
+                        ++tileY;
+                    }
                 }
 
                 newMeshCache.vertexCount = totalVertices;
@@ -935,11 +1000,14 @@ namespace MeshCombineStudio
 
             void PrintMissingArrayWarning(MeshCombiner meshCombiner, GameObject go, Mesh mesh, string text)
             {
-                Debug.Log("(MeshCombineStudio) => GameObject: " + go.name + " Mesh " + mesh.name + " has missing " + text + " while the other meshes have them. Click the 'Select Meshes in Project' button to change the import settings.");
+                Debug.Log("(MeshCombineStudio) => GameObject: " + go.name + " Mesh " + mesh.name + " has missing " +
+                          text +
+                          " while the other meshes have them. Click the 'Select Meshes in Project' button to change the import settings.");
                 meshCombiner.selectImportSettingsMeshes.Add(mesh);
             }
-            
-            void HasArray<T>(ref bool hasNewArray, bool hasArray, ref T[] newArray, Array array, int vertexCount, int totalVertices, bool useDefaultValue = false, T defaultValue = default(T))
+
+            void HasArray<T>(ref bool hasNewArray, bool hasArray, ref T[] newArray, Array array, int vertexCount,
+                int totalVertices, bool useDefaultValue = false, T defaultValue = default(T))
             {
                 if (hasArray)
                 {
@@ -956,6 +1024,7 @@ namespace MeshCombineStudio
                             else Array.Clear(newArray, 0, totalVertices);
                         }
                     }
+
                     hasNewArray = true;
                 }
                 else if (hasNewArray)
@@ -974,16 +1043,16 @@ namespace MeshCombineStudio
             public void RemoveTrianglesBelowSurface(Transform t, MeshCombineJob meshCombineJob)
             {
                 if (vertexIsBelow == null) vertexIsBelow = new byte[65534];
-                
+
                 Ray ray = instance.ray;
                 RaycastHit hitInfo = instance.hitInfo;
                 Vector3 pos = Vector3.zero;
                 int layerMask = meshCombineJob.meshCombiner.surfaceLayerMask;
                 float rayHeight = meshCombineJob.meshCombiner.maxSurfaceHeight;
-                
+
                 Vector3[] newVertices = newMeshCache.vertices;
                 int[] newTriangles = newMeshCache.triangles;
-                
+
                 FastList<MeshObject> meshObjects = meshCombineJob.meshObjectsHolder.meshObjects;
 
                 int startIndex = meshCombineJob.startIndex;
@@ -993,10 +1062,10 @@ namespace MeshCombineStudio
                 {
                     MeshObject meshObject = meshObjects.items[i];
                     if (!meshObject.intersectsSurface) continue;
-                    
+
                     int startTriangleIndex = meshObject.startNewTriangleIndex;
                     int endTriangleIndex = meshObject.newTriangleCount + startTriangleIndex;
-                    
+
                     for (int j = startTriangleIndex; j < endTriangleIndex; j += 3)
                     {
                         bool isAboveSurface = false;
@@ -1033,8 +1102,13 @@ namespace MeshCombineStudio
                                 }
                             }
 
-                            if (isBelow != belowSurface) { isAboveSurface = true; break; }
+                            if (isBelow != belowSurface)
+                            {
+                                isAboveSurface = true;
+                                break;
+                            }
                         }
+
                         if (!isAboveSurface)
                         {
                             meshCombineJob.trianglesRemoved += 3;
@@ -1042,7 +1116,7 @@ namespace MeshCombineStudio
                         }
                     }
                 }
-                
+
                 Array.Clear(vertexIsBelow, 0, newVertices.Length);
             }
 
@@ -1068,7 +1142,7 @@ namespace MeshCombineStudio
                     backFaceDirection = Quaternion.Euler(meshCombiner.backFaceRotation) * Vector3.forward;
                 }
                 else backFaceDirection = meshCombiner.backFaceDirection;
-                
+
                 for (int i = 0; i < totalTriangles; i += 3)
                 {
                     Vector3 normal = Vector3.zero;
@@ -1080,16 +1154,17 @@ namespace MeshCombineStudio
                         vertexPosition += newVertices[vertexIndex];
                         normal += newNormals[vertexIndex];
                     }
+
                     vertexPosition /= 3;
                     normal /= 3;
-                    
+
                     if (useBox)
                     {
                         Vector3 outerPosition;
                         outerPosition.x = (normal.x > 0 ? backFaceBoundsMax.x : backFaceBoundsMin.x);
                         outerPosition.y = (normal.y > 0 ? backFaceBoundsMax.y : backFaceBoundsMin.y);
                         outerPosition.z = (normal.z > 0 ? backFaceBoundsMax.z : backFaceBoundsMin.z);
-                    
+
                         backFaceDirection = ((newPosition + vertexPosition) - outerPosition);
                     }
 
@@ -1117,7 +1192,7 @@ namespace MeshCombineStudio
                 {
                     float snapSize = meshCombineJob.meshCombiner.weldSnapSize;
                     if (snapSize < 0.00001f) snapSize = 0.00001f;
-                    
+
                     for (int i = 0; i < vertexCount; i++)
                     {
                         Vector3 vertex = Mathw.SnapRound(vertices[i], snapSize);
@@ -1152,6 +1227,7 @@ namespace MeshCombineStudio
                     if (triangles[i] == -1) continue;
                     triangles[i] = triangleMap[triangles[i]];
                 }
+
                 Array.Copy(weldVertices.items, newMeshCache.vertices, weldVertices.Count);
                 newMeshCache.vertexCount = weldVertices.Count;
             }
@@ -1160,7 +1236,7 @@ namespace MeshCombineStudio
             {
                 int totalTriangles = newMeshCache.triangleCount;
                 int[] newTriangles = newMeshCache.triangles;
-                
+
                 for (int i = 0; i < totalTriangles; i += 3)
                 {
                     if (newTriangles[i] == -1)
@@ -1172,7 +1248,7 @@ namespace MeshCombineStudio
                         totalTriangles -= 3;
                     }
                 }
-                
+
                 newMeshCache.triangleCount = totalTriangles;
             }
 
@@ -1196,20 +1272,23 @@ namespace MeshCombineStudio
                 }
                 else if (meshCombineJob.parent == null) meshCombineJob.parent = meshCombineJob.meshCombiner.transform;
 
-                GameObject go = (GameObject)GameObject.Instantiate(meshCombiner.instantiatePrefab, newPosition, Quaternion.identity, meshCombineJob.parent);
+                GameObject go = (GameObject)GameObject.Instantiate(meshCombiner.instantiatePrefab, newPosition,
+                    Quaternion.identity, meshCombineJob.parent);
 
                 meshCombiner.data.combinedGameObjects.Add(go);
 
                 CachedComponents cachedComponents = go.GetComponent<CachedComponents>();
                 MeshRenderer mr = cachedComponents.mr;
                 MeshFilter mf = cachedComponents.mf;
-                
+
                 string name = (combineMode == CombineMode.DynamicObjects ? "CombinedMesh" : meshObjectsHolder.mat.name);
                 go.name = name;
-                
+
                 if (meshCombineJob.intersectsSurface)
                 {
-                    if (meshCombiner.noColliders) instance.camGeometryCapture.RemoveTrianglesBelowSurface(go.transform, meshCombineJob, newMeshCache, ref vertexIsBelow);
+                    if (meshCombiner.noColliders)
+                        instance.camGeometryCapture.RemoveTrianglesBelowSurface(go.transform, meshCombineJob,
+                            newMeshCache, ref vertexIsBelow);
                     else RemoveTrianglesBelowSurface(go.transform, meshCombineJob);
                 }
 
@@ -1222,8 +1301,9 @@ namespace MeshCombineStudio
 #endif
 
                 if (meshCombiner.weldVertices) WeldVertices(meshCombineJob);
-                
-                if (meshCombineJob.trianglesRemoved > 0 || meshCombineJob.backFaceTrianglesRemoved > 0 || meshCombiner.weldVertices)
+
+                if (meshCombineJob.trianglesRemoved > 0 || meshCombineJob.backFaceTrianglesRemoved > 0 ||
+                    meshCombiner.weldVertices)
                 {
                     ArrangeTriangles();
 
@@ -1232,6 +1312,7 @@ namespace MeshCombineStudio
                         instance.tempMeshCache = new MeshCache.SubMeshCache();
                         instance.tempMeshCache.Init(false);
                     }
+
                     instance.tempMeshCache.CopySubMeshCache(newMeshCache);
                     newMeshCache.RebuildVertexBuffer(instance.tempMeshCache, false);
                 }
@@ -1266,6 +1347,7 @@ namespace MeshCombineStudio
                         meshCombiner.newTotalNormalChannels++;
                         MeshExtension.ApplyNormals(mesh, newMeshCache.normals, totalVertices);
                     }
+
                     if (newMeshCache.hasTangents)
                     {
                         meshCombiner.newTotalTangentChannels++;
@@ -1277,28 +1359,32 @@ namespace MeshCombineStudio
                         meshCombiner.newTotalUvChannels++;
                         MeshExtension.ApplyUvs(mesh, newMeshCache.uv, 0, totalVertices);
                     }
+
                     if (newMeshCache.hasUv2)
                     {
                         meshCombiner.newTotalUv2Channels++;
                         MeshExtension.ApplyUvs(mesh, newMeshCache.uv2, 1, totalVertices);
                     }
+
                     if (newMeshCache.hasUv3)
                     {
                         meshCombiner.newTotalUv3Channels++;
                         MeshExtension.ApplyUvs(mesh, newMeshCache.uv3, 2, totalVertices);
                     }
+
                     if (newMeshCache.hasUv4)
                     {
                         meshCombiner.newTotalUv3Channels++;
                         MeshExtension.ApplyUvs(mesh, newMeshCache.uv4, 3, totalVertices);
                     }
+
                     if (newMeshCache.hasColors)
                     {
                         meshCombiner.newTotalColorChannels++;
                         MeshExtension.ApplyColors32(mesh, newMeshCache.colors32, totalVertices);
                     }
                 }
-                
+
 #if UNITY_EDITOR
                 if (meshCombiner.validRebakeLighting)
                 {
@@ -1313,7 +1399,7 @@ namespace MeshCombineStudio
                     so.FindProperty("m_ScaleInLightmap").floatValue = meshCombiner.scaleInLightmap;
                     so.ApplyModifiedProperties();
                 }
-                
+
                 // UnityEditor.GameObjectUtility.SetStaticEditorFlags(go, ((UnityEditor.StaticEditorFlags)meshCombiner.outputStatic) & ~UnityEditor.StaticEditorFlags.BatchingStatic);
 
                 if (!Application.isPlaying)
@@ -1326,14 +1412,15 @@ namespace MeshCombineStudio
                     }
                 }
 #endif
-                
+
                 if (meshCombiner.addMeshColliders)
                 {
                     bool addMeshCollider = true;
 
                     if (meshCombiner.addMeshCollidersInRange)
                     {
-                        if (!meshCombiner.addMeshCollidersBounds.Contains(go.transform.position)) addMeshCollider = false;
+                        if (!meshCombiner.addMeshCollidersBounds.Contains(go.transform.position))
+                            addMeshCollider = false;
                     }
 
                     if (addMeshCollider) meshCombiner.addMeshCollidersList.Add(new MeshColliderAdd(go, mesh));
@@ -1342,28 +1429,30 @@ namespace MeshCombineStudio
                 if (meshCombiner.makeMeshesUnreadable) mesh.UploadMeshData(true);
 
                 meshCombiner.newDrawCalls++;
-                
+
                 mr.sharedMaterial = meshObjectsHolder.mat;
                 mf.sharedMesh = mesh;
                 cachedComponents.garbageCollectMesh.mesh = mesh;
 
                 meshObjectsHolder.combineCondition.WriteToGameObject(go, mr);
 
-                if (meshObjectsHolder.newCachedGOs == null) meshObjectsHolder.newCachedGOs = new FastList<CachedGameObject>();
+                if (meshObjectsHolder.newCachedGOs == null)
+                    meshObjectsHolder.newCachedGOs = new FastList<CachedGameObject>();
                 meshObjectsHolder.newCachedGOs.Add(new CachedGameObject(cachedComponents));
 
                 meshObjectsHolder.lodParent.lodLevels[meshObjectsHolder.lodLevel].newMeshRenderers.Add(mr);
-                if (--meshObjectsHolder.lodParent.jobsPending == 0 && meshObjectsHolder.lodParent.lodLevels.Length > 1) meshObjectsHolder.lodParent.AssignLODGroup(meshCombiner);
+                if (--meshObjectsHolder.lodParent.jobsPending == 0 && meshObjectsHolder.lodParent.lodLevels.Length > 1)
+                    meshObjectsHolder.lodParent.AssignLODGroup(meshCombiner);
             }
         }
     }
-    
+
     public class MeshCache
     {
         public Mesh mesh;
         public SubMeshCache[] subMeshCache;
         public int subMeshCount;
-        
+
         public MeshCache(Mesh mesh)
         {
             this.mesh = mesh;
@@ -1382,7 +1471,7 @@ namespace MeshCombineStudio
                     subMeshCache[i].RebuildVertexBuffer(tempMeshCache, true);
                 }
             }
-        } 
+        }
 
         public class SubMeshCache
         {
@@ -1397,16 +1486,23 @@ namespace MeshCombineStudio
             public int vertexCount;
             public int triangleCount;
 
-            public SubMeshCache() { }
-            
+            public SubMeshCache()
+            {
+            }
+
             public void CopySubMeshCache(SubMeshCache source)
             {
                 vertexCount = source.vertexCount;
-                
+
                 Array.Copy(source.vertices, 0, vertices, 0, vertexCount);
 
-                hasNormals = source.hasNormals; hasTangents = source.hasTangents; hasColors = source.hasColors;
-                hasUv = source.hasUv; hasUv2 = source.hasUv2; hasUv3 = source.hasUv3; hasUv4 = source.hasUv4;
+                hasNormals = source.hasNormals;
+                hasTangents = source.hasTangents;
+                hasColors = source.hasColors;
+                hasUv = source.hasUv;
+                hasUv2 = source.hasUv2;
+                hasUv3 = source.hasUv3;
+                hasUv4 = source.hasUv4;
 
                 if (source.hasNormals) CopyArray(source.normals, ref normals, vertexCount);
                 if (source.hasTangents) CopyArray(source.tangents, ref tangents, vertexCount);
@@ -1429,7 +1525,7 @@ namespace MeshCombineStudio
                 triangles = mesh.GetTriangles(subMeshIndex);
                 triangleCount = triangles.Length;
             }
-            
+
             public SubMeshCache(Mesh mesh, bool assignTriangles)
             {
                 vertices = mesh.vertices;
@@ -1473,7 +1569,7 @@ namespace MeshCombineStudio
                 vertices = new Vector3[65534];
                 if (initTriangles) triangles = new int[786408];
             }
-            
+
             // TODO make it possible to do on multi thread
             public void RebuildVertexBuffer(SubMeshCache sub, bool resizeArrays)
             {
@@ -1481,7 +1577,7 @@ namespace MeshCombineStudio
                 int[] subVertexIndices = new int[usedVertices.Length];
 
                 vertexCount = 0;
-                
+
                 for (int i = 0; i < triangleCount; i++)
                 {
                     int vertexIndex = triangles[i];
@@ -1498,8 +1594,13 @@ namespace MeshCombineStudio
 
                 if (resizeArrays) vertices = new Vector3[vertexCount];
 
-                hasNormals = sub.hasNormals; hasTangents = sub.hasTangents; hasColors = sub.hasColors;
-                hasUv = sub.hasUv; hasUv2 = sub.hasUv2; hasUv3 = sub.hasUv3; hasUv4 = sub.hasUv4;
+                hasNormals = sub.hasNormals;
+                hasTangents = sub.hasTangents;
+                hasColors = sub.hasColors;
+                hasUv = sub.hasUv;
+                hasUv2 = sub.hasUv2;
+                hasUv3 = sub.hasUv3;
+                hasUv4 = sub.hasUv4;
 
                 if (resizeArrays)
                 {
@@ -1512,7 +1613,7 @@ namespace MeshCombineStudio
                     if (hasUv4) uv4 = new Vector2[vertexCount];
                     if (hasColors) colors32 = new Color32[vertexCount];
                 }
-                
+
                 for (int i = 0; i < vertexCount; i++)
                 {
                     int vertexIndex = subVertexIndices[i];
@@ -1569,7 +1670,7 @@ namespace MeshCombineStudio
         {
             Color32[] newColors = new Color32[length];
             Array.Copy(colors, newColors, length);
-            mesh.colors32 = newColors; 
+            mesh.colors32 = newColors;
         }
 
         static public void ApplyTriangles(Mesh mesh, int[] triangles, int length)
@@ -1580,5 +1681,3 @@ namespace MeshCombineStudio
         }
     }
 }
-
-

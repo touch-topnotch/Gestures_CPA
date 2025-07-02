@@ -42,6 +42,7 @@ namespace MeshCombineStudio
                 spawn = false;
                 Spawn();
             }
+
             if (deleteChildren)
             {
                 deleteChildren = false;
@@ -100,10 +101,14 @@ namespace MeshCombineStudio
                         float spawnValue = Random.value;
                         if (spawnValue < density)
                         {
-                            Vector3 pos = new Vector3(x + Random.Range(-halfRes, halfRes), yStart + (Random.Range(0, bounds.size.y) * Random.Range(heightRange.x, heightRange.y)), z + Random.Range(-halfRes, halfRes));
-                            if (pos.x < xStart || pos.x > xEnd || pos.y < yStart || pos.y > yEnd || pos.z < zStart || pos.z > zEnd) continue;
+                            Vector3 pos = new Vector3(x + Random.Range(-halfRes, halfRes),
+                                yStart + (Random.Range(0, bounds.size.y) * Random.Range(heightRange.x, heightRange.y)),
+                                z + Random.Range(-halfRes, halfRes));
+                            if (pos.x < xStart || pos.x > xEnd || pos.y < yStart || pos.y > yEnd || pos.z < zStart ||
+                                pos.z > zEnd) continue;
                             pos.y += heightOffset;
-                            Vector3 eulerAngles = new Vector3(Random.Range(0, rotationRange.x), Random.Range(0, rotationRange.y), Random.Range(0, rotationRange.z));
+                            Vector3 eulerAngles = new Vector3(Random.Range(0, rotationRange.x),
+                                Random.Range(0, rotationRange.y), Random.Range(0, rotationRange.z));
                             GameObject go = (GameObject)Instantiate(objects[index], pos, Quaternion.Euler(eulerAngles));
                             float scale = Random.Range(scaleRange.x, scaleRange.y) * scaleMulti;
                             go.transform.localScale = new Vector3(scale, scale, scale);

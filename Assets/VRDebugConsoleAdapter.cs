@@ -7,10 +7,10 @@ public class VRDebugConsoleAdapter : MonoBehaviour
 {
     [SerializeField] private HeadInteractionType toggleConsole = HeadInteractionType.DoubleNod;
     [SerializeField] private HeadInteraction headInteraction;
-   
-    
+
+
     private DebugLogManager _debugLogManager;
-    
+
     private void OnValidate()
     {
         if (headInteraction == null)
@@ -26,7 +26,7 @@ public class VRDebugConsoleAdapter : MonoBehaviour
     private void Awake()
     {
         _debugLogManager = GetComponent<DebugLogManager>();
-        headInteraction.onHeadInteraction += e =>
+        headInteraction.onHeadInteraction.AddListener( e =>
         {
             if (e != toggleConsole)
                 return;
@@ -36,8 +36,6 @@ public class VRDebugConsoleAdapter : MonoBehaviour
             {
                 _debugLogManager.ShowLogWindow();
             }
-
-        };
+        });
     }
-
 }

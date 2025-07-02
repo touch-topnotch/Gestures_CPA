@@ -122,8 +122,13 @@ namespace MeshCombineStudio
 
     public static class Mathw
     {
-        public static readonly int[] bits = new int[] { 1 << 0 , 1 << 1, 1 << 2, 1 << 3, 1 << 4, 1 << 5, 1 << 6, 1 << 7, 1 << 8, 1 << 9, 1 << 10, 1 << 11, 1 << 12, 1 << 13, 1 << 14, 1 << 15, 1 << 16, 1 << 17,
-                                                        1 << 18, 1 << 19, 1 << 20, 1 << 21, 1 << 22, 1 << 23, 1 << 24, 1 << 25, 1 << 26, 1 << 27, 1 << 28, 1 << 29, 1 << 30, 1 << 31};
+        public static readonly int[] bits = new int[]
+        {
+            1 << 0, 1 << 1, 1 << 2, 1 << 3, 1 << 4, 1 << 5, 1 << 6, 1 << 7, 1 << 8, 1 << 9, 1 << 10, 1 << 11, 1 << 12,
+            1 << 13, 1 << 14, 1 << 15, 1 << 16, 1 << 17,
+            1 << 18, 1 << 19, 1 << 20, 1 << 21, 1 << 22, 1 << 23, 1 << 24, 1 << 25, 1 << 26, 1 << 27, 1 << 28, 1 << 29,
+            1 << 30, 1 << 31
+        };
 
         public static Vector3 Clamp(Vector3 v, float min, float max)
         {
@@ -143,7 +148,7 @@ namespace MeshCombineStudio
 
         public static float SinDeg(float angle)
         {
-            return Mathf.Sin(angle * Mathf.Deg2Rad);// * Mathf.Rad2Deg;
+            return Mathf.Sin(angle * Mathf.Deg2Rad); // * Mathf.Rad2Deg;
         }
 
         public static float GetMax(Vector3 v)
@@ -229,6 +234,7 @@ namespace MeshCombineStudio
                 distance = center.x - max.x;
                 totalDistance += distance * distance;
             }
+
             if (center.y < min.y)
             {
                 distance = center.y - min.y;
@@ -239,6 +245,7 @@ namespace MeshCombineStudio
                 distance = center.y - max.y;
                 totalDistance += distance * distance;
             }
+
             if (center.z < min.z)
             {
                 distance = center.z - min.z;
@@ -249,6 +256,7 @@ namespace MeshCombineStudio
                 distance = center.z - max.z;
                 totalDistance += distance * distance;
             }
+
             return totalDistance <= sphere.radius * sphere.radius;
         }
 
@@ -302,7 +310,7 @@ namespace MeshCombineStudio
             GetMinMax(v0[2], v1[2], v2[2], out min, out max);
 
             if (min > boxHalfSize[2] || max < -boxHalfSize[2]) return false;
-             
+
             normal = Vector3.Cross(e0, e1);
             if (!PlaneBoxOverlap(normal, v0, boxHalfSize)) return false;
 
@@ -357,12 +365,22 @@ namespace MeshCombineStudio
 
         /*======================== X-tests ========================*/
         // [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static bool AxisTest_X01(Vector3 v0, Vector3 v2, Vector3 boxHalfSize, float a, float b, float fa, float fb, out float min, out float max)
+        static bool AxisTest_X01(Vector3 v0, Vector3 v2, Vector3 boxHalfSize, float a, float b, float fa, float fb,
+            out float min, out float max)
         {
             float p0 = a * v0[1] - b * v0[2];
             float p2 = a * v2[1] - b * v2[2];
 
-            if (p0 < p2) { min = p0; max = p2; } else { min = p2; max = p0; }
+            if (p0 < p2)
+            {
+                min = p0;
+                max = p2;
+            }
+            else
+            {
+                min = p2;
+                max = p0;
+            }
 
             float rad = fa * boxHalfSize[1] + fb * boxHalfSize[2];
 
@@ -371,12 +389,22 @@ namespace MeshCombineStudio
         }
 
         // [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static bool AxisTest_X2(Vector3 v0, Vector3 v1, Vector3 boxHalfSize, float a, float b, float fa, float fb, out float min, out float max)
+        static bool AxisTest_X2(Vector3 v0, Vector3 v1, Vector3 boxHalfSize, float a, float b, float fa, float fb,
+            out float min, out float max)
         {
             float p0 = a * v0[1] - b * v0[2];
             float p1 = a * v1[1] - b * v1[2];
 
-            if (p0 < p1) { min = p0; max = p1; } else { min = p1; max = p0; }
+            if (p0 < p1)
+            {
+                min = p0;
+                max = p1;
+            }
+            else
+            {
+                min = p1;
+                max = p0;
+            }
 
             float rad = fa * boxHalfSize[1] + fb * boxHalfSize[2];
 
@@ -387,12 +415,22 @@ namespace MeshCombineStudio
         /*======================== Y-tests ========================*/
 
         // [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static bool AxisTest_Y02(Vector3 v0, Vector3 v2, Vector3 boxHalfSize, float a, float b, float fa, float fb, out float min, out float max)
+        static bool AxisTest_Y02(Vector3 v0, Vector3 v2, Vector3 boxHalfSize, float a, float b, float fa, float fb,
+            out float min, out float max)
         {
             float p0 = -a * v0[0] + b * v0[2];
             float p2 = -a * v2[0] + b * v2[2];
 
-            if (p0 < p2) { min = p0; max = p2; } else { min = p2; max = p0; }
+            if (p0 < p2)
+            {
+                min = p0;
+                max = p2;
+            }
+            else
+            {
+                min = p2;
+                max = p0;
+            }
 
             float rad = fa * boxHalfSize[0] + fb * boxHalfSize[2];
 
@@ -401,12 +439,22 @@ namespace MeshCombineStudio
         }
 
         // [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static bool AxisTest_Y1(Vector3 v0, Vector3 v1, Vector3 boxHalfSize, float a, float b, float fa, float fb, out float min, out float max)
+        static bool AxisTest_Y1(Vector3 v0, Vector3 v1, Vector3 boxHalfSize, float a, float b, float fa, float fb,
+            out float min, out float max)
         {
             float p0 = -a * v0[0] + b * v0[2];
             float p1 = -a * v1[0] + b * v1[2];
 
-            if (p0 < p1) { min = p0; max = p1; } else { min = p1; max = p0; }
+            if (p0 < p1)
+            {
+                min = p0;
+                max = p1;
+            }
+            else
+            {
+                min = p1;
+                max = p0;
+            }
 
             float rad = fa * boxHalfSize[0] + fb * boxHalfSize[2];
 
@@ -417,12 +465,22 @@ namespace MeshCombineStudio
         /*======================== Z-tests ========================*/
 
         // [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static bool AxisTest_Z12(Vector3 v1, Vector3 v2, Vector3 boxHalfSize, float a, float b, float fa, float fb, out float min, out float max)
+        static bool AxisTest_Z12(Vector3 v1, Vector3 v2, Vector3 boxHalfSize, float a, float b, float fa, float fb,
+            out float min, out float max)
         {
             float p1 = a * v1[0] - b * v1[1];
             float p2 = a * v2[0] - b * v2[1];
 
-            if (p2 < p1) { min = p2; max = p1; } else { min = p1; max = p2; }
+            if (p2 < p1)
+            {
+                min = p2;
+                max = p1;
+            }
+            else
+            {
+                min = p1;
+                max = p2;
+            }
 
             float rad = fa * boxHalfSize[0] + fb * boxHalfSize[1];
 
@@ -431,12 +489,22 @@ namespace MeshCombineStudio
         }
 
         // [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static bool AxisTest_Z0(Vector3 v0, Vector3 v1, Vector3 boxHalfSize, float a, float b, float fa, float fb, out float min, out float max)
+        static bool AxisTest_Z0(Vector3 v0, Vector3 v1, Vector3 boxHalfSize, float a, float b, float fa, float fb,
+            out float min, out float max)
         {
             float p0 = a * v0[0] - b * v0[1];
             float p1 = a * v1[0] - b * v1[1];
 
-            if (p0 < p1) { min = p0; max = p1; } else { min = p1; max = p0; }
+            if (p0 < p1)
+            {
+                min = p0;
+                max = p1;
+            }
+            else
+            {
+                min = p1;
+                max = p0;
+            }
 
             float rad = fa * boxHalfSize[0] + fb * boxHalfSize[1];
 

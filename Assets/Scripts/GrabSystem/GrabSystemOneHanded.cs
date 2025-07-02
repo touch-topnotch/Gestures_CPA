@@ -41,5 +41,4 @@ public class GrabSystemOneHanded : GrabSystem
         Gizmos.DrawWireSphere(_mainGrabPoint.GrabPointTransform.position, _mainGrabPoint.GrabPointRadius);
         Gizmos.DrawRay(_mainGrabPoint.GrabPointTransform.position, _mainGrabPoint.GrabPointTransform.right);
     }
-
 }

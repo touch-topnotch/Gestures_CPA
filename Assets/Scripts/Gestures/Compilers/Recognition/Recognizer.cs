@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Scripts.Design;
 using Scripts.Events;
 using Scripts.HandsLogic;
-using Scripts.PlayerLogic;
+using Scripts.Players;
 using Scripts.Systems;
 using UnityEngine;
 
@@ -26,8 +26,9 @@ namespace Scripts.Gestures
             _config = config;
         }
 
+        
         public IEnumerator RecognizeDynamicGesture(Dictionary<string, DynamicGesture> possibleGestures,
-            GestureRecognized onGestureRecognized, FrameRecognized onFrameRecognized)
+            Action<string> onGestureRecognized, Action<string> onFrameRecognized)
         {
             // Initialize possible gestures
             var v_possibleGestures = new List<DynamicGesture>(possibleGestures.Values);
@@ -93,7 +94,7 @@ namespace Scripts.Gestures
             }
 
             //  v_possibleGestures[v_curGesture].AllFramesDetected();
-            onGestureRecognized?.Invoke(v_possibleGestures[v_curGesture].Name);
+            onGestureRecognized?.Invoke(v_possibleGestures[v_curGesture].name);
             _hands.handVisualiser.ManipulateAll(e => e.Hide());
 
             void LogPossibleFrames()
@@ -124,7 +125,8 @@ namespace Scripts.Gestures
             return false;
         }
 
-        public static bool RecognizeFrame(in RecognitionProperties properties, FrameData frameData, in bool shareFrameBetweenDevices = false)
+        public static bool RecognizeFrame(in RecognitionProperties properties, FrameData frameData,
+            in bool shareFrameBetweenDevices = false)
         {
             return RecognizeFrame(properties, frameData, _hands, shareFrameBetweenDevices);
         }
@@ -135,7 +137,7 @@ namespace Scripts.Gestures
             if (RecognizeHand(frameData.LeftBones, hands.leftHand.points, properties)
                 && RecognizeHand(frameData.RightBones, hands.rightHand.points, properties))
             {
-                if(shareFrameBetweenDevices)
+                if (shareFrameBetweenDevices)
                     onSharedFrameBetweenDevices?.Invoke(frameData.name);
                 return true;
             }
@@ -148,7 +150,7 @@ namespace Scripts.Gestures
         {
             if (bonesData == null || bonesData.rotations?.Length != handSkeleton.Length)
                 return true;
-            
+
             var dist = OptimizedDistance(bonesData.rootPos, handSkeleton[0].localPosition);
             if (1 / props.positionQuality - dist < props.positionQuality)
             {

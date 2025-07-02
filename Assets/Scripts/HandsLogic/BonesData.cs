@@ -8,14 +8,15 @@ namespace Scripts.HandsLogic
         public Vector3 rootPos => _isListened ? TransformRoot() : _fixedRootPos;
         public Quaternion[] rotations => _isListened ? TransformRotations() : _rotations;
         public bool Exists() => rotations != null && rotations.Length != 0;
-        
+
         public readonly HandType type;
-        
+
         private readonly Vector3 _fixedRootPos;
         private readonly Quaternion _fixedRootRot;
         private Quaternion[] _rotations;
         private bool _isListened;
         private Transform _parent;
+
         public BonesData(HandType type)
         {
             this.type = type;
@@ -47,6 +48,7 @@ namespace Scripts.HandsLogic
             {
                 rot[i] = points[i].localRotation;
             }
+
             this.type = type;
             _fixedRootPos = points[0].localPosition;
             _rotations = rot;
@@ -58,14 +60,15 @@ namespace Scripts.HandsLogic
         {
             return $"Root: {rootPos}, rotations: {Debugger.arrayToString<Quaternion>(rotations)}";
         }
+
         public void SetParent(Transform transform) // Listen при любом вызове
         {
-            
             _parent = transform;
             if (!Exists())
-            { 
+            {
                 return;
             }
+
             _isListened = true;
         }
 
@@ -75,6 +78,7 @@ namespace Scripts.HandsLogic
         }
 
         private Vector3 TransformRoot() => _parent.TransformVector(_fixedRootPos);
+
         private ref Quaternion[] TransformRotations()
         {
             _rotations[0] = _parent.rotation * _fixedRootRot;

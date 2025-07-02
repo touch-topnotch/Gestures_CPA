@@ -1,0 +1,4 @@
+namespace Scripts.Static
+{
+    
+}

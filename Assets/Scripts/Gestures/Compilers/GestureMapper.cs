@@ -2,16 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Characters;
-using Gesture_Editor_SDK.Realtime;
-using ModestTree;
 using Newtonsoft.Json;
 using Scripts.Characters;
 using Scripts.Databases;
+using Scripts.Gesture_Editor_SDK.Realtime;
 using Scripts.HandsLogic;
 using Scripts.Network;
 using UnityEngine;
 using Scripts.Static;
-using Scripts.Systems;
+using Scripts.Static.Definitions;
 using Scripts.Weapons;
 using Unity.Services.CloudSave;
 using FrameAtlas = System.Collections.Generic.Dictionary<string, Scripts.Databases.DBFrameStruct>;
@@ -64,38 +63,34 @@ namespace Scripts.Gestures
         }
 
         public static bool TryGetDynamicGesture(JsonFrameStruct jsonStruct,
-            in Dictionary<string, Weapon> recognizables,
             out DynamicGesture gesture)
         {
-            // firstly, find IRecognizable, if exist.
-            IRecognizable recognizableObject = null;
-
-            foreach (var gestureName in recognizables.Keys)
-            {
-                if (gestureName == jsonStruct.key)
-                {
-                    recognizableObject = recognizables[gestureName];
-                    break;
-                }
-            }
-
-            if (recognizableObject == null)
-            {
-                Debug.Log("Recognizables for gesture " + jsonStruct.key+ " not found");
-            }
+            // firstly, find IGestureAbility, if exist.
+            // IGestureAbility recognizableObject = null;
+            //
+            // foreach (var gestureName in recognizables.Keys)
+            // {
+            //     if (gestureName == jsonStruct.key)
+            //     {
+            //         recognizableObject = recognizables[gestureName];
+            //         break;
+            //     }
+            // }
+            //
+            // if (recognizableObject == null)
+            // {
+            //     Debug.Log("Recognizables for gesture " + jsonStruct.key + " not found");
+            // }
 
             List<FrameData> frames = new();
 
             foreach (var frame in jsonStruct.value.Frames)
             {
-                frames.Add(StringToFrameData(jsonStruct.key + "_" + frames.Count,frame));
+                frames.Add(StringToFrameData(jsonStruct.key + "_" + frames.Count, frame));
             }
 
 
-            gesture = new DynamicGesture(jsonStruct.key,
-                (GestureType)jsonStruct.value.Type,
-                frames,
-                recognizableObject);
+            gesture = new DynamicGesture(jsonStruct.key, (AbilityType)jsonStruct.value.Type,frames);
 
             return true;
         }
@@ -119,27 +114,24 @@ namespace Scripts.Gestures
             return dictionary;
         }
 
-        public static async Task<Dictionary<string, DynamicGesture>> ReadCharacterGestures(
-            Dictionary<string, Character> characters)
+        public static async Task<Dictionary<string, DynamicGesture>> ReadCharacterGestures()
         {
             var jsonCharacters = await CharacterMapper.GetCharacterStructs(); // json прочитали
             if (jsonCharacters == null)
                 return null;
             Dictionary<string, DynamicGesture> gestures = new();
-            
+
             foreach (var charKey in jsonCharacters.Keys)
             {
-                if (characters.ContainsKey(charKey))
+               
+                foreach (var gesture in jsonCharacters[charKey].Gestures)
                 {
-                    foreach (var gesture in jsonCharacters[charKey].Gestures)
+                    if (TryGetDynamicGesture(gesture, out var dynamicGesture))
                     {
-                        if (TryGetDynamicGesture(gesture, characters[charKey].weapons,
-                                out var dynamicGesture))
-                        {
-                            gestures.Add(dynamicGesture.Name, dynamicGesture);
-                        }
+                        gestures.Add(dynamicGesture.name, dynamicGesture);
                     }
                 }
+                
             }
 
             return gestures;
@@ -190,7 +182,7 @@ namespace Scripts.Gestures
         {
             var JsonFrame = new JsonFrameStruct
             {
-                key = gesture.Name,
+                key = gesture.name,
                 value = new JsonFrameProperty()
                 {
                     Type = (int)gesture.gestureType,
@@ -205,8 +197,12 @@ namespace Scripts.Gestures
         public static string[] FrameDataToString(FrameData frameData)
         {
             var s = new string [4];
-            s[0] = frameData.LeftBones == null ? "!" : VectorConverter.QuaternionArrayToCode(frameData.LeftBones.rotations);
-            s[1] = frameData.RightBones == null ? "!" : VectorConverter.QuaternionArrayToCode(frameData.RightBones.rotations);
+            s[0] = frameData.LeftBones == null
+                ? "!"
+                : VectorConverter.QuaternionArrayToCode(frameData.LeftBones.rotations);
+            s[1] = frameData.RightBones == null
+                ? "!"
+                : VectorConverter.QuaternionArrayToCode(frameData.RightBones.rotations);
             s[2] = frameData.LeftBones == null ? "!" : VectorConverter.VecToCodePos(frameData.LeftBones.rootPos);
             s[3] = frameData.RightBones == null ? "!" : VectorConverter.VecToCodePos(frameData.RightBones.rootPos);
             return s;

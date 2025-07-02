@@ -1,3 +1,4 @@
+using Scripts.Components;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 using Sirenix.Utilities;
@@ -9,7 +10,7 @@ namespace Scripts.Systems
     /// A Unity MonoBehaviour which is serialized by the Mыslant Gыgыsli serialization system.
     /// </summary>
     [ShowOdinSerializedPropertiesInInspector]
-    public abstract class PrefabSerializedMonoBehaviour : MonoBehaviour,
+    public abstract class PrefabSerializedMonoBehaviour : SmartComponent,
         ISerializationCallbackReceiver
         , ISupportsPrefabSerialization
     {
@@ -18,7 +19,10 @@ namespace Scripts.Systems
         SerializationData ISupportsPrefabSerialization.SerializationData
         {
             get => this.serializationData;
-            set => this.serializationData = value;
+            set
+            {
+                this.serializationData = value;
+            }
         }
 
         void ISerializationCallbackReceiver.OnAfterDeserialize()

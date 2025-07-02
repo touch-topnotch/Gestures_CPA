@@ -35,7 +35,7 @@ namespace MeshCombineStudio
                 }
 
                 for (int i = 0; i < meshCombinerList.Count; i++)
-                { 
+                {
                     meshCombinerList[i].SwapCombine();
                 }
             }
@@ -50,7 +50,9 @@ namespace MeshCombineStudio
                 textStyle.fontSize = 16;
             }
 
-            textStyle.normal.textColor = (this.meshCombiner.combinedActive && this.meshCombiner.combined) ? Color.green : Color.red;
+            textStyle.normal.textColor = (this.meshCombiner.combinedActive && this.meshCombiner.combined)
+                ? Color.green
+                : Color.red;
 
             int meshCombineJobsCount = 0;
 
@@ -59,14 +61,23 @@ namespace MeshCombineStudio
             for (int i = 0; i < meshCombinerList.Count; i++)
             {
                 MeshCombiner meshCombiner = meshCombinerList[i];
-                if (meshCombiner.meshCombineJobs.Count > meshCombineJobsCount) meshCombineJobsCount = meshCombiner.meshCombineJobs.Count;
-                if (meshCombiner.combinedActive && meshCombiner.combined) GUI.Label(new Rect(10, 30 + (i * 22), 300, 30), meshCombiner.gameObject.name + " is Enabled.", textStyle);
-                else GUI.Label(new Rect(10, 30 + (i * 22), 300, 30), meshCombiner.gameObject.name + " is Disabled.", textStyle);
+                if (meshCombiner.meshCombineJobs.Count > meshCombineJobsCount)
+                    meshCombineJobsCount = meshCombiner.meshCombineJobs.Count;
+                if (meshCombiner.combinedActive && meshCombiner.combined)
+                    GUI.Label(new Rect(10, 30 + (i * 22), 300, 30), meshCombiner.gameObject.name + " is Enabled.",
+                        textStyle);
+                else
+                    GUI.Label(new Rect(10, 30 + (i * 22), 300, 30), meshCombiner.gameObject.name + " is Disabled.",
+                        textStyle);
             }
 
 
-            if (meshCombineJobsCount > 0) GUI.Label(new Rect(10, 45 + (meshCombinerList.Count * 22), 250, 30), "Combining => Jobs Left " + meshCombineJobsCount, textStyle);
-            else GUI.Label(new Rect(10, 45 + (meshCombinerList.Count * 22), 200, 30), "Toggle with 'Tab' key.", textStyle);
+            if (meshCombineJobsCount > 0)
+                GUI.Label(new Rect(10, 45 + (meshCombinerList.Count * 22), 250, 30),
+                    "Combining => Jobs Left " + meshCombineJobsCount, textStyle);
+            else
+                GUI.Label(new Rect(10, 45 + (meshCombinerList.Count * 22), 200, 30), "Toggle with 'Tab' key.",
+                    textStyle);
         }
     }
 }

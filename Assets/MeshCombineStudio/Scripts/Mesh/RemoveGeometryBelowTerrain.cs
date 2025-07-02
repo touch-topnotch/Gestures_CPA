@@ -47,14 +47,19 @@ namespace MeshCombineStudio
                 RemoveMesh(mfs[i].transform, mfs[i].mesh);
             }
 
-            Debug.Log("Removeable " + removeTriangles + " total " + totalTriangles + " improvement " + (((float)removeTriangles / totalTriangles) * 100).ToString("F2"));
+            Debug.Log("Removeable " + removeTriangles + " total " + totalTriangles + " improvement " +
+                      (((float)removeTriangles / totalTriangles) * 100).ToString("F2"));
             Debug.Log("Skipped Objects " + skippedObjects);
         }
 
         public void RemoveMesh(Transform t, Mesh mesh)
         {
             if (mesh == null) return;
-            if (!(IsMeshUnderTerrain(t, mesh))) { ++skippedObjects; return; }
+            if (!(IsMeshUnderTerrain(t, mesh)))
+            {
+                ++skippedObjects;
+                return;
+            }
 
             Vector3[] vertices = mesh.vertices;
             List<int> newTriangles = new List<int>();
@@ -85,7 +90,7 @@ namespace MeshCombineStudio
                 for (float x = 0; x < 1; x += 0.125f)
                 {
                     Vector3 p = new Vector3(min.x + (x * delta.x), min.y, min.z + (z * delta.y));
-                    float height = 0;// terrainColliderCam.GetHeight(p);
+                    float height = 0; // terrainColliderCam.GetHeight(p);
                     if (p.y < height) return true;
                 }
             }
@@ -206,13 +211,18 @@ namespace MeshCombineStudio
 
             for (int i = 0; i < terrainArray.Length; i++)
             {
-                if (terrainBoundsArray[i].Contains(pos)) { index = i; break; }
+                if (terrainBoundsArray[i].Contains(pos))
+                {
+                    index = i;
+                    break;
+                }
             }
 
             if (index != -1)
             {
                 return terrainArray[index].SampleHeight(pos);
             }
+
             return Mathf.Infinity;
         }
 
@@ -247,6 +257,7 @@ namespace MeshCombineStudio
                         height = GetTerrainHeight(pos);
                         isBelow = pos.y < height;
                     }
+
                     if (isBelow)
                     {
                         verticeIsBelow[verticeIndex] = true;
@@ -258,6 +269,7 @@ namespace MeshCombineStudio
                             height = GetTerrainHeight(pos);
                             isBelow = pos.y < height;
                         }
+
                         if (isBelow)
                         {
                             verticeIsBelow[verticeIndex] = true;

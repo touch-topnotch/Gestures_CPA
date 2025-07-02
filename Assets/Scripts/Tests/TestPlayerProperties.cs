@@ -4,6 +4,7 @@ using Gesture_Editor_SDK.EditorAttributes.InspectorButtonAttribute;
 using Gesture_Editor_SDK.ReadOnly;
 using Scripts.PlayerLogic;
 using Scripts.Static;
+using Scripts.Static.Definitions;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Avatar = Scripts.PlayerLogic.Avatar;

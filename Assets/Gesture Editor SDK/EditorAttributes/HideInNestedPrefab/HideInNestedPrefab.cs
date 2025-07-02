@@ -3,7 +3,6 @@ using UnityEditor;
 
 namespace Gesture_Editor_SDK.EditorAttributes
 {
- 
 //     public class DisableInNestedPrefabAttribute : PropertyAttribute
 //     {
 //         public string title;
@@ -56,5 +55,4 @@ namespace Gesture_Editor_SDK.EditorAttributes
 //         }
 //     }
 // #endif
-
 }

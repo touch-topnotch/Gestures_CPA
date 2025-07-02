@@ -7,7 +7,6 @@ namespace MeshCombineStudio
     [ExecuteInEditMode]
     public class FindLodGroups : MonoBehaviour
     {
-
         public bool find;
 
         void Start()
@@ -32,11 +31,10 @@ namespace MeshCombineStudio
             {
                 Debug.Log(lodGroups[i].name);
             }
+
             Debug.Log("---------------------------------------------");
             Debug.Log("LODGroups found " + lodGroups.Length);
             Debug.Log("---------------------------------------------");
-
-
         }
     }
 }

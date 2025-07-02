@@ -11,7 +11,7 @@ public class RaycastTest : MonoBehaviour
     public LayerMask layerMask;
     public bool createTriangle;
     public int triangleIndex;
-    
+
     RaycastHit hitInfo;
 
     void Update()
@@ -32,19 +32,22 @@ public class RaycastTest : MonoBehaviour
         Vector3 p3 = new Vector3(0, 1, 0);
 
         float offset = 0.01f;
-        
+
         Vector3 p4 = new Vector3(offset, 0, 0);
         Vector3 p5 = new Vector3(offset, 0, 1);
         Vector3 p6 = new Vector3(offset, 1, 0);
 
-        var verts = new Vector3[] { p1, p2, p3,
-                                    p6, p5, p4,
+        var verts = new Vector3[]
+        {
+            p1, p2, p3,
+            p6, p5, p4,
         };
 
-        
 
-        var triangles = new int[] { 0, 1, 2,
-                                    3, 4, 5,
+        var triangles = new int[]
+        {
+            0, 1, 2,
+            3, 4, 5,
         };
 
         mesh.name = "Triangle";
@@ -72,7 +75,7 @@ public class RaycastTest : MonoBehaviour
         //float time = Time.realtimeSinceStartup - tStamp;
         //Debug.Log("Time " + time);
     }
-    
+
     void Swap<T>(ref T v1, ref T v2)
     {
         T temp = v1;
@@ -108,7 +111,8 @@ public class RaycastTest : MonoBehaviour
             ray.direction = dir;
             if (Physics.Raycast(ray, out hitInfo, 10000))
             {
-                if (Vector3.Dot(dir, hitInfo.normal) >= 0) Gizmos.color = Color.green; else Gizmos.color = Color.red;
+                if (Vector3.Dot(dir, hitInfo.normal) >= 0) Gizmos.color = Color.green;
+                else Gizmos.color = Color.red;
 
                 Gizmos.DrawLine(hitInfo.point, hitInfo.point + hitInfo.normal);
 
@@ -156,7 +160,8 @@ public class RaycastTest : MonoBehaviour
 
             Vector3 origin = tri.a + (tri.dirAb / 2) + ((tri.c - tri.h1) / 2);
 
-            if (Physics.CheckBox(origin, new Vector3(0.05f, tri.h, tri.ab) / 2, Quaternion.LookRotation(tri.dirAb, tri.dirAc)))
+            if (Physics.CheckBox(origin, new Vector3(0.05f, tri.h, tri.ab) / 2,
+                    Quaternion.LookRotation(tri.dirAb, tri.dirAc)))
             {
                 Gizmos.color = Color.red;
 
@@ -209,7 +214,7 @@ public class RaycastTest : MonoBehaviour
             //}
         }
 
-        Physics.queriesHitBackfaces = false; 
+        Physics.queriesHitBackfaces = false;
     }
 
     public bool step2;
@@ -248,7 +253,7 @@ public struct TriangleTest
         else if (_bc > _ab)
         {
             a = _c;
-            b = _b; 
+            b = _b;
             c = _a;
         }
 

@@ -6,8 +6,17 @@ namespace MeshCombineStudio
 {
     public class CombinedLODManager : MonoBehaviour
     {
-        public enum LodMode { Automatic, DebugLod }
-        public enum LodDistanceMode { Automatic, Manual }
+        public enum LodMode
+        {
+            Automatic,
+            DebugLod
+        }
+
+        public enum LodDistanceMode
+        {
+            Automatic,
+            Manual
+        }
 
         public bool drawGizmos = true;
         public LOD[] lods;
@@ -17,7 +26,7 @@ namespace MeshCombineStudio
         public int showLod = 0;
         public bool lodCulled;
         public float lodCullDistance = 500;
-        
+
         public Vector3 octreeCenter = Vector3.zero;
         public Vector3 octreeSize = new Vector3(256, 256, 256);
         public int maxLevels = 4;
@@ -50,11 +59,11 @@ namespace MeshCombineStudio
         {
             if (octree.cellsUsed != null) Lod(lodMode);
         }
-        
+
         public void UpdateLods(MeshCombiner meshCombiner, int lodAmount)
         {
             if (lods != null && lods.Length == lodAmount) return;
-            
+
             lods = new LOD[lodAmount];
             float[] newDistances = new float[lodAmount];
 
@@ -83,7 +92,8 @@ namespace MeshCombineStudio
                 lods[i].searchParent.gameObject.SetActive(true);
                 MeshRenderer[] mrs = lods[i].searchParent.GetComponentsInChildren<MeshRenderer>();
 
-                for (int j = 0; j < mrs.Length; j++) octree.AddMeshRenderer(mrs[j], mrs[j].transform.position, i, lods.Length);
+                for (int j = 0; j < mrs.Length; j++)
+                    octree.AddMeshRenderer(mrs[j], mrs[j].transform.position, i, lods.Length);
             }
         }
 
@@ -126,7 +136,10 @@ namespace MeshCombineStudio
             public Transform searchParent;
             public Sphere3 sphere = new Sphere3();
 
-            public LOD() { }
+            public LOD()
+            {
+            }
+
             public LOD(Transform searchParent)
             {
                 this.searchParent = searchParent;
@@ -138,8 +151,13 @@ namespace MeshCombineStudio
             public Cell[] cells;
             AABB3 box;
 
-            public Cell() { }
-            public Cell(Vector3 position, Vector3 size, int maxLevels) : base(position, size, maxLevels) { }
+            public Cell()
+            {
+            }
+
+            public Cell(Vector3 position, Vector3 size, int maxLevels) : base(position, size, maxLevels)
+            {
+            }
 
             public void AddMeshRenderer(MeshRenderer mr, Vector3 position, int lodLevel, int lodLevels)
             {
@@ -181,10 +199,13 @@ namespace MeshCombineStudio
                             {
                                 for (int i = 0; i < lods.Length; i++)
                                 {
-                                    for (int j = 0; j < thisCell.mrList[i].Count; j++) thisCell.mrList[i][j].enabled = false;
+                                    for (int j = 0; j < thisCell.mrList[i].Count; j++)
+                                        thisCell.mrList[i][j].enabled = false;
                                 }
+
                                 thisCell.currentLod = -1;
                             }
+
                             return;
                         }
                     }
@@ -192,7 +213,8 @@ namespace MeshCombineStudio
                     for (int lodIndex = 0; lodIndex < lods.Length; lodIndex++)
                     {
                         bool intersect;
-                        if (lodIndex < lods.Length - 1) intersect = Mathw.IntersectAABB3Sphere3(box, lods[lodIndex].sphere);
+                        if (lodIndex < lods.Length - 1)
+                            intersect = Mathw.IntersectAABB3Sphere3(box, lods[lodIndex].sphere);
                         else intersect = true;
 
                         if (intersect)
@@ -202,15 +224,21 @@ namespace MeshCombineStudio
                                 for (int i = 0; i < lods.Length; i++)
                                 {
                                     bool active = (i == lodIndex);
-                                    for (int j = 0; j < thisCell.mrList[i].Count; j++) thisCell.mrList[i][j].enabled = active;
+                                    for (int j = 0; j < thisCell.mrList[i].Count; j++)
+                                        thisCell.mrList[i][j].enabled = active;
                                 }
+
                                 thisCell.currentLod = lodIndex;
                             }
+
                             break;
                         }
                     }
                 }
-                else for (int i = 0; i < 8; ++i) if (cellsUsed[i]) cells[i].AutoLodInternal(lods, lodCulledDistance);
+                else
+                    for (int i = 0; i < 8; ++i)
+                        if (cellsUsed[i])
+                            cells[i].AutoLodInternal(lods, lodCulledDistance);
             }
 
             public void LodInternal(LOD[] lods, int lodLevel)
@@ -229,7 +257,10 @@ namespace MeshCombineStudio
                         thisCell.currentLod = lodLevel;
                     }
                 }
-                else for (int i = 0; i < 8; ++i) if (cellsUsed[i]) cells[i].LodInternal(lods, lodLevel);
+                else
+                    for (int i = 0; i < 8; ++i)
+                        if (cellsUsed[i])
+                            cells[i].LodInternal(lods, lodLevel);
             } //===============================================================================================================================
 
             public void DrawGizmos(LOD[] lods)
@@ -261,7 +292,10 @@ namespace MeshCombineStudio
 
                     Gizmos.color = Color.white;
                 }
-                else for (int i = 0; i < 8; ++i) if (cellsUsed[i]) cells[i].DrawGizmosInternal();
+                else
+                    for (int i = 0; i < 8; ++i)
+                        if (cellsUsed[i])
+                            cells[i].DrawGizmosInternal();
             }
         }
 

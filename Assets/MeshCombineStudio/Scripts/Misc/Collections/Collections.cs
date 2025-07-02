@@ -2,12 +2,15 @@
 using System;
 
 
-namespace MeshCombineStudio {
+namespace MeshCombineStudio
+{
     public class ObjectHolder<T> : FastIndex
     {
         public T item;
 
-        public ObjectHolder() { }
+        public ObjectHolder()
+        {
+        }
 
         public ObjectHolder(T item)
         {
@@ -64,8 +67,6 @@ namespace MeshCombineStudio {
             if (List != null) List.Remove(this);
             // else Debug.LogError("Can't remove item because list is null!");
         }
-
-
     }
 
     public class MonoBehaviourFastIndex : MonoBehaviour, IFastIndex
@@ -83,5 +84,5 @@ namespace MeshCombineStudio {
         {
             if (List != null) List.Remove(this);
         }
-    } 
+    }
 }

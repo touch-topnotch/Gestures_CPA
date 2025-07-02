@@ -6,7 +6,6 @@ namespace MeshCombineStudio
 {
     public class DirectDraw : MonoBehaviour
     {
-
         MeshRenderer[] mrs;
         Mesh[] meshes;
         Material[] mats;

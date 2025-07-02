@@ -34,7 +34,8 @@ public class VisualizeMesh : MonoBehaviour
             Gizmos.DrawLine(pos, pos + mn.MultiplyVector(normals[i]) * 0.5f);
 
             Gizmos.color = Color.red;
-            Gizmos.DrawLine(pos, pos + mt.MultiplyVector(new Vector3(tangents[i].x, tangents[i].y, tangents[i].z)) * 0.5f);
+            Gizmos.DrawLine(pos,
+                pos + mt.MultiplyVector(new Vector3(tangents[i].x, tangents[i].y, tangents[i].z)) * 0.5f);
         }
     }
 }

@@ -1,5 +1,6 @@
 using System.Linq;
 using Scripts.PlayerLogic;
+using Scripts.Static.Definitions;
 using Sirenix.OdinInspector;
 using UnityEngine;
 

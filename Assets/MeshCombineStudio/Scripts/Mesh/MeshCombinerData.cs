@@ -40,7 +40,7 @@ namespace MeshCombineStudio
         }
     }
 
-    
+
     //[Serializable]
     //public struct FoundLODGroup
     //{

@@ -6,17 +6,18 @@ namespace Scripts.Components
     /// <summary>
     /// This class 
     /// </summary>
-    public abstract class SmartComponent: MonoBehaviour
+    public abstract class SmartComponent : MonoBehaviour
     {
-        
         // the OnValidate function allows to decrease the amount of calls shouldAddMissingComponent property
         private bool _shouldAddMissingComponents;
+
         private void OnValidate()
         {
             _shouldAddMissingComponents = shouldAddMissingComponents;
         }
+
         protected abstract bool shouldAddMissingComponents { get; }
-      
+
 #if UNITY_EDITOR
         [ShowIf("_shouldAddMissingComponents")]
         [Button("Add Missing Components")]
@@ -25,8 +26,10 @@ namespace Scripts.Components
             AddMissingComponents();
         }
 #endif
-        
-        
-        public virtual void AddMissingComponents() { }
+
+
+        public virtual void AddMissingComponents()
+        {
+        }
     }
 }

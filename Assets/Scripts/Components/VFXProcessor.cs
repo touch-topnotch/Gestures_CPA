@@ -21,5 +21,7 @@ namespace Components
         {
             ManipulateOfAllObjects((o => { o.SetActive(false); }));
         }
+
+        protected override bool shouldAddMissingComponents { get; }
     }
 }

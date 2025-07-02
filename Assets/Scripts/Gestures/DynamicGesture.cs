@@ -1,27 +1,21 @@
-using System;
 using System.Collections.Generic;
-using Gesture_Editor_SDK.Realtime;
-using Scripts.HandsLogic;
+using Scripts.Gesture_Editor_SDK.Realtime;
 using Scripts.Static;
+using Scripts.Static.Definitions;
 using UnityEngine;
 
 namespace Scripts.Gestures
 {
-    public enum GestureType
-    {
-        System,
-        Weapon,
-    }
+    
 
-    public class DynamicGesture // frame + IRecognizable = оружие
+    public class DynamicGesture
     {
+        public readonly AbilityType abilityType;
+        public readonly GestureType gestureType = GestureType.Dynamic;
         public List<FrameData> frames { get; }
-        public GestureType gestureType { get; private set; }
-        private IRecognizable _recognizable;
-
         private string _name;
 
-        public string Name
+        public string name
         {
             get => _name;
             private set
@@ -37,21 +31,21 @@ namespace Scripts.Gestures
             }
         }
 
-        public DynamicGesture(string name, GestureType type, List<FrameData> frames, IRecognizable recognizable)
+        public DynamicGesture(string name, AbilityType type, List<FrameData> frames) //IGestureAbility recognizable)
         {
-            Name = name;
-            gestureType = type;
+            this.name = name;
+            this.abilityType = type;
             this.frames = frames;
-            _recognizable = recognizable;
+        //    _recognizable = recognizable;
         }
 
         public DynamicGesture(string name)
         {
-            Name = name;
+            this.name = name;
             frames = new();
         }
 
-        public bool HasFrame(string frame) => GestureMapper.PrefixOfName(frame) == Name &&
+        public bool HasFrame(string frame) => GestureMapper.PrefixOfName(frame) == name &&
                                               GestureMapper.IndexOfName(frame) < frames.Count;
 
         public void AddFrame(FrameData frame)
@@ -73,19 +67,19 @@ namespace Scripts.Gestures
             return index + 1 < frames.Count ? frames[index + 1] : null;
         }
 
-        public void FrameRecognized(string name)
-        {
-            _recognizable?.OnFrameRecognized(name);
-        }
-
-        public void AllFramesDetected(Action onAbilityReleasedCallback)
-        {
-            if (_recognizable != null)
-            {
-                _recognizable.AbilityCalled();
-                _recognizable.AbilityReleasedEvent += () => { onAbilityReleasedCallback?.Invoke(); };
-            }
-        }
+        // public void FrameRecognized(string name)
+        // {
+        //     _recognizable?.OnFrameRecognized(name);
+        // }
+        //
+        // public void AllFramesDetected(Action onAbilityReleasedCallback)
+        // {
+        //     if (_recognizable != null)
+        //     {
+        //         _recognizable.OnGestureCasted();
+        //         _recognizable.AbilityReleasedEvent.AddListener(() => { onAbilityReleasedCallback?.Invoke(); });
+        //     }
+        // }
 
         public bool TryGetFrameData(string name, out FrameData frameData)
         {
@@ -96,7 +90,7 @@ namespace Scripts.Gestures
 
         public void LogFrames()
         {
-            var log = $"Gesture {Name} contains: ";
+            var log = $"Gesture {name} contains: ";
             for (int i = 0; i < frames.Count; i++)
             {
                 log += frames[i].name + " - base name: " + frames[i].baseName + ", ";
