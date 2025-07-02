@@ -43,6 +43,7 @@ namespace Scripts.PlayerLogic
             if (IsPlayer && !IsOwner)
             {
                 _player.InitializePlayer(this.NetworkBehaviourId, new PlayerProperties(RigType.NoRig, AvatarType.Enemy, lastPlayerProperties.character));
+                
             }
 
             if (IsPlayer && IsOwner)
@@ -68,6 +69,7 @@ namespace Scripts.PlayerLogic
             {
                 _player.InitializePlayer(this.NetworkBehaviourId, new PlayerProperties(RigType.NoRig, AvatarType.None, lastPlayerProperties.character));
             }
+            
             _player.onPlayerInitialized.AddListener(() =>
             {
                 oldPlayer.gameObject.SetActive(false);

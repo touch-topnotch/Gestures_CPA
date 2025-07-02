@@ -146,15 +146,15 @@ namespace Scripts.GameControllers
 
                 _playersDict[clientId].data.onPlayerInitialized.AddListener(()=>
                 {
-                    PoolNetworkPrefabs(clientId);
-                    OnTestServerRpc(clientId);
+                   // PoolNetworkPrefabs(clientId);
+                   if (ConnectedClients.Count >= gameProperties.playerCount)
+                   {
+                       OnTestServerRpc(clientId);
+                   }
                 });
                 onPoolPrefabs.AddListener(() =>
                 {
-                    if (ConnectedClients.Count >= gameProperties.playerCount)
-                    {
-                        StartGameSessionServerRpc();
-                    }
+                    
                 });
 
                 // l.rl("position: " + client.PlayerObject.transform.position);
@@ -215,8 +215,8 @@ namespace Scripts.GameControllers
 
             // if (!IsServer)
             // {
-            //     _playersDict[clientId].data.abilityController
-            //         .SetSpawnedWeapons(JsonConvert.DeserializeObject<Dictionary<string, ulong[]>>(weapons));
+                _playersDict[clientId].data.abilityController
+                    .SetSpawnedWeapons(JsonConvert.DeserializeObject<Dictionary<string, ulong[]>>(weapons));
             //     onPoolPrefabs?.Invoke();
             // }
         }
