@@ -154,7 +154,7 @@ namespace Scripts.Abilities
                 abilitiesLib.characterAbilities.AddReplace(characterData.characterName, weapons);
             }
 
-            var log = "Weapons initialized: ";
+            var log = "Weapons (spawn) initialized: ";
 
             foreach (var VARIABLE in abilitiesLib.characterAbilities)
             {
@@ -190,8 +190,12 @@ namespace Scripts.Abilities
                 }
                 abilitiesLib.characterAbilities.AddReplace(characterWeapons.Key, weapons);
             }
-            Debug.Log("Weapons initialized: " +
-                      Debugger.dictionaryToString(abilitiesLib.characterAbilities, true, true));
+            var log = "Weapons (set) initialized: ";
+            foreach (var VARIABLE in abilitiesLib.characterAbilities)
+            {
+                log += VARIABLE.Key + " contains " + Debugger.dictionaryToString(VARIABLE.Value, false, false) + "; ";
+            }
+            Debug.Log(log);
             OnWeaponsInitialized?.Invoke();
         }
     }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using Scripts.Events;
 using Scripts.GameControllers;
 using Scripts.Gestures;
@@ -95,9 +96,12 @@ namespace Scripts.PlayerLogic
                         ids[i] = id;
                 }
                 dict.Add(key, ids);
+                Debug.Log(key + " "+ids.ToString());
             }
+            
             // say client to spawn characters and abilities
-            PoolNetworkPrefabsClientRpc(JsonUtility.ToJson(dict));
+            var j = JsonConvert.SerializeObject(dict);
+            PoolNetworkPrefabsClientRpc(j);
             onPoolPrefabs?.Invoke();
             
         }
@@ -105,7 +109,7 @@ namespace Scripts.PlayerLogic
         {
             if (!IsServer)
             {
-                _player.data.abilityController.SetSpawnedWeapons(JsonUtility.FromJson<Dictionary<string, ulong[]>>(weapons));
+                _player.data.abilityController.SetSpawnedWeapons(JsonConvert.DeserializeObject<Dictionary<string, ulong[]>>(weapons));
                 onPoolPrefabs?.Invoke();
             }
         }
