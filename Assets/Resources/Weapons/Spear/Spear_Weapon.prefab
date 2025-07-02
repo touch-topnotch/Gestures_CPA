@@ -22,7 +22,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5043607200963286701
 Transform:
   m_ObjectHideFlags: 0
@@ -1185,6 +1185,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57a636f964ec48d685b9fc9e0927cffc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TriggerEnterEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  TriggerExitEvent:
+    m_PersistentCalls:
+      m_Calls: []
   bladePoint: {fileID: 2891339950573659053}
   _speed: {x: 0, y: 0, z: 0}
 --- !u!1 &5815488725442724320
@@ -1202,7 +1208,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1040888603936904296
 Transform:
   m_ObjectHideFlags: 0
@@ -1233,7 +1239,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1782274571210300429
 Transform:
   m_ObjectHideFlags: 0
@@ -1490,6 +1496,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b4133833c1fbf248a693c64475e3830, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _inherited: {fileID: 0}
   _grabObject: {fileID: 5043607200963286701}
   rightHandGrabGesture: fist_r
   leftHandGrabGesture: fist_l
@@ -1561,10 +1568,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponDesign: {fileID: 4361515481607510143}
-  <GrabSystem>k__BackingField: {fileID: 304913697765233496}
-  _bladeMinSpeed: 4
-  _blade: {fileID: 5386802355539745604}
-  _rigidbody: {fileID: 4732545821214067437}
+  _grabSystem: {fileID: 0}
   _weaponPoint: {fileID: 715713551747779496}
   _bladePoint: {fileID: 2891339950573659053}
 --- !u!114 &4361515481607510143
@@ -1587,21 +1591,18 @@ MonoBehaviour:
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
-    SerializationNodes: []
+    SerializationNodes:
+    - Name: playerData
+      Entry: 6
+      Data: 
+    - Name: actions
+      Entry: 6
+      Data: 
+    - Name: paramActions
+      Entry: 6
+      Data: 
   audioProcessor: {fileID: 3723247436879803530}
   vfxProcessor: {fileID: 7511636564416663047}
-  _floorMask:
-    serializedVersion: 2
-    m_Bits: 512
-  weaponAudioProcessor: {fileID: 497613944309035651}
-  _startSpawnPoint: {fileID: 1782274571210300429}
-  _spawnDuration: 1
-  _spawnAnimation: {fileID: 7645610442821589858}
-  _spearObject: {fileID: 1939728240215023131}
-  _spearAura: {fileID: 6657744914178785833}
-  _portalVFX: {fileID: 6864945273772439407}
-  _portalSoundDelay: 1.5
-  _portalOffsetY: 0.8
 --- !u!82 &3393876225162420465
 AudioSource:
   m_ObjectHideFlags: 0
