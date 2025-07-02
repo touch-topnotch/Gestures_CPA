@@ -73,7 +73,7 @@ namespace Scripts.PlayerLogic
                 oldPlayer.gameObject.SetActive(false);
             });
         }
-      
+
 
         [ServerRpc]
         public void OnLocalClientFrameRecognizedServerRpc(string frameName, ulong client)
