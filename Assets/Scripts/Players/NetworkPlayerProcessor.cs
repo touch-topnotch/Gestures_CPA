@@ -69,8 +69,10 @@ namespace Scripts.PlayerLogic
             {
                 _player.InitializePlayer(this.NetworkBehaviourId, new PlayerProperties(RigType.NoRig, AvatarType.None, lastPlayerProperties.character));
             }
+            Debug.Log("OAOAOA " + name);
             if (IsServer)
             {
+                Debug.Log("OAOAOA Server " + name);
                 _player.onPlayerInitialized.AddListener(PoolNetworkPrefabs);
             }
 
@@ -81,6 +83,7 @@ namespace Scripts.PlayerLogic
         }
         public void PoolNetworkPrefabs()
         {
+            Debug.Log("        public void PoolNetworkPrefabs() " + name);
             // spawn abilities
             data.abilityController.SpawnWeapons(data.characterController.characterConfigs, this.transform);
             
@@ -107,7 +110,7 @@ namespace Scripts.PlayerLogic
         [ClientRpc]
         public void PoolNetworkPrefabsClientRpc(string weapons)
         {
-            Debug.Log(" [ClientRpc] public void PoolNetworkPrefabsClientRpc(string weapons) " + NetworkManager.ConnectedClients.Count);
+            Debug.Log(" [ClientRpc] public void PoolNetworkPrefabsClientRpc(string weapons) " + name);
             if (!IsServer)
             {
                 _player.data.abilityController.SetSpawnedWeapons(JsonConvert.DeserializeObject<Dictionary<string, ulong[]>>(weapons));
