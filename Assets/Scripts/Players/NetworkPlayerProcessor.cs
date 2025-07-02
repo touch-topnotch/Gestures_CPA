@@ -96,7 +96,6 @@ namespace Scripts.PlayerLogic
                         ids[i] = id;
                 }
                 dict.Add(key, ids);
-                Debug.Log(key + " "+ids.ToString());
             }
             
             // say client to spawn characters and abilities
