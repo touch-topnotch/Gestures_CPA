@@ -308,6 +308,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57a636f964ec48d685b9fc9e0927cffc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TriggerEnterEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  TriggerExitEvent:
+    m_PersistentCalls:
+      m_Calls: []
   bladePoint: {fileID: 1577025544150225347}
   _speed: {x: 0, y: 0, z: 0}
 --- !u!1 &1095704420979590178
@@ -361,7 +367,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponDesign: {fileID: 1394147504130111960}
-  triggerZone: {fileID: 3377540541202527382}
+  damage: 0
+  lifeTime: 0
+  orbSpeed: 3
+  orbBetweenHandsSpeed: 10
+  orb: {fileID: 0}
 --- !u!114 &1394147504130111960
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -382,7 +392,16 @@ MonoBehaviour:
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
-    SerializationNodes: []
+    SerializationNodes:
+    - Name: playerData
+      Entry: 6
+      Data: 
+    - Name: actions
+      Entry: 6
+      Data: 
+    - Name: paramActions
+      Entry: 6
+      Data: 
   audioProcessor: {fileID: 4678970476330283690}
   vfxProcessor: {fileID: 7926670802074503995}
   _waterHead: {fileID: 384230362007853748}

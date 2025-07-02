@@ -33,7 +33,47 @@ namespace Scripts
             Casting,
             Bending,
         }
-        
+
+
+        public override void OnReadyToBeCasted()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void OnCastCancelled()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void OnGestureCasted()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void OnActivated()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void OnHitStarted()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void OnHitStopped()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void OnDeactivated()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void OnAbilityDestroyed()
+        {
+            throw new NotImplementedException();
+        }
 
         public override void OnFrameRecognized(string frameName)
         {
@@ -89,16 +129,6 @@ namespace Scripts
             _waterHead.transform.position = _waterSpline.SplineHeadPosition;
         }
 
-        public override void OnGestureDetected()
-        {
-            
-        }
-
-        public override void OnHit()
-        {
-            
-        }
-
         public override void OnImpact(string affected)
         {
             if (affected.Equals("Untagged")) return; // delete later
@@ -123,15 +153,6 @@ namespace Scripts
             }
             yield return new WaitForSeconds(_waterDisappearDelay);
             _waterSplash.SetActive(false);
-        }
-
-        public override void OnAbilityReleased()
-        {
-            
-        }
-
-        public override void OnHitHolds()
-        {
         }
     }
 }
