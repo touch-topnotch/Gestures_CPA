@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using Scripts.Events;
 using Scripts.Network;
 using Scripts.PlayerLogic;
@@ -8,6 +9,7 @@ using Scripts.Static;
 using Scripts.Static.Definitions;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Events;
 
 #if DEDICATED_SERVER
 using Unity.Netcode.Transports.UTP;
@@ -30,7 +32,7 @@ namespace Scripts.GameControllers
         [SerializeField] private GameObject ServerInputSystem;
         public Dictionary<ulong, NetworkPlayerProcessor> PlayersDict => _playersDict;
         public GameProperties gameProperties;
-
+        public UnityEvent onPoolPrefabs = new UnityEvent();
 
 
 #if DEDICATED_SERVER
@@ -142,10 +144,17 @@ namespace Scripts.GameControllers
                 // глобальная логика плеера и сразу какая-то странная инициализация оружий
                 _playersDict.Add(clientId, player);
 
-                if (ConnectedClients.Count >= gameProperties.playerCount)
+                _playersDict[clientId].data.onPlayerInitialized.AddListener(()=>
                 {
-                    _playersDict[clientId].onPoolPrefabs.AddListener(StartGameSessionServerRpc);
-                }
+                    PoolNetworkPrefabs(clientId);
+                });
+                onPoolPrefabs.AddListener(() =>
+                {
+                    if (ConnectedClients.Count >= gameProperties.playerCount)
+                    {
+                        StartGameSessionServerRpc();
+                    }
+                });
 
                 // l.rl("position: " + client.PlayerObject.transform.position);
             }
@@ -155,6 +164,44 @@ namespace Scripts.GameControllers
                 l.rl(LocalClient.PlayerObject.name + " constructed!");
             }
 
+        }
+        public void PoolNetworkPrefabs(ulong clientId)
+        {
+            Debug.Log("        public void PoolNetworkPrefabs() " + name);
+            // spawn abilities
+            _playersDict[clientId].data.abilityController.SpawnWeapons(_playersDict[clientId].data.characterController.characterConfigs, _playersDict[clientId].transform);
+            
+            Dictionary<string, ulong[]> dict = new();
+            foreach (var key in _playersDict[clientId].data.abilityController.abilitiesLib.characterAbilities.Keys)
+            {
+                var names = _playersDict[clientId].data.abilityController.abilitiesLib.characterAbilities[key].Keys.ToArray();
+                ulong[] ids= new ulong[names.Length];
+            
+                for(int i = 0; i < names.Length; i ++)
+                {
+                    if(_playersDict[clientId].data.abilityController.abilitiesLib.characterAbilities[key][names[i]].TryGetNetcodeId(out ulong id))
+                        ids[i] = id;
+                }
+                dict.Add(key, ids);
+            }
+            
+            // say client to spawn characters and abilities
+            var j = JsonConvert.SerializeObject(dict);
+            Debug.Log("Call client rpc in " + name + j);
+            PoolNetworkPrefabsClientRpc(clientId, j);
+            onPoolPrefabs?.Invoke();
+        }
+        [ClientRpc]
+        public void PoolNetworkPrefabsClientRpc(ulong clientId, string weapons)
+        {
+            Debug.Log(" [ClientRpc] public void PoolNetworkPrefabsClientRpc(string weapons) " + name);
+
+            if (!IsServer)
+            {
+                _playersDict[clientId].data.abilityController
+                    .SetSpawnedWeapons(JsonConvert.DeserializeObject<Dictionary<string, ulong[]>>(weapons));
+                onPoolPrefabs?.Invoke();
+            }
         }
         [ServerRpc]
         private void StartGameSessionServerRpc()
@@ -168,11 +215,12 @@ namespace Scripts.GameControllers
         [ClientRpc]
         private void StartGameSessionClientRpc(ulong playerId)
         {
+      
             if (!_playersDict[playerId].IsOwner)
             {
                 return;
             }
-
+            Debug.Log(" [Client rpc] private void StartGameSessionClientRpc(ulong playerId) "  + playerId);
             _playersDict[playerId].data.abilityController
                 .AddCharacterToInventory(_playersDict[playerId].data.characterController.currentCharacter.name);
 

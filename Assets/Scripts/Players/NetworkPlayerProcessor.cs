@@ -22,7 +22,6 @@ namespace Scripts.PlayerLogic
         private bool _isSynchronized;
 
         public PlayerData data => _player.data;
-        public UnityEvent onPoolPrefabs = new UpdateEvent();
         private void Awake()
         {
             _player = GetComponent<Player>();
@@ -69,54 +68,12 @@ namespace Scripts.PlayerLogic
             {
                 _player.InitializePlayer(this.NetworkBehaviourId, new PlayerProperties(RigType.NoRig, AvatarType.None, lastPlayerProperties.character));
             }
-            Debug.Log("OAOAOA " + name);
-            if (IsServer)
-            {
-                Debug.Log("OAOAOA Server " + name);
-                _player.onPlayerInitialized.AddListener(PoolNetworkPrefabs);
-            }
-
             _player.onPlayerInitialized.AddListener(() =>
             {
                 oldPlayer.gameObject.SetActive(false);
             });
         }
-        public void PoolNetworkPrefabs()
-        {
-            Debug.Log("        public void PoolNetworkPrefabs() " + name);
-            // spawn abilities
-            data.abilityController.SpawnWeapons(data.characterController.characterConfigs, this.transform);
-            
-            Dictionary<string, ulong[]> dict = new();
-            foreach (var key in data.abilityController.abilitiesLib.characterAbilities.Keys)
-            {
-                var names = data.abilityController.abilitiesLib.characterAbilities[key].Keys.ToArray();
-                ulong[] ids= new ulong[names.Length];
-            
-                for(int i = 0; i < names.Length; i ++)
-                {
-                    if(data.abilityController.abilitiesLib.characterAbilities[key][names[i]].TryGetNetcodeId(out ulong id))
-                        ids[i] = id;
-                }
-                dict.Add(key, ids);
-            }
-            
-            // say client to spawn characters and abilities
-            var j = JsonConvert.SerializeObject(dict);
-            PoolNetworkPrefabsClientRpc(j);
-            onPoolPrefabs?.Invoke();
-            
-        }
-        [ClientRpc]
-        public void PoolNetworkPrefabsClientRpc(string weapons)
-        {
-            Debug.Log(" [ClientRpc] public void PoolNetworkPrefabsClientRpc(string weapons) " + name);
-            if (!IsServer)
-            {
-                _player.data.abilityController.SetSpawnedWeapons(JsonConvert.DeserializeObject<Dictionary<string, ulong[]>>(weapons));
-                onPoolPrefabs?.Invoke();
-            }
-        }
+      
 
         [ServerRpc]
         public void OnLocalClientFrameRecognizedServerRpc(string frameName, ulong client)
