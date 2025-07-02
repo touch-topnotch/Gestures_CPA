@@ -70,12 +70,11 @@ namespace Scripts.PlayerLogic
             }
             if (IsServer)
             {
-                _player.onPlayerInitialized.AddListener(PoolNetworkPrefabsServerRpc);
+                _player.onPlayerInitialized.AddListener(PoolNetworkPrefabs);
             }
             oldPlayer.gameObject.SetActive(false);
         }
-        [ServerRpc]
-        public void PoolNetworkPrefabsServerRpc()
+        public void PoolNetworkPrefabs()
         {
             // spawn abilities
             data.abilityController.SpawnWeapons(data.characterController.characterConfigs, this.transform);

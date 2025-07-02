@@ -111,10 +111,10 @@ namespace Scripts.PlayerLogic
                         _rig.Initialize();
                      else
                          onPlayerInitialized.AddListener(_rig.Initialize);
+                     
                 }
             }
         }
-
 
         private void OnDisable()
         {

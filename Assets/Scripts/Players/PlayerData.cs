@@ -1,13 +1,15 @@
 using System;
+using System.ComponentModel;
 using Scripts.Abilities;
-using Scripts.Characters;
 using Scripts.Gestures;
 using Scripts.HandsLogic;
 using Scripts.PlayerLogic;
 using Scripts.Static.Definitions;
 using Scripts.Systems;
 using Sirenix.OdinInspector;
+using UnityEngine;
 using UnityEngine.Events;
+using CharacterController = Scripts.Characters.CharacterController;
 
 namespace Scripts.Players
 {
@@ -52,26 +54,30 @@ namespace Scripts.Players
         [EnumToggleButtons]
         public AvatarType avatar;
         public CharacterType character;
-        public PlayerProperties(RigType rig, AvatarType avatar, CharacterType character)
+        [HideInInspector] public bool activateRigOnAwake;
+        
+        public PlayerProperties(RigType rig, AvatarType avatar, CharacterType character, bool activateRigOnAwake = true)
         {
             this.rig = rig;
             this.avatar = avatar;
             this.character = character;
+            this.activateRigOnAwake = activateRigOnAwake;
         }
 
         public PlayerProperties(string fromString)
         {
-            
+
             var words = fromString.Split(' ');
-            
+
             if (words.Length < 3)
                 throw new ArgumentException();
-            
+
             this.rig = (RigType)words[0][0];
             this.avatar = (AvatarType)words[1][0];
             this.character = (CharacterType)words[2][0];
+            this.activateRigOnAwake = Convert.ToBoolean(words[3]);
         }
 
-        public string toString => $"{(char)rig} {(char)avatar} {(char)character}";
+        public string toString => $"{(char)rig} {(char)avatar} {(char)character} {Convert.ToInt16(activateRigOnAwake)}";
     }
 }
