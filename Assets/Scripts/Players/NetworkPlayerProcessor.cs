@@ -104,8 +104,10 @@ namespace Scripts.PlayerLogic
             onPoolPrefabs?.Invoke();
             
         }
-        [ClientRpc] public void PoolNetworkPrefabsClientRpc(string weapons)
+        [ClientRpc]
+        public void PoolNetworkPrefabsClientRpc(string weapons)
         {
+            Debug.Log(" [ClientRpc] public void PoolNetworkPrefabsClientRpc(string weapons) " + NetworkManager.ConnectedClients.Count);
             if (!IsServer)
             {
                 _player.data.abilityController.SetSpawnedWeapons(JsonConvert.DeserializeObject<Dictionary<string, ulong[]>>(weapons));
