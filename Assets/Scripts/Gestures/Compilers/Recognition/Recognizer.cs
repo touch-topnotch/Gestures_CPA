@@ -19,8 +19,7 @@ namespace Scripts.Gestures
         private static readonly Color _colorActive = new Color(1, 1, 1, 0.0f);
         private static readonly Color _colorPassive = new Color(0.6f, 1, 1, 0.8f);
         private static readonly WaitForUpdate v_waitForUpdate = new WaitForUpdate();
-        private static PlayerHands _hands = PlayerData.local.hands;
-
+        private readonly PlayerHands _hands;
         public Recognizer(RecognitionPropertiesConfig config, PlayerHands hands)
         {
             _config = config;
@@ -109,7 +108,7 @@ namespace Scripts.Gestures
             }
         }
 
-        public static bool TryRecognizeFrameInAnyPossibles(in RecognitionProperties props,
+        public bool TryRecognizeFrameInAnyPossibles(in RecognitionProperties props,
             in List<FrameData> possibleFrames, out int frameId, in bool shareFrameBetweenDevices = false)
         {
             for (int i = 0; i < possibleFrames.Count; i++)
@@ -125,7 +124,7 @@ namespace Scripts.Gestures
             return false;
         }
 
-        public static bool RecognizeFrame(in RecognitionProperties properties, FrameData frameData,
+        public bool RecognizeFrame(in RecognitionProperties properties, FrameData frameData,
             in bool shareFrameBetweenDevices = false)
         {
             return RecognizeFrame(properties, frameData, _hands, shareFrameBetweenDevices);
