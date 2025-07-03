@@ -249,27 +249,20 @@ namespace Scripts.Weapons
             isSubscribed = true;
         }
 
-        
-    
+        public override void OnNetworkObjectParentChanged(NetworkObject parentNetworkObject)
+        {
+            SubscribeEvents();
+            weaponDesign.playerData = parentNetworkObject.GetComponent<Player>().data;
+            OnInitialized();
+            Debug.Log("OnNetworkObjectParentChanged: Weapon " + name + ", id - " + this.NetworkObjectId + " intialized!");
+        }
+
         public override void Initialize(PlayerData data, DynamicGesture gesture)
         {
             base.Initialize(data, gesture);
-            SubscribeEvents();
-            weaponDesign.playerData = data;
-            OnInitialized();
-            InitializeClientRpc();
         }
 
-        [ClientRpc]
-        private void InitializeClientRpc()
-        {
-            var player = transform.parent.GetComponent<Player>();
-            base.Initialize(player.data, null);
-            SubscribeEvents();
-            weaponDesign.playerData = player.data;
-            OnInitialized();
-            Debug.Log("[ClientRpc] Weapon " + name + ", id - " + this.NetworkObjectId + " intialized!");
-        }
+      
 
         public override void ReadyToBeRecognized()
         {
