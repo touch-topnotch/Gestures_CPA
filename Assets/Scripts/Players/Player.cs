@@ -158,12 +158,17 @@ namespace Scripts.PlayerLogic
             
             _data = new PlayerData(this, anchors, hands, abilityController, characterController, abilityController.gesturesLib);
             abilityController.gesturesLib.onLibraryInitialized += data.onPlayerInitialized.Invoke;
+            foreach (var VARIABLE in _rigList)
+            {
+                if(VARIABLE.type == _playerProps.rig)
+                    abilityController.CreateRecognizer(VARIABLE.RecognitionPropertiesConfig);
+            }
             data.onPlayerInitialized.AddListener(() =>
             {
                 Debug.Log(
                     $"Player {id} initialized. rig - {this.playerProperties.rig}, character - {this.playerProperties.character}, avatar - {this.playerProperties.avatar}");
             });
-            abilityController.CreateRecognizer(_rig.RecognitionPropertiesConfig);
+    
             if (isLocal)
                 PlayerData.local = data;
             Global.updateEvent.AddListener(UpdateAnchors);
