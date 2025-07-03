@@ -256,11 +256,22 @@ namespace Scripts.Weapons
             Debug.Log("Events of " + transform.name + " subscribed");
         }
 
+        public override void OnNetworkObjectParentChanged(NetworkObject parentNetworkObject)
+        {
+            playerData = transform.parent.GetComponent<Player>().data;
+            weaponDesign.playerData = playerData;
+            base.OnNetworkObjectParentChanged(parentNetworkObject);
+        }
+
+  
+
         public override void Initialize(PlayerData data, DynamicGesture gesture)
         {
-            base.Initialize(data, gesture);
-            playerData = transform.parent.GetComponent<Player>().data;
+   
             weaponDesign.playerData = data;
+               
+            base.Initialize(data, gesture);
+            
             OnInitialized();
         }
         

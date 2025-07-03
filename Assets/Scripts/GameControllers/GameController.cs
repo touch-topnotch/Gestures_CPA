@@ -182,10 +182,7 @@ namespace Scripts.GameControllers
                 }
                 dict.Add((CharacterType)Enum.Parse(typeof(CharacterType),key), ids);
             }
-            foreach(var player in _playersDict.Values)
-            {
-                player.SetWeaponsClientRpc(clientId, JsonConvert.SerializeObject(dict));
-            }
+            _playersDict[clientId].SetWeaponsClientRpc(JsonConvert.SerializeObject(dict));
             onPoolPrefabs.Invoke();
         }
         
