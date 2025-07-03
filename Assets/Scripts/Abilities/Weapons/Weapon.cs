@@ -6,6 +6,7 @@ using Scripts.PlayerLogic;
 using Scripts.Players;
 using Scripts.Static.Definitions;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -258,8 +259,11 @@ namespace Scripts.Weapons
 
         public override void OnNetworkObjectParentChanged(NetworkObject parentNetworkObject)
         {
-            playerData = transform.parent.GetComponent<Player>().data;
-            weaponDesign.playerData = playerData;
+            if (parentNetworkObject != null &&parentNetworkObject.GetComponent<Player>())
+            {
+                playerData = transform.parent.GetComponent<Player>().data;
+                weaponDesign.playerData = playerData;
+            }
             base.OnNetworkObjectParentChanged(parentNetworkObject);
         }
 
