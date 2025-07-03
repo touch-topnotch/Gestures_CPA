@@ -257,6 +257,18 @@ namespace Scripts.Weapons
             SubscribeEvents();
             weaponDesign.playerData = data;
             OnInitialized();
+            InitializeClientRpc();
+        }
+
+        [ClientRpc]
+        private void InitializeClientRpc()
+        {
+            var player = transform.parent.GetComponent<Player>();
+            base.Initialize(player.data, null);
+            SubscribeEvents();
+            weaponDesign.playerData = player.data;
+            OnInitialized();
+            Debug.Log("[ClientRpc] Weapon " + name + ", id - " + this.NetworkObjectId + " intialized!");
         }
 
         public override void ReadyToBeRecognized()

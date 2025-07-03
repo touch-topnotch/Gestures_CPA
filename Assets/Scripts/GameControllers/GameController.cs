@@ -147,7 +147,7 @@ namespace Scripts.GameControllers
 
                 _playersDict[clientId].data.onPlayerInitialized.AddListener(()=>
                 {
-                    // PoolNetworkPrefabs(clientId);
+                    PoolNetworkPrefabs(clientId);
                     // if (ConnectedClients.Count >= gameProperties.playerCount)
                     // {
                     //     OnTestServerRpc(clientId);
@@ -174,41 +174,41 @@ namespace Scripts.GameControllers
             // spawn abilities
             _playersDict[clientId].data.abilityController.SpawnWeapons(_playersDict[clientId].data.characterController.characterConfigs, _playersDict[clientId].transform);
             
-            Dictionary<string, ulong[]> dict = new();
-            foreach (var key in _playersDict[clientId].data.abilityController.abilitiesLib.characterAbilities.Keys)
-            {
-                var names = _playersDict[clientId].data.abilityController.abilitiesLib.characterAbilities[key].Keys.ToArray();
-                ulong[] ids= new ulong[names.Length];
-            
-                for(int i = 0; i < names.Length; i ++)
-                {
-                    if(_playersDict[clientId].data.abilityController.abilitiesLib.characterAbilities[key][names[i]].TryGetNetcodeId(out ulong id))
-                        ids[i] = id;
-                }
-                dict.Add(key, ids);
-            }
-            
-            // say client to spawn characters and abilities
-            var j = JsonConvert.SerializeObject(dict);
-            Debug.Log("Call client rpc in " + clientId + j);
-            PoolNetworkPrefabsClientRpc(clientId, j);
+            // Dictionary<string, ulong[]> dict = new();
+            // foreach (var key in _playersDict[clientId].data.abilityController.abilitiesLib.characterAbilities.Keys)
+            // {
+            //     var names = _playersDict[clientId].data.abilityController.abilitiesLib.characterAbilities[key].Keys.ToArray();
+            //     ulong[] ids= new ulong[names.Length];
+            //
+            //     for(int i = 0; i < names.Length; i ++)
+            //     {
+            //         if(_playersDict[clientId].data.abilityController.abilitiesLib.characterAbilities[key][names[i]].TryGetNetcodeId(out ulong id))
+            //             ids[i] = id;
+            //     }
+            //     dict.Add(key, ids);
+            // }
+            //
+            // // say client to spawn characters and abilities
+            // var j = JsonConvert.SerializeObject(dict);
+            // Debug.Log("Call client rpc in " + clientId + j);
+            //PoolNetworkPrefabsClientRpc(clientId, j);
             
             onPoolPrefabs?.Invoke();
         }
         
-    
-        [ClientRpc]
-        public void PoolNetworkPrefabsClientRpc(ulong clientId, string weapons)
-        {
-           // Debug.Log(" [ClientRpc] public void PoolNetworkPrefabsClientRpc(string weapons) " + name);
-
-            if (!IsServer)
-            {
-                _playersDict[clientId].data.abilityController
-                    .SetSpawnedWeapons(JsonConvert.DeserializeObject<Dictionary<string, ulong[]>>(weapons));
-                onPoolPrefabs?.Invoke();
-            }
-        }
+        //
+        // [ClientRpc]
+        // public void PoolNetworkPrefabsClientRpc(ulong clientId, string weapons)
+        // {
+        //    // Debug.Log(" [ClientRpc] public void PoolNetworkPrefabsClientRpc(string weapons) " + name);
+        //
+        //     if (!IsServer)
+        //     {
+        //         _playersDict[clientId].data.abilityController
+        //             .SetSpawnedWeapons(JsonConvert.DeserializeObject<Dictionary<string, ulong[]>>(weapons));
+        //         onPoolPrefabs?.Invoke();
+        //     }
+        // }
         [ServerRpc]
         private void StartGameSessionServerRpc()
         {
