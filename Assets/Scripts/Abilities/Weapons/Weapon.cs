@@ -265,18 +265,15 @@ namespace Scripts.Weapons
                 weaponDesign.playerData = playerData;
             }
             base.OnNetworkObjectParentChanged(parentNetworkObject);
+            OnInitialized();
         }
 
   
 
         public override void Initialize(PlayerData data, DynamicGesture gesture)
         {
-   
             weaponDesign.playerData = data;
-               
             base.Initialize(data, gesture);
-            
-            OnInitialized();
         }
         
 
