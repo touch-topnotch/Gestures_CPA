@@ -168,7 +168,8 @@ namespace Scripts.PlayerLogic
                 PlayerData.local = data;
             Global.updateEvent.AddListener(UpdateAnchors);
             
-            }
+        }
+        
         
         private bool isAnyNull()
         {

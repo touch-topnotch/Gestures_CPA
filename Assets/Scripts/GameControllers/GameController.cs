@@ -147,7 +147,6 @@ namespace Scripts.GameControllers
 
                 _playersDict[clientId].data.onPlayerInitialized.AddListener(()=>
                 {
-                    StartCoroutine(TestCoroutine());
                     // PoolNetworkPrefabs(clientId);
                     // if (ConnectedClients.Count >= gameProperties.playerCount)
                     // {
@@ -197,21 +196,7 @@ namespace Scripts.GameControllers
             onPoolPrefabs?.Invoke();
         }
         
-        private int testint  = 0;
-
-        private IEnumerator TestCoroutine()
-        {
-            for(int i = 0; i < 100; i ++)
-            {
-                OnTestClientRpc();
-                yield return new WaitForSeconds(1);
-            }
-        }
-        [ClientRpc]
-        private void OnTestClientRpc()
-        {
-            Debug.LogWarning($"This is the [CLIENT RPC] function, which calls {++testint} times");
-        }
+    
         [ClientRpc]
         public void PoolNetworkPrefabsClientRpc(ulong clientId, string weapons)
         {

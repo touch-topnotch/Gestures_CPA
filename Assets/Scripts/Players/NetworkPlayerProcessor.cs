@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
@@ -74,6 +75,26 @@ namespace Scripts.PlayerLogic
             {
                 oldPlayer.gameObject.SetActive(false);
             });
+            if (IsServer)
+            {
+                StartCoroutine(TestCoroutine());
+                
+            }
+        }
+        private int testint  = 0;
+
+        private IEnumerator TestCoroutine()
+        {
+            for(int i = 0; i < 100; i ++)
+            {
+                OnTestClientRpc();
+                yield return new WaitForSeconds(1);
+            }
+        }
+        [ClientRpc]
+        private void OnTestClientRpc()
+        {
+            Debug.LogWarning($"This is the [CLIENT RPC] function, which calls {++testint} times");
         }
 
 
