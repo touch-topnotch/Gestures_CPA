@@ -253,14 +253,13 @@ namespace Scripts.Weapons
         {
             transform.name = abilityName+ "_"+ NetworkObjectId;
             SubscribeEvents();
-            playerData = transform.parent.GetComponent<Player>().data;
-            weaponDesign.playerData = playerData;
             Debug.Log("Events of " + transform.name + " subscribed");
         }
 
         public override void Initialize(PlayerData data, DynamicGesture gesture)
         {
             base.Initialize(data, gesture);
+            playerData = transform.parent.GetComponent<Player>().data;
             weaponDesign.playerData = data;
             OnInitialized();
         }
