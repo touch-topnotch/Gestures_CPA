@@ -150,7 +150,7 @@ namespace Scripts.Weapons
             if (IsServer)
                 return;
             _unityEvents[eventId]?.Invoke();
-            Debug.Log("CallEventClientRpc(ushort eventId");
+            Debug.Log("CallEventClientRpc(ushort " + eventId + " )");
         }
         [ClientRpc]
         private void CallEventClientRpc(string value, ushort eventId)

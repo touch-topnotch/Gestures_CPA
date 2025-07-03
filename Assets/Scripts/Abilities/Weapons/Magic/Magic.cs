@@ -12,10 +12,12 @@ namespace Scripts.Weapons.Magic
         protected NetworkVariable<float> Mana = new NetworkVariable<float>();
         protected override void OnInitialized()
         {
-            if (IsServer)
-            {
+            if(IsOwner)
                 StartUsingMagicSpell();
-            }
+            // if (IsServer)
+            // {
+            //   //  StartUsingMagicSpell();
+            // }
         }
         protected virtual void StartUsingMagicSpell()
         {
