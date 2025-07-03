@@ -121,15 +121,20 @@ namespace Scripts.PlayerLogic
         [ClientRpc]
         public void StartUseAbilitiesClientRpc(ushort[] debugCharacterAbilities)
         {
-            Debug.Log("Самое важное сообщение в твоей жизни [Client rpc] private void StartGameSessionClientRpc(ulong playerId) ");
-            data.abilityController
-                .AddCharacterToInventory(data.characterController.currentCharacter.name);
-            
-            foreach (var VARIABLE in debugCharacterAbilities)
+            if (IsOwner)
             {
-                data.abilityController.AddCharacterToInventory(((CharacterType)VARIABLE).ToString());
+                Debug.Log(
+                    "Самое важное сообщение в твоей жизни [Client rpc] private void StartGameSessionClientRpc(ulong playerId) ");
+                data.abilityController
+                    .AddCharacterToInventory(data.characterController.currentCharacter.name);
+
+                foreach (var VARIABLE in debugCharacterAbilities)
+                {
+                    data.abilityController.AddCharacterToInventory(((CharacterType)VARIABLE).ToString());
+                }
+
+                data.abilityController.UseCharacterAbilities();
             }
-            data.abilityController.UseCharacterAbilities();
         }
     }
 }
