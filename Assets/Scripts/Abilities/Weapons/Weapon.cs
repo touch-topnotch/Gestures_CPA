@@ -1,5 +1,7 @@
+using System;
 using Components;
 using Gesture_Editor_SDK.Realtime;
+using ModestTree.Util;
 using Scripts.Events;
 using Scripts.Gestures;
 using Scripts.PlayerLogic;
@@ -175,7 +177,18 @@ namespace Scripts.Weapons
             CallEventClientRpc(value, eventId);
             Debug.Log($"CallEventClientRpc(string {value}, ushort "+eventId +")");
         }
-
+        private void CallEventFromServer(ushort eventId)
+        {
+            _unityEvents[eventId]?.Invoke();
+            CallEventClientRpc(eventId);
+            Debug.Log("CallEventServerRpc(ushort eventId)");
+        }
+        private void CallEventFromServer(string value, ushort eventId)
+        {
+            _unityParamEvents[eventId]?.Invoke(value);
+            CallEventClientRpc(value, eventId);
+            Debug.Log($"CallEventClientRpc(string {value}, ushort "+eventId +")");
+        }
         
 
         #endregion
@@ -207,8 +220,8 @@ namespace Scripts.Weapons
             {
                 for (ushort i = 0; i < _weaponEvents.Length; i++)
                 {
-               
-                    _weaponEvents[i] = new WeaponEvent(_unityEvents[i], CallEventServerRpc, i, invokeAvailable);
+
+                    _weaponEvents[i] = new WeaponEvent(_unityEvents[i], IsServer ? CallEventFromServer : CallEventServerRpc, i, invokeAvailable);
                     if (IsClient)
                     {
                         _unityEvents[i].AddListener(weaponDesign.actions[i]);
@@ -217,7 +230,7 @@ namespace Scripts.Weapons
 
                 for (ushort i = 0; i < _weaponParamEvents.Length; i++)
                 {
-                    _weaponParamEvents[i] = new WeaponEvent<string>(_unityParamEvents[i], CallEventServerRpc, i, invokeAvailable);
+                    _weaponParamEvents[i] = new WeaponEvent<string>(_unityParamEvents[i], IsServer ? CallEventFromServer : CallEventServerRpc, i, invokeAvailable);
                     if (IsClient)
                     {
                         _unityParamEvents[i].AddListener(weaponDesign.paramActions[i]);
