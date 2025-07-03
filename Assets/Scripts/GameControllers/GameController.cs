@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
@@ -146,15 +147,17 @@ namespace Scripts.GameControllers
 
                 _playersDict[clientId].data.onPlayerInitialized.AddListener(()=>
                 {
-                   // PoolNetworkPrefabs(clientId);
-                   if (ConnectedClients.Count >= gameProperties.playerCount)
-                   {
-                       OnTestServerRpc(clientId);
-                   }
+                    StartCoroutine(TestCoroutine());
+                    // PoolNetworkPrefabs(clientId);
+                    // if (ConnectedClients.Count >= gameProperties.playerCount)
+                    // {
+                    //     OnTestServerRpc(clientId);
+                    // }
                 });
                 onPoolPrefabs.AddListener(() =>
                 {
-                    
+                  //  StartGameSessionServerRpc();
+                  
                 });
 
                 // l.rl("position: " + client.PlayerObject.transform.position);
@@ -194,31 +197,32 @@ namespace Scripts.GameControllers
             onPoolPrefabs?.Invoke();
         }
         
-        
-        [ServerRpc]
-        private void OnTestServerRpc(ulong player_n)
+        private int testint  = 0;
+
+        private IEnumerator TestCoroutine()
         {
-            Debug.LogWarning($" This is the [SERVER RPC] function, which sends targeted abilities to prefab {player_n}");
-            string test = "test message (bebra)";
-            OnTestClientRpc(player_n);
+            for(int i = 0; i < 100; i ++)
+            {
+                OnTestClientRpc();
+                yield return new WaitForSeconds(1);
+            }
         }
-        
         [ClientRpc]
-        private void OnTestClientRpc(ulong player_n)
+        private void OnTestClientRpc()
         {
-            Debug.LogWarning($"This is the [CLIENT RPC] function, which should add abilities for prefab. Platform - {this.LocalClient.ClientId}, try to add abilities on {player_n}");
+            Debug.LogWarning($"This is the [CLIENT RPC] function, which calls {++testint} times");
         }
         [ClientRpc]
         public void PoolNetworkPrefabsClientRpc(ulong clientId, string weapons)
         {
            // Debug.Log(" [ClientRpc] public void PoolNetworkPrefabsClientRpc(string weapons) " + name);
 
-            // if (!IsServer)
-            // {
+            if (!IsServer)
+            {
                 _playersDict[clientId].data.abilityController
                     .SetSpawnedWeapons(JsonConvert.DeserializeObject<Dictionary<string, ulong[]>>(weapons));
-            //     onPoolPrefabs?.Invoke();
-            // }
+                onPoolPrefabs?.Invoke();
+            }
         }
         [ServerRpc]
         private void StartGameSessionServerRpc()
@@ -237,7 +241,7 @@ namespace Scripts.GameControllers
             {
                 return;
             }
-         //    Debug.Log(" [Client rpc] private void StartGameSessionClientRpc(ulong playerId) "  + playerId);
+            //    Debug.Log(" [Client rpc] private void StartGameSessionClientRpc(ulong playerId) "  + playerId);
             _playersDict[playerId].data.abilityController
                 .AddCharacterToInventory(_playersDict[playerId].data.characterController.currentCharacter.name);
 
