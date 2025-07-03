@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.09617658, g: 0.09700921, b: 0.14271364, a: 1}
+  m_IndirectSpecularColor: {r: 0.09630863, g: 0.097275175, b: 0.1428421, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2938,6 +2938,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8578199810362241708, guid: 1e3fbdbda288e4656bcacf97400f90e0,
+        type: 3}
+      propertyPath: xzBoard
+      value: 0.13
+      objectReference: {fileID: 0}
+    - target: {fileID: 8578199810362241708, guid: 1e3fbdbda288e4656bcacf97400f90e0,
+        type: 3}
+      propertyPath: moveSpeed
+      value: 6.58
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3064,7 +3074,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 7802441}
   m_HandleRect: {fileID: 7802440}
   m_Direction: 0
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -3924,7 +3934,7 @@ MonoBehaviour:
     OldPrefabList: []
   ServerInputSystem: {fileID: 0}
   gameProperties: {fileID: 0}
-  onPoolPrefabs:
+  onReadyToStart:
     m_PersistentCalls:
       m_Calls: []
 --- !u!114 &2120393406
