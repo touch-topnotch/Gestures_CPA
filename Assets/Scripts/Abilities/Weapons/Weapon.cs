@@ -249,18 +249,20 @@ namespace Scripts.Weapons
             isSubscribed = true;
         }
 
-        public override void OnNetworkObjectParentChanged(NetworkObject parentNetworkObject)
+        public override void OnNetworkSpawn()
         {
+            transform.name = abilityName+ "_"+ NetworkObjectId;
             SubscribeEvents();
-            weaponDesign.playerData = parentNetworkObject.GetComponent<Player>().data;
-            OnInitialized();
-            Debug.Log("OnNetworkObjectParentChanged: Weapon " + name + ", id - " + this.NetworkObjectId + " intialized!");
+            Debug.Log("Events of " + transform.name + " subscribed");
         }
 
         public override void Initialize(PlayerData data, DynamicGesture gesture)
         {
             base.Initialize(data, gesture);
+            weaponDesign.playerData = data;
+            OnInitialized();
         }
+        
 
       
 
