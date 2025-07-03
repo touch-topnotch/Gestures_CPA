@@ -87,8 +87,9 @@ namespace Scripts.PlayerLogic
         {
             if (!IsOwner)
                 return;
-            var weapons = JsonConvert.DeserializeObject<Dictionary<CharacterType, ulong[]>>(spawnedWeaponsData);
-            data.abilityController.SetSpawnedWeapons(weapons);
+            var weaponsDict = JsonConvert.DeserializeObject<Dictionary<CharacterType, ulong[]>>(spawnedWeaponsData);
+            var weapons = GetComponentsInChildren<Weapon>();
+            data.abilityController.SetSpawnedWeapons(weaponsDict, weapons);
         }
         [ServerRpc]
         public void OnLocalClientFrameRecognizedServerRpc(string frameName, ulong client)

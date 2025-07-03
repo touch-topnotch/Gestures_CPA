@@ -164,28 +164,34 @@ namespace Scripts.Abilities
             OnWeaponsInitialized?.Invoke();
          }
 
-        public void SetSpawnedWeapons(Dictionary<CharacterType, ulong[]> allSpawnedWeapons)
+        public void SetSpawnedWeapons(Dictionary<CharacterType, ulong[]> dictionary, Weapon[] spawned)
         {
-            foreach (var characterWeapons in allSpawnedWeapons)
+            foreach (var characterWeapons in dictionary)
             {
                 var weapons = new Arsenal();
                 foreach (var weapon_ulong in characterWeapons.Value)
                 {
-                    if(NetworkManager.Singleton.SpawnManager.SpawnedObjects.ContainsKey(weapon_ulong))
+                    Weapon w = null;
+                    foreach (var s in spawned)
+                    {
+                        if (s.NetworkObjectId == weapon_ulong)
+                        {
+                            w = s;
+                        }
+                    }
+                    if(w == null)
                     {
                         Debug.Log($"Weapon with id {weapon_ulong} was not found");
                         continue;
                     }
-                    var nO = NetworkManager.Singleton.SpawnManager.SpawnedObjects[weapon_ulong].GetComponent<Weapon>();
-               
-                    if(!gesturesLib.characterGestures.ContainsKey(nO.name))
+
+                    if(!gesturesLib.characterGestures.ContainsKey(w.abilityName))
                     {
-                        Debug.Log($"Gesture library doesn't contain {nO.name}");
+                        Debug.Log($"Gesture library doesn't contain {w.abilityName}");
                         continue;
                     }
-                    
-                    nO.Initialize(inherited.data, gesturesLib.characterGestures[nO.name]);
-                    weapons.Add(nO.name.Split('_')[0], nO);
+                    w.Initialize(inherited.data, gesturesLib.characterGestures[w.abilityName]);
+                    weapons.Add(w.name.Split('_')[0], w);
                  
                 }
                 abilitiesLib.characterAbilities.AddReplace(characterWeapons.Key.ToString(), weapons);
