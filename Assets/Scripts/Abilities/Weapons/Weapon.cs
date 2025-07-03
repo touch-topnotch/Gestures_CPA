@@ -46,9 +46,9 @@ namespace Scripts.Weapons
         [Header("Weapons components")]
         [SerializeField]
         protected WeaponDesign weaponDesign;
-        public WeaponState state { get; private set; } 
-        
-        protected virtual bool invokeAvailable => IsServer || (IsClient && IsOwner);
+        public WeaponState state { get; private set; }
+
+        protected virtual bool invokeAvailable => true;//IsServer || (IsClient && IsOwner);
 
         protected bool isSubscribed { get; private set; }
         public override string abilityName => transform.name.Split('_')[0];
@@ -253,6 +253,8 @@ namespace Scripts.Weapons
         {
             transform.name = abilityName+ "_"+ NetworkObjectId;
             SubscribeEvents();
+            playerData = transform.parent.GetComponent<Player>().data;
+            weaponDesign.playerData = playerData;
             Debug.Log("Events of " + transform.name + " subscribed");
         }
 
