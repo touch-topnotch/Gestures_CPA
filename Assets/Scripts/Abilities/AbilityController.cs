@@ -15,6 +15,7 @@ using Scripts.Systems;
 using Scripts.Weapons;
 using Sirenix.Utilities;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Rendering;
@@ -143,7 +144,7 @@ namespace Scripts.Abilities
                     }
 
                     var spawnedWeapon = Instantiate(prefab).GetComponent<Weapon>();
-                    spawnedWeapon.NetworkObject.Spawn();
+                    spawnedWeapon.NetworkObject.SpawnWithOwnership(parent.GetComponent<NetworkBehaviour>().OwnerClientId);
                     if (!spawnedWeapon.NetworkObject.TrySetParent(parent))
                     {
                         Debug.Log($"Can't set parent for {key}");

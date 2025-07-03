@@ -49,7 +49,7 @@ namespace Scripts.Weapons
         protected WeaponDesign weaponDesign;
         public WeaponState state { get; private set; }
 
-        protected virtual bool invokeAvailable => true;//IsServer || (IsClient && IsOwner);
+        protected virtual bool invokeAvailable => IsOwner;//IsServer || (IsClient && IsOwner);
 
         protected bool isSubscribed { get; private set; }
         public override string abilityName => transform.name.Split('_')[0];
