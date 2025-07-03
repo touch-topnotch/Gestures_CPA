@@ -1,6 +1,8 @@
+using Scripts.HandsLogic;
 using Scripts.PlayerLogic;
 using Scripts.Players;
 using Scripts.Systems;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -61,6 +63,8 @@ namespace Components
                 OnImpact
             };
         }
+
+        public virtual void Update(){}
 
         protected override bool shouldAddMissingComponents => !(vfxProcessor && audioProcessor);
     }
