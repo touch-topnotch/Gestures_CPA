@@ -179,34 +179,18 @@ namespace Scripts.GameControllers
         [ServerRpc]
         private void StartGameSessionServerRpc()
         {
+            var dushort = new ushort[gameProperties.debugCharacterAbilities.Length];
+            for(int i = 0; i <  gameProperties.debugCharacterAbilities.Length; i ++ )
+            {
+                dushort[i] = (ushort)gameProperties.debugCharacterAbilities[i];
+            }
             foreach (var player in _playersDict.Keys)
             {
-                StartGameSessionClientRpc(player);
+                _playersDict[player].StartUseAbilitiesClientRpc(dushort);
             }
         }
 
-        [ClientRpc]
-        private void StartGameSessionClientRpc(ulong playerId)
-        {
-      
-            if (!_playersDict[playerId].IsOwner)
-            {
-                return;
-            }
-            //    Debug.Log(" [Client rpc] private void StartGameSessionClientRpc(ulong playerId) "  + playerId);
-            _playersDict[playerId].data.abilityController
-                .AddCharacterToInventory(_playersDict[playerId].data.characterController.currentCharacter.name);
-
-            if (gameProperties != null && gameProperties.debugCharacterAbilities != null)
-            {
-                foreach (var VARIABLE in gameProperties.debugCharacterAbilities)
-                {
-                    _playersDict[playerId].data.abilityController.AddCharacterToInventory(VARIABLE.ToString());
-                }
-            }
-
-            _playersDict[playerId].data.abilityController.UseCharacterAbilities();
-        }
+    
         private void ClientDisconnected(ulong clientId)
         {
             if (_playersDict.ContainsKey(clientId))
