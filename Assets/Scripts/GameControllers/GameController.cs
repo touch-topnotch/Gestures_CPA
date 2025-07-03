@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -168,8 +169,23 @@ namespace Scripts.GameControllers
         public void PoolNetworkPrefabs(ulong clientId)
         {
             _playersDict[clientId].data.abilityController.SpawnWeapons(_playersDict[clientId].data.characterController.characterConfigs, _playersDict[clientId].transform);
+            Dictionary<CharacterType, ulong[]> dict = new();
+            foreach (var key in _playersDict[clientId].data.abilityController.abilitiesLib.characterAbilities.Keys)
+            {
+                var names = _playersDict[clientId].data.abilityController.abilitiesLib.characterAbilities[key].Keys.ToArray();
+                ulong[] ids= new ulong[names.Length];
+            
+                for(int i = 0; i < names.Length; i ++)
+                {
+                    if(_playersDict[clientId].data.abilityController.abilitiesLib.characterAbilities[key][names[i]].TryGetNetcodeId(out ulong id))
+                        ids[i] = id;
+                }
+                dict.Add((CharacterType)Enum.Parse(typeof(CharacterType),key), ids);
+            }
+            _playersDict[clientId].SetWeaponsClientRpc(JsonConvert.SerializeObject(dict));
             onPoolPrefabs.Invoke();
         }
+        
         [ServerRpc]
         private void AllClientsConnectedServerRpc()
         {

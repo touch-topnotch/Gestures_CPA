@@ -7,6 +7,7 @@ using Scripts.GameControllers;
 using Scripts.Gestures;
 using Scripts.Players;
 using Scripts.Static.Definitions;
+using Scripts.Weapons;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -75,8 +76,20 @@ namespace Scripts.PlayerLogic
             {
                 oldPlayer.gameObject.SetActive(false);
             });
+            if (IsServer)
+            {
+                
+            }
         }
-        
+
+        [ClientRpc]
+        public void SetWeaponsClientRpc(string spawnedWeaponsData)
+        {
+            if (!IsOwner)
+                return;
+            var weapons = JsonConvert.DeserializeObject<Dictionary<CharacterType, ulong[]>>(spawnedWeaponsData);
+            data.abilityController.SetSpawnedWeapons(weapons);
+        }
         [ServerRpc]
         public void OnLocalClientFrameRecognizedServerRpc(string frameName, ulong client)
         {

@@ -164,7 +164,7 @@ namespace Scripts.Abilities
             OnWeaponsInitialized?.Invoke();
          }
 
-        public void SetSpawnedWeapons(Dictionary<string, ulong[]> allSpawnedWeapons)
+        public void SetSpawnedWeapons(Dictionary<CharacterType, ulong[]> allSpawnedWeapons)
         {
             foreach (var characterWeapons in allSpawnedWeapons)
             {
@@ -188,7 +188,7 @@ namespace Scripts.Abilities
                     weapons.Add(nO.name.Split('_')[0], nO);
                  
                 }
-                abilitiesLib.characterAbilities.AddReplace(characterWeapons.Key, weapons);
+                abilitiesLib.characterAbilities.AddReplace(characterWeapons.Key.ToString(), weapons);
             }
             var log = "Weapons (set) initialized: ";
             foreach (var VARIABLE in abilitiesLib.characterAbilities)
