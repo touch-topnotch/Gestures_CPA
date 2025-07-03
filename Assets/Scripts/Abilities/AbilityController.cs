@@ -60,9 +60,9 @@ namespace Scripts.Abilities
             }
         }
 
-        public void CreateRecognizer(RecognitionPropertiesConfig config)
+        public void CreateRecognizer(RecognitionPropertiesConfig config, PlayerHands hands)
         {
-            _recognizer = new Recognizer(config);
+            _recognizer = new Recognizer(config, hands);
         }
 
         public void AddCharacterToInventory(string character)

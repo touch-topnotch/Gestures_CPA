@@ -161,7 +161,7 @@ namespace Scripts.PlayerLogic
             foreach (var VARIABLE in _rigList)
             {
                 if(VARIABLE.type == _playerProps.rig)
-                    abilityController.CreateRecognizer(VARIABLE.RecognitionPropertiesConfig);
+                    abilityController.CreateRecognizer(VARIABLE.RecognitionPropertiesConfig, hands);
             }
             data.onPlayerInitialized.AddListener(() =>
             {
@@ -258,12 +258,6 @@ namespace Scripts.PlayerLogic
         {
             onPlayerModeChanged.AddListener(EventLogger.OnPlayerModeChanged);
             characterController.characterChangedEvent.AddListener(EventLogger.OnCharacterChanged);
-        }
-
-        public void CreateRecognizer()
-        {
-            if(isInitialized)
-                abilityController.CreateRecognizer(_rig.RecognitionPropertiesConfig);
         }
 
     }

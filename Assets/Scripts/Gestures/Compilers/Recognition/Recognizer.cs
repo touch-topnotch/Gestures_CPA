@@ -19,11 +19,12 @@ namespace Scripts.Gestures
         private static readonly Color _colorActive = new Color(1, 1, 1, 0.0f);
         private static readonly Color _colorPassive = new Color(0.6f, 1, 1, 0.8f);
         private static readonly WaitForUpdate v_waitForUpdate = new WaitForUpdate();
-        private static PlayerHands _hands => PlayerData.local.hands;
+        private static PlayerHands _hands = PlayerData.local.hands;
 
-        public Recognizer(RecognitionPropertiesConfig config)
+        public Recognizer(RecognitionPropertiesConfig config, PlayerHands hands)
         {
             _config = config;
+            _hands = hands;
         }
 
         
