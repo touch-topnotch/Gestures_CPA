@@ -309,7 +309,7 @@ namespace Scripts.Weapons
             GestureCastedEvent?.Invoke();
         }
 
-        public override UnityEvent AbilityReleasedEvent { get; set; }
+        public sealed override UnityEvent AbilityReleasedEvent { get;  set; }
 
         public override void AddMissingComponents()
         {

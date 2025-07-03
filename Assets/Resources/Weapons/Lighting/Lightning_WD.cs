@@ -188,7 +188,6 @@ namespace Scripts
             var affected = new Affected(aff);
             Debug.Log($"I should play {affected.surfaceType} sound");
             StartCoroutine(Explosion());
-
         }
 
         protected override bool shouldAddMissingComponents =>

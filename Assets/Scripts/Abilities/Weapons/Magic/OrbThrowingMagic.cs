@@ -76,7 +76,7 @@ namespace Scripts.Weapons.Magic
                     if (lifeTimer >= lifeTime)
                     {
                         lifeTimer = 0;
-                        ImpactEvent.Invoke(new Affected(PhysicLayer.NONE, SurfaceType.NONE).toString);
+                        AbilityDestroyedEvent.Invoke();
                     }
                 }
 
