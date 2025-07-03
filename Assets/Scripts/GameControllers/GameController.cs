@@ -184,7 +184,7 @@ namespace Scripts.GameControllers
             }
             foreach(var player in _playersDict.Values)
             {
-                player.SetWeaponsClientRpc(JsonConvert.SerializeObject(dict));
+                player.SetWeaponsClientRpc(clientId, JsonConvert.SerializeObject(dict));
             }
             onPoolPrefabs.Invoke();
         }

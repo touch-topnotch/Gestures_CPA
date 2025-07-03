@@ -83,9 +83,15 @@ namespace Scripts.PlayerLogic
         }
 
         [ClientRpc]
-        public void SetWeaponsClientRpc(string spawnedWeaponsData)
+        public void SetWeaponsClientRpc(ulong playerId, string spawnedWeaponsData)
         {
+        
+            Debug.Log("network object id - " + NetworkObjectId + ", playerid - "+playerId);
+            if (playerId != this.NetworkObjectId)
+                return;
+            
             var weaponsDict = JsonConvert.DeserializeObject<Dictionary<CharacterType, ulong[]>>(spawnedWeaponsData);
+            Debug.Log("Do it in player " + name);
             var weapons = GetComponentsInChildren<Weapon>();
             data.abilityController.SetSpawnedWeapons(weaponsDict, weapons);
         }
