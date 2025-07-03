@@ -9,6 +9,7 @@ using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Rendering;
 
 namespace Scripts.Weapons
 {
@@ -49,7 +50,7 @@ namespace Scripts.Weapons
         protected WeaponDesign weaponDesign;
         public WeaponState state { get; private set; }
 
-        protected virtual bool invokeAvailable => IsOwner;//IsServer || (IsClient && IsOwner);
+        protected virtual bool invokeAvailable => IsOwner || IsServer;// || (IsClient && IsOwner);
 
         protected bool isSubscribed { get; private set; }
         public override string abilityName => transform.name.Split('_')[0];
@@ -172,7 +173,7 @@ namespace Scripts.Weapons
         {
             _unityParamEvents[eventId]?.Invoke(value);
             CallEventClientRpc(value, eventId);
-            Debug.Log($"CallEventClientRpc(string {value}, ushort eventId");
+            Debug.Log($"CallEventClientRpc(string {value}, ushort "+eventId +")");
         }
 
         
@@ -181,7 +182,9 @@ namespace Scripts.Weapons
 
         protected virtual void OnInitialized()
         {
+            Debug.Log("protected virtual void OnInitialized()");
         }
+        
         
         private void SubscribeEvents() 
         {

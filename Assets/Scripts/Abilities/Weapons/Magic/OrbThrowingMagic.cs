@@ -35,7 +35,6 @@ namespace Scripts.Weapons.Magic
             if (IsServer)
             {
                 orb.EnableComponents();
-                
                 orb.TriggerEnterEvent.AddListener((affected)=> ImpactEvent.Invoke(affected.toString));
                 ImpactEvent.AddListener(OnImpact);
             }
