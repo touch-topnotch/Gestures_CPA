@@ -56,7 +56,7 @@ namespace Scripts.PlayerLogic
                 {
                     PlayerData.local = _player.data;
                 });
-                //_player.onPlayerInitialized.AddListener(_player.CreateRecognizer);
+                
                 Recognizer.onSharedFrameBetweenDevices.AddListener((frame) =>
                 {
                     OnLocalClientFrameRecognizedServerRpc(frame, OwnerClientId);
@@ -85,8 +85,6 @@ namespace Scripts.PlayerLogic
         [ClientRpc]
         public void SetWeaponsClientRpc(string spawnedWeaponsData)
         {
-            if (!IsOwner)
-                return;
             var weaponsDict = JsonConvert.DeserializeObject<Dictionary<CharacterType, ulong[]>>(spawnedWeaponsData);
             var weapons = GetComponentsInChildren<Weapon>();
             data.abilityController.SetSpawnedWeapons(weaponsDict, weapons);
