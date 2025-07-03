@@ -56,7 +56,7 @@ namespace Scripts.PlayerLogic
                 {
                     PlayerData.local = _player.data;
                 });
-                _player.onPlayerInitialized.AddListener(_player.CreateRecognizer);
+                //_player.onPlayerInitialized.AddListener(_player.CreateRecognizer);
                 Recognizer.onSharedFrameBetweenDevices.AddListener((frame) =>
                 {
                     OnLocalClientFrameRecognizedServerRpc(frame, OwnerClientId);

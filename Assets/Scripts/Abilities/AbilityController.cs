@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Characters;
+using Newtonsoft.Json;
 using Scrips.Components;
 using Scripts.Events;
 using Scripts.Gesture_Editor_SDK.Realtime;
@@ -76,6 +77,7 @@ namespace Scripts.Abilities
         public void UseCharacterAbilities()
         {
             Debug.Log("Start to use next inventory abilities "+Debugger.dictionaryToString(inventory.characterAbilities, false, true));
+            
             StartCoroutine(_recognizer.RecognizeDynamicGesture(inventory.characterAbilities.ToGestureDict(),
                 (e) =>
                 {
@@ -107,8 +109,8 @@ namespace Scripts.Abilities
 
         
         public void SpawnWeapons(List<CharacterData> characterConfigs, Transform parent)
-         {
-            
+        {
+            Debug.Log(Debugger.listToString(characterConfigs, true));
             foreach (var characterData in characterConfigs)
             {
                 var weapons = new Arsenal();
@@ -149,7 +151,6 @@ namespace Scripts.Abilities
                     }
                     spawnedWeapon.Initialize(inherited.data, gesturesLib.characterGestures[key]);
                     weapons.AddReplace(spawnedWeapon.abilityName, spawnedWeapon);
-                    
                 }
                 abilitiesLib.characterAbilities.AddReplace(characterData.characterName, weapons);
             }

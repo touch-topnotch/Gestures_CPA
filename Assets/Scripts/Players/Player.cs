@@ -135,7 +135,7 @@ namespace Scripts.PlayerLogic
             if (isLocal)
             {
                 InitializePlayer(0, playerProperties);
-                CreateRecognizer();
+                //CreateRecognizer();
             }
         }
 
@@ -163,7 +163,7 @@ namespace Scripts.PlayerLogic
                 Debug.Log(
                     $"Player {id} initialized. rig - {this.playerProperties.rig}, character - {this.playerProperties.character}, avatar - {this.playerProperties.avatar}");
             });
-
+            abilityController.CreateRecognizer(_rig.RecognitionPropertiesConfig);
             if (isLocal)
                 PlayerData.local = data;
             Global.updateEvent.AddListener(UpdateAnchors);
