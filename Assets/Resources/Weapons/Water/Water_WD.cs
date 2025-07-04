@@ -37,42 +37,34 @@ namespace Scripts
 
         public override void OnReadyToBeCasted()
         {
-            throw new NotImplementedException();
         }
 
         public override void OnCastCancelled()
         {
-            throw new NotImplementedException();
         }
 
         public override void OnGestureCasted()
         {
-            throw new NotImplementedException();
         }
 
         public override void OnActivated()
         {
-            throw new NotImplementedException();
         }
 
         public override void OnHitStarted()
         {
-            throw new NotImplementedException();
         }
 
         public override void OnHitStopped()
         {
-            throw new NotImplementedException();
         }
 
         public override void OnDeactivated()
         {
-            throw new NotImplementedException();
         }
 
         public override void OnAbilityDestroyed()
         {
-            throw new NotImplementedException();
         }
 
         public override void OnFrameRecognized(string frameName)
@@ -86,11 +78,12 @@ namespace Scripts
                     _waterPuddle.transform.position = playerData.hands.leftHand.grabPoint.position + _puddlePosOffset;
                     _waterSpline.transform.position = _waterPuddle.transform.position;
                     _waterPuddle.SetActive(true);
+                    _waterSpline.BindHeadTransform(_waterHead.transform);
                     _controlState = ControlState.Casting;
                     break;
                 case 2:
                     _waterSpline.gameObject.SetActive(true);
-                    _waterSpline.StartWaterBend(Vector3.up, _speed, _waterSplineAppearSpeed, _speed);
+                    _waterSpline.StartWaterBend(Vector3.up, SplineBendingControll.BendControlMode.Position, _speed, _waterSplineAppearSpeed, _speed);
                     break;
                 case 4:
                     _waterHead.SetActive(true);
@@ -120,13 +113,14 @@ namespace Scripts
         {
             _waterPuddle.transform.position = Vector3.Lerp(_waterPuddle.transform.position, playerData.hands.leftHand.grabPoint.position + _puddlePosOffset, 16f * Time.deltaTime);
             _waterSpline.transform.position = Vector3.Lerp(_waterSpline.transform.position, _waterPuddle.transform.position, 20f * Time.deltaTime);
+            _waterHead.transform.position = _waterSpline.SplineHeadPosition;
         }
 
         private void WaterBend()
         {
-            var hand =  playerData.hands.rightHand;
-            _waterSpline.SetDirection(hand.points[3].transform.forward);
-            _waterHead.transform.position = _waterSpline.SplineHeadPosition;
+            //var hand =  playerData.hands.rightHand;
+            //_waterSpline.SetLastNodePosition(_waterHead.transform.position - _waterSpline.transform.position);
+            //_waterHead.transform.position = _waterSpline.SplineHeadPosition;
         }
 
         public override void OnImpact(string affected)

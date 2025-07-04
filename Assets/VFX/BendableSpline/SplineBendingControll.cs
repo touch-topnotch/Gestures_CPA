@@ -1,8 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using SplineMesh;
 using UnityEngine.Serialization;
+
+
 
 public class SplineBendingControll : MonoBehaviour
 {
@@ -11,8 +14,8 @@ public class SplineBendingControll : MonoBehaviour
     [SerializeField] private float _startSpeed = 1f;
     [SerializeField] private float _baseSpeed = 1f;
     [SerializeField] private float _endSpeed = 1f;
-    [SerializeField] private  float _nodeInterval = 1f; 
-
+    [SerializeField] private  float _nodeInterval = 1f;
+    private BendControlMode _bendControlMode;
 
     [SerializeField] Spline _Spline;
     [SerializeField] ExampleContortAlong _ContortAlong;
@@ -21,21 +24,29 @@ public class SplineBendingControll : MonoBehaviour
     
     private Vector3 _startDirection;
     private Vector3 _direction;
+    private Transform _headTarget;
     private bool _stopped;
     
-    public void StartWaterBend(Vector3 dir, float speed)
+    public enum BendControlMode
     {
-        StartWaterBend(dir, speed, speed, speed, new List<Vector3>());
+        Direction,
+        Position
     }
     
-    public void StartWaterBend(Vector3 dir, float speed, float startSpeed, float endSpeed)
+    public void StartWaterBend(Vector3 dir, BendControlMode _bendControlMode, float speed)
     {
-        StartWaterBend(dir, speed, startSpeed, endSpeed, new List<Vector3>());
+        StartWaterBend(dir, _bendControlMode, speed, speed, speed, new List<Vector3>());
     }
     
-    public void StartWaterBend(Vector3 dir, float speed, float startSpeed, float endSpeed, List<Vector3> initialNodePoses)
+    public void StartWaterBend(Vector3 dir, BendControlMode _bendControlMode, float speed, float startSpeed, float endSpeed)
+    {
+        StartWaterBend(dir,_bendControlMode, speed, startSpeed, endSpeed, new List<Vector3>());
+    }
+    
+    public void StartWaterBend(Vector3 dir, BendControlMode _bendControlMode, float speed, float startSpeed, float endSpeed, List<Vector3> initialNodePoses)
     {
         _startDirection = dir.normalized;
+        this._bendControlMode = _bendControlMode;
         _startSpeed = startSpeed;
         _baseSpeed = speed;
         _endSpeed = endSpeed;
@@ -53,6 +64,11 @@ public class SplineBendingControll : MonoBehaviour
     public void SetDirection(Vector3 dir)
     {
         _direction = dir.normalized;
+    }
+    
+    public void BindHeadTransform(Transform transform)
+    {
+        _headTarget = transform;
     }
 
     IEnumerator WaterBend(List<Vector3> initialNodePoses)
@@ -88,24 +104,20 @@ public class SplineBendingControll : MonoBehaviour
             _ContortAlong.ScaleMesh(Vector3.Lerp(startScale, targetScale, startingLength / meshLength));
             yield return null;
         }
+        //lastNode = AddNode(lastNode);
         // Main bend control
         while (endingLength < meshLength)
         {
-            if (!_stopped)
+            switch (_bendControlMode)
             {
-                // Move last node
-                lastNode.Position += _direction * (_baseSpeed * Time.deltaTime);
-                lastNode.Direction = lastNode.Position;
-            
-
-                // Add new node if last node is to far
-                if (Vector3.Distance(lastNode.Position, _Spline.nodes[^2].Position) > _nodeInterval)
-                {
-                    var splineNode = new SplineNode(lastNode.Position,lastNode.Position);
-                    _Spline.AddNode(splineNode);
-                    lastNode = splineNode;
-                    targetScale = _Scale;
-                }
+                case BendControlMode.Direction:
+                    lastNode = DirectionMove(lastNode);
+                    break;
+                case BendControlMode.Position:
+                    lastNode = PositionMove(lastNode);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
             
             if (_Spline.Length < meshLength) // Handle to short spline
@@ -129,6 +141,48 @@ public class SplineBendingControll : MonoBehaviour
         }
         
         Debug.Log("stopped");
+    }
+
+    private SplineNode PositionMove(SplineNode lastNode)
+    {
+        // Move last node
+        lastNode.Position = _headTarget.position - transform.position;
+        lastNode.Direction = lastNode.Position;
+
+        // Add new node if last node is to far
+        if (Vector3.Distance(lastNode.Position, _Spline.nodes[^2].Position) > _nodeInterval)
+        {
+            lastNode = AddNode(lastNode);
+        }
+
+        return lastNode;
+    }
+
+    private SplineNode DirectionMove(SplineNode lastNode)
+    {
+        if (!_stopped)
+        {
+            // Move last node
+            lastNode.Position += _direction * (_baseSpeed * Time.deltaTime);
+            lastNode.Direction = lastNode.Position;
+
+
+            // Add new node if last node is to far
+            if (Vector3.Distance(lastNode.Position, _Spline.nodes[^2].Position) > _nodeInterval)
+            {
+                lastNode = AddNode(lastNode);
+            }
+        }
+
+        return lastNode;
+    }
+
+    private SplineNode AddNode(SplineNode lastNode)
+    {
+        var splineNode = new SplineNode(lastNode.Position, lastNode.Position);
+        _Spline.AddNode(splineNode);
+        lastNode = splineNode;
+        return lastNode;
     }
 
     private void SetInitialNodes(List<Vector3> initialNodePoses)
