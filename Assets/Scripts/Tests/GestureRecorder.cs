@@ -274,7 +274,7 @@ namespace Scripts.Tests
             else
             {
                 // remove last Left Hand.
-                _sequencedHandVisualizer.leftHandVisualizer.Hide();
+                _sequencedHandVisualizer.leftHandVisualizer.Hide(false);
             }
         }
 
@@ -289,7 +289,7 @@ namespace Scripts.Tests
             }
             else
             {
-                _sequencedHandVisualizer.rightHandVisualizer.Hide();
+                _sequencedHandVisualizer.rightHandVisualizer.Hide(false);
                 // remove last Right Hand.
             }
         }

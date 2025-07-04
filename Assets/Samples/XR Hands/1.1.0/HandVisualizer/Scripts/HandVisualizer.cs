@@ -309,7 +309,7 @@ namespace UnityEngine.XR.Hands.Samples.VisualizerSample
                     if (child.gameObject.name.EndsWith(XRHandJointID.Wrist.ToString()))
                         wristRootXform = child;
                     else if (child.gameObject.name.EndsWith("Hand") && meshMaterial != null && child.TryGetComponent<SkinnedMeshRenderer>(out var renderer))
-                        renderer.sharedMaterial = meshMaterial;
+                        renderer.material = meshMaterial;
                 }
 
                 m_DrawJointsParent = new GameObject();

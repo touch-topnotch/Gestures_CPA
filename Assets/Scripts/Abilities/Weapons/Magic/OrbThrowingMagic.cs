@@ -1,3 +1,4 @@
+using System;
 using Scripts.Components;
 using Scripts.Static.Definitions;
 using Sirenix.OdinInspector;
@@ -22,16 +23,20 @@ namespace Scripts.Weapons.Magic
         public TriggerBehaviour orb;
         private bool isTriggered;
         private float lifeTimer;
-        
-        
+
+        private void Start()
+        {
+            orb.DisableComponents();
+        }
+
+
         protected override void ActivateSpell()
         {
             if (IsServer)
             {
-                
+                orb.EnableComponents();
                 orb.TriggerEnterEvent.AddListener((affected)=> ImpactEvent.Invoke(affected.toString));
                 ImpactEvent.AddListener(OnImpact);
-                GestureCastedEvent.AddListener(ActivatedEvent.Invoke);
             }
 
         }
@@ -71,7 +76,7 @@ namespace Scripts.Weapons.Magic
                     if (lifeTimer >= lifeTime)
                     {
                         lifeTimer = 0;
-                        ImpactEvent.Invoke(new Affected(PhysicLayer.NONE, SurfaceType.NONE).toString);
+                        AbilityDestroyedEvent.Invoke();
                     }
                 }
 

@@ -135,12 +135,13 @@ namespace Scripts.PlayerLogic
             if (isLocal)
             {
                 InitializePlayer(0, playerProperties);
-                CreateRecognizer();
+                //CreateRecognizer();
             }
         }
 
         public void InitializePlayer(ulong _id, PlayerProperties _playerProps)
         {
+            id = _id;
             AddLoggers();
             
             characterController.SpawnCharacters();
@@ -157,14 +158,23 @@ namespace Scripts.PlayerLogic
             
             _data = new PlayerData(this, anchors, hands, abilityController, characterController, abilityController.gesturesLib);
             abilityController.gesturesLib.onLibraryInitialized += data.onPlayerInitialized.Invoke;
-            
-
+            foreach (var VARIABLE in _rigList)
+            {
+                if(VARIABLE.type == _playerProps.rig)
+                    abilityController.CreateRecognizer(VARIABLE.RecognitionPropertiesConfig, hands);
+            }
+            data.onPlayerInitialized.AddListener(() =>
+            {
+                Debug.Log(
+                    $"Player {id} initialized. rig - {this.playerProperties.rig}, character - {this.playerProperties.character}, avatar - {this.playerProperties.avatar}");
+            });
+    
             if (isLocal)
                 PlayerData.local = data;
-            
             Global.updateEvent.AddListener(UpdateAnchors);
-            Debug.Log($"Player {id} initialized. rig - {this.playerProperties.rig}, character - {this.playerProperties.character}, avatar - {this.playerProperties.avatar}");
+            
         }
+        
         
         private bool isAnyNull()
         {
@@ -248,12 +258,6 @@ namespace Scripts.PlayerLogic
         {
             onPlayerModeChanged.AddListener(EventLogger.OnPlayerModeChanged);
             characterController.characterChangedEvent.AddListener(EventLogger.OnCharacterChanged);
-        }
-
-        public void CreateRecognizer()
-        {
-            if(isInitialized)
-                abilityController.CreateRecognizer(_rig.RecognitionPropertiesConfig);
         }
 
     }

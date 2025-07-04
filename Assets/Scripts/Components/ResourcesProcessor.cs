@@ -26,10 +26,10 @@ namespace Components
         where T : Object
     {
         [BoxGroup("Resources")] [SerializeField]
-        protected readonly Dictionary<string, T> itemsDict = new();
+        public readonly Dictionary<string, T> itemsDict = new();
 
         [BoxGroup("Resources")] [SerializeField]
-        protected readonly Dictionary<string, List<T>> listOfItemsDict = new();
+        public readonly Dictionary<string, List<T>> listOfItemsDict = new();
 
         private T LoadResource(string resourceName)
         {

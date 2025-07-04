@@ -1,5 +1,8 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using Scripts.Events;
 using Scripts.Network;
 using Scripts.PlayerLogic;
@@ -8,6 +11,7 @@ using Scripts.Static;
 using Scripts.Static.Definitions;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Events;
 
 #if DEDICATED_SERVER
 using Unity.Netcode.Transports.UTP;
@@ -31,8 +35,10 @@ namespace Scripts.GameControllers
         public Dictionary<ulong, NetworkPlayerProcessor> PlayersDict => _playersDict;
         public GameProperties gameProperties;
 
+        public UnityEvent onReadyToStart = new UnityEvent();
+        private UnityEvent onPoolPrefabs = new UnityEvent();
 
-     
+
 #if DEDICATED_SERVER
         private IServerQueryHandler _serverQueryHandler;
         private async void ListenServerEvents()
@@ -119,7 +125,7 @@ namespace Scripts.GameControllers
 #if DEDICATED_SERVER
             Global.eventManager.onServicesInitilalised += ListenServerEvents;
 #endif
-            
+
 #if !DEDICATED_SERVER
 
             ServerBrowser.ConnectToServer();
@@ -127,13 +133,13 @@ namespace Scripts.GameControllers
 
 
             OnClientConnectedCallback += ClientConnected;
-            
+
             OnClientDisconnectCallback += ClientDisconnected;
         }
 
         private void ClientConnected(ulong clientId)
         {
-          
+
 
             if (IsServer)
             {
@@ -141,45 +147,66 @@ namespace Scripts.GameControllers
                 var player = client.PlayerObject.GetComponent<NetworkPlayerProcessor>();
                 // глобальная логика плеера и сразу какая-то странная инициализация оружий
                 _playersDict.Add(clientId, player);
-                _playersDict[clientId].onPoolPrefabs.AddListener(StartGameSession);
-              
+
+                _playersDict[clientId].data.onPlayerInitialized.AddListener(()=>
+                {
+                    PoolNetworkPrefabs(clientId);
+                });
+                onPoolPrefabs.AddListener(() =>
+                {
+                    if(ConnectedClients.Count >= gameProperties.playerCount)
+                            AllClientsConnectedServerRpc();
+                });
                 
-                // l.rl("position: " + client.PlayerObject.transform.position);
             }
+
             if (!IsServer)
             {
                 l.rl(LocalClient.PlayerObject.name + " constructed!");
             }
-            
-        }
 
-        private void StartGameSession()
+        }
+        public void PoolNetworkPrefabs(ulong clientId)
         {
+            _playersDict[clientId].data.abilityController.SpawnWeapons(_playersDict[clientId].data.characterController.characterConfigs, _playersDict[clientId].transform);
+            Dictionary<CharacterType, ulong[]> dict = new();
+            foreach (var key in _playersDict[clientId].data.abilityController.abilitiesLib.characterAbilities.Keys)
+            {
+                var names = _playersDict[clientId].data.abilityController.abilitiesLib.characterAbilities[key].Keys.ToArray();
+                ulong[] ids= new ulong[names.Length];
+            
+                for(int i = 0; i < names.Length; i ++)
+                {
+                    if(_playersDict[clientId].data.abilityController.abilitiesLib.characterAbilities[key][names[i]].TryGetNetcodeId(out ulong id))
+                        ids[i] = id;
+                }
+                dict.Add((CharacterType)Enum.Parse(typeof(CharacterType),key), ids);
+            }
+            _playersDict[clientId].SetWeaponsClientRpc(JsonConvert.SerializeObject(dict));
+            onPoolPrefabs.Invoke();
+        }
+        
+        [ServerRpc]
+        private void AllClientsConnectedServerRpc()
+        {
+            StartGameSessionServerRpc();
+            onReadyToStart?.Invoke();
+        }
+        [ServerRpc]
+        private void StartGameSessionServerRpc()
+        {
+            var dushort = new ushort[gameProperties.debugCharacterAbilities.Length];
+            for(int i = 0; i <  gameProperties.debugCharacterAbilities.Length; i ++ )
+            {
+                dushort[i] = (ushort)gameProperties.debugCharacterAbilities[i];
+            }
             foreach (var player in _playersDict.Keys)
             {
-                StartGameSessionClientRpc(player);
+                _playersDict[player].StartUseAbilitiesClientRpc(dushort);
             }
         }
 
-        [ClientRpc]
-        private void StartGameSessionClientRpc(ulong playerId)
-        {
-            if (_playersDict[playerId].IsOwner){
-                
-                _playersDict[playerId].data.abilityController.AddCharacterToInventory(_playersDict[playerId].data.characterController.currentCharacter.name);
-     
-                if (gameProperties != null && gameProperties.debugCharacterAbilities != null)
-                {
-                    foreach (var VARIABLE in gameProperties.debugCharacterAbilities)
-                    {
-                        _playersDict[playerId].data.abilityController.AddCharacterToInventory(VARIABLE.ToString());
-                    }
-                }
-                _playersDict[playerId].data.abilityController.UseCharacterAbilities();
-            }
-        }
-        
-        
+    
         private void ClientDisconnected(ulong clientId)
         {
             if (_playersDict.ContainsKey(clientId))

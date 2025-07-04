@@ -19,11 +19,11 @@ namespace Scripts.Gestures
         private static readonly Color _colorActive = new Color(1, 1, 1, 0.0f);
         private static readonly Color _colorPassive = new Color(0.6f, 1, 1, 0.8f);
         private static readonly WaitForUpdate v_waitForUpdate = new WaitForUpdate();
-        private static PlayerHands _hands => PlayerData.local.hands;
-
-        public Recognizer(RecognitionPropertiesConfig config)
+        private readonly PlayerHands _hands;
+        public Recognizer(RecognitionPropertiesConfig config, PlayerHands hands)
         {
             _config = config;
+            _hands = hands;
         }
 
         
@@ -54,10 +54,10 @@ namespace Scripts.Gestures
                 if (TryRecognizeFrameInAnyPossibles(_config.SupportiveProperties, v_possibleFrames,
                         out var curSuppRec, false) && drawnSuppLast != curSuppRec)
                 {
-                    _hands.handVisualiser.ShowHands();
-                    _hands.handVisualiser.Move(v_possibleFrames[curSuppRec], 4, null);
-                    _hands.handVisualiser.ManipulateLasts((m) => m.ChangeColorPinPong(_colorActive, _colorPassive,
-                        new ColorParams(HandShaderProps.EdgeColor, 1, false)));
+                     _hands.handVisualiser.ShowHands();
+                      _hands.handVisualiser.Move(v_possibleFrames[curSuppRec], 4, null);
+                      _hands.handVisualiser.ManipulateLasts((m) => m.ChangeColorPinPong(_colorActive, _colorPassive,
+                         new ColorParams(HandShaderProps.EdgeColor, 1, false)));
                     drawnSuppLast = curSuppRec;
                 }
 
@@ -80,8 +80,7 @@ namespace Scripts.Gestures
                     if (!wasDrawn && RecognizeFrame(_config.SupportiveProperties, possibleFrame, _hands, false))
                     {
                         _hands.handVisualiser.Move(possibleFrame, 4, null);
-                        _hands.handVisualiser.ManipulateLasts((m) => m.ChangeColorPinPong(_colorActive, _colorPassive,
-                            new ColorParams(HandShaderProps.EdgeColor, 1, false)));
+                        _hands.handVisualiser.ManipulateLasts((m) => m.ChangeColorPinPong(_colorActive, _colorPassive, new ColorParams(HandShaderProps.EdgeColor, 1, false)));
                         wasDrawn = true;
                     }
 
@@ -95,7 +94,7 @@ namespace Scripts.Gestures
 
             //  v_possibleGestures[v_curGesture].AllFramesDetected();
             onGestureRecognized?.Invoke(v_possibleGestures[v_curGesture].name);
-            _hands.handVisualiser.ManipulateAll(e => e.Hide());
+            _hands.handVisualiser.ManipulateAll(e => e.Hide(true));
 
             void LogPossibleFrames()
             {
@@ -109,7 +108,7 @@ namespace Scripts.Gestures
             }
         }
 
-        public static bool TryRecognizeFrameInAnyPossibles(in RecognitionProperties props,
+        public bool TryRecognizeFrameInAnyPossibles(in RecognitionProperties props,
             in List<FrameData> possibleFrames, out int frameId, in bool shareFrameBetweenDevices = false)
         {
             for (int i = 0; i < possibleFrames.Count; i++)
@@ -125,7 +124,7 @@ namespace Scripts.Gestures
             return false;
         }
 
-        public static bool RecognizeFrame(in RecognitionProperties properties, FrameData frameData,
+        public bool RecognizeFrame(in RecognitionProperties properties, FrameData frameData,
             in bool shareFrameBetweenDevices = false)
         {
             return RecognizeFrame(properties, frameData, _hands, shareFrameBetweenDevices);

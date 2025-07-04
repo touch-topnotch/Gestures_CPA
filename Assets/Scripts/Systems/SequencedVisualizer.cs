@@ -8,7 +8,7 @@ namespace Scripts.Systems
     {
         public bool IsActive();
         public void Show();
-        public void Hide();
+        public void Hide(bool immediately);
         public void Replace(T target);
         public void Move(T target, float speed, Action onPlaced, bool changePosition);
         public void Destroy();
@@ -17,7 +17,7 @@ namespace Scripts.Systems
     public interface ISequencedVisualizer<T>
     {
         public void ChangeMaxLength(int l);
-        public void Hide(int index);
+        public void Hide(bool immediately, int index);
         public void HideAll();
 
         /// <summary>
@@ -105,24 +105,24 @@ namespace Scripts.Systems
 
             return ret;
         }
-
         public void Show()
         {
             objects[lastIndex].Show();
             lastIndex = (lastIndex++) % length;
         }
 
-        public void Hide(int index = -1)
+        public void Hide(bool immediately, int index = -1)
         {
             if (index == -1)
             {
-                objects[lastIndex].Hide();
+                objects[lastIndex].Hide(immediately);
                 lastIndex = (lastIndex--) % length;
                 return;
             }
 
-            objects[index].Hide();
+            objects[index].Hide(immediately);
         }
+     
 
         public void Spawn(T target)
         {
@@ -153,7 +153,7 @@ namespace Scripts.Systems
         {
             for (int i = 0; i < length; i++)
             {
-                objects[i].Hide();
+                objects[i].Hide(false);
             }
         }
     }

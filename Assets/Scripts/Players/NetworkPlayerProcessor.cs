@@ -1,10 +1,13 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using Scripts.Events;
 using Scripts.GameControllers;
 using Scripts.Gestures;
 using Scripts.Players;
 using Scripts.Static.Definitions;
+using Scripts.Weapons;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -21,7 +24,6 @@ namespace Scripts.PlayerLogic
         private bool _isSynchronized;
 
         public PlayerData data => _player.data;
-        public UnityEvent onPoolPrefabs = new UpdateEvent();
         private void Awake()
         {
             _player = GetComponent<Player>();
@@ -43,6 +45,7 @@ namespace Scripts.PlayerLogic
             if (IsPlayer && !IsOwner)
             {
                 _player.InitializePlayer(this.NetworkBehaviourId, new PlayerProperties(RigType.NoRig, AvatarType.Enemy, lastPlayerProperties.character));
+                
             }
 
             if (IsPlayer && IsOwner)
@@ -53,7 +56,7 @@ namespace Scripts.PlayerLogic
                 {
                     PlayerData.local = _player.data;
                 });
-                _player.onPlayerInitialized.AddListener(_player.CreateRecognizer);
+                
                 Recognizer.onSharedFrameBetweenDevices.AddListener((frame) =>
                 {
                     OnLocalClientFrameRecognizedServerRpc(frame, OwnerClientId);
@@ -68,44 +71,27 @@ namespace Scripts.PlayerLogic
             {
                 _player.InitializePlayer(this.NetworkBehaviourId, new PlayerProperties(RigType.NoRig, AvatarType.None, lastPlayerProperties.character));
             }
+            
+            _player.onPlayerInitialized.AddListener(() =>
+            {
+                oldPlayer.gameObject.SetActive(false);
+            });
             if (IsServer)
             {
-                _player.onPlayerInitialized.AddListener(PoolNetworkPrefabs);
-            }
-            oldPlayer.gameObject.SetActive(false);
-        }
-        public void PoolNetworkPrefabs()
-        {
-            // spawn abilities
-            data.abilityController.SpawnWeapons(data.characterController.characterConfigs, this.transform);
-            
-            Dictionary<string, ulong[]> dict = new();
-            foreach (var key in data.abilityController.abilitiesLib.characterAbilities.Keys)
-            {
-                var names = data.abilityController.abilitiesLib.characterAbilities[key].Keys.ToArray();
-                ulong[] ids= new ulong[names.Length];
-            
-                for(int i = 0; i < names.Length; i ++)
-                {
-                    if(data.abilityController.abilitiesLib.characterAbilities[key][names[i]].TryGetNetcodeId(out ulong id))
-                        ids[i] = id;
-                }
-                dict.Add(key, ids);
-            }
-            // say client to spawn characters and abilities
-            PoolNetworkPrefabsClientRpc(JsonUtility.ToJson(dict));
-            onPoolPrefabs?.Invoke();
-            
-        }
-        [ClientRpc] public void PoolNetworkPrefabsClientRpc(string weapons)
-        {
-            if (!IsServer)
-            {
-                _player.data.abilityController.SetSpawnedWeapons(JsonUtility.FromJson<Dictionary<string, ulong[]>>(weapons));
-                onPoolPrefabs?.Invoke();
+                
             }
         }
 
+        [ClientRpc]
+        public void SetWeaponsClientRpc(string spawnedWeaponsData)
+        {
+            if (IsOwner)
+            {
+                var weaponsDict = JsonConvert.DeserializeObject<Dictionary<CharacterType, ulong[]>>(spawnedWeaponsData);
+                var weapons = GetComponentsInChildren<Weapon>();
+                data.abilityController.SetSpawnedWeapons(weaponsDict, weapons);
+            }
+        }
         [ServerRpc]
         public void OnLocalClientFrameRecognizedServerRpc(string frameName, ulong client)
         {
@@ -144,6 +130,25 @@ namespace Scripts.PlayerLogic
             {
                 data.characterController.SetCharacter(characterName);
                 data.abilityController.AddCharacterToInventory(characterName);
+            }
+        }
+        
+        [ClientRpc]
+        public void StartUseAbilitiesClientRpc(ushort[] debugCharacterAbilities)
+        {
+            if (IsOwner)
+            {
+                Debug.Log(
+                    "Самое важное сообщение в твоей жизни [Client rpc] private void StartGameSessionClientRpc(ulong playerId) ");
+                data.abilityController
+                    .AddCharacterToInventory(data.characterController.currentCharacter.name);
+
+                foreach (var VARIABLE in debugCharacterAbilities)
+                {
+                    data.abilityController.AddCharacterToInventory(((CharacterType)VARIABLE).ToString());
+                }
+
+                data.abilityController.UseCharacterAbilities();
             }
         }
     }

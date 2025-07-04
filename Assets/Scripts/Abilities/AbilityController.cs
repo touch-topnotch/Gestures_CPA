@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Characters;
+using Newtonsoft.Json;
 using Scrips.Components;
 using Scripts.Events;
 using Scripts.Gesture_Editor_SDK.Realtime;
@@ -14,6 +15,7 @@ using Scripts.Systems;
 using Scripts.Weapons;
 using Sirenix.Utilities;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Rendering;
@@ -59,9 +61,9 @@ namespace Scripts.Abilities
             }
         }
 
-        public void CreateRecognizer(RecognitionPropertiesConfig config)
+        public void CreateRecognizer(RecognitionPropertiesConfig config, PlayerHands hands)
         {
-            _recognizer = new Recognizer(config);
+            _recognizer = new Recognizer(config, hands);
         }
 
         public void AddCharacterToInventory(string character)
@@ -76,6 +78,7 @@ namespace Scripts.Abilities
         public void UseCharacterAbilities()
         {
             Debug.Log("Start to use next inventory abilities "+Debugger.dictionaryToString(inventory.characterAbilities, false, true));
+            
             StartCoroutine(_recognizer.RecognizeDynamicGesture(inventory.characterAbilities.ToGestureDict(),
                 (e) =>
                 {
@@ -107,8 +110,8 @@ namespace Scripts.Abilities
 
         
         public void SpawnWeapons(List<CharacterData> characterConfigs, Transform parent)
-         {
-            
+        {
+            Debug.Log(Debugger.listToString(characterConfigs, true));
             foreach (var characterData in characterConfigs)
             {
                 var weapons = new Arsenal();
@@ -141,7 +144,7 @@ namespace Scripts.Abilities
                     }
 
                     var spawnedWeapon = Instantiate(prefab).GetComponent<Weapon>();
-                    spawnedWeapon.NetworkObject.Spawn();
+                    spawnedWeapon.NetworkObject.SpawnWithOwnership(parent.GetComponent<NetworkBehaviour>().OwnerClientId);
                     if (!spawnedWeapon.NetworkObject.TrySetParent(parent))
                     {
                         Debug.Log($"Can't set parent for {key}");
@@ -149,12 +152,11 @@ namespace Scripts.Abilities
                     }
                     spawnedWeapon.Initialize(inherited.data, gesturesLib.characterGestures[key]);
                     weapons.AddReplace(spawnedWeapon.abilityName, spawnedWeapon);
-                    
                 }
                 abilitiesLib.characterAbilities.AddReplace(characterData.characterName, weapons);
             }
 
-            var log = "Weapons initialized: ";
+            var log = "Weapons (spawn) initialized: ";
 
             foreach (var VARIABLE in abilitiesLib.characterAbilities)
             {
@@ -164,34 +166,44 @@ namespace Scripts.Abilities
             OnWeaponsInitialized?.Invoke();
          }
 
-        public void SetSpawnedWeapons(Dictionary<string, ulong[]> allSpawnedWeapons)
+        public void SetSpawnedWeapons(Dictionary<CharacterType, ulong[]> dictionary, Weapon[] spawned)
         {
-            foreach (var characterWeapons in allSpawnedWeapons)
+            foreach (var characterWeapons in dictionary)
             {
                 var weapons = new Arsenal();
                 foreach (var weapon_ulong in characterWeapons.Value)
                 {
-                    if(NetworkManager.Singleton.SpawnManager.SpawnedObjects.ContainsKey(weapon_ulong))
+                    Weapon w = null;
+                    foreach (var s in spawned)
+                    {
+                        if (s.NetworkObjectId == weapon_ulong)
+                        {
+                            w = s;
+                        }
+                    }
+                    if(w == null)
                     {
                         Debug.Log($"Weapon with id {weapon_ulong} was not found");
                         continue;
                     }
-                    var nO = NetworkManager.Singleton.SpawnManager.SpawnedObjects[weapon_ulong].GetComponent<Weapon>();
-               
-                    if(!gesturesLib.characterGestures.ContainsKey(nO.name))
+
+                    if(!gesturesLib.characterGestures.ContainsKey(w.abilityName))
                     {
-                        Debug.Log($"Gesture library doesn't contain {nO.name}");
+                        Debug.Log($"Gesture library doesn't contain {w.abilityName}");
                         continue;
                     }
-                    
-                    nO.Initialize(inherited.data, gesturesLib.characterGestures[nO.name]);
-                    weapons.Add(nO.name.Split('_')[0], nO);
+                    w.Initialize(inherited.data, gesturesLib.characterGestures[w.abilityName]);
+                    weapons.Add(w.name.Split('_')[0], w);
                  
                 }
-                abilitiesLib.characterAbilities.AddReplace(characterWeapons.Key, weapons);
+                abilitiesLib.characterAbilities.AddReplace(characterWeapons.Key.ToString(), weapons);
             }
-            Debug.Log("Weapons initialized: " +
-                      Debugger.dictionaryToString(abilitiesLib.characterAbilities, true, true));
+            var log = "Weapons (set) initialized: ";
+            foreach (var VARIABLE in abilitiesLib.characterAbilities)
+            {
+                log += VARIABLE.Key + " contains " + Debugger.dictionaryToString(VARIABLE.Value, false, false) + "; ";
+            }
+            Debug.Log(log);
             OnWeaponsInitialized?.Invoke();
         }
     }

@@ -1,13 +1,17 @@
+using System;
 using Components;
 using Gesture_Editor_SDK.Realtime;
+using ModestTree.Util;
 using Scripts.Events;
 using Scripts.Gestures;
 using Scripts.PlayerLogic;
 using Scripts.Players;
 using Scripts.Static.Definitions;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Rendering;
 
 namespace Scripts.Weapons
 {
@@ -46,9 +50,9 @@ namespace Scripts.Weapons
         [Header("Weapons components")]
         [SerializeField]
         protected WeaponDesign weaponDesign;
-        public WeaponState state { get; private set; } 
-        
-        protected virtual bool invokeAvailable => IsServer || (IsClient && IsOwner);
+        public WeaponState state { get; private set; }
+
+        protected virtual bool invokeAvailable => IsOwner || IsServer;// || (IsClient && IsOwner);
 
         protected bool isSubscribed { get; private set; }
         public override string abilityName => transform.name.Split('_')[0];
@@ -149,7 +153,7 @@ namespace Scripts.Weapons
             if (IsServer)
                 return;
             _unityEvents[eventId]?.Invoke();
-            Debug.Log("CallEventClientRpc(ushort eventId");
+            Debug.Log("CallEventClientRpc(ushort " + eventId + " )");
         }
         [ClientRpc]
         private void CallEventClientRpc(string value, ushort eventId)
@@ -171,16 +175,29 @@ namespace Scripts.Weapons
         {
             _unityParamEvents[eventId]?.Invoke(value);
             CallEventClientRpc(value, eventId);
-            Debug.Log($"CallEventClientRpc(string {value}, ushort eventId");
+            Debug.Log($"CallEventClientRpc(string {value}, ushort "+eventId +")");
         }
-
+        private void CallEventFromServer(ushort eventId)
+        {
+            _unityEvents[eventId]?.Invoke();
+            CallEventClientRpc(eventId);
+            Debug.Log("CallEventServerRpc(ushort eventId)");
+        }
+        private void CallEventFromServer(string value, ushort eventId)
+        {
+            _unityParamEvents[eventId]?.Invoke(value);
+            CallEventClientRpc(value, eventId);
+            Debug.Log($"CallEventClientRpc(string {value}, ushort "+eventId +")");
+        }
         
 
         #endregion
 
         protected virtual void OnInitialized()
         {
+            Debug.Log("protected virtual void OnInitialized()");
         }
+        
         
         private void SubscribeEvents() 
         {
@@ -203,8 +220,8 @@ namespace Scripts.Weapons
             {
                 for (ushort i = 0; i < _weaponEvents.Length; i++)
                 {
-               
-                    _weaponEvents[i] = new WeaponEvent(_unityEvents[i], CallEventServerRpc, i, invokeAvailable);
+
+                    _weaponEvents[i] = new WeaponEvent(_unityEvents[i], IsServer ? CallEventFromServer : CallEventServerRpc, i, invokeAvailable);
                     if (IsClient)
                     {
                         _unityEvents[i].AddListener(weaponDesign.actions[i]);
@@ -213,7 +230,7 @@ namespace Scripts.Weapons
 
                 for (ushort i = 0; i < _weaponParamEvents.Length; i++)
                 {
-                    _weaponParamEvents[i] = new WeaponEvent<string>(_unityParamEvents[i], CallEventServerRpc, i, invokeAvailable);
+                    _weaponParamEvents[i] = new WeaponEvent<string>(_unityParamEvents[i], IsServer ? CallEventFromServer : CallEventServerRpc, i, invokeAvailable);
                     if (IsClient)
                     {
                         _unityParamEvents[i].AddListener(weaponDesign.paramActions[i]);
@@ -249,15 +266,34 @@ namespace Scripts.Weapons
             isSubscribed = true;
         }
 
-        
-    
-        public override void Initialize(PlayerData data, DynamicGesture gesture)
+        public override void OnNetworkSpawn()
         {
-            base.Initialize(data, gesture);
+            transform.name = abilityName+ "_"+ NetworkObjectId;
             SubscribeEvents();
-            weaponDesign.playerData = data;
+            Debug.Log("Events of " + transform.name + " subscribed");
+        }
+
+        public override void OnNetworkObjectParentChanged(NetworkObject parentNetworkObject)
+        {
+            if (parentNetworkObject != null &&parentNetworkObject.GetComponent<Player>())
+            {
+                playerData = transform.parent.GetComponent<Player>().data;
+                weaponDesign.playerData = playerData;
+            }
+            base.OnNetworkObjectParentChanged(parentNetworkObject);
             OnInitialized();
         }
+
+  
+
+        public override void Initialize(PlayerData data, DynamicGesture gesture)
+        {
+            weaponDesign.playerData = data;
+            base.Initialize(data, gesture);
+        }
+        
+
+      
 
         public override void ReadyToBeRecognized()
         {
@@ -273,7 +309,7 @@ namespace Scripts.Weapons
             GestureCastedEvent?.Invoke();
         }
 
-        public override UnityEvent AbilityReleasedEvent { get; set; }
+        public sealed override UnityEvent AbilityReleasedEvent { get;  set; }
 
         public override void AddMissingComponents()
         {

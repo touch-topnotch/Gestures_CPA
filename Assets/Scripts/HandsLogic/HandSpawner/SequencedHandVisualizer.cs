@@ -43,7 +43,7 @@ namespace Scripts.HandsLogic
                     o.transform.name = "Sequenced_Hand_R (" + id + ")";
                     return o.GetComponent<HandMesh>();
                 });
-            ManipulateAll(e => e.Hide());
+            ManipulateAll(e => e.Hide(true));
         }
 
         public void SwitchManipulation(FrameData target,
@@ -57,18 +57,21 @@ namespace Scripts.HandsLogic
         }
 
         public void ChangeMaxLength(int l) => TwoHandsManipulation((e) => { e.ChangeMaxLength(l); });
-
-        public void Hide(int index) => TwoHandsManipulation((e) => { e.Hide(index); });
+      
+        public void Hide(bool immediately, int index) => TwoHandsManipulation((e) => { e.Hide(immediately, index); });
 
         public void HideAll() => TwoHandsManipulation((e) => { e.HideAll(); });
 
         public void Spawn(FrameData target) =>
             SwitchManipulation(target, (visualizer, data) => { visualizer.Spawn(data); });
 
+
         public void ShowHands()
-        {
+        {          
+            Debug.Log("  public void ShowHands()");
             leftHandVisualizer.Show();
             rightHandVisualizer.Show();
+
         }
 
         public void Override(FrameData target, int index = 0) =>

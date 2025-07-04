@@ -38,7 +38,7 @@ namespace Scripts.HandsLogic
         [SerializeField] private AnimationCurve handMovementCurve;
         public Material HandMaterial
         {
-            get => _meshRenderer.sharedMaterials[1];
+            get => _meshRenderer.materials[1];
             set
             {
                 _materials[1] = value;
@@ -170,10 +170,17 @@ namespace Scripts.HandsLogic
             ChangeColor(new Color(0.6f, 0.6f, 0.6f, 0.6f), HandShaderProps.EdgeColor);
         }
 
-
-        public void Hide()
+        public void Hide(bool immediately)
         {
-            gameObject.SetActive(false);
+            if (immediately)
+                HideImmediately();
+            else
+                HideTween();
+        }
+
+
+        public void HideTween()
+        {
             ChangeColorForProps(Color.clear, HandShaderProps.AllColors, new ColorParams(0, 1, false), prop =>
             {
                 ChangeColor(Color.clear, prop);
@@ -181,12 +188,16 @@ namespace Scripts.HandsLogic
                 this.gameObject.SetActive(false);
             });
         }
+        public void HideImmediately()
+        {
+            this.gameObject.SetActive(false);
+        }
 
         public void Replace(BonesData target)
         {
             if (!target.Exists())
             {
-                Hide();
+                HideImmediately();
                 return;
             }
 
