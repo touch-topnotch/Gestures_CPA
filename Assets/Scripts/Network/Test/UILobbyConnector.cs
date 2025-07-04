@@ -26,7 +26,7 @@ namespace Network.Test
 
         private void Awake()
         {
-            if (CreateOnAwake || Application.platform == RuntimePlatform.Android)
+            if (CreateOnAwake)
             {
                 Global.eventManager.onServicesInitilalised += CreateLobby;
             }

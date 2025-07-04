@@ -46,7 +46,7 @@ namespace Scripts
         
         public override void OnFrameRecognized(string frameName)
         {
-            Debug.Log(" public override void OnFrameRecognized(string frameName)");
+            Debug.Log(" public override void OnFrameRecognized(string "+ frameName+")");
             state = GestureMapper.IndexOfName(frameName);
         
             switch (state)
@@ -90,7 +90,7 @@ namespace Scripts
         }
         
         
-        public void Update()
+        public override void Update()
         {
             if (state <= 0)
                 return;
@@ -203,5 +203,7 @@ namespace Scripts
             
             _explosionObject = transform.Find("EnergyExplosion").gameObject;
         }
+        
+        
     }
 }

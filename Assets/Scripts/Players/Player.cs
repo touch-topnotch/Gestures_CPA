@@ -260,5 +260,10 @@ namespace Scripts.PlayerLogic
             characterController.characterChangedEvent.AddListener(EventLogger.OnCharacterChanged);
         }
 
+        public PlayerData GetRawPlayerData()
+        {
+                return new PlayerData(this, anchors, hands, abilityController, characterController, null);
+            
+        }
     }
 }
