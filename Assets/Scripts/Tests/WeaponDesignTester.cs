@@ -1,7 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿#if UNITY_EDITOR
 using Components;
-using Cysharp.Threading.Tasks.Triggers;
-using Scripts.Gestures;
 using Scripts.PlayerLogic;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -14,20 +12,26 @@ namespace Scripts.Tests
         public Player debugPLayer;
         public int frameIndex;
         private WeaponDesign _weaponDesign;
-        [SerializeField][Tooltip("The UPDATE method of your WD should be PUBLIC")]
+        [SerializeField][Tooltip("The UPDATE method of your WD should be overriden")]
         private bool simulateUpdate = false;
 
         [Button("OnFrameRecognized", ButtonSizes.Medium)]
         public void TestOnFrameRecognized()
         {
             _weaponDesign ??= GetComponent<WeaponDesign>();
-            _weaponDesign.playerData = debugPLayer.GetRawPlayerData();
+            _weaponDesign.playerData ??= debugPLayer.GetRawPlayerData();
             _weaponDesign.OnFrameRecognized(name.Split('_')[0] + '_' + frameIndex);
         }
         [Button("Next Frame", ButtonSizes.Medium)]
         public void TestOnNextFrameRecognized()
         {
             ++frameIndex;
+            TestOnFrameRecognized();
+        }
+        [Button("Previous Frame", ButtonSizes.Medium)]
+        public void TestOnPrevFrameRecognized()
+        {
+            --frameIndex;
             TestOnFrameRecognized();
         }
         
@@ -98,7 +102,7 @@ namespace Scripts.Tests
 
         private void Update()
         {
-            if (simulateUpdate)
+            if (simulateUpdate && _weaponDesign && _weaponDesign.playerData != null)
             {
                 _weaponDesign.Update();
             }
@@ -106,3 +110,4 @@ namespace Scripts.Tests
         
     }
 }
+#endif
