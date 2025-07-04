@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.VFX;
 #if UNITY_EDITOR
@@ -34,7 +35,7 @@ namespace Scripts
         public List<VFXProperty> properties = new List<VFXProperty>();
         public VisualEffect vfx;
         public string AddNextComponents = "";
-
+        [Button("Add Bindings")]
         public void AddBindings()
         {
             vfx ??= GetComponent<VisualEffect>();
@@ -64,6 +65,22 @@ namespace Scripts
             }
         }
 
+        [Button("Add missing components")]
+
+        public void AddMissingComponents()
+        {
+            foreach (var VARIABLE in properties)
+            {
+                if (VARIABLE.value == null)
+                {
+                    var t = GameObject.Find(VARIABLE.name);
+                    if (t == null)
+                        continue;
+                    
+                    VARIABLE.value = t.transform;
+                }
+            }
+        }
         public void Update()
         {
             if (properties.Count == 0)

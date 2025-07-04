@@ -869,6 +869,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   trackedHead: {fileID: 2667102071189451076}
   trackedTime: 1
+  onHeadInteraction:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1891049933633322038
 GameObject:
   m_ObjectHideFlags: 0
@@ -1985,7 +1988,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0924bcaa9eb50df458a783ae0e2b59f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InteractionManager: {fileID: 6150985093310750248}
+  m_InteractionManager: {fileID: 0}
   m_InteractionLayerMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -2944,6 +2947,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc94eaa24398eec43bf379949badc181, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _inherited: {fileID: 0}
   positionSpeed: 16.86
   m_UseOptimizedControls: 1
   m_PlayerHands: {fileID: 0}
@@ -3932,7 +3936,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0924bcaa9eb50df458a783ae0e2b59f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InteractionManager: {fileID: 6150985093310750248}
+  m_InteractionManager: {fileID: 0}
   m_InteractionLayerMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -5459,7 +5463,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4748640837830770101}
   - component: {fileID: 6635868049377450245}
-  - component: {fileID: 6150985093310750248}
   - component: {fileID: 3189782340887037208}
   - component: {fileID: 4728930324103167599}
   - component: {fileID: 418426362746354189}
@@ -5503,20 +5506,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ActionAssets:
   - {fileID: -944628639613478452, guid: fb77024b2f83a6b40bf077b9bcd28144, type: 3}
---- !u!114 &6150985093310750248
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8137668375342577582}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83e4e6cca11330d4088d729ab4fc9d9f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_StartingHoverFilters: []
-  m_StartingSelectFilters: []
 --- !u!114 &3189782340887037208
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5604,6 +5593,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdaee7a0b0c640b38587ca39ac810195, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _inherited: {fileID: 0}
   type: 2
   anchors: {fileID: 5387737772972339220}
   _headInteraction: {fileID: 1017968581249551198}
@@ -5620,7 +5610,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8137668375342577582}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 48bbae9064fb481eb854bcc25c3158bd, type: 3}
   m_Name: 
@@ -5748,6 +5738,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8d73b03b4ee49a5a73d8feafdfe2a7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _inherited: {fileID: 0}
   moveOnAwake: 0
   parentMoveController: {fileID: 5892623623397422106}
   gravity: 0.2

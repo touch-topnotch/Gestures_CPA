@@ -26,8 +26,11 @@ using System;
 using Scripts.Movements;
 using Scripts.PlayerLogic;
 using Scripts.Systems;
+using Scripts.XR;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.UI;
 using Node = UnityEngine.XR.XRNode;
 
 namespace Scripts.Rigs
@@ -49,6 +52,12 @@ namespace Scripts.Rigs
         [Range(0.1f, 10f)] [SerializeField] [ShowIf("_lerpBody")]
         private float _bodyLerpSpeed = 2f;
 
+        [SerializeField] private CustomXRPokeInteractor _leftPokeInteractor;
+        
+        [SerializeField] private CustomXRPokeInteractor _rightPokeInteractor;
+        
+        // interaction manager
+        [SerializeField] private CustomXRInteractionManager _interactionManager;
         public override void Initialize()
         {
             base.Initialize();
@@ -65,6 +74,11 @@ namespace Scripts.Rigs
                     }
                 }
             });
+            
+
+            _interactionManager.Initialize();
+            _leftPokeInteractor.Initialize();
+            _rightPokeInteractor.Initialize();
         }
         protected virtual void FixedUpdate()
         {
