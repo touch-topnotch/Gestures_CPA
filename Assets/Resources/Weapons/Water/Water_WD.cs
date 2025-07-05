@@ -65,6 +65,9 @@ namespace Scripts
 
         public override void OnAbilityDestroyed()
         {
+            _controlState = ControlState.Deactivated;
+            _waterSpline.StopWaterBend();
+            _waterHead.SetActive(false);
         }
 
         public override void OnFrameRecognized(string frameName)
