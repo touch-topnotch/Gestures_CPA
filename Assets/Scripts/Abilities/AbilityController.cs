@@ -31,6 +31,8 @@ namespace Scripts.Abilities
         public AbilitiesLibrary abilitiesLib;
         public GesturesLibrary gesturesLib;
         public UnityEvent OnWeaponsInitialized = new UnityEvent();
+        [SerializeField] private AnimationCurve supportiveHandsCurve;
+        [SerializeField] private AnimationCurve enemyHandsCurve;
 
         private FrameRecognized OnAbilityFrameRecognized;
         private GestureRecognized OnGestureRecognized;
@@ -63,7 +65,7 @@ namespace Scripts.Abilities
 
         public void CreateRecognizer(RecognitionPropertiesConfig config, PlayerHands hands)
         {
-            _recognizer = new Recognizer(config, hands);
+            _recognizer = new Recognizer(config, hands, supportiveHandsCurve);
         }
 
         public void AddCharacterToInventory(string character)
@@ -99,9 +101,7 @@ namespace Scripts.Abilities
                 if (gesture.TryGetFrameData(name, out var frame))
                 {
                     Debug.Log("Move hands");
-                    hands.MoveHands(frame.ParentedFrame(inherited.data.anchors.Body), 4,
-                        () => { Debug.Log("Frame Simulated!"); },
-                        true);
+                    hands.MoveHands(frame.ParentedFrame(inherited.data.anchors.Body),  new HandMoveProps(4, ()=>{Debug.Log("Frame Simulated!"); }, true, enemyHandsCurve));
                 }
             }
         }

@@ -11,9 +11,6 @@ GameObject:
   - component: {fileID: 5922409495568453439}
   - component: {fileID: 6934817223367666101}
   - component: {fileID: 6101549131428172911}
-  - component: {fileID: 3589411743804031242}
-  - component: {fileID: 2782639044834837091}
-  - component: {fileID: 6361011814518611969}
   - component: {fileID: 1460916720016913889}
   m_Layer: 0
   m_Name: Lighting_Weapon
@@ -40,7 +37,7 @@ Transform:
   - {fileID: 6578129881786605900}
   - {fileID: 6386774159174476738}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6934817223367666101
 MonoBehaviour:
@@ -58,7 +55,7 @@ MonoBehaviour:
   damage: 50
   lifeTime: 6
   orbSpeed: 2
-  orbBetweenHandsSpeed: 10
+  orbBetweenHandsSpeed: 42.3
   orb: {fileID: 1513608888069650308}
 --- !u!114 &6101549131428172911
 MonoBehaviour:
@@ -90,8 +87,8 @@ MonoBehaviour:
     - Name: paramActions
       Entry: 6
       Data: 
-  audioProcessor: {fileID: 2782639044834837091}
-  vfxProcessor: {fileID: 6361011814518611969}
+  audioProcessor: {fileID: 0}
+  vfxProcessor: {fileID: 0}
   _explosionObject: {fileID: 6392737549971435810}
   arc: {fileID: 8756093444836569815}
   orb: {fileID: 7032281320514241081}
@@ -101,245 +98,12 @@ MonoBehaviour:
   orbBetweenHandsSpeed: 7
   rotationSpeed: 3.21
   _explosionDuration: 0.3
---- !u!82 &3589411743804031242
-AudioSource:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 593491053053476456}
-  m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 0
-  m_Volume: 1
-  m_Pitch: 1
-  Loop: 0
-  Mute: 0
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 10
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
---- !u!114 &2782639044834837091
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 593491053053476456}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 120b55196a0b42a2995cbd4dc13e0f94, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects: []
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes:
-    - Name: itemsDict
-      Entry: 7
-      Data: 0|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[UnityEngine.AudioClip,
-        UnityEngine.AudioModule]], mscorlib
-    - Name: comparer
-      Entry: 7
-      Data: 1|System.Collections.Generic.GenericEqualityComparer`1[[System.String,
-        mscorlib]], mscorlib
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: listOfItemsDict
-      Entry: 7
-      Data: 2|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Collections.Generic.List`1[[UnityEngine.AudioClip,
-        UnityEngine.AudioModule]], mscorlib]], mscorlib
-    - Name: comparer
-      Entry: 9
-      Data: 1
-    - Name: 
-      Entry: 12
-      Data: 1
-    - Name: 
-      Entry: 7
-      Data: 
-    - Name: $k
-      Entry: 1
-      Data: Frames
-    - Name: $v
-      Entry: 7
-      Data: 3|System.Collections.Generic.List`1[[UnityEngine.AudioClip, UnityEngine.AudioModule]],
-        mscorlib
-    - Name: 
-      Entry: 12
-      Data: 2
-    - Name: 
-      Entry: 6
-      Data: 
-    - Name: 
-      Entry: 6
-      Data: 
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-  _audioSource: {fileID: 3589411743804031242}
---- !u!114 &6361011814518611969
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 593491053053476456}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4f5f7402d4e42ed84b7ab052baf68b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects: []
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes:
-    - Name: itemsDict
-      Entry: 7
-      Data: 0|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[UnityEngine.GameObject,
-        UnityEngine.CoreModule]], mscorlib
-    - Name: comparer
-      Entry: 7
-      Data: 1|System.Collections.Generic.GenericEqualityComparer`1[[System.String,
-        mscorlib]], mscorlib
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
-    - Name: listOfItemsDict
-      Entry: 7
-      Data: 2|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Collections.Generic.List`1[[UnityEngine.GameObject,
-        UnityEngine.CoreModule]], mscorlib]], mscorlib
-    - Name: comparer
-      Entry: 9
-      Data: 1
-    - Name: 
-      Entry: 12
-      Data: 0
-    - Name: 
-      Entry: 13
-      Data: 
-    - Name: 
-      Entry: 8
-      Data: 
+  source: {fileID: 837650601417708072}
+  clipFrames:
+  - {fileID: 8300000, guid: 466eb8440abd7fc4f9969cab2a0dfe6d, type: 3}
+  - {fileID: 8300000, guid: 2710b98c95be6ea419923edb5f45080b, type: 3}
+  - {fileID: 8300000, guid: 1f6654f13f7864531be5709f31426512, type: 3}
+  arcAmbient: {fileID: 8300000, guid: 98f351032bd2f7d409edb491873ad38e, type: 3}
 --- !u!114 &1460916720016913889
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -587,13 +351,14 @@ GameObject:
   - component: {fileID: 3005251023336451860}
   - component: {fileID: 6000397854012440946}
   - component: {fileID: 7032281320514241081}
+  - component: {fileID: 837650601417708072}
   m_Layer: 0
   m_Name: ElectricOrb VFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &3005251023336451860
 Transform:
   m_ObjectHideFlags: 0
@@ -617,7 +382,7 @@ VFXRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8813216037597574716}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -676,7 +441,7 @@ VisualEffect:
       - m_Value: 0.38
         m_Name: OrbSize
         m_Overridden: 1
-      - m_Value: 1
+      - m_Value: 0.39915675
         m_Name: Power
         m_Overridden: 1
     m_Vector2f:
@@ -702,6 +467,129 @@ VisualEffect:
       m_Array: []
     m_Bool:
       m_Array: []
+--- !u!82 &837650601417708072
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8813216037597574716}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 98f351032bd2f7d409edb491873ad38e, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 0.456
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 10
+  Pan2D: 0
+  rolloffMode: 2
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0.08196793
+      value: 0.7305298
+      inSlope: -10.0039835
+      outSlope: -10.0039835
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.18196793
+      value: 0.23052979
+      inSlope: -2.5009959
+      outSlope: -2.5009959
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.38196793
+      value: 0
+      inSlope: -0.08861123
+      outSlope: -0.08861123
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.37672564
+    - serializedVersion: 3
+      time: 0.7789772
+      value: 0
+      inSlope: -0.15631224
+      outSlope: -0.15631224
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.9819679
+      value: 0
+      inSlope: -0.10003988
+      outSlope: -0.10003988
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &9046794892908550430
 GameObject:
   m_ObjectHideFlags: 0
@@ -803,7 +691,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1800289150216900555
 Transform:
   m_ObjectHideFlags: 0
@@ -812,7 +700,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9116414227980206730}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.19395, y: 1.5395, z: 0.34460002}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -855,7 +743,7 @@ VisualEffect:
       - m_Value: 1
         m_Name: Line Smoothness
         m_Overridden: 1
-      - m_Value: 1
+      - m_Value: 0.99633676
         m_Name: Power
         m_Overridden: 1
     m_Vector2f:
@@ -874,34 +762,34 @@ VisualEffect:
       - m_Value: {x: 0.030938307, y: 1.1726384, z: 0.5989035}
         m_Name: Pose C
         m_Overridden: 1
-      - m_Value: {x: -0.5225873, y: 1.4328301, z: 6.5014033}
+      - m_Value: {x: -0.2375873, y: 1.7358302, z: 0.42140344}
         m_Name: L_IndexTip
         m_Overridden: 1
-      - m_Value: {x: -0.49395767, y: 1.4214356, z: 6.4371395}
+      - m_Value: {x: -0.20895767, y: 1.7244357, z: 0.35713938}
         m_Name: L_ThumbTip
         m_Overridden: 1
-      - m_Value: {x: -0.555182, y: 1.4220119, z: 6.50413}
+      - m_Value: {x: -0.27018198, y: 1.725012, z: 0.42412993}
         m_Name: L_MiddleTip
         m_Overridden: 1
-      - m_Value: {x: -0.57806504, y: 1.42556, z: 6.491199}
+      - m_Value: {x: -0.29306507, y: 1.7285601, z: 0.41119903}
         m_Name: L_RingTip
         m_Overridden: 1
-      - m_Value: {x: -0.6049396, y: 1.4325608, z: 6.465867}
+      - m_Value: {x: -0.31993958, y: 1.7355609, z: 0.385867}
         m_Name: L_LittleTip
         m_Overridden: 1
-      - m_Value: {x: -0.5175873, y: 1.2561699, z: 6.4954033}
+      - m_Value: {x: -0.09058729, y: 1.3431698, z: 0.46540344}
         m_Name: R_IndexTip
         m_Overridden: 1
-      - m_Value: {x: -0.5999396, y: 1.2564392, z: 6.459867}
+      - m_Value: {x: -0.17293958, y: 1.3434391, z: 0.42986697}
         m_Name: R_LittleTip
         m_Overridden: 1
-      - m_Value: {x: -0.550182, y: 1.2669882, z: 6.49813}
+      - m_Value: {x: -0.12318198, y: 1.353988, z: 0.46812993}
         m_Name: R_MiddleTip
         m_Overridden: 1
-      - m_Value: {x: -0.57306504, y: 1.26344, z: 6.485199}
+      - m_Value: {x: -0.14606509, y: 1.3504399, z: 0.45519903}
         m_Name: R_RingTip
         m_Overridden: 1
-      - m_Value: {x: -0.48851672, y: 1.2677326, z: 6.430862}
+      - m_Value: {x: -0.061516725, y: 1.3547325, z: 0.40086195}
         m_Name: R_ThumbTip
         m_Overridden: 1
       - m_Value: {x: -0.005, y: 1.349, z: 0.434}
@@ -916,7 +804,7 @@ VisualEffect:
       - m_Value: {x: 0, y: 0, z: 0}
         m_Name: New Position_position
         m_Overridden: 0
-      - m_Value: {x: -8.831833, y: 1.4854498, z: -9.801308}
+      - m_Value: {x: 0, y: 0, z: 0}
         m_Name: EnergyOrbPosition
         m_Overridden: 1
     m_Vector4f:
@@ -958,7 +846,7 @@ VFXRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9116414227980206730}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1

@@ -262,7 +262,7 @@ namespace Scripts.Weapons
             _Activated.AddListener(() => { state = WeaponState.Activated; });
             _Deactivated.AddListener(() => { state = WeaponState.Deactivated; });
             _AbilityDestroyed.AddListener(() => { state = WeaponState.Destroyed;});
-            _AbilityDestroyed.AddListener( () =>{ AbilityReleasedEvent.Invoke(); });
+            _AbilityDestroyed.AddListener( () =>{ AbilityReleasedEvent?.Invoke(); });
             isSubscribed = true;
         }
 

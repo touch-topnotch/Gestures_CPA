@@ -11,6 +11,7 @@ using Scripts.Static;
 using Scripts.Systems;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.XR.Hands;
 
 namespace Scripts.HandsLogic
 {
@@ -19,8 +20,19 @@ namespace Scripts.HandsLogic
         left,
         right
     }
+    public interface IHandInteraction
+    {
+        Vector3 positionOffset { get; set; }
+        Quaternion rotationOffset { get; set; }
+        
+        void UpdateJoint(XRHandJointID index, in Vector3 position);
+        void UpdateJoint(XRHandJointID index, in Quaternion rotation);
+        void UpdateJoint(int handMeshId, in Vector3 position);
+        void UpdateJoint(int handMeshId, in Quaternion rotation);
+        void UpdateJoints(in Quaternion[] rotation);
+    }
 
-    public class HandMesh : MonoBehaviour, IQueueVisualised<BonesData>, IColorable
+    public class HandMesh : MonoBehaviour, IQueueVisualised<BonesData>, IColorable, IHandInteraction
     {
         private enum HandMaterialType
         {
@@ -28,14 +40,21 @@ namespace Scripts.HandsLogic
             Ghost
         }
 
-        [Header("Types")] [SerializeField] private HandMaterialType _handMaterialType;
+        [Header("Settings")] [SerializeField][Range(0f, 100f)] private float positionSpeed;
+        [SerializeField] [Range(0, 100f)] private float rotationSpeed;
+        [Header("Types")]
+        [SerializeField] private HandMaterialType _handMaterialType;
         [SerializeField] private HandType _handType;
-        [Space] [Header("Transforms")] public Transform grabPoint;
+        [Space] [Header("Transforms")] 
+        public Transform grabPoint;
         public Transform palmCenter;
         public Transform[] points;
 
         [SerializeField] private List<Material> _materials = new List<Material>();
-        [SerializeField] private AnimationCurve handMovementCurve;
+        public static readonly int[] XRHandJointIdToCustom = new[]         // this array converts XRHandJointID to our metrics
+            { 0, 16, 22, 23, 24, 25, 1, 2, 3, 4, 5, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21, 6, 7, 8, 9, 10 };
+        public static readonly int[] CustomToXRHandJointId = new[]        // this array converts our to XRHandJointID metrics
+            { 0, 6, 7, 8, 9, 10, 21, 22, 23, 24, 25, 11, 12, 13, 14, 15, 1, 16, 17, 18, 19, 20, 2, 3, 4, 5 };
         public Material HandMaterial
         {
             get => _meshRenderer.materials[1];
@@ -55,13 +74,11 @@ namespace Scripts.HandsLogic
         private UpdateEvent onUpdate => Global.updateEvent;
 
         private bool _isPlaced;
-        private Action _onPlaced;
-        private float _speed;
         private float _progress;
         private bool _isMoved;
         private BonesData _target;
         private Tween _tween;
-        private bool _changePosition;
+        private HandMoveProps _lastProps;
 
 #if UNITY_EDITOR
         [Button("Add missing components")]
@@ -117,49 +134,36 @@ namespace Scripts.HandsLogic
 
         private void MoveHand()
         {
-            _progress += Time.deltaTime * _speed;
-            if (_isPlaced)
-            {
-                _progress = 0;
-                return;
-            }
-                
-            
+          
+
             if (_target == null || _target.rotations == null || _target.rotations?.Length != 26)
             {
-                _onPlaced = null;
-                StopMoveHand();
+               
                 return;
             }
-
-            var dist = Vector3.Distance(points[0].localPosition, _target.rootPos);
-            var a1 = Quaternion.Angle(points[0].localRotation, _target.rotations[0]);
-            var a2 = Quaternion.Angle(points[13].localRotation, _target.rotations[13]);
-            if (a1 < 0.001f && a2 < 0.001f)
+            _progress += Time.deltaTime * _lastProps.speed;
+            if (_progress > 1)
             {
-                if (!_changePosition || dist < 0.05f) 
-                {
-                    StopMoveHand();
-                }
+                _isPlaced = true;
+                _progress = 1;
             }
-            if (_changePosition)
-                points[0].localPosition =
-                    Vector3.Lerp(points[0].localPosition, _target.rootPos, handMovementCurve.Evaluate(_progress));
 
-            for (int i = 0; i < points.Length; i++)
+            if (_lastProps.changePosition)
+                points[0].localPosition = Vector3.Lerp(points[0].localPosition, _target.rootPos + positionOffset,
+                    _lastProps.animationCurve.Evaluate(_progress));
+            for (int i = 0; i < 26; i++)
             {
-                points[i].localRotation =
-                    Quaternion.Lerp(points[i].localRotation, _target.rotations[i],handMovementCurve.Evaluate(_progress));
+                points[i].localRotation = Quaternion.Lerp(points[i].localRotation,
+                    _target.rotations[i] * rotationOffset, _lastProps.animationCurve.Evaluate(_progress));
             }
         }
 
 
         private void StopMoveHand()
         {
-            _progress = 0;
-            _onPlaced?.Invoke();
+            _progress = 0; 
+            _lastProps.onPlaced?.Invoke();
             _isPlaced = true;
-            onUpdate.RemoveListener(MoveHand);
         }
 
         public bool IsActive() => gameObject.activeSelf;
@@ -207,17 +211,14 @@ namespace Scripts.HandsLogic
                 points[i].localRotation = target.rotations[i];
             }
         }
-
-        public void Move(BonesData target, float speed, Action onPlaced, bool changePosition = true)
+        public void Move(BonesData target, HandMoveProps props)
         {
             if (target == null || target.rotations == null || target.rotations.Length == 0)
                 return;
             _target = target;
-            _speed = speed;
-            _onPlaced = onPlaced;
-            _changePosition = changePosition;
             _isPlaced = false;
             _progress = 0;
+            _lastProps = props;
             if (!_isMoved)
                 onUpdate.AddListener(MoveHand);
         }
@@ -270,6 +271,44 @@ namespace Scripts.HandsLogic
 
             HandMaterial.DOColor(color, pColorParams.id, 1 / pColorParams.speed).onComplete =
                 onComplete;
+        }
+
+        public bool inSameLocation(in BonesData target)
+        {
+            var dist = Vector3.Distance(points[0].localPosition, target.rootPos);
+            var a1 = Quaternion.Angle(points[0].localRotation, target.rotations[0]);
+            var a2 = Quaternion.Angle(points[13].localRotation, target.rotations[13]);
+            var a3 = Quaternion.Angle(points[24].localRotation, target.rotations[24]);
+            if (a1 < 0.001f && a2 < 0.001f && a3 < 0.001f)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public Vector3 positionOffset { get; set; } = Vector3.zero;
+        public Quaternion rotationOffset { get; set; } = Quaternion.identity;
+        public void UpdateJoint(XRHandJointID index, in Vector3 position)=>
+            UpdateJoint(XRHandJointIdToCustom[index.ToIndex()], position);
+        public void UpdateJoint(XRHandJointID index, in Quaternion rotation) =>
+            UpdateJoint(XRHandJointIdToCustom[index.ToIndex()], rotation);
+        public void UpdateJoint(int handMeshId, in Vector3 position)
+        { 
+            points[handMeshId].localPosition = Vector3.Lerp( points[handMeshId].localPosition, positionOffset + position, Time.deltaTime*positionSpeed);
+        }
+
+        public void UpdateJoint(int handMeshId, in Quaternion rotation)
+        {
+            points[handMeshId].localRotation = Quaternion.Lerp(points[handMeshId].localRotation,
+                rotation * rotationOffset, Time.deltaTime * rotationSpeed);
+        }
+        public void UpdateJoints(in Quaternion[] rotation)
+        {
+            
+            for(int i = 0; i < rotation.Length; i ++)
+            {
+                UpdateJoint(i, rotation[i]);
+            }
         }
     }
 }

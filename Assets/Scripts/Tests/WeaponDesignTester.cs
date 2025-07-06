@@ -1,4 +1,4 @@
-﻿#if UNITY_EDITOR
+﻿
 using Components;
 using Scripts.PlayerLogic;
 using Sirenix.OdinInspector;
@@ -110,4 +110,3 @@ namespace Scripts.Tests
         
     }
 }
-#endif

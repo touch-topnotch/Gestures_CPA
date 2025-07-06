@@ -4,13 +4,27 @@ using UnityEngine;
 
 namespace Scripts.Systems
 {
+    public struct HandMoveProps
+    {
+        public readonly float speed;
+        public readonly Action onPlaced;
+        public readonly bool changePosition;
+        public readonly AnimationCurve animationCurve;
+        public HandMoveProps(float speed, Action onPlaced, bool changePosition, AnimationCurve animationCurve)
+        {
+            this.speed = speed;
+            this.onPlaced = onPlaced;
+            this.changePosition = changePosition;
+            this.animationCurve = animationCurve;
+        }
+    }
     public interface IQueueVisualised<T>
     {
         public bool IsActive();
         public void Show();
         public void Hide(bool immediately);
         public void Replace(T target);
-        public void Move(T target, float speed, Action onPlaced, bool changePosition);
+        public void Move(T target, HandMoveProps props);
         public void Destroy();
     }
 
@@ -27,8 +41,8 @@ namespace Scripts.Systems
 
         public void Override(T target, int index);
 
-        public void SpawnAndMove(T target, float speed, Action onPlaced);
-        public void Move(T target, float speed, Action onPlaced, int index);
+        public void SpawnAndMove(T target, HandMoveProps props);
+        public void Move(T target, HandMoveProps props,  int index);
     }
 
     public class SequencedVisualizer<T> : ISequencedVisualizer<T>
@@ -136,17 +150,17 @@ namespace Scripts.Systems
             objects[index].Replace(target);
         }
 
-        public void SpawnAndMove(T target, float speed, Action onPlaced)
+        public void SpawnAndMove(T target, HandMoveProps props)
         {
             Show();
-            Move(target, speed, onPlaced);
+            Move(target, props);
         }
 
 
-        public void Move(T target, float speed, Action onPlaced, int index = -1)
+        public void Move(T target, HandMoveProps props, int index = -1)
         {
             if (index == -1) index = lastIndex;
-            objects[index].Move(target, speed, onPlaced, true);
+            objects[index].Move(target, props);
         }
 
         public void HideAll()
