@@ -17,6 +17,7 @@ namespace Scripts.Players
     {
         public PlayerMode playerMode => owner.playerMode;
         public PlayerProperties properties => owner.playerProperties;
+        public Rig rig => owner.rig;
         
         public readonly PlayerHands hands;
 

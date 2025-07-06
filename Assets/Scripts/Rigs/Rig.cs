@@ -1,13 +1,9 @@
-using Cysharp.Threading.Tasks.Triggers;
 using Scrips.Components;
-using Scripts.Events;
 using Scripts.Gestures;
 using Scripts.HandsLogic;
 using Scripts.Movements;
 using Scripts.Static.Definitions;
 using Scripts.Systems;
-using Sirenix.OdinInspector;
-using UnityEditor;
 using UnityEngine;
 
 namespace Scripts.PlayerLogic
@@ -25,7 +21,6 @@ namespace Scripts.PlayerLogic
         public HeadInteraction headInteraction => _headInteraction;
 
         public RecognitionPropertiesConfig RecognitionPropertiesConfig => _recognitionProperties;
-
         protected void OnValidate()
         {
             if (anchors && anchors.Head)

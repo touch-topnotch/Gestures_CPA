@@ -3,28 +3,26 @@ using System.Collections;
 using System.Collections.Generic;
 using Scripts.Events;
 using Scripts.Gestures;
+using Scripts.HandsLogic;
 using Scripts.Static.Definitions;
 using Scripts.Static.Extensions;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Scripts.PlayerLogic
 {
     public class PCRig : Rig
     {
-        [Serializable]
-        private struct PCHandsProperties
-        {
-            [Range(0.01f, 10f)] public float delayOnFrame;
-            [Range(0.01f, 6f)] public float handSpeed;
-        }
-
-        [SerializeField] private PCHandsProperties handsProperties;
-        [SerializeField] protected FirstPersonController _personController;
+        [SerializeField][BoxGroup("Settings")]
+        [Range(0.01f, 10f)] public float delayOnFrame;
+        [SerializeField][BoxGroup("Components")]
+        protected FirstPersonController _personController;
         [SerializeField] protected RingMenu gestureMenu;
         private WaitForSeconds _waitUntilNextFrame;
+        private WaitForUpdate _waitForUpdate;
         private GesturesLibrary _library;
         private bool isInitialized;
-
+        private FrameData _targetFrameData;
         public override void Initialize()
         {
             base.Initialize();
@@ -32,7 +30,7 @@ namespace Scripts.PlayerLogic
             if (hands)
                 hands.OnEnabled();
             
-            _waitUntilNextFrame = new WaitForSeconds(handsProperties.delayOnFrame);
+            _waitUntilNextFrame = new WaitForSeconds(delayOnFrame);
             _library = inherited.data.gesturesLibrary;
 
             PrepareRingData();
@@ -87,10 +85,7 @@ namespace Scripts.PlayerLogic
 
         private void SimulateFrame(string key)
         {
-            // выход - отдавать КОПИЮ фрейма, а не сам фрейм
-            hands.MoveHands(_library.allAvailableFrames[key].ParentedFrame(inherited.data.anchors.Body),
-                handsProperties.handSpeed, () => { },
-                !InputExtension.CtrlOrCmd());
+            _targetFrameData = _library.allAvailableFrames[key].ParentedFrame(inherited.data.anchors.Body);
         }
 
         private void SimulateDynamicGesture(string key)
@@ -101,16 +96,14 @@ namespace Scripts.PlayerLogic
             var nextFrame = dynamicName + '_' + (indexOfName + 1);
             if (indexOfName >= _library.characterGestures[dynamicName].frames.Count)
                 return;
-
-            Debug.Log("Simulating " + key);
-            hands.MoveHands(_library.allAvailableFrames[frameName].ParentedFrame(inherited.data.anchors.Body),
-                handsProperties.handSpeed,
-                () => { StartCoroutine(WaitUntilNextFrame(nextFrame)); },
-                !InputExtension.CtrlOrCmd());
+            _targetFrameData = _library.characterGestures[dynamicName].frames[indexOfName].ParentedFrame(inherited.data.anchors.Body);
+            StartCoroutine(WaitUntilNextFrame(nextFrame));
         }
 
         private IEnumerator WaitUntilNextFrame(string next)
         {
+            while(!hands.leftHand.inSameLocation(_targetFrameData.LeftBones) || !hands.rightHand.inSameLocation(_targetFrameData.RightBones))
+                yield return _waitForUpdate;
             yield return _waitUntilNextFrame;
             SimulateDynamicGesture(next);
         }
@@ -153,6 +146,19 @@ namespace Scripts.PlayerLogic
         private void Update()
         {
             ToggleMenu();
+            
+            if(_targetFrameData != null){
+                UpdateHand(hands.leftHand, _targetFrameData.LeftBones);
+                UpdateHand(hands.rightHand, _targetFrameData.RightBones);
+            }
+
+        }
+
+        private void UpdateHand(HandMesh hand, BonesData target)
+        {
+            if(!InputExtension.CtrlOrCmd())     
+                hand.UpdateJoint(0, target.rootPos);
+            hand.UpdateJoints(target.rotations);
         }
 
         private void ToggleMenu()

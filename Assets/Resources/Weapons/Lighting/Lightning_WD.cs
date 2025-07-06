@@ -1,14 +1,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Components;
 using DG.Tweening;
+using ModestTree;
 using Scripts.Gestures;
 using Scripts.Static.Definitions;
+using Scripts.Systems;
 using Unity.Netcode.Components;
 using UnityEngine;
 using UnityEngine.VFX;
+using UnityEngine.XR.Hands;
 
 namespace Scripts
 {
@@ -37,6 +41,11 @@ namespace Scripts
         private GameObject _lightningObject => orb.gameObject;
         private List<Transform> left = new();
         private List<Transform> right = new();
+
+        [Header("SFX")]
+        [SerializeField] private AudioSource source;
+        [SerializeField] private AudioClip[] clipFrames;
+        [SerializeField] private AudioClip arcAmbient;
         
         private void Start()
         {
@@ -67,9 +76,25 @@ namespace Scripts
                     arc.gameObject.SetActive(true);
                     orb.SetFloat("Power", 0);
                     arc.SetFloat("Power", 0);
+                    source.PlayOneShot(clipFrames[state], 1f);
                     break;
                 case 1:
-                    audioProcessor.PlaySequencedSound("Frames", state);
+                    // shake left and right hand by changing offsets
+                    var leftHand = playerData.hands.leftHand;
+                    var rightHand = playerData.hands.rightHand;
+                    DOTween.Shake(() => leftHand.positionOffset, x => leftHand.positionOffset= x, 40f, 0.005f, 20, 90, false);
+                    DOTween.Shake(() => rightHand.positionOffset, x => rightHand.positionOffset= x, 40f, 0.005f, 20, 90, false);
+                    source.clip = arcAmbient;
+                    source.loop = true;
+                    source.DOFade(0.3f, 4f).SetEase(Ease.InOutQuad);
+                    source.Play();
+                    source.PlayOneShot(clipFrames[state]);
+                    break;
+                case 2:
+                    source.PlayOneShot(clipFrames[state], 1f);
+                    break;
+                case 4:
+                    
                     break;
             }
         }
@@ -84,9 +109,9 @@ namespace Scripts
         }
         public override void OnAbilityDestroyed()
         {
-            _lightningObject.SetActive(false);
-            StopCoroutine(lightningMove);
+            source.Stop();
             StartCoroutine(Explosion());
+            _lightningObject.SetActive(false);
         }
         
         
@@ -100,6 +125,7 @@ namespace Scripts
                 
                 var leftPalmPos = playerData.hands.leftHand.palmCenter.position;
                 var rightPalmPos = playerData.hands.rightHand.palmCenter.position;
+     
                 var distance = Vector3.Distance(leftPalmPos, rightPalmPos);
                 // i have min and max boardings. I need to get a coefficient from 0 to 1, where 0 is the distance less than minimum or more than maximum, and 1 is the distance between minimum and maximum
                 // it should be linear function
@@ -113,12 +139,15 @@ namespace Scripts
 
                 To(orb, "Power", 0.4f);
                 To(arc, "Power", 1);
-            }    
-        
+            }
+
+            if (state > 1)
+            {
+                To(orb, "Power", 1);
+            }
             if (state > 2)
             {
                 To(arc, "Power", 0);
-                To(orb, "Power", 1);
             }
         
             if (state < 4)

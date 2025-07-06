@@ -10,9 +10,12 @@ namespace Scripts.Systems
         {
             if (array == null) return "null";
             string line = "";
+            bool was = false;
             foreach (T t in array)
             {
-                line += inLine ? ", " : "\n";
+                if(was)
+                    line += inLine ? ", " : "\n";
+                was = true;
                 line += t.ToString();
             }
 
@@ -24,18 +27,12 @@ namespace Scripts.Systems
         {
             if (array == null) return "null";
             string line = "";
-            bool once = true;
+            bool was = false;
             foreach (var t in array)
             {
-                if (!once)
-                {
+                if(was)
                     line += inLine ? ", " : "\n";
-                }
-                else
-                {
-                    once = false;
-                }
-
+                was = true;
                 if (showValues)
                 {
                     line += t.Key.ToString() + " - " + t.Value?.ToString();
@@ -53,9 +50,12 @@ namespace Scripts.Systems
         {
             if (array == null) return "null";
             string line = "";
+            bool was = false;
             foreach (T t in array)
             {
-                line += inLine ? ", " : "\n";
+                if(was)
+                    line += inLine ? ", " : "\n";
+                was = true;
                 line += t.ToString();
             }
 

@@ -5,7 +5,7 @@ namespace Components
     [RequireComponent(typeof(AudioSource))]
     public class AudioProcessor : ResourcesProcessor<AudioClip>
     {
-        [SerializeField] private AudioSource _audioSource;
+        public AudioSource source;
 
         private void OnValidate()
         {
@@ -17,19 +17,38 @@ namespace Components
             // }
         }
 
+        public void PlayOneSound(string key,float volume, bool loop)
+        {
+            ActivateResource(key, (e) =>
+            {
+                if (loop)
+                {
+                    source.clip = e;
+                    source.loop = true;
+                    source.volume = volume;
+                    source.Play();
+                }
+                else
+                {
+                    source.PlayOneShot(e,volume);
+                }
+
+
+            });
+        }
+
         public void PlaySequencedSound(string key, int id)
         {
             ActivateSequencedResource(key, id, (e) =>
             {
-                _audioSource.clip = e;
-                _audioSource.Play();
+                source.PlayOneShot(e);
             });
         }
         protected override bool shouldAddMissingComponents { get; }
 
         protected override void ManipulateResource(AudioClip resource)
         {
-            _audioSource.PlayOneShot(resource);
+            source.PlayOneShot(resource);
         }
     }
 }
