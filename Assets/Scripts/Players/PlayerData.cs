@@ -22,6 +22,7 @@ namespace Scripts.Players
         public readonly PlayerHands hands;
 
         public readonly BodyAnchors anchors;
+        public readonly Transform recognizerCenter;
 
         public readonly AbilityController abilityController;
         public readonly CharacterController characterController;
@@ -37,11 +38,12 @@ namespace Scripts.Players
         
         private readonly Player owner;
 
-        public PlayerData(Player owner, BodyAnchors anchors, PlayerHands playerHands, AbilityController abilityController, CharacterController characterController, GesturesLibrary gesturesLibrary)
+        public PlayerData(Player owner, BodyAnchors anchors, PlayerHands playerHands, AbilityController abilityController, CharacterController characterController, GesturesLibrary gesturesLibrary, Transform recognizerCenter)
         {
             this.owner = owner;
             this.anchors = anchors;
             this.hands = playerHands;
+            this.recognizerCenter = recognizerCenter;
             this.gesturesLibrary = gesturesLibrary;
             this.abilityController = abilityController;
             this.characterController = characterController;

@@ -87,8 +87,8 @@ namespace Scripts
                     // shake left and right hand by changing offsets
                     var leftHand = playerData.hands.leftHand;
                     var rightHand = playerData.hands.rightHand;
-                    DOTween.Shake(() => leftHand.positionOffset, x => leftHand.positionOffset= x, 10f, 0.005f, 15, 5, false);
-                    DOTween.Shake(() => rightHand.positionOffset, x => rightHand.positionOffset= x, 10f, 0.005f, 15, 4, false);
+                    // DOTween.Shake(() => leftHand.positionOffset, x => leftHand.positionOffset= x, 10f, 0.005f, 15, 5, false);
+                    // DOTween.Shake(() => rightHand.positionOffset, x => rightHand.positionOffset= x, 10f, 0.005f, 15, 4, false);
                     source.clip = arcAmbient;
                     source.loop = true;
                     source.DOFade(0.3f, 4f).SetEase(Ease.InOutQuad);
@@ -140,8 +140,13 @@ namespace Scripts
 
             if (state == 2)
             {
-                To(orb, "Power", 1);
+                To(orb, "Power", 0.4f);
                 To(arc, "Power", 1);
+            }
+            if (state == 3)
+            {
+                To(orb, "Power", 0.6f);
+                To(arc, "Power", 0);
             }
             
             if (state <= 2)
@@ -162,10 +167,6 @@ namespace Scripts
                 // To(arc, "Power", 1);
             }
             
-            if (state > 2)
-            {
-                To(arc, "Power", 0);
-            }
         
             if (state < 4)
             {
@@ -176,6 +177,11 @@ namespace Scripts
                 }
         
                 arc.SetVector3("EnergyOrbPosition", orb.transform.position);
+            }
+
+            if (state == 4)
+            {
+                To(orb, "Power", 1f);
             }
             
         }

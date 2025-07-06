@@ -16,7 +16,7 @@ namespace Scripts.Weapons.Magic
         protected float lifeTime;
 
 
-        [Range(0.0f, 100f)] [SerializeField] protected float orbSpeed = 3f;
+        [Range(0.0f, 10f)] [SerializeField] protected float orbSpeed = 3f;
 
         [Range(0.0f, 100f)] [SerializeField] protected float orbBetweenHandsSpeed = 10f;
         
@@ -26,6 +26,11 @@ namespace Scripts.Weapons.Magic
 
         private void Start()
         {
+            GestureCastedEvent.AddListener(() =>
+            {
+                isTriggered = false;
+                lifeTimer = 0;
+            });
             orb.DisableComponents();
         }
 
@@ -35,7 +40,16 @@ namespace Scripts.Weapons.Magic
             if (IsServer)
             {
                 orb.EnableComponents();
-                orb.TriggerEnterEvent.AddListener((affected)=> ImpactEvent.Invoke(affected.toString));
+                orb.TriggerEnterEvent.AddListener((affected)=>
+                {
+                    if (state != WeaponState.Activated)
+                        return;
+                    if (!isTriggered)
+                    {
+                        ImpactEvent.Invoke(affected.toString);
+                        isTriggered = true;
+                    }
+                });
                 ImpactEvent.AddListener(OnImpact);
             }
 
@@ -83,7 +97,8 @@ namespace Scripts.Weapons.Magic
                 if (IsClient)
                 {
                     var fingerDir = playerData.hands.rightHand.points[3].transform.forward;
-                    orb.transform.position += fingerDir * (orbSpeed * Time.deltaTime);
+                    orb.rigidBody.velocity = fingerDir * orbSpeed;
+                 //   orb.transform.position += fingerDir * (orbSpeed * Time.deltaTime);
                 }
      
             }

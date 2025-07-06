@@ -147,7 +147,7 @@ namespace Scripts.Gestures
 
         public FrameData AttachedToPlayer()
         {
-            return ParentedFrame(PlayerData.local.anchors.Body);
+            return ParentedFrame(PlayerData.local.recognizerCenter);
         }
     }
 }

@@ -36,8 +36,11 @@ namespace Scripts.PlayerLogic
         [DisableInEditorMode][DisableInPlayMode]
         private PlayerMode _playerMode;
 
-        [BoxGroup("Components")][SerializeField]
+        [BoxGroup("Components")]
+        [SerializeField]
         private BodyAnchors anchors;
+        [SerializeField]
+        private Transform recognitionCenter;
         
         [BoxGroup("Components")][SerializeField]
         private PlayerHands hands;
@@ -156,7 +159,7 @@ namespace Scripts.PlayerLogic
             
             onPlayerInitialized.AddListener(()=> { isInitialized = true; });
             
-            _data = new PlayerData(this, anchors, hands, abilityController, characterController, abilityController.gesturesLib);
+            _data = new PlayerData(this, anchors, hands, abilityController, characterController, abilityController.gesturesLib, recognitionCenter);
             abilityController.gesturesLib.onLibraryInitialized += data.onPlayerInitialized.Invoke;
             foreach (var VARIABLE in _rigList)
             {
@@ -262,7 +265,7 @@ namespace Scripts.PlayerLogic
 
         public PlayerData GetRawPlayerData()
         {
-                return new PlayerData(this, anchors, hands, abilityController, characterController, null);
+                return new PlayerData(this, anchors, hands, abilityController, characterController, null, recognitionCenter);
             
         }
         
