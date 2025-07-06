@@ -37,7 +37,7 @@ Transform:
   - {fileID: 6578129881786605900}
   - {fileID: 6386774159174476738}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6934817223367666101
 MonoBehaviour:
@@ -98,6 +98,8 @@ MonoBehaviour:
   orbBetweenHandsSpeed: 7
   rotationSpeed: 3.21
   _explosionDuration: 0.3
+  activeLightningColor: {r: 1, g: 0.5615012, b: 0, a: 0.7529412}
+  passiveLightningColor: {r: 1, g: 0.29591838, b: 0, a: 0.41960785}
   source: {fileID: 837650601417708072}
   clipFrames:
   - {fileID: 8300000, guid: 466eb8440abd7fc4f9969cab2a0dfe6d, type: 3}
@@ -441,7 +443,7 @@ VisualEffect:
       - m_Value: 0.38
         m_Name: OrbSize
         m_Overridden: 1
-      - m_Value: 0.39915675
+      - m_Value: 0.997024
         m_Name: Power
         m_Overridden: 1
     m_Vector2f:
@@ -743,7 +745,7 @@ VisualEffect:
       - m_Value: 1
         m_Name: Line Smoothness
         m_Overridden: 1
-      - m_Value: 0.99633676
+      - m_Value: 0.99983233
         m_Name: Power
         m_Overridden: 1
     m_Vector2f:

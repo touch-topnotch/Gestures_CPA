@@ -38,7 +38,6 @@ namespace Scripts.GameControllers
         public UnityEvent onReadyToStart = new UnityEvent();
         private UnityEvent onPoolPrefabs = new UnityEvent();
 
-
 #if DEDICATED_SERVER
         private IServerQueryHandler _serverQueryHandler;
         private async void ListenServerEvents()
@@ -192,9 +191,12 @@ namespace Scripts.GameControllers
             StartGameSessionServerRpc();
             onReadyToStart?.Invoke();
         }
+
+        private List<string> subscribedAbilities;
         [ServerRpc]
         private void StartGameSessionServerRpc()
         {
+            Debug.Log("StartGameSessionServerRpc()");
             var dushort = new ushort[gameProperties.debugCharacterAbilities.Length];
             for(int i = 0; i <  gameProperties.debugCharacterAbilities.Length; i ++ )
             {
@@ -205,7 +207,11 @@ namespace Scripts.GameControllers
                 _playersDict[player].StartUseAbilitiesClientRpc(dushort);
             }
         }
-
+        [ServerRpc]
+        public void AskContinueUsingAbilities(ulong clientId)
+        {
+            _playersDict[clientId].ContinueUseAbilitiesClientRpc();
+        }
     
         private void ClientDisconnected(ulong clientId)
         {

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using Scripts.Abilities;
 using Scripts.Events;
 using Scripts.GameControllers;
 using Scripts.Gestures;
@@ -132,24 +133,40 @@ namespace Scripts.PlayerLogic
                 data.abilityController.AddCharacterToInventory(characterName);
             }
         }
-        
         [ClientRpc]
         public void StartUseAbilitiesClientRpc(ushort[] debugCharacterAbilities)
         {
             if (IsOwner)
             {
-                Debug.Log(
-                    "Самое важное сообщение в твоей жизни [Client rpc] private void StartGameSessionClientRpc(ulong playerId) ");
                 data.abilityController
                     .AddCharacterToInventory(data.characterController.currentCharacter.name);
 
                 foreach (var VARIABLE in debugCharacterAbilities)
                 {
                     data.abilityController.AddCharacterToInventory(((CharacterType)VARIABLE).ToString());
+                    
+                }
+
+                foreach (var VARIABLE in data.abilityController.inventory.characterAbilities)
+                {
+                    VARIABLE.Value.AbilityReleasedEvent.AddListener(()=>
+                    {
+                        GameController.Instance.AskContinueUsingAbilities(OwnerClientId);
+                    });
                 }
 
                 data.abilityController.UseCharacterAbilities();
             }
         }
+
+        [ClientRpc]
+        public void ContinueUseAbilitiesClientRpc()
+        {
+            if (IsOwner)
+            {
+                data.abilityController.UseCharacterAbilities();
+            }
+        }
+
     }
 }

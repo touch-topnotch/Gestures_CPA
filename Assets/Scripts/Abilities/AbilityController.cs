@@ -19,6 +19,8 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Rendering;
+using Zenject.Asteroids;
+using GameController = Scripts.GameControllers.GameController;
 
 namespace Scripts.Abilities
 {
@@ -80,7 +82,7 @@ namespace Scripts.Abilities
         public void UseCharacterAbilities()
         {
             Debug.Log("Start to use next inventory abilities "+Debugger.dictionaryToString(inventory.characterAbilities, false, true));
-            
+          
             StartCoroutine(_recognizer.RecognizeDynamicGesture(inventory.characterAbilities.ToGestureDict(),
                 (e) =>
                 {

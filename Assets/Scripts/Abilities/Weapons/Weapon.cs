@@ -181,13 +181,13 @@ namespace Scripts.Weapons
         {
             _unityEvents[eventId]?.Invoke();
             CallEventClientRpc(eventId);
-            Debug.Log("CallEventServerRpc(ushort eventId)");
+            Debug.Log($"CallEventServerRpc (from server) (ushort {eventId}");
         }
         private void CallEventFromServer(string value, ushort eventId)
         {
             _unityParamEvents[eventId]?.Invoke(value);
             CallEventClientRpc(value, eventId);
-            Debug.Log($"CallEventClientRpc(string {value}, ushort "+eventId +")");
+            Debug.Log($"CallEventClientRpc (from server) (string {value}, ushort "+eventId +")");
         }
         
 
@@ -262,7 +262,8 @@ namespace Scripts.Weapons
             _Activated.AddListener(() => { state = WeaponState.Activated; });
             _Deactivated.AddListener(() => { state = WeaponState.Deactivated; });
             _AbilityDestroyed.AddListener(() => { state = WeaponState.Destroyed;});
-            _AbilityDestroyed.AddListener( () =>{ AbilityReleasedEvent?.Invoke(); });
+            _AbilityDestroyed.AddListener( () =>{ AbilityReleasedEvent.Invoke(); });
+            AbilityReleasedEvent.AddListener(()=>Debug.Log("Я сказал, ПЕНИС КИТОВЫЙ"));
             isSubscribed = true;
         }
 
@@ -291,10 +292,6 @@ namespace Scripts.Weapons
             weaponDesign.playerData = data;
             base.Initialize(data, gesture);
         }
-        
-
-      
-
         public override void ReadyToBeRecognized()
         {
             ReadyToBeCastedEvent?.Invoke();
@@ -309,7 +306,7 @@ namespace Scripts.Weapons
             GestureCastedEvent?.Invoke();
         }
 
-        public sealed override UnityEvent AbilityReleasedEvent { get;  set; }
+        public sealed override UnityEvent AbilityReleasedEvent { get; set; } = new UnityEvent();
 
         public override void AddMissingComponents()
         {
