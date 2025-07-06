@@ -293,8 +293,8 @@ namespace Scripts.HandsLogic
         public void UpdateJoint(XRHandJointID index, in Quaternion rotation) =>
             UpdateJoint(XRHandJointIdToCustom[index.ToIndex()], rotation);
         public void UpdateJoint(int handMeshId, in Vector3 position)
-        { 
-            points[handMeshId].localPosition = Vector3.Lerp( points[handMeshId].localPosition, positionOffset + position, Time.deltaTime*positionSpeed);
+        {
+            points[handMeshId].localPosition = positionOffset + Vector3.Lerp( points[handMeshId].localPosition, positionOffset + position, Time.deltaTime*positionSpeed);
         }
 
         public void UpdateJoint(int handMeshId, in Quaternion rotation)

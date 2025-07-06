@@ -29,7 +29,7 @@ namespace Scripts.Design
         public static readonly int FadeStart = Shader.PropertyToID("_FadeStart");
         public static readonly int NoiseScale = Shader.PropertyToID("_NoiseScale");
         public static readonly int NoiseStrength = Shader.PropertyToID("_NoiseStrength");
-        public static readonly int[] FingerNames = new[] { FingerColor1, FingerColor2, FingerColor3, FingerColor4 };
+        public static readonly int[] FingerNames = new[] { FingerColor1, FingerColor2, FingerColor3, FingerColor4, ThumbColor};
 
         public static readonly int[] AllColors = new[]
             { MainColor, EdgeColor, ThumbColor, FingerColor1, FingerColor2, FingerColor3, FingerColor4 };

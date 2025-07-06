@@ -75,7 +75,7 @@ namespace Scripts.Weapons.Magic
                     lifeTimer += Time.deltaTime;
                     if (lifeTimer >= lifeTime)
                     {
-                        lifeTimer = 0;
+                        lifeTimer = 0; 
                         AbilityDestroyedEvent.Invoke();
                     }
                 }
