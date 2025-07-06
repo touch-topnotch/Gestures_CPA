@@ -124,7 +124,6 @@ namespace Scripts.HandsLogic
             {
                 m_LeftHandGameObjects = new HandGameObjects(
                     m_PlayerHands.leftHand,
-                    m_DebugDrawPrefab,
                     positionSpeed);
             }
 
@@ -132,7 +131,6 @@ namespace Scripts.HandsLogic
             {
                 m_RightHandGameObjects = new HandGameObjects(
                     m_PlayerHands.rightHand,
-                    m_DebugDrawPrefab,
                     positionSpeed);
             }
 
@@ -240,13 +238,97 @@ namespace Scripts.HandsLogic
 
             public HandGameObjects(
                 HandMesh handMesh,
-                GameObject debugDrawPrefab,
                 float positionSpeed)
             {
-           
-
+                void AssignJoint(
+                    XRHandJointID jointId,
+                    Transform jointXform)
+                {
+                    int jointIndex = jointId.ToIndex();
+                    m_JointXforms[jointIndex] = jointXform;
+                }
                 this.m_positionSpeed = positionSpeed; 
                 m_HandMesh = handMesh;
+                
+                     var hand_transf = m_HandMesh.transform;
+                //    hand_transf.parent.transform.localPosition = handOffset;
+                hand_transf.localRotation = Quaternion.identity;
+
+                Transform wristRootXform = null;
+                for (int childIndex = 0; childIndex < hand_transf.childCount; ++childIndex)
+                {
+                    var child = hand_transf.GetChild(childIndex);
+                    if (child.gameObject.name.EndsWith(XRHandJointID.Wrist.ToString()))
+                        wristRootXform = child;
+                }
+                if (wristRootXform == null)
+                {
+                    Debug.LogWarning("Hand transform hierarchy not set correctly - couldn't find Wrist joint!");
+                }
+                else
+                {
+                    AssignJoint(XRHandJointID.Wrist, wristRootXform);
+                    for (int childIndex = 0; childIndex < wristRootXform.childCount; ++childIndex)
+                    {
+                        var child = wristRootXform.GetChild(childIndex);
+
+                        if (child.name.EndsWith(XRHandJointID.Palm.ToString()))
+                        {
+                            AssignJoint(XRHandJointID.Palm, child);
+                            continue;
+                        }
+
+                        for (int fingerIndex = (int)XRHandFingerID.Thumb;
+                             fingerIndex <= (int)XRHandFingerID.Little;
+                             ++fingerIndex)
+                        {
+                            var fingerId = (XRHandFingerID)fingerIndex;
+
+                            var jointIdFront = fingerId.GetFrontJointID();
+                            if (!child.name.EndsWith(jointIdFront.ToString()))
+                                continue;
+
+                            AssignJoint(jointIdFront, child);
+                            var lastChild = child;
+
+                            int jointIndexBack = fingerId.GetBackJointID().ToIndex();
+                            for (int jointIndex = jointIdFront.ToIndex() + 1;
+                                 jointIndex <= jointIndexBack;
+                                 ++jointIndex)
+                            {
+                                for (int nextChildIndex = 0; nextChildIndex < lastChild.childCount; ++nextChildIndex)
+                                {
+                                    var nextChild = lastChild.GetChild(nextChildIndex);
+                                    if (nextChild.name.EndsWith(XRHandJointIDUtility.FromIndex(jointIndex).ToString()))
+                                    {
+                                        lastChild = nextChild;
+                                        break;
+                                    }
+                                }
+
+                                if (!lastChild.name.EndsWith(XRHandJointIDUtility.FromIndex(jointIndex).ToString()))
+                                    throw new InvalidOperationException(
+                                        "Hand transform hierarchy not set correctly - couldn't find " +
+                                        XRHandJointIDUtility.FromIndex(jointIndex) + " joint!");
+
+                                var jointId = XRHandJointIDUtility.FromIndex(jointIndex);
+                                AssignJoint(jointId, lastChild);
+                            }
+                        }
+                    }
+                }
+
+                for (int fingerIndex = (int)XRHandFingerID.Thumb;
+                     fingerIndex <= (int)XRHandFingerID.Little;
+                     ++fingerIndex)
+                {
+                    var fingerId = (XRHandFingerID)fingerIndex;
+
+                    var jointId = fingerId.GetFrontJointID();
+                    if (m_JointXforms[jointId.ToIndex()] == null)
+                        Debug.LogWarning("Hand transform hierarchy not set correctly - couldn't find " + jointId +
+                                         " joint!");
+                }
             }
             
             public void ToggleDrawMesh(bool drawMesh)
