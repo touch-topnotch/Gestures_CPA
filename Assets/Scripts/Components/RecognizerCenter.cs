@@ -6,6 +6,7 @@ namespace Scripts
         public Vector3 offset;
         public Transform body;
         private Transform root;
+        [Range(0, 10f)] private float positionLerp = 0.8f;
         private void Start()
         {
             offset = this.transform.localPosition;
@@ -16,8 +17,10 @@ namespace Scripts
         {
             var transform1 = this.transform;
             var tr = body.TransformPoint(offset);
-            transform1.position = new Vector3(tr.x, root.position.y, tr.z);
-            transform1.rotation = body.rotation;
+            transform1.position = Vector3.Lerp(transform1.position, new Vector3(tr.x, root.position.y, tr.z),
+                positionLerp * Time.deltaTime);
+            transform1.rotation = Quaternion.Lerp(transform1.rotation, body.rotation, positionLerp * Time.deltaTime);
+           
         }
     }
 }
