@@ -74,7 +74,7 @@ namespace Scripts.Characters
                         res_path = res_path.Replace(".prefab", "");
                     }
 
-                    var resourceObject = Resources.Load(res_path) as GameObject;
+                    var resourceObject = UnityEngine.Resources.Load(res_path) as GameObject;
 
                     if (!resourceObject)
                     {

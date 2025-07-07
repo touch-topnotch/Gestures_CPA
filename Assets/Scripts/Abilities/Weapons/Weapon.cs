@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using Components;
 using Gesture_Editor_SDK.Realtime;
 using ModestTree.Util;
 using Scripts.Events;
+using Scripts.Gesture_Editor_SDK.Realtime;
 using Scripts.Gestures;
 using Scripts.PlayerLogic;
 using Scripts.Players;
@@ -50,6 +52,9 @@ namespace Scripts.Weapons
         [Header("Weapons components")]
         [SerializeField]
         protected WeaponDesign weaponDesign;
+
+        [SerializeField]
+        protected WeaponObserver[] observers;
         public WeaponState state { get; private set; }
 
         protected virtual bool invokeAvailable => IsOwner || IsServer;// || (IsClient && IsOwner);
@@ -91,7 +96,7 @@ namespace Scripts.Weapons
         /// </example>
         /// This function describes the start of hit 
         /// </summary>
-        protected WeaponEvent StartHitEvent { get; private set; }
+        public WeaponEvent StartHitEvent { get; private set; }
 
         /// <summary>
         /// <example>
@@ -120,7 +125,7 @@ namespace Scripts.Weapons
         /// </example>
         /// This function describes the hit impact ability.
         /// <returns>UnityEvent of type Affected for handling impact events.</returns>
-        protected WeaponEvent<string> ImpactEvent { get; private set; }
+        public WeaponEvent<string> ImpactEvent { get; private set; }
         
         #region UnityEvents
         
@@ -189,21 +194,25 @@ namespace Scripts.Weapons
             CallEventClientRpc(value, eventId);
             Debug.Log($"CallEventClientRpc (from server) (string {value}, ushort "+eventId +")");
         }
-        
 
         #endregion
 
         protected virtual void OnInitialized()
         {
             Debug.Log("protected virtual void OnInitialized()");
+            foreach (var VARIABLE in observers)
+            {
+                VARIABLE.Initialize(playerData);
+            }
+            
         }
-        
-        
-        private void SubscribeEvents() 
+
+
+        private void SubscribeEvents()
         {
             _weaponEvents = new WeaponEvent[8];
             _weaponParamEvents = new WeaponEvent<string>[2];
-            _unityEvents = new []
+            _unityEvents = new[]
             {
                 _ReadyToBeCasted,
                 _CastCancelled,
@@ -214,14 +223,15 @@ namespace Scripts.Weapons
                 _StopHit,
                 _AbilityDestroyed
             };
-            _unityParamEvents = new [] { _FrameRecognized, _Impact };
-            
+            _unityParamEvents = new[] { _FrameRecognized, _Impact };
+
             try
             {
                 for (ushort i = 0; i < _weaponEvents.Length; i++)
                 {
 
-                    _weaponEvents[i] = new WeaponEvent(_unityEvents[i], IsServer ? CallEventFromServer : CallEventServerRpc, i, invokeAvailable);
+                    _weaponEvents[i] = new WeaponEvent(_unityEvents[i],
+                        IsServer ? CallEventFromServer : CallEventServerRpc, i, invokeAvailable);
                     if (IsClient)
                     {
                         _unityEvents[i].AddListener(weaponDesign.actions[i]);
@@ -230,7 +240,8 @@ namespace Scripts.Weapons
 
                 for (ushort i = 0; i < _weaponParamEvents.Length; i++)
                 {
-                    _weaponParamEvents[i] = new WeaponEvent<string>(_unityParamEvents[i], IsServer ? CallEventFromServer : CallEventServerRpc, i, invokeAvailable);
+                    _weaponParamEvents[i] = new WeaponEvent<string>(_unityParamEvents[i],
+                        IsServer ? CallEventFromServer : CallEventServerRpc, i, invokeAvailable);
                     if (IsClient)
                     {
                         _unityParamEvents[i].AddListener(weaponDesign.paramActions[i]);
@@ -254,17 +265,31 @@ namespace Scripts.Weapons
             AbilityDestroyedEvent = _weaponEvents[7];
             FrameRecognizedEvent = _weaponParamEvents[0];
             ImpactEvent = _weaponParamEvents[1];
-            
-            
+
+
             state = WeaponState.Initialized;
-            _FrameRecognized.AddListener((e) => { state =  WeaponState.Casting;});
-            _CastCancelled.AddListener(() => { state = WeaponState.Cancelled;});
+            _FrameRecognized.AddListener((e) => { state = WeaponState.Casting; });
+            _CastCancelled.AddListener(() => { state = WeaponState.Cancelled; });
             _Activated.AddListener(() => { state = WeaponState.Activated; });
             _Deactivated.AddListener(() => { state = WeaponState.Deactivated; });
-            _AbilityDestroyed.AddListener(() => { state = WeaponState.Destroyed;});
-            _AbilityDestroyed.AddListener( () =>{ AbilityReleasedEvent.Invoke(); });
-            AbilityReleasedEvent.AddListener(()=>Debug.Log("Я сказал, ПЕНИС КИТОВЫЙ"));
+            _AbilityDestroyed.AddListener(() => { state = WeaponState.Destroyed; });
+            _AbilityDestroyed.AddListener(() => { AbilityReleasedEvent.Invoke(); });
+            AbilityReleasedEvent.AddListener(() => Debug.Log("Я сказал, ПЕНИС КИТОВЫЙ"));
             isSubscribed = true;
+            if (observers != null)
+            {
+                foreach (var observer in observers)
+                {
+                   
+                    _Activated.AddListener(observer.OnActivated);
+                    _Deactivated.AddListener(observer.OnDeactivated);
+                    _Impact.AddListener((e)=>
+                    {
+                        observer.OnImpact(new Affected(e));
+                    });
+                }
+            }
+
         }
 
         public override void OnNetworkSpawn()
@@ -280,9 +305,10 @@ namespace Scripts.Weapons
             {
                 playerData = transform.parent.GetComponent<Player>().data;
                 weaponDesign.playerData = playerData;
+                OnInitialized();
             }
             base.OnNetworkObjectParentChanged(parentNetworkObject);
-            OnInitialized();
+         
         }
 
   

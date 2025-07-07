@@ -242,14 +242,10 @@ namespace Scripts
             StartCoroutine(Explosion());
         }
 
-        protected override bool shouldAddMissingComponents =>
-            !(vfxProcessor && audioProcessor && arc && orb && _explosionObject);
 
         public override void AddMissingComponents()
         {
             base.AddMissingComponents();
-            vfxProcessor = GetComponent<VFXProcessor>();
-            audioProcessor = GetComponent<AudioProcessor>();
             arc = transform.Find("Electric Arc").GetComponent<VisualEffect>();
             orb = transform.Find("Electric Orb").GetComponent<VisualEffect>();
             

@@ -275,6 +275,8 @@ namespace Scripts.HandsLogic
 
         public bool inSameLocation(in BonesData target)
         {
+            if (target == null)
+                return true;
             var dist = Vector3.Distance(points[0].localPosition, target.rootPos);
             var a1 = Quaternion.Angle(points[0].localRotation, target.rotations[0]);
             var a2 = Quaternion.Angle(points[13].localRotation, target.rotations[13]);

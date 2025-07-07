@@ -32,7 +32,7 @@ namespace Scripts.Installers
                 }
 
                 rig = SpawnRig(type == RigType.PCRig
-                    ? Resources.Load("Players/PC Rig") as GameObject
+                    ? UnityEngine.Resources.Load("Players/PC Rig") as GameObject
                     : SetPlayerByPlatform(), Container);
             }
 
@@ -49,7 +49,7 @@ namespace Scripts.Installers
         private GameObject SetPlayerByPlatform()
         {
             Debug.Log("LOADING XR RIG PREFAB");
-            return Resources.Load("Players/XR Rig") as GameObject;
+            return UnityEngine.Resources.Load("Players/XR Rig") as GameObject;
 
             // if (XRGeneralSettings.Instance.Manager.activeLoader)
             // {

@@ -1,20 +1,19 @@
 using System;
+using Scripts.Components;
 using Scripts.Gestures;
-using Scripts.PlayerLogic;
 using Scripts.Players;
-using Scripts.Static.Definitions;
-using UnityEngine;
-using UnityEngine.Rendering;
-using Sirenix.OdinInspector;
+using Scripts.Systems.Grab;
+using Scripts.Weapons;
 using Unity.Netcode;
+using UnityEngine;
 
-namespace Scripts.Weapons
+namespace Scripts.Abilities.Weapons.Melee
 {
      public class Melee : Weapon, IGrabable
      {
           [Range(0, 1000)] protected float maxCapacityValue;
           protected NetworkVariable<float> Capacity = new NetworkVariable<float>();
-          
+         
           public override void Initialize(PlayerData data, DynamicGesture gesture)
           {
                base.Initialize(data, gesture);
@@ -23,7 +22,7 @@ namespace Scripts.Weapons
           }
 
           [SerializeField]
-          private GrabSystem _grabSystem;
+          protected GrabSystem _grabSystem;
           
           public GrabSystem GrabSystem
           {
@@ -31,16 +30,24 @@ namespace Scripts.Weapons
                set => _grabSystem = value;
           }
 
+          protected  override void OnInitialized()
+          {
+               base.OnInitialized();
+               SetGrabSystem();
+          }
+
           public void SetGrabSystem()
           {
                if (_grabSystem != null)
                {
-                    Debug.Log("Вы конченные");
+                    _grabSystem.OnGrabStart += OnGrabbed;
+                    _grabSystem.OnGrabEnd += OnUnGrabbed;
                }
           }
           
           public void OnGrabbed()
           {
+               Debug.Log("OnGrabbed()");
                ActivatedEvent.Invoke();
           }
 

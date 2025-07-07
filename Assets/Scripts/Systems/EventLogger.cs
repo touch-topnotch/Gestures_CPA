@@ -8,7 +8,7 @@ namespace Scripts.Systems
     {
         public static void OnPlayerModeChanged(PlayerMode mode)
         {
-            Debug.Log("Player mode changed on " + mode);
+     //       Debug.Log("Player mode changed on " + mode);
         }
         public static void OnCharacterChanged(string mode)
         {

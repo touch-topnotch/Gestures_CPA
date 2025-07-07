@@ -137,12 +137,12 @@ namespace Scripts.PlayerLogic
 
             if (isLocal)
             {
-                InitializePlayer(0, playerProperties);
+                InitializePlayer(0, playerProperties, true);
                 //CreateRecognizer();
             }
         }
 
-        public void InitializePlayer(ulong _id, PlayerProperties _playerProps)
+        public void InitializePlayer(ulong _id, PlayerProperties _playerProps, bool isOwner)
         {
             id = _id;
             AddLoggers();
@@ -159,7 +159,7 @@ namespace Scripts.PlayerLogic
             
             onPlayerInitialized.AddListener(()=> { isInitialized = true; });
             
-            _data = new PlayerData(this, anchors, hands, abilityController, characterController, abilityController.gesturesLib, recognitionCenter);
+            _data = new PlayerData(this, anchors, hands, abilityController, characterController, abilityController.gesturesLib, recognitionCenter, isOwner);
             abilityController.gesturesLib.onLibraryInitialized += data.onPlayerInitialized.Invoke;
             foreach (var VARIABLE in _rigList)
             {
@@ -265,7 +265,7 @@ namespace Scripts.PlayerLogic
 
         public PlayerData GetRawPlayerData()
         {
-                return new PlayerData(this, anchors, hands, abilityController, characterController, null, recognitionCenter);
+                return new PlayerData(this, anchors, hands, abilityController, characterController, null, recognitionCenter, true);
             
         }
         

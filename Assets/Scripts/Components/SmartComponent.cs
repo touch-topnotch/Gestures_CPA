@@ -16,7 +16,7 @@ namespace Scripts.Components
             _shouldAddMissingComponents = shouldAddMissingComponents;
         }
 
-        protected abstract bool shouldAddMissingComponents { get; }
+        protected virtual bool shouldAddMissingComponents { get; }
 
 #if UNITY_EDITOR
         [ShowIf("_shouldAddMissingComponents")]

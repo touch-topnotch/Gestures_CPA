@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Scripts.PlayerLogic;
+using Scripts.Systems.Grab;
 using UnityEngine;
 
 public interface IGrabable

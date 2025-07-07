@@ -215,7 +215,7 @@ public class Spear_WD : WeaponDesign
     // }
     public override void OnReadyToBeCasted()
     {
-        throw new System.NotImplementedException();
+      //  throw new System.NotImplementedException();
     }
 
     public override void OnCastCancelled()

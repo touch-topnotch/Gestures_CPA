@@ -85,6 +85,11 @@ namespace Scripts.PlayerLogic
 
         private void SimulateFrame(string key)
         {
+            if (!_library.allAvailableFrames.ContainsKey(key))
+            {
+                Debug.Log("Key: " + key + " don't found");
+                return;
+            }
             _targetFrameData = _library.allAvailableFrames[key].ParentedFrame(inherited.data.anchors.Body);
         }
 
@@ -96,13 +101,18 @@ namespace Scripts.PlayerLogic
             var nextFrame = dynamicName + '_' + (indexOfName + 1);
             if (indexOfName >= _library.characterGestures[dynamicName].frames.Count)
                 return;
-            _targetFrameData = _library.characterGestures[dynamicName].frames[indexOfName].ParentedFrame(inherited.data.anchors.Body);
+            if (!_library.allAvailableFrames.ContainsKey(frameName))
+            {
+                Debug.Log("Key: " + frameName + " don't found");
+                return;
+            }
+            _targetFrameData = _library.allAvailableFrames[frameName].ParentedFrame(inherited.data.anchors.Body);
             StartCoroutine(WaitUntilNextFrame(nextFrame));
         }
 
         private IEnumerator WaitUntilNextFrame(string next)
         {
-            while(!hands.leftHand.inSameLocation(_targetFrameData.LeftBones) || !hands.rightHand.inSameLocation(_targetFrameData.RightBones))
+            while(!hands.leftHand.inSameLocation(_targetFrameData?.LeftBones) || !hands.rightHand.inSameLocation(_targetFrameData?.RightBones))
                 yield return _waitForUpdate;
             yield return _waitUntilNextFrame;
             SimulateDynamicGesture(next);
@@ -156,7 +166,10 @@ namespace Scripts.PlayerLogic
 
         private void UpdateHand(HandMesh hand, BonesData target)
         {
-            if(!InputExtension.CtrlOrCmd())     
+            if(target == null)
+                return;
+            
+            if (!InputExtension.CtrlOrCmd() ) 
                 hand.UpdateJoint(0, target.rootPos);
             hand.UpdateJoints(target.rotations);
         }

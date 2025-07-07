@@ -61,6 +61,7 @@ namespace Scripts.Static.Definitions
         Metal,
         Stone,
         Body,
+        Wood,
         Glass,
         NONE
     }

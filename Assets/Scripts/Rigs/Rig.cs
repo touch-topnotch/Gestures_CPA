@@ -41,7 +41,7 @@ namespace Scripts.PlayerLogic
 
         protected virtual void OnPlayerStateChanged(PlayerMode state)
         {
-            Debug.Log("Current state: " + state);
+           // Debug.Log("Current state: " + state);
         }
 
         public abstract bool isMoved();

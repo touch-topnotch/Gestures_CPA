@@ -35,11 +35,13 @@ namespace Scripts.Players
         public UnityEvent<HeadInteractionType> onHeadInteraction => owner.onHeadInteraction;
         
         public static PlayerData local;
-        
+
+        public readonly bool isOwner;
         private readonly Player owner;
 
-        public PlayerData(Player owner, BodyAnchors anchors, PlayerHands playerHands, AbilityController abilityController, CharacterController characterController, GesturesLibrary gesturesLibrary, Transform recognizerCenter)
+        public PlayerData(Player owner, BodyAnchors anchors, PlayerHands playerHands, AbilityController abilityController, CharacterController characterController, GesturesLibrary gesturesLibrary, Transform recognizerCenter, bool isOwner)
         {
+            this.isOwner = isOwner;
             this.owner = owner;
             this.anchors = anchors;
             this.hands = playerHands;

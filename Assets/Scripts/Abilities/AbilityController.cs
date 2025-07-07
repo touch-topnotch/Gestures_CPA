@@ -82,7 +82,10 @@ namespace Scripts.Abilities
         public void UseCharacterAbilities()
         {
             Debug.Log("Start to use next inventory abilities "+Debugger.dictionaryToString(inventory.characterAbilities, false, true));
-          
+            foreach (var VARIABLE in inventory.characterAbilities)
+            {
+                VARIABLE.Value.ReadyToBeRecognized();
+            }
             StartCoroutine(_recognizer.RecognizeDynamicGesture(inventory.characterAbilities.ToGestureDict(),
                 (e) =>
                 {

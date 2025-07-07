@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,18 +41,19 @@ namespace Scripts.PlayerLogic
                 : new PlayerProperties(RigType.NoRig, AvatarType.Enemy, CharacterType.Anger);
 
             var IsPlayer = IsClient || IsHost;
-            transform.name = $"Player {OwnerClientId}";
-
+            var transform1 = transform;
+            transform1.name = $"Player {OwnerClientId}";
+            ChangeLayersRecursively(transform1, $"Player {OwnerClientId}");
           
             if (IsPlayer && !IsOwner)
             {
-                _player.InitializePlayer(this.NetworkBehaviourId, new PlayerProperties(RigType.NoRig, AvatarType.Enemy, lastPlayerProperties.character));
+                _player.InitializePlayer(this.NetworkBehaviourId, new PlayerProperties(RigType.NoRig, AvatarType.Enemy, lastPlayerProperties.character), false);
                 
             }
 
             if (IsPlayer && IsOwner)
             {
-                _player.InitializePlayer(this.OwnerClientId, new PlayerProperties(lastPlayerProperties.rig, AvatarType.Local, lastPlayerProperties.character));
+                _player.InitializePlayer(this.OwnerClientId, new PlayerProperties(lastPlayerProperties.rig, AvatarType.Local, lastPlayerProperties.character), true);
                 
                 _player.onPlayerInitialized.AddListener(() =>
                 {
@@ -70,7 +72,7 @@ namespace Scripts.PlayerLogic
             
             if (IsServer && !IsHost)
             {
-                _player.InitializePlayer(this.NetworkBehaviourId, new PlayerProperties(RigType.NoRig, AvatarType.None, lastPlayerProperties.character));
+                _player.InitializePlayer(this.NetworkBehaviourId, new PlayerProperties(RigType.NoRig, AvatarType.None, lastPlayerProperties.character), false);
             }
             
             _player.onPlayerInitialized.AddListener(() =>
@@ -92,6 +94,8 @@ namespace Scripts.PlayerLogic
                 var weapons = GetComponentsInChildren<Weapon>();
                 data.abilityController.SetSpawnedWeapons(weaponsDict, weapons);
             }
+            ChangeLayersRecursively(transform, $"Player {OwnerClientId}");
+            
         }
         [ServerRpc]
         public void OnLocalClientFrameRecognizedServerRpc(string frameName, ulong client)
@@ -101,7 +105,6 @@ namespace Scripts.PlayerLogic
                 Debug.Log("Play Gesture Frame of player " + _player.name);
                 _player.data.abilityController.SimulateFrame(_player.data.hands, frameName);
             }
-
             CallFrameRecognizedClientRpc(frameName, client);
         }
 
@@ -168,5 +171,14 @@ namespace Scripts.PlayerLogic
             }
         }
 
+        static void ChangeLayersRecursively(Transform trans, string name)
+        {
+            trans.gameObject.layer = LayerMask.NameToLayer(name);
+            for (int i = 0; i < trans.childCount; i++)
+            {
+                ChangeLayersRecursively(trans.GetChild(i), name);
+            }
+          
+        }
     }
 }
