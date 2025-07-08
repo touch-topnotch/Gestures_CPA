@@ -282,22 +282,22 @@ namespace Scripts.PlayerLogic
             if (immediately)
             {
                 loadingSphere.enabled = true;
-                loadingSphere.sharedMaterial.color = Color.black;
+                loadingSphere.material.color = Color.black;
                 return;
             }
             loadingSphere.enabled = true;
-            loadingSphere.sharedMaterial.color = Color.clear;
+            loadingSphere.material.color = Color.clear;
             
             // Create a new color with the same RGB values but the target alpha
             Color finalColor = Color.black;
-            loadingSphere.sharedMaterial.DOColor(finalColor, 1);
+            loadingSphere.material.DOColor(finalColor, 1);
         }
         public void HideLoadingScreen(bool immediately = false)
         {
             if (immediately)
             {
                 loadingSphere.enabled = false;
-                loadingSphere.sharedMaterial.color = Color.clear;
+                loadingSphere.material.color = Color.clear;
                 return;
             }
 
@@ -306,7 +306,7 @@ namespace Scripts.PlayerLogic
             
             // Create a new color with the same RGB values but the target alpha
             Color finalColor = Color.clear;
-            loadingSphere.sharedMaterial.DOColor(finalColor, 1).onComplete += () => { loadingSphere.enabled = false; };
+            loadingSphere.material.DOColor(finalColor, 1).onComplete += () => { loadingSphere.enabled = false; };
         }
         
     }

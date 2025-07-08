@@ -21,8 +21,7 @@ namespace Scripts.Systems.Grab
         public event Action OnGrabStart;
         public event Action OnGrabEnd;
         public event Action OnSwing;
-
-        [SerializeField] protected Transform _grabObject;
+        public Transform _grabObjectAnchor;
 
         protected PlayerData _playerData;
 
@@ -70,9 +69,10 @@ namespace Scripts.Systems.Grab
             if (_playerData is { isOwner: true })
             {
                 HandleGrab();
+                if (isActivated)
+                    SetGrabObjectTransform();
             }
-            if(isActivated)
-                SetGrabObjectTransform();
+            
           
         }
 
@@ -127,7 +127,7 @@ namespace Scripts.Systems.Grab
 
         protected void SetGrabObjectTransformOneHanded(GrabPoint grabPoint)
         {
-            var grabObjectTransform = _grabObject.transform;
+            var grabObjectTransform = _grabObjectAnchor.transform;
             var grabObjectPos = grabObjectTransform.position;
 
             var localRotation = grabPoint.GrabReversed

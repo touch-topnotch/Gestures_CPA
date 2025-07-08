@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Scripts.Systems.Grab
 {
@@ -78,7 +79,7 @@ namespace Scripts.Systems.Grab
 
         private void SetGrabObjectTransformTwoHanded()
         {
-            var grabObjectTransform = _grabObject.transform;
+            var grabObjectTransform = _grabObjectAnchor.transform;
             var grabObjectPos = grabObjectTransform.position;
 
             grabObjectPos = Vector3.Lerp(grabObjectPos,

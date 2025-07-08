@@ -29,7 +29,8 @@ namespace Scripts.Resources.Weapons.Hammer
         [SerializeField] 
         private VisualEffect _materializationController;
 
-        [SerializeField] private Transform hammer;
+        [SerializeField] private Transform hammerMovablePart;
+        [SerializeField] private Transform hammerMesh;
         [SerializeField] private Transform vfxRoot;
         [SerializeField] private Transform hammerInStoneAnchor;
       
@@ -44,7 +45,7 @@ namespace Scripts.Resources.Weapons.Hammer
             switch (frameId)
             {
                 case 0:
-                    var forward = playerData.recognizerCenter.forward * 0.7f + playerData.recognizerCenter.position;
+                    var forward = playerData.anchors.Body.forward * 0.7f + playerData.recognizerCenter.position;
                     forward.y = playerData.anchors.Root.position.y + 0.01f;
                     vfxRoot.position = forward;
                     _audioSource.PlayOneShot(_pushOne, 0.5f);
@@ -68,8 +69,8 @@ namespace Scripts.Resources.Weapons.Hammer
                     _rockVFX.DOPlayForward();
                     break;
                 case 7:
-                    hammer.gameObject.SetActive(true);
-                    hammer.position = hammerInStoneAnchor.position;
+                    hammerMesh.gameObject.SetActive(true);
+                    hammerMovablePart.position = hammerInStoneAnchor.position;
                     _audioSource.PlayOneShot(_treshina);
                     _materializationController.gameObject.SetActive(true);
                     _materializationController.Play();
@@ -85,10 +86,10 @@ namespace Scripts.Resources.Weapons.Hammer
             {
                 var midPoint = ((playerData.hands.leftHand.points[0].position +
                                  playerData.hands.rightHand.points[1].position) / 2);
-                var position = hammer.position;
+                var position = hammerMovablePart.position;
                 position = Vector3.Lerp(position, new Vector3(position.x, midPoint.y, position.z), _hammerYSpeed * Time.deltaTime);
-                hammer.position = position;
-                if(hammer.position.y - playerData.anchors.Body.position.y > 1.65f) 
+                hammerMovablePart.position = position;
+                if(hammerMovablePart.position.y - playerData.anchors.Body.position.y > 1.65f) 
                 {
                     gestureRealyCasted = true;
                     OnGestureRealyCasted();
@@ -112,7 +113,7 @@ namespace Scripts.Resources.Weapons.Hammer
             _rockVFX.gameObject.SetActive(false);
             _treshinaVFX.gameObject.SetActive(false);
             _materializationController.gameObject.SetActive(false);
-            hammer.gameObject.SetActive(false);
+            hammerMesh.gameObject.SetActive(false);
             _audioSource.clip = null;
             _audioSource.volume = 1;
         }

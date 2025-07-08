@@ -1,7 +1,11 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using Scripts.Components;
 using Scripts.Gestures;
+using Scripts.Network;
 using Scripts.Players;
+using Scripts.Static.Definitions;
 using Scripts.Systems.Grab;
 using Scripts.Weapons;
 using Unity.Netcode;
@@ -23,7 +27,9 @@ namespace Scripts.Abilities.Weapons.Melee
 
           [SerializeField]
           protected GrabSystem _grabSystem;
-          
+
+          [SerializeField]
+          protected ClientTransform hammerObject;
           public GrabSystem GrabSystem
           {
                get => _grabSystem;
@@ -34,6 +40,19 @@ namespace Scripts.Abilities.Weapons.Melee
           {
                base.OnInitialized();
                SetGrabSystem();
+               ActivatedEvent.AddListener(()=>
+               {
+                    StartCoroutine(dieDelay());
+               });
+          }
+
+          protected void Update()
+          {
+               if (IsOwner && hammerObject.enabled)
+               {
+                    hammerObject.transform.position = _grabSystem._grabObjectAnchor.position;
+                    hammerObject.transform.rotation = _grabSystem._grabObjectAnchor.rotation;
+               }
           }
 
           public void SetGrabSystem()
@@ -49,6 +68,13 @@ namespace Scripts.Abilities.Weapons.Melee
           {
                Debug.Log("OnGrabbed()");
                ActivatedEvent.Invoke();
+               
+          }
+
+          public IEnumerator dieDelay()
+          {
+               yield return new WaitForSeconds(10f);
+               AbilityReleasedEvent?.Invoke();
           }
 
           public void OnUnGrabbed()
