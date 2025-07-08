@@ -131,7 +131,7 @@ namespace Scripts.PlayerLogic
         {
         
           
-            ShowLoadingScreen(true);
+       //     ShowLoadingScreen(true);
             _rigDict = new Dictionary<RigType, Rig>();
             foreach (var VARIABLE in _rigList)
             {
@@ -151,8 +151,8 @@ namespace Scripts.PlayerLogic
         {
             id = _id;
             AddLoggers();
-            if(!isOwner)
-                HideLoadingScreen(true);
+            // if(!isOwner)
+            //     HideLoadingScreen(true);
             characterController.SpawnCharacters();
             abilityController.Initialize();
        
@@ -176,8 +176,8 @@ namespace Scripts.PlayerLogic
             {
                 Debug.Log(
                     $"Player {id} initialized. rig - {this.playerProperties.rig}, character - {this.playerProperties.character}, avatar - {this.playerProperties.avatar}");
-                if(isOwner)
-                    HideLoadingScreen();
+                // if(isOwner)
+                //     HideLoadingScreen();
             });
     
             if (isLocal)

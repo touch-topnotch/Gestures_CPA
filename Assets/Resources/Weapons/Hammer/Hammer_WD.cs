@@ -156,6 +156,8 @@ namespace Scripts.Resources.Weapons.Hammer
 
         public override void OnAbilityDestroyed()
         {
+            isActive = false;
+            gestureRealyCasted = false;
             hammerMesh.gameObject.SetActive(false);
         }
 
