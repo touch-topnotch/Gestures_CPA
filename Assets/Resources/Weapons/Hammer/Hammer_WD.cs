@@ -45,7 +45,7 @@ namespace Scripts.Resources.Weapons.Hammer
             switch (frameId)
             {
                 case 0:
-                    var forward = playerData.anchors.Body.forward * 0.7f + playerData.recognizerCenter.position;
+                    var forward = playerData.anchors.Body.forward * 0.7f;
                     forward.y = playerData.anchors.Root.position.y + 0.01f;
                     vfxRoot.position = forward;
                     _audioSource.PlayOneShot(_pushOne, 0.5f);
@@ -89,7 +89,7 @@ namespace Scripts.Resources.Weapons.Hammer
                 var position = hammerMovablePart.position;
                 position = Vector3.Lerp(position, new Vector3(position.x, midPoint.y, position.z), _hammerYSpeed * Time.deltaTime);
                 hammerMovablePart.position = position;
-                if(hammerMovablePart.position.y - playerData.anchors.Body.position.y > 1.5f) 
+                if(hammerMovablePart.position.y - playerData.anchors.Body.position.y > 1.5f || isActive) 
                 {
                     gestureRealyCasted = true;
                     OnGestureRealyCasted();
@@ -133,9 +133,11 @@ namespace Scripts.Resources.Weapons.Hammer
             
         }
 
+        private bool isActive;
+
         public override void OnActivated()
         {
-         //   throw new System.NotImplementedException();
+            isActive = true;
         }
 
         public override void OnHitStarted()
@@ -149,6 +151,7 @@ namespace Scripts.Resources.Weapons.Hammer
 
         public override void OnDeactivated()
         {
+            isActive = false;
         }
 
         public override void OnAbilityDestroyed()
