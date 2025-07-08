@@ -45,7 +45,7 @@ namespace Scripts.Resources.Weapons.Hammer
             switch (frameId)
             {
                 case 0:
-                    var forward = playerData.anchors.Body.forward * 0.7f;
+                    var forward = playerData.anchors.Body.position + playerData.anchors.Body.forward * 0.7f;
                     forward.y = playerData.anchors.Root.position.y + 0.01f;
                     vfxRoot.position = forward;
                     _audioSource.PlayOneShot(_pushOne, 0.5f);
