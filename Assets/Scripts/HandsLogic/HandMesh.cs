@@ -149,12 +149,12 @@ namespace Scripts.HandsLogic
             }
 
             if (_lastProps.changePosition)
-                points[0].localPosition = Vector3.Lerp(points[0].localPosition, _target.rootPos + positionOffset,
+                points[0].localPosition = Vector3.Lerp(points[0].localPosition, _target.rootPos,
                     _lastProps.animationCurve.Evaluate(_progress));
             for (int i = 0; i < 26; i++)
             {
                 points[i].localRotation = Quaternion.Lerp(points[i].localRotation,
-                    _target.rotations[i] * rotationOffset, _lastProps.animationCurve.Evaluate(_progress));
+                    _target.rotations[i], _lastProps.animationCurve.Evaluate(_progress));
             }
         }
 

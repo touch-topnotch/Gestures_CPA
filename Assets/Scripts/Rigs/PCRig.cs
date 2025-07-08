@@ -90,7 +90,8 @@ namespace Scripts.PlayerLogic
                 Debug.Log("Key: " + key + " don't found");
                 return;
             }
-            _targetFrameData = _library.allAvailableFrames[key].ParentedFrame(inherited.data.anchors.Body);
+
+            _targetFrameData = _library.allAvailableFrames[key].AttachedToPlayer();
         }
 
         private void SimulateDynamicGesture(string key)
@@ -106,7 +107,8 @@ namespace Scripts.PlayerLogic
                 Debug.Log("Key: " + frameName + " don't found");
                 return;
             }
-            _targetFrameData = _library.allAvailableFrames[frameName].ParentedFrame(inherited.data.anchors.Body);
+
+            _targetFrameData = _library.allAvailableFrames[frameName].AttachedToPlayer();
             StartCoroutine(WaitUntilNextFrame(nextFrame));
         }
 

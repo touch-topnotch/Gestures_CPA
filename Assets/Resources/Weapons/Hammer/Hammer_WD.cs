@@ -44,7 +44,9 @@ namespace Scripts.Resources.Weapons.Hammer
             switch (frameId)
             {
                 case 0:
-                    vfxRoot.position = new Vector3(playerData.recognizerCenter.position.x, playerData.anchors.Root.position.y + 0.1f, playerData.recognizerCenter.position.z);
+                    var forward = playerData.recognizerCenter.forward * 0.7f + playerData.recognizerCenter.position;
+                    forward.y = playerData.anchors.Root.position.y + 0.01f;
+                    vfxRoot.position = forward;
                     _audioSource.PlayOneShot(_pushOne, 0.5f);
                     _treshinaVFX.gameObject.SetActive(true);
                     _treshinaVFX.DOPlayForward();

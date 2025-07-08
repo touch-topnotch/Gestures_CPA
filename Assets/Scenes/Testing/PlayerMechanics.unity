@@ -1675,7 +1675,7 @@ Light:
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 2
+    m_Type: 0
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
@@ -1881,8 +1881,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1201259685}
   - component: {fileID: 1201259684}
-  - component: {fileID: 1201259683}
   - component: {fileID: 1201259686}
+  - component: {fileID: 1201259687}
   m_Layer: 0
   m_Name: NetworkingComponents
   m_TagString: Untagged
@@ -1890,18 +1890,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1201259683
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1201259682}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b09ed377c62d4f30b634236a46f95078, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1201259684
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2012,6 +2000,18 @@ MonoBehaviour:
   SimultaneousHandsAndControllersEnabled: 0
   _readOnlyWideMotionModeHandPosesEnabled: 0
   wideMotionModeHandPosesEnabled: 0
+--- !u!114 &1201259687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1201259682}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b09ed377c62d4f30b634236a46f95078, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1264330899
 GameObject:
   m_ObjectHideFlags: 0
@@ -2364,7 +2364,7 @@ GameObject:
   - component: {fileID: 1372885442}
   m_Layer: 9
   m_Name: Plane
-  m_TagString: Untagged
+  m_TagString: Stone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3275,6 +3275,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 665a30ebe82022b48a1eb61943c3ad1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  onWaitingToConnect:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 2050896275}
+        m_TargetAssemblyTypeName: Scripts.PlayerLogic.Player, Assembly-CSharp
+        m_MethodName: ShowLoadingScreen
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!4 &1835352230
 Transform:
   m_ObjectHideFlags: 0

@@ -38,6 +38,8 @@ namespace Scripts.Players
 
         public readonly bool isOwner;
         private readonly Player owner;
+        public void ShowLoadingScreen(bool immediately) => owner.ShowLoadingScreen(immediately);
+        public void HideLoadingScreen(bool immediately) => owner.HideLoadingScreen(immediately);
 
         public PlayerData(Player owner, BodyAnchors anchors, PlayerHands playerHands, AbilityController abilityController, CharacterController characterController, GesturesLibrary gesturesLibrary, Transform recognizerCenter, bool isOwner)
         {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using Scripts.Abilities;
 using Scripts.Characters;
 using Scripts.Components;
@@ -64,6 +65,8 @@ namespace Scripts.PlayerLogic
         public UnityEvent<HeadInteractionType> onHeadInteraction => _rig.headInteraction.onHeadInteraction;
         public PlayerData data => _data;
         private PlayerData _data;
+        [SerializeField]
+        private MeshRenderer loadingSphere;
         
         public Rig rig => _rig;
         [HideInEditorMode]
@@ -126,7 +129,9 @@ namespace Scripts.PlayerLogic
 
         private void Awake()
         {
+        
           
+            ShowLoadingScreen(true);
             _rigDict = new Dictionary<RigType, Rig>();
             foreach (var VARIABLE in _rigList)
             {
@@ -146,7 +151,8 @@ namespace Scripts.PlayerLogic
         {
             id = _id;
             AddLoggers();
-            
+            if(!isOwner)
+                HideLoadingScreen(true);
             characterController.SpawnCharacters();
             abilityController.Initialize();
        
@@ -170,6 +176,8 @@ namespace Scripts.PlayerLogic
             {
                 Debug.Log(
                     $"Player {id} initialized. rig - {this.playerProperties.rig}, character - {this.playerProperties.character}, avatar - {this.playerProperties.avatar}");
+                if(isOwner)
+                    HideLoadingScreen();
             });
     
             if (isLocal)
@@ -267,6 +275,38 @@ namespace Scripts.PlayerLogic
         {
                 return new PlayerData(this, anchors, hands, abilityController, characterController, null, recognitionCenter, true);
             
+        }
+
+        public void ShowLoadingScreen(bool immediately = false)
+        {
+            if (immediately)
+            {
+                loadingSphere.enabled = true;
+                loadingSphere.sharedMaterial.color = Color.black;
+                return;
+            }
+            loadingSphere.enabled = true;
+            loadingSphere.sharedMaterial.color = Color.clear;
+            
+            // Create a new color with the same RGB values but the target alpha
+            Color finalColor = Color.black;
+            loadingSphere.sharedMaterial.DOColor(finalColor, 1);
+        }
+        public void HideLoadingScreen(bool immediately = false)
+        {
+            if (immediately)
+            {
+                loadingSphere.enabled = false;
+                loadingSphere.sharedMaterial.color = Color.clear;
+                return;
+            }
+
+            if (!loadingSphere.enabled)
+                return;
+            
+            // Create a new color with the same RGB values but the target alpha
+            Color finalColor = Color.clear;
+            loadingSphere.sharedMaterial.DOColor(finalColor, 1).onComplete += () => { loadingSphere.enabled = false; };
         }
         
     }
