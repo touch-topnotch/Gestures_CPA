@@ -40,7 +40,7 @@ namespace Scripts.Abilities.Weapons.Melee
           {
                base.OnInitialized();
                SetGrabSystem();
-               ActivatedEvent.AddListener(()=>
+               ActivatedEvent?.AddListener(()=>
                {
                     StartCoroutine(dieDelay());
                });

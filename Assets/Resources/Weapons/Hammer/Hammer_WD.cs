@@ -89,7 +89,7 @@ namespace Scripts.Resources.Weapons.Hammer
                 var position = hammerMovablePart.position;
                 position = Vector3.Lerp(position, new Vector3(position.x, midPoint.y, position.z), _hammerYSpeed * Time.deltaTime);
                 hammerMovablePart.position = position;
-                if(hammerMovablePart.position.y - playerData.anchors.Body.position.y > 1.65f) 
+                if(hammerMovablePart.position.y - playerData.anchors.Body.position.y > 1.5f) 
                 {
                     gestureRealyCasted = true;
                     OnGestureRealyCasted();
@@ -107,7 +107,7 @@ namespace Scripts.Resources.Weapons.Hammer
         
         public override void OnReadyToBeCasted()
         {
-
+           
             _rockVFX.transform.localScale = Vector3.one;
             _treshinaVFX.transform.localScale = Vector3.one;
             _rockVFX.gameObject.SetActive(false);
@@ -153,6 +153,7 @@ namespace Scripts.Resources.Weapons.Hammer
 
         public override void OnAbilityDestroyed()
         {
+            hammerMesh.gameObject.SetActive(false);
         }
 
         public override void OnImpact(string affected)
