@@ -76,8 +76,9 @@ namespace Scripts.Weapons.Magic
                 {
                     var leftPalmPos = playerData.hands.leftHand.palmCenter.position;
                     var rightPalmPos = playerData.hands.rightHand.palmCenter.position;
-                    orb.transform.position = (leftPalmPos + rightPalmPos) / 2; //Vector3.Lerp(orb.transform.position, (leftPalmPos + rightPalmPos) / 2,
-                       // orbBetweenHandsSpeed * Time.deltaTime);
+                    orb.transform.position =
+                        (leftPalmPos + rightPalmPos) / 2; //Vector3.Lerp(orb.transform.position, (leftPalmPos + rightPalmPos) / 2,
+                    // orbBetweenHandsSpeed * Time.deltaTime);
                 }
 
            
@@ -96,12 +97,57 @@ namespace Scripts.Weapons.Magic
 
                 if (IsClient)
                 {
-                    var fingerDir = playerData.hands.rightHand.points[3].transform.forward;
-                    orb.rigidBody.velocity = fingerDir * orbSpeed;
-                 //   orb.transform.position += fingerDir * (orbSpeed * Time.deltaTime);
+                    SimpleOrbAim();
+                    //DistanceBasedOrbAim();
+                    //RayCastOrbAim();
                 }
      
             }
+        }
+
+        private void SimpleOrbAim()
+        {
+            var fingerDir = playerData.hands.rightHand.points[3].transform.forward;
+            orb.rigidBody.velocity = fingerDir * orbSpeed;
+            //   orb.transform.position += fingerDir * (orbSpeed * Time.deltaTime);
+        }
+
+        private float _distanceMultiplier = 1.2f;
+        private float _rotationSpeed = 360f;
+        
+        private void DistanceBasedOrbAim()
+        {
+            var fingerDir = playerData.hands.rightHand.points[3].transform.forward;
+            var targetDistance = Vector3.Distance(orb.transform.position,  playerData.hands.rightHand.points[3].transform.position) * _distanceMultiplier;
+            var targetPos = playerData.hands.rightHand.points[3].transform.position + fingerDir * targetDistance;
+            Quaternion targetRotation = Quaternion.LookRotation(targetPos - orb.transform.position);
+            
+            orb.rigidBody.MoveRotation(Quaternion.RotateTowards(orb.transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime));
+            orb.rigidBody.velocity = orb.transform.forward * orbSpeed;
+        }
+
+        [SerializeField] private LayerMask _aimTargetLayer;
+        
+        private void RayCastOrbAim()
+        {
+            var fingerDir = playerData.hands.rightHand.points[3].transform.forward;
+            Ray ray = new Ray(playerData.hands.rightHand.points[3].transform.position, playerData.hands.rightHand.points[3].transform.forward);
+            RaycastHit hit;
+            
+            Vector3 targetPos;
+            if (Physics.Raycast(ray, out hit, Mathf.Infinity, _aimTargetLayer))
+            {
+                targetPos = hit.point;
+            }
+            else
+            {
+                var targetDistance = Vector3.Distance(orb.transform.position,  playerData.hands.rightHand.points[3].transform.position) * _distanceMultiplier;
+                targetPos = playerData.hands.rightHand.points[3].transform.position + fingerDir * targetDistance;
+            }
+            Quaternion targetRotation = Quaternion.LookRotation(targetPos - orb.transform.position);
+            
+            orb.rigidBody.MoveRotation(Quaternion.RotateTowards(orb.transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime));
+            orb.rigidBody.velocity = orb.transform.forward * orbSpeed;
         }
 
         private void HideOrbAfterDelay()

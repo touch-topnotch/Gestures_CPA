@@ -106,8 +106,12 @@ namespace Scripts
                     }
 
                     break;
+                
+                case 3:
+                    source.PlayOneShot(clipFrames[state], 1f);
+                    break;
                 case 4:
-                    
+                    source.PlayOneShot(clipFrames[state], 1f);
                     break;
             }
         }

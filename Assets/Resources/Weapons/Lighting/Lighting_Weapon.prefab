@@ -307,7 +307,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 98f351032bd2f7d409edb491873ad38e, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 7ae6d7f851cf62e4389e53c721956246, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 0.456
   m_Pitch: 1
@@ -893,10 +893,13 @@ MonoBehaviour:
   weaponDesign: {fileID: 7556167455210854915}
   observers: []
   damage: 50
-  lifeTime: 6
+  lifeTime: 42.8
   orbSpeed: 4
   orbBetweenHandsSpeed: 42.3
   orb: {fileID: 9005143814553782385}
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 1536
 --- !u!114 &7556167455210854915
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -943,6 +946,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 466eb8440abd7fc4f9969cab2a0dfe6d, type: 3}
   - {fileID: 8300000, guid: 2710b98c95be6ea419923edb5f45080b, type: 3}
   - {fileID: 8300000, guid: 1f6654f13f7864531be5709f31426512, type: 3}
+  - {fileID: 8300000, guid: d26cce85986371f4aaa59db35a0dd7c1, type: 3}
+  - {fileID: 8300000, guid: df4ae15a4139dad4ebdc186512b0dd94, type: 3}
   arcAmbient: {fileID: 8300000, guid: 98f351032bd2f7d409edb491873ad38e, type: 3}
 --- !u!114 &6248307953677142085
 MonoBehaviour:
