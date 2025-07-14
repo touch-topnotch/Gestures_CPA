@@ -5,6 +5,7 @@ using Scripts.Design;
 using Scripts.Events;
 using Scripts.HandsLogic;
 using Scripts.Players;
+using Scripts.Static;
 using Scripts.Systems;
 using UnityEngine;
 
@@ -20,10 +21,12 @@ namespace Scripts.Gestures
         private static readonly Color _colorPassive = new Color(0.6f, 1, 1, 0.8f);
         private static readonly WaitForUpdate v_waitForUpdate = new WaitForUpdate();
         private readonly PlayerHands _hands;
-        public Recognizer(RecognitionPropertiesConfig config, PlayerHands hands)
+        private readonly AnimationCurve _supportiveHandsCurve;
+        public Recognizer(RecognitionPropertiesConfig config, PlayerHands hands, AnimationCurve supportiveHandsCurve)
         {
             _config = config;
             _hands = hands;
+            _supportiveHandsCurve = supportiveHandsCurve;
         }
 
         
@@ -55,7 +58,7 @@ namespace Scripts.Gestures
                         out var curSuppRec, false) && drawnSuppLast != curSuppRec)
                 {
                      _hands.handVisualiser.ShowHands();
-                      _hands.handVisualiser.Move(v_possibleFrames[curSuppRec], 4, null);
+                      _hands.handVisualiser.Move(v_possibleFrames[curSuppRec], new HandMoveProps(3, () => { }, true, _supportiveHandsCurve));
                       _hands.handVisualiser.ManipulateLasts((m) => m.ChangeColorPinPong(_colorActive, _colorPassive,
                          new ColorParams(HandShaderProps.EdgeColor, 1, false)));
                     drawnSuppLast = curSuppRec;
@@ -79,7 +82,7 @@ namespace Scripts.Gestures
                 {
                     if (!wasDrawn && RecognizeFrame(_config.SupportiveProperties, possibleFrame, _hands, false))
                     {
-                        _hands.handVisualiser.Move(possibleFrame, 4, null);
+                        _hands.handVisualiser.Move(possibleFrame, new HandMoveProps(4, () => { }, true, _supportiveHandsCurve));
                         _hands.handVisualiser.ManipulateLasts((m) => m.ChangeColorPinPong(_colorActive, _colorPassive, new ColorParams(HandShaderProps.EdgeColor, 1, false)));
                         wasDrawn = true;
                     }
@@ -149,19 +152,18 @@ namespace Scripts.Gestures
         {
             if (bonesData == null || bonesData.rotations?.Length != handSkeleton.Length)
                 return true;
-
             var dist = OptimizedDistance(bonesData.rootPos, handSkeleton[0].localPosition);
             if (1 / props.positionQuality - dist < props.positionQuality)
             {
-                //     l.rl("Canceled, because position: " + dist + " < " + props.positionQuality);
+                    // l.rl("Canceled, because position: " + dist + " < " + props.positionQuality);
                 return false;
             }
-
+           
             float distance = OptimizedDistance(bonesData.rotations[0], handSkeleton[0].localRotation);
 
             if (distance < props.rootRotationQuality)
             {
-                //    l.rl("Canceled, because root rotation: " + distance + " > " + props.rootRotationQuality);
+                   //l.rl("Canceled, because root rotation: " + distance + " > " + props.rootRotationQuality);
                 return false;
             }
 
@@ -172,7 +174,7 @@ namespace Scripts.Gestures
                 var quality = props.rotationQuality;
                 if (distance < quality) // 0 - bad, 1 - good, 0.9 - ok
                 {
-                    //    l.rl("Canceled, because rotation: " + distance + " > " + props.rotationQuality);
+                       //l.rl("Canceled, because rotation: " + distance + " > " + props.rotationQuality);
                     return false;
                 }
             }

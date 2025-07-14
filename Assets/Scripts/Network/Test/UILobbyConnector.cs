@@ -6,6 +6,7 @@ using Scripts.Static;
 using Unity.Netcode;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
+using UnityEngine.Events;
 
 namespace Network.Test
 {
@@ -60,8 +61,9 @@ namespace Network.Test
             await UniTask.SwitchToMainThread();
 
             NetworkManager.Singleton.OnClientStarted += () => { LobbyComponents.SetActive(false); };
-
+      
             ShowLobbies();
+            
         }
 
         private async void Update()

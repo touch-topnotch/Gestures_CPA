@@ -1,14 +1,20 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Components;
 using DG.Tweening;
+using ModestTree;
+using Scripts.Design;
 using Scripts.Gestures;
 using Scripts.Static.Definitions;
+using Scripts.Systems;
 using Unity.Netcode.Components;
 using UnityEngine;
 using UnityEngine.VFX;
+using UnityEngine.XR.Hands;
+using Color = UnityEngine.Color;
 
 namespace Scripts
 {
@@ -32,11 +38,19 @@ namespace Scripts
         [SerializeField] 
         private float _explosionDuration;
 
+        [SerializeField] private Color activeLightningColor;
+        [SerializeField] private Color passiveLightningColor;
+
         private int state;
         private Coroutine lightningMove;
         private GameObject _lightningObject => orb.gameObject;
         private List<Transform> left = new();
         private List<Transform> right = new();
+
+        [Header("SFX")]
+        [SerializeField] private AudioSource source;
+        [SerializeField] private AudioClip[] clipFrames;
+        [SerializeField] private AudioClip arcAmbient;
         
         private void Start()
         {
@@ -67,9 +81,33 @@ namespace Scripts
                     arc.gameObject.SetActive(true);
                     orb.SetFloat("Power", 0);
                     arc.SetFloat("Power", 0);
+                    source.PlayOneShot(clipFrames[state], 1f);
                     break;
                 case 1:
-                    audioProcessor.PlaySequencedSound("Frames", state);
+                    // shake left and right hand by changing offsets
+                    var leftHand = playerData.hands.leftHand;
+                    var rightHand = playerData.hands.rightHand;
+                    // DOTween.Shake(() => leftHand.positionOffset, x => leftHand.positionOffset= x, 10f, 0.005f, 15, 5, false);
+                    // DOTween.Shake(() => rightHand.positionOffset, x => rightHand.positionOffset= x, 10f, 0.005f, 15, 4, false);
+                    source.clip = arcAmbient;
+                    source.loop = true;
+                    source.DOFade(0.3f, 4f).SetEase(Ease.InOutQuad);
+                    source.Play();
+                    source.PlayOneShot(clipFrames[state]);
+                    break;
+                case 2:
+                    source.PlayOneShot(clipFrames[state], 1f);
+                    foreach (var id in HandShaderProps.FingerNames)
+                    {
+                        playerData.hands.leftHand.ChangeColorPinPong(activeLightningColor, passiveLightningColor,
+                            new ColorParams(id, 0.2f));
+                        playerData.hands.rightHand.ChangeColorPinPong(activeLightningColor, passiveLightningColor,
+                            new ColorParams(id, 0.2f));
+                    }
+
+                    break;
+                case 4:
+                    
                     break;
             }
         }
@@ -84,9 +122,9 @@ namespace Scripts
         }
         public override void OnAbilityDestroyed()
         {
-            _lightningObject.SetActive(false);
-            StopCoroutine(lightningMove);
+            source.Stop();
             StartCoroutine(Explosion());
+            _lightningObject.SetActive(false);
         }
         
         
@@ -94,32 +132,41 @@ namespace Scripts
         {
             if (state <= 0)
                 return;
-        
+            if (state == 1)
+            {
+                To(orb, "Power", 0.4f);
+                To(arc, "Power", 1);
+            }
+
+            if (state == 2)
+            {
+                To(orb, "Power", 0.4f);
+                To(arc, "Power", 1);
+            }
+            if (state == 3)
+            {
+                To(orb, "Power", 0.6f);
+                To(arc, "Power", 0);
+            }
+            
             if (state <= 2)
             {
                 
                 var leftPalmPos = playerData.hands.leftHand.palmCenter.position;
                 var rightPalmPos = playerData.hands.rightHand.palmCenter.position;
-                var distance = Vector3.Distance(leftPalmPos, rightPalmPos);
+                arc.transform.position = (leftPalmPos + rightPalmPos) / 2;
+                //var distance = Vector3.Distance(leftPalmPos, rightPalmPos);
                 // i have min and max boardings. I need to get a coefficient from 0 to 1, where 0 is the distance less than minimum or more than maximum, and 1 is the distance between minimum and maximum
                 // it should be linear function
-                var yCoef = Math.Clamp(((1 - Math.Abs(yCenter - distance) / yCenter) - 0.2f) * 4, 0, 1);
-                var xzDistance = Vector2.Distance(new Vector2(leftPalmPos.x, leftPalmPos.z),
-                    new Vector2(rightPalmPos.x, rightPalmPos.z));
-                var xzCoef = Math.Clamp((boardingXZ - xzDistance) / boardingXZ * 6, 0, 1);
-        
-                var power = yCoef * xzCoef;
-                arc.transform.position = (leftPalmPos + rightPalmPos) / 2;
-
-                To(orb, "Power", 0.4f);
-                To(arc, "Power", 1);
-            }    
-        
-            if (state > 2)
-            {
-                To(arc, "Power", 0);
-                To(orb, "Power", 1);
+                //var yCoef = Math.Clamp(((1 - Math.Abs(yCenter - distance) / yCenter) - 0.2f) * 4, 0, 1);
+                //var xzDistance = Vector2.Distance(new Vector2(leftPalmPos.x, leftPalmPos.z),
+                //    new Vector2(rightPalmPos.x, rightPalmPos.z));
+                //var xzCoef = Math.Clamp((boardingXZ - xzDistance) / boardingXZ * 6, 0, 1);
+                // var power = yCoef * xzCoef;
+                // To(orb, "Power", 0.4f);
+                // To(arc, "Power", 1);
             }
+            
         
             if (state < 4)
             {
@@ -130,6 +177,11 @@ namespace Scripts
                 }
         
                 arc.SetVector3("EnergyOrbPosition", orb.transform.position);
+            }
+
+            if (state == 4)
+            {
+                To(orb, "Power", 1f);
             }
             
         }
@@ -190,14 +242,10 @@ namespace Scripts
             StartCoroutine(Explosion());
         }
 
-        protected override bool shouldAddMissingComponents =>
-            !(vfxProcessor && audioProcessor && arc && orb && _explosionObject);
 
         public override void AddMissingComponents()
         {
             base.AddMissingComponents();
-            vfxProcessor = GetComponent<VFXProcessor>();
-            audioProcessor = GetComponent<AudioProcessor>();
             arc = transform.Find("Electric Arc").GetComponent<VisualEffect>();
             orb = transform.Find("Electric Orb").GetComponent<VisualEffect>();
             

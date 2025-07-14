@@ -1,11 +1,6 @@
 using System;
-using System.Collections.Generic;
-using JetBrains.Annotations;
 using Scripts.Gestures;
-using Scripts.PlayerLogic;
 using Scripts.Systems;
-using Sirenix.OdinInspector;
-using UnityEditor;
 using UnityEngine;
 
 namespace Scripts.HandsLogic
@@ -77,12 +72,12 @@ namespace Scripts.HandsLogic
         public void Override(FrameData target, int index = 0) =>
             SwitchManipulation(target, (v, d) => { v.Override(d, index); });
 
-        public void SpawnAndMove(FrameData target, float speed, Action onPlaced) =>
-            SwitchManipulation(target, (v, d) => { v.SpawnAndMove(d, speed, onPlaced); });
+        public void SpawnAndMove(FrameData target, HandMoveProps props) =>
+            SwitchManipulation(target, (v, d) => { v.SpawnAndMove(d, props); });
 
-        public void Move(FrameData target, float speed, Action onPlaced, int index = 0)
+        public void Move(FrameData target, HandMoveProps props, int index = 0)
             =>
-                SwitchManipulation(target, (v, d) => { v.Move(d, speed, onPlaced, index); });
+                SwitchManipulation(target, (v, d) => { v.Move(d, props, index); });
 
         public void ManipulateLasts(HandMeshManipulation manipulation) => TwoHandsManipulation((e) =>
         {

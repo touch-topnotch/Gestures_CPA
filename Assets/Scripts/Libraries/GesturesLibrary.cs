@@ -92,6 +92,19 @@ namespace Scripts.Gestures
                 allAvailableFrames.Add(frame.Key, frame.Value);
             }
 
+            // var detailed = "";
+            // foreach (var VARIABLE in characterGestures)
+            // {
+            //     detailed += VARIABLE.Key + ": ";
+            //     foreach (var frame in VARIABLE.Value.frames)
+            //     {
+            //         detailed += frame.name + " " + frame.LeftBones + frame.RightBones + ", ";
+            //     }
+            //
+            //     detailed += "\n";
+            // }
+  
+
             var log = $"Library has initialized!\n"
                       + $"   All Parsed Gestures: {Debugger.dictionaryToString(allCharacterGestures.openDict, false, true)}"
                       + $"\n   Character Gestures (Now without limitations): {Debugger.dictionaryToString(characterGestures, false, true)}"
@@ -99,6 +112,7 @@ namespace Scripts.Gestures
                       + $"\n   Supportive Gestures: {Debugger.dictionaryToString(supportiveGestures, false, true)}";
 
             Debug.Log(log);
+            //Debug.Log(detailed);
             onLibraryInitialized?.Invoke();
         }
 

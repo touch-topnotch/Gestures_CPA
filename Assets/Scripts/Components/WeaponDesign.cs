@@ -22,8 +22,6 @@ namespace Components
     public abstract class WeaponDesign : PrefabSerializedMonoBehaviour
     {
         [Header("Components")]
-        public AudioProcessor audioProcessor;
-        public VFXProcessor vfxProcessor;
         [HideInInspector] public PlayerData playerData;
         [HideInInspector]
         public UnityAction[] actions;
@@ -66,6 +64,5 @@ namespace Components
 
         public virtual void Update(){}
 
-        protected override bool shouldAddMissingComponents => !(vfxProcessor && audioProcessor);
     }
 }

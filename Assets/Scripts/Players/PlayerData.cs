@@ -17,10 +17,12 @@ namespace Scripts.Players
     {
         public PlayerMode playerMode => owner.playerMode;
         public PlayerProperties properties => owner.playerProperties;
+        public Rig rig => owner.rig;
         
         public readonly PlayerHands hands;
 
         public readonly BodyAnchors anchors;
+        public readonly Transform recognizerCenter;
 
         public readonly AbilityController abilityController;
         public readonly CharacterController characterController;
@@ -33,14 +35,19 @@ namespace Scripts.Players
         public UnityEvent<HeadInteractionType> onHeadInteraction => owner.onHeadInteraction;
         
         public static PlayerData local;
-        
-        private readonly Player owner;
 
-        public PlayerData(Player owner, BodyAnchors anchors, PlayerHands playerHands, AbilityController abilityController, CharacterController characterController, GesturesLibrary gesturesLibrary)
+        public readonly bool isOwner;
+        private readonly Player owner;
+        public void ShowLoadingScreen(bool immediately) => owner.ShowLoadingScreen(immediately);
+        public void HideLoadingScreen(bool immediately) => owner.HideLoadingScreen(immediately);
+
+        public PlayerData(Player owner, BodyAnchors anchors, PlayerHands playerHands, AbilityController abilityController, CharacterController characterController, GesturesLibrary gesturesLibrary, Transform recognizerCenter, bool isOwner)
         {
+            this.isOwner = isOwner;
             this.owner = owner;
             this.anchors = anchors;
             this.hands = playerHands;
+            this.recognizerCenter = recognizerCenter;
             this.gesturesLibrary = gesturesLibrary;
             this.abilityController = abilityController;
             this.characterController = characterController;

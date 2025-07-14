@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DG.Tweening;
 using Scripts.Abilities;
 using Scripts.Characters;
 using Scripts.Components;
@@ -36,8 +37,11 @@ namespace Scripts.PlayerLogic
         [DisableInEditorMode][DisableInPlayMode]
         private PlayerMode _playerMode;
 
-        [BoxGroup("Components")][SerializeField]
+        [BoxGroup("Components")]
+        [SerializeField]
         private BodyAnchors anchors;
+        [SerializeField]
+        private Transform recognitionCenter;
         
         [BoxGroup("Components")][SerializeField]
         private PlayerHands hands;
@@ -61,6 +65,8 @@ namespace Scripts.PlayerLogic
         public UnityEvent<HeadInteractionType> onHeadInteraction => _rig.headInteraction.onHeadInteraction;
         public PlayerData data => _data;
         private PlayerData _data;
+        [SerializeField]
+        private MeshRenderer loadingSphere;
         
         public Rig rig => _rig;
         [HideInEditorMode]
@@ -123,7 +129,9 @@ namespace Scripts.PlayerLogic
 
         private void Awake()
         {
+        
           
+       //     ShowLoadingScreen(true);
             _rigDict = new Dictionary<RigType, Rig>();
             foreach (var VARIABLE in _rigList)
             {
@@ -134,16 +142,17 @@ namespace Scripts.PlayerLogic
 
             if (isLocal)
             {
-                InitializePlayer(0, playerProperties);
+                InitializePlayer(0, playerProperties, true);
                 //CreateRecognizer();
             }
         }
 
-        public void InitializePlayer(ulong _id, PlayerProperties _playerProps)
+        public void InitializePlayer(ulong _id, PlayerProperties _playerProps, bool isOwner)
         {
             id = _id;
             AddLoggers();
-            
+            // if(!isOwner)
+            //     HideLoadingScreen(true);
             characterController.SpawnCharacters();
             abilityController.Initialize();
        
@@ -156,7 +165,7 @@ namespace Scripts.PlayerLogic
             
             onPlayerInitialized.AddListener(()=> { isInitialized = true; });
             
-            _data = new PlayerData(this, anchors, hands, abilityController, characterController, abilityController.gesturesLib);
+            _data = new PlayerData(this, anchors, hands, abilityController, characterController, abilityController.gesturesLib, recognitionCenter, isOwner);
             abilityController.gesturesLib.onLibraryInitialized += data.onPlayerInitialized.Invoke;
             foreach (var VARIABLE in _rigList)
             {
@@ -167,6 +176,8 @@ namespace Scripts.PlayerLogic
             {
                 Debug.Log(
                     $"Player {id} initialized. rig - {this.playerProperties.rig}, character - {this.playerProperties.character}, avatar - {this.playerProperties.avatar}");
+                // if(isOwner)
+                //     HideLoadingScreen();
             });
     
             if (isLocal)
@@ -262,8 +273,41 @@ namespace Scripts.PlayerLogic
 
         public PlayerData GetRawPlayerData()
         {
-                return new PlayerData(this, anchors, hands, abilityController, characterController, null);
+                return new PlayerData(this, anchors, hands, abilityController, characterController, null, recognitionCenter, true);
             
         }
+
+        public void ShowLoadingScreen(bool immediately = false)
+        {
+            if (immediately)
+            {
+                loadingSphere.enabled = true;
+                loadingSphere.material.color = Color.black;
+                return;
+            }
+            loadingSphere.enabled = true;
+            loadingSphere.material.color = Color.clear;
+            
+            // Create a new color with the same RGB values but the target alpha
+            Color finalColor = Color.black;
+            loadingSphere.material.DOColor(finalColor, 1);
+        }
+        public void HideLoadingScreen(bool immediately = false)
+        {
+            if (immediately)
+            {
+                loadingSphere.enabled = false;
+                loadingSphere.material.color = Color.clear;
+                return;
+            }
+
+            if (!loadingSphere.enabled)
+                return;
+            
+            // Create a new color with the same RGB values but the target alpha
+            Color finalColor = Color.clear;
+            loadingSphere.material.DOColor(finalColor, 1).onComplete += () => { loadingSphere.enabled = false; };
+        }
+        
     }
 }

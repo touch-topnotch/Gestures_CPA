@@ -1,17 +1,19 @@
 using System;
 using Scripts.Gestures;
 using Scripts.PlayerLogic;
+using Scripts.Systems.Grab;
 using UnityEngine;
 
 
-public class GrabSystemOneHanded : GrabSystem
+
+internal class GrabSystemOneHanded : GrabSystem
 {
     protected override void HandleGrab()
     {
         if (!_mainGrabPoint.IsGrabbed)
         {
             if (CheckHandGrab(rightHandGrabber, _mainGrabPoint, rightHandGrabGesture) ||
-                CheckHandGrab(lefttHandGrabber, _mainGrabPoint, leftHandGrabGesture))
+                CheckHandGrab(leftHandGrabber, _mainGrabPoint, leftHandGrabGesture))
             {
                 if (!_mainGrabPoint.IsGrabbed) OnGrabStarted();
                 if (_mainGrabPoint.UnGrabCoroutine != null) StopCoroutine(_mainGrabPoint.UnGrabCoroutine);
@@ -41,4 +43,6 @@ public class GrabSystemOneHanded : GrabSystem
         Gizmos.DrawWireSphere(_mainGrabPoint.GrabPointTransform.position, _mainGrabPoint.GrabPointRadius);
         Gizmos.DrawRay(_mainGrabPoint.GrabPointTransform.position, _mainGrabPoint.GrabPointTransform.right);
     }
+
+    //protected override bool shouldAddMissingComponents { get; }
 }

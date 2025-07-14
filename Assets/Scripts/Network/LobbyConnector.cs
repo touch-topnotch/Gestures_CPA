@@ -6,6 +6,7 @@ using Unity.Services.Core;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Network
 {
@@ -19,7 +20,7 @@ namespace Network
 
         public event Action<string> LobbyConnected;
         public event Action<string> LobbyConnectedAsHost;
-
+        public UnityEvent onWaitingToConnect;
         private void Update()
         {
             HandleLobbyHeartbeat();
@@ -48,6 +49,7 @@ namespace Network
 
         public async UniTask ConnectLobby(string id)
         {
+            onWaitingToConnect?.Invoke();
             if (_currentLobby != null)
             {
                 string playerId = AuthenticationService.Instance.PlayerId;
@@ -57,13 +59,16 @@ namespace Network
             _currentLobby = await LobbyService.Instance.JoinLobbyByIdAsync(id);
             Debug.Log($"connected Lobby {_currentLobby.Name} {_currentLobby.Players.Count}/{_currentLobby.MaxPlayers}");
             CurrentLobbyID = _currentLobby.Id;
+            
             LobbyConnected?.Invoke(CurrentLobbyID);
         }
 
         public async UniTask ConnectOrCreateLobby(int maxPlayers)
         {
+            
             if (_currentLobby != null)
                 return;
+     
 
             var availableLobbies = await ListLobbies();
 
@@ -82,11 +87,13 @@ namespace Network
         {
             try
             {
+                onWaitingToConnect?.Invoke();
                 var lobbyName = $"MyLobby{AuthenticationService.Instance.PlayerId}";
                 var lobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayers).ConfigureAwait(false);
                 Debug.Log($"created Lobby {lobby.Name} {lobby.MaxPlayers}");
                 _currentLobby = lobby;
                 CurrentLobbyID = _currentLobby.Id;
+              
                 LobbyConnectedAsHost?.Invoke(CurrentLobbyID);
             }
             catch (LobbyServiceException e)

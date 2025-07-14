@@ -78,22 +78,23 @@ namespace Scripts.HandsLogic
             }
         }
 
-        public void MoveHands(in FrameData frameData, float speed, Action onPlaced,
-            bool changePosition)
+        public void MoveHands(in FrameData frameData,HandMoveProps props)
         {
             switch (frameData.HandUsed)
             {
                 case HandUsedType.LEFT:
-                    leftHand.Move(frameData.LeftBones, speed, onPlaced, changePosition);
+                    leftHand.Move(frameData.LeftBones, props);
                     break;
                 case HandUsedType.RIGHT:
-                    rightHand.Move(frameData.RightBones, speed, onPlaced, changePosition);
+                    rightHand.Move(frameData.RightBones, props);
                     break;
                 case HandUsedType.LEFTNRIGHT:
-                    _onPlaced = onPlaced;
+
+                    _onPlaced = props.onPlaced;
+                    
                     _isSync = true; //  0 hands - true, 1 hand - false, 2 hands - true. Короче это так работает, забей
-                    leftHand.Move(frameData.LeftBones, speed, SyncHands, changePosition);
-                    rightHand.Move(frameData.RightBones, speed, SyncHands, changePosition);
+                    leftHand.Move(frameData.LeftBones,new HandMoveProps(props.speed,SyncHands, props.changePosition, props.animationCurve));
+                    rightHand.Move(frameData.RightBones, new HandMoveProps(props.speed,SyncHands, props.changePosition, props.animationCurve));
                     break;
                 case HandUsedType.NULL:
                     Debug.LogError("Gesture doesn't contains bones!");

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Scripts.Abilities.Weapons.Melee;
 using Scripts.Weapons;
 using UnityEngine;
 

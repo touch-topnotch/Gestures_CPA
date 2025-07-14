@@ -29,7 +29,7 @@ namespace Scripts.PlayerLogic
         {
             if (Anchors.Head && Anchors.Body)
             {
-                if (Physics.Raycast(Anchors.Head.position, Vector3.down, out var hit, 100, layerMask: ~0 & (1 << 9)))
+                if (Physics.Raycast(Anchors.Head.position, Vector3.down, out var hit, 100, layerMask: ~0 & (1 << 10)))
                 {
                     currentHeight = hit.distance;
                     var scale = Anchors.Body.localScale;

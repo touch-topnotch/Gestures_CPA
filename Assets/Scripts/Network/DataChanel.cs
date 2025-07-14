@@ -8,6 +8,7 @@ using UnityEngine;
 using File = System.IO.File;
 using Scripts.Static;
 using Telegram.Bot.Types.Enums;
+using UnityEngine.Events;
 using UnityEngine.Networking;
 
 namespace Scripts.Network
@@ -36,7 +37,7 @@ namespace Scripts.Network
         public static string Get(string jsonPath)
         {
             jsonPath = Calculations.ConvertToResourceFormat(jsonPath);
-            var jsonFile = Resources.Load<TextAsset>(jsonPath);
+            var jsonFile = UnityEngine.Resources.Load<TextAsset>(jsonPath);
             if (jsonFile != null)
                 return jsonFile.text;
             Debug.LogError("Failed to load JSON file from resources: " + jsonPath);

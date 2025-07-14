@@ -77,7 +77,7 @@ namespace Scripts.HandsLogic
             _isListened = false;
         }
 
-        private Vector3 TransformRoot() => _parent.TransformVector(_fixedRootPos);
+        private Vector3 TransformRoot() => _parent.localPosition + _parent.TransformVector(_fixedRootPos);
 
         private ref Quaternion[] TransformRotations()
         {

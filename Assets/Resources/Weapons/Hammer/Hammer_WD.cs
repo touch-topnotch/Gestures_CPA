@@ -1,261 +1,168 @@
 using System.Collections;
 using Components;
 using DG.Tweening;
+using Scripts.Components;
 using Scripts.Gestures;
-using Scripts.PlayerLogic;
 using UnityEngine;
 using UnityEngine.VFX;
 
-public class Hammer_WD : WeaponDesign
+namespace Scripts.Resources.Weapons.Hammer
 {
-    // [SerializeField] private LayerMask _floorMask;
-    //
-    // [SerializeField] private AudioProcessor weaponAudioProcessor;
-    //
-    // [Header("Hammer Settings")] [SerializeField]
-    // private Transform _startSpawnPoint;
-    //
-    // [SerializeField] private float _spawnDuration;
-    // [SerializeField] private Animation _spawnAnimation;
-    // [SerializeField] private GameObject _hammerObject;
-    //
-    // [Header("VFX Objects")] [SerializeField]
-    // private VisualEffect _portalVFX;
-    //
-    // [SerializeField] private float _portalSoundDelay;
-    // private Coroutine _portalSoundCoroutine;
-    //
-    // [SerializeField] private float _portalOffsetY;
-    // private Vector3 _portalSpawnLocalPos;
-    //
-    //
-    // private bool _shouldPortalFollowHandPosStop;
-    // private bool _shouldPortalFollowHandRotZStop;
-    // private bool _shouldPortalFollowHandRotXStop;
-    //
-    // private const string TwirlStrength = "TwirlStrength";
-    // private const string FeathDistance = "FeathDistance";
-    // private const string FeathGradient = "FeathGradient";
-    //
-    //
-    // private void Awake()
-    // {
-    //     _hammerObject.SetActive(false);
-    //     _portalSpawnLocalPos = _portalVFX.transform.localPosition;
-    // }
-    //
-    // public override void OnFrameRecognized(string frameName)
-    // {
-    //     var frameId = GestureMapper.IndexOfName(frameName);
-    //     Debug.Log("Design FrameRecognized " + frameId);
-    //
-    //     audioProcessor.ActivateResource("Frame_" + frameId);
-    //
-    //     switch (frameId)
-    //     {
-    //         case 0:
-    //             transform.position = playerData.bodyAnchors.Body.position;
-    //             transform.rotation = playerData.bodyAnchors.Body.rotation;
-    //             RaycastHit hit;
-    //             if (Physics.Raycast(_startSpawnPoint.position, Vector3.down, out hit, 10f, _floorMask))
-    //             {
-    //                 transform.position = hit.point;
-    //             }
-    //
-    //             _portalVFX.gameObject.SetActive(true);
-    //             _portalVFX.transform.localPosition = _portalSpawnLocalPos;
-    //             _shouldPortalFollowHandPosStop = false;
-    //             _shouldPortalFollowHandRotZStop = false;
-    //             _shouldPortalFollowHandRotXStop = false;
-    //             _portalSoundCoroutine = StartCoroutine(PlayPortalSound());
-    //
-    //             var endScale = _portalVFX.transform.localScale;
-    //             DOVirtual.Vector3(Vector3.zero, endScale, 2f, v => _portalVFX.transform.localScale = v)
-    //                 .SetEase(Ease.OutExpo);
-    //             break;
-    //         case 1:
-    //             DOVirtual.Float(1, 8f, 3f, v => _portalVFX.SetFloat(TwirlStrength, v)).SetEase(Ease.InOutQuart);
-    //             DOVirtual.Float(0, -2.24f, 2f, v => _portalVFX.SetFloat(FeathDistance, v)).SetEase(Ease.InOutQuad);
-    //             break;
-    //         case 3:
-    //             StartCoroutine(PortalFollowHandPos());
-    //             StartCoroutine(PortalFollowHandRot());
-    //             break;
-    //         case 4:
-    //             _shouldPortalFollowHandRotXStop = true;
-    //
-    //             break;
-    //         case 5:
-    //             _shouldPortalFollowHandRotZStop = true;
-    //             break;
-    //         case 7:
-    //             _shouldPortalFollowHandPosStop = true;
-    //             break;
-    //         case 8:
-    //             _hammerObject.transform.rotation = Quaternion.LookRotation(Vector3.up);
-    //
-    //             StartCoroutine(SpawnHammer());
-    //             StartCoroutine(DestroyPortal());
-    //             StopCoroutine(_portalSoundCoroutine);
-    //             break;
-    //     }
-    // }
-    //
-    // private IEnumerator DestroyPortal()
-    // {
-    //     DOVirtual.Float(-2.24f, -8f, 1f, v => _portalVFX.SetFloat(FeathDistance, v)).SetEase(Ease.InQuart);
-    //
-    //     DOVirtual.Float(8, 1, 3f, v => _portalVFX.SetFloat(TwirlStrength, v)).SetEase(Ease.InOutQuart);
-    //
-    //     var startScale = _portalVFX.transform.localScale;
-    //     DOVirtual.Vector3(startScale, Vector3.zero, 3f, v => _portalVFX.transform.localScale = v).SetEase(Ease.InExpo);
-    //
-    //     yield return new WaitForSeconds(3f);
-    //     _portalVFX.gameObject.SetActive(false);
-    // }
-    //
-    // private IEnumerator PlayPortalSound()
-    // {
-    //     WaitForSeconds delayWFS = new WaitForSeconds(_portalSoundDelay);
-    //     while (true)
-    //     {
-    //         audioProcessor.ActivateResource("Portal");
-    //         yield return delayWFS;
-    //     }
-    // }
-    //
-    // private IEnumerator PortalFollowHandPos()
-    // {
-    //     var targetPos = playerData.hands.rightHand.points[0].position.y + _portalOffsetY;
-    //     var portalTransform = _portalVFX.transform;
-    //
-    //     while (!_shouldPortalFollowHandPosStop || Vector3.Distance(portalTransform.position,
-    //                new Vector3(portalTransform.position.x, targetPos, portalTransform.position.z)) > 0.01f)
-    //     {
-    //         if (!_shouldPortalFollowHandPosStop)
-    //         {
-    //             targetPos = playerData.hands.rightHand.points[0].position.y + _portalOffsetY;
-    //         }
-    //
-    //         var position = portalTransform.position;
-    //         position = Vector3.Lerp(position, new Vector3(position.x, targetPos, position.z), 2f * Time.deltaTime);
-    //         portalTransform.position = position;
-    //
-    //         yield return null;
-    //     }
-    // }
-    //
-    // private IEnumerator PortalFollowHandRot()
-    // {
-    //     float targetRotZ = playerData.hands.rightHand.points[0].rotation.eulerAngles.z;
-    //     float targetRotX = playerData.hands.rightHand.points[0].rotation.eulerAngles.x;
-    //
-    //     while (!_shouldPortalFollowHandRotZStop ||
-    //            Vector3.Distance(_portalVFX.transform.eulerAngles, new Vector3(targetRotX, 0, targetRotZ)) > 0.1f)
-    //     {
-    //         if (!_shouldPortalFollowHandRotZStop)
-    //             targetRotZ = playerData.hands.rightHand.points[0].rotation.eulerAngles.z;
-    //         else targetRotZ = -180f;
-    //
-    //         if (!_shouldPortalFollowHandRotXStop)
-    //             targetRotX = playerData.hands.rightHand.points[0].rotation.eulerAngles.x;
-    //         else targetRotX = 0f;
-    //
-    //
-    //         Quaternion targetQuaternion = Quaternion.Euler(targetRotX, 0, targetRotZ);
-    //         _portalVFX.transform.rotation =
-    //             Quaternion.Slerp(_portalVFX.transform.rotation, targetQuaternion, 8f * Time.deltaTime);
-    //         yield return null;
-    //     }
-    // }
-    //
-    // private IEnumerator SpawnHammer()
-    // {
-    //     yield return new WaitForSeconds(1 - _spawnDuration);
-    //     _hammerObject.SetActive(true);
-    //     _spawnAnimation.Play();
-    //
-    //     yield return new WaitForSeconds(_spawnDuration);
-    // }
-    //
-    // public override void OnGestureDetected()
-    // {
-    //     Debug.Log("GestureDetected");
-    // }
-    //
-    // public override void OnHitHolds()
-    // {
-    //     //  Debug.Log("HitHolding");
-    // }
-    //
-    // public override void OnHit()
-    // {
-    //     //Debug.Log("HitCalled");
-    //     weaponAudioProcessor.ActivateRandomResource("Swing");
-    // }
-    //
-    // public override void OnImpact(string affected)
-    // {
-    //     weaponAudioProcessor.ActivateRandomResource("Hit_" + affected);
-    // }
-    //
-    // public override void OnAbilityReleased()
-    // {
-    //     Debug.Log("AbilityReleased");
-    // }
-    //
-    // public override void OnGrabbed()
-    // {
-    //     base.OnGrabbed();
-    // }
+    public class Hammer_WD : WeaponDesign
+    {
+        [SerializeField] private LayerMask _floorMask;
+
+        [Header("Hammer Settings")] [SerializeField] [Range(0, 1f)]
+        private float _hammerYSpeed;
+         [Header(("SFX Objects"))] [SerializeField]
+        private AudioSource _audioSource;
+        [SerializeField]
+        private AudioClip _pushOne;
+        [SerializeField] private AudioClip _pushTwo;
+        [SerializeField] private AudioClip _treshina;
+        [SerializeField] private AudioClip _fall;
+        [Header("VFX Objects")] 
+        [SerializeField]
+        private VisualEffect _treshinaVFX;
+        [SerializeField]
+        private VisualEffect _rockVFX;
+        [SerializeField] 
+        private VisualEffect _materializationController;
+
+        [SerializeField] private Transform hammerMovablePart;
+        [SerializeField] private Transform hammerMesh;
+        [SerializeField] private Transform vfxRoot;
+        [SerializeField] private Transform hammerInStoneAnchor;
+      
+        private int currentState;
+        public override void OnFrameRecognized(string frameName)
+        {
+            
+            var frameId = GestureMapper.IndexOfName(frameName);
+            Debug.Log("Design FrameRecognized " + frameId);
     
-    public override void OnReadyToBeCasted()
-    {
-        throw new System.NotImplementedException();
-    }
+            currentState = frameId;
+            switch (frameId)
+            {
+                case 0:
+                    var forward = playerData.anchors.Body.position + playerData.anchors.Body.forward * 0.7f;
+                    forward.y = playerData.anchors.Root.position.y + 0.01f;
+                    vfxRoot.position = forward;
+                    _audioSource.PlayOneShot(_pushOne, 0.5f);
+                    _treshinaVFX.gameObject.SetActive(true);
+                    _treshinaVFX.DOPlayForward();
+                    break;
+                case 1:
+                    _audioSource.PlayOneShot(_pushTwo);
+                    break;
+                case 2:
+                    _audioSource.PlayOneShot(_pushOne, 0.5f);
+                    break;
+                case 3:
+                    _audioSource.PlayOneShot(_pushTwo, 0.3f);
+                    _audioSource.PlayOneShot(_treshina, 1);
+                    break;
+                case 6:
+                    _rockVFX.transform.position = vfxRoot.position;
+                    _rockVFX.gameObject.SetActive(true);
+                    _audioSource.PlayOneShot(_fall);
+                    _rockVFX.DOPlayForward();
+                    break;
+                case 7:
+                    hammerMesh.gameObject.SetActive(true);
+                    hammerMovablePart.position = hammerInStoneAnchor.position;
+                    _audioSource.PlayOneShot(_treshina);
+                    _materializationController.gameObject.SetActive(true);
+                    _materializationController.Play();
+                    break;
 
-    public override void OnCastCancelled()
-    {
-        throw new System.NotImplementedException();
-    }
+            }
+        }
 
-    public override void OnGestureCasted()
-    {
-        throw new System.NotImplementedException();
-    }
+        
+        public override void Update()
+        {
+            if (currentState >=  6 && !gestureRealyCasted)
+            {
+                var midPoint = ((playerData.hands.leftHand.points[0].position +
+                                 playerData.hands.rightHand.points[1].position) / 2);
+                var position = hammerMovablePart.position;
+                position = Vector3.Lerp(position, new Vector3(position.x, midPoint.y, position.z), _hammerYSpeed * Time.deltaTime);
+                hammerMovablePart.position = position;
+                if(hammerMovablePart.position.y - playerData.anchors.Body.position.y > 1.5f || isActive) 
+                {
+                    gestureRealyCasted = true;
+                    OnGestureRealyCasted();
+                }
+            }
+        }
 
-    public override void OnActivated()
-    {
-        throw new System.NotImplementedException();
-    }
+        public void OnGestureRealyCasted()
+        {
+            Debug.Log("OnGestureRealyCasted");
+            _materializationController.gameObject.SetActive(false);
+            _treshinaVFX.transform.DOScale(Vector3.zero, 0.5f);
+            _rockVFX.transform.DOScale(Vector3.zero, 0.5f);
+        }
+        
+        public override void OnReadyToBeCasted()
+        {
+           
+            _rockVFX.transform.localScale = Vector3.one;
+            _treshinaVFX.transform.localScale = Vector3.one;
+            _rockVFX.gameObject.SetActive(false);
+            _treshinaVFX.gameObject.SetActive(false);
+            _materializationController.gameObject.SetActive(false);
+            hammerMesh.gameObject.SetActive(false);
+            _audioSource.clip = null;
+            _audioSource.volume = 1;
+        }
 
-    public override void OnHitStarted()
-    {
-        throw new System.NotImplementedException();
-    }
+        public void ActivateGrabSystem()
+        {
+            
+        }
+        public override void OnCastCancelled()
+        {
+            
+        }
 
-    public override void OnHitStopped()
-    {
-        throw new System.NotImplementedException();
-    }
+        private bool gestureRealyCasted = false;
+        public override void OnGestureCasted()
+        {
+            
+        }
 
-    public override void OnDeactivated()
-    {
-        throw new System.NotImplementedException();
-    }
+        private bool isActive;
 
-    public override void OnAbilityDestroyed()
-    {
-        throw new System.NotImplementedException();
-    }
+        public override void OnActivated()
+        {
+            isActive = true;
+        }
 
-    public override void OnFrameRecognized(string frameName)
-    {
-        throw new System.NotImplementedException();
-    }
+        public override void OnHitStarted()
+        {
+        //    throw new System.NotImplementedException();
+        }
 
-    public override void OnImpact(string affected)
-    {
-        throw new System.NotImplementedException();
+        public override void OnHitStopped()
+        {
+        }
+
+        public override void OnDeactivated()
+        {
+            isActive = false;
+        }
+
+        public override void OnAbilityDestroyed()
+        {
+            isActive = false;
+            gestureRealyCasted = false;
+            hammerMesh.gameObject.SetActive(false);
+        }
+
+        public override void OnImpact(string affected)
+        {
+        }
     }
 }
