@@ -44,7 +44,7 @@ namespace Scripts.Rigs
     {
         [Header("OVR Rig Components")] [SerializeField]
         private XRMovement _movement;
-
+        
         [Range(0.01f, 3f)] [SerializeField] private float _bodyHeightOffset = 1.8f;
 
         [SerializeField] private bool _lerpBody = true;
