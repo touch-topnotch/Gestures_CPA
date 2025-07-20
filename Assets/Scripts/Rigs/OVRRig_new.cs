@@ -12,6 +12,7 @@ using Sirenix.OdinInspector;
 using Sirenix.Utilities;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.InputSystem.Controls;
 using UnityEngine.Serialization;
 using CharacterController = UnityEngine.CharacterController;
 using Node = UnityEngine.XR.XRNode;
@@ -23,24 +24,6 @@ namespace Scripts.Rigs
     /// </summary>
     public class OvrRigNew : Rig
     {
-        
-        [BoxGroup("Body Settings")]
-            [Range(0.01f, 3f)]
-            [SerializeField] 
-        private float bodyHeightOffset = 1.8f;
-        
-        [BoxGroup("Body Settings")]
-            [SerializeField]
-        private bool lerpBody = true;
-        
-        [BoxGroup("Body Settings")] 
-            [Range(0.1f, 10f)]
-            [SerializeField] 
-            [ShowIf("lerpBody")]
-        private float bodyLerpSpeed = 2f;
-        
-    
-        
         [BoxGroup("Locomotion Settings")]
             [SerializeField]
         private Transform cameraAnchor;
@@ -51,21 +34,22 @@ namespace Scripts.Rigs
         [BoxGroup("Locomotion Settings")] [SerializeField][MinMaxSlider(0, 1)]
         private Vector2 moveBoards;
         
-        
+        [BoxGroup("Locomotion Settings")] 
         [SerializeField] 
+        [MinMaxSlider(0,1, true)] 
+        private Vector2 moveZone;
+        [BoxGroup("Locomotion Settings")] 
+        [SerializeField]
         [Range(0, 1)] 
-        private float standingInaccuracy;
+        private float smoothMoveToCentrizing;
         
         [BoxGroup("Locomotion Settings")] 
-        [SerializeField] [Range(0, 30)]
+        [SerializeField] [Range(0, 4)]
         private float maxVelocityXZ;
 
         [BoxGroup("Locomotion Settings")] 
-        [SerializeField] [Range(0, 30)]
+        [SerializeField] [Range(0, 4)]
         private float maxVelocityY;
-    
-        
-
         [BoxGroup("Locomotion Settings")] [SerializeField]
         private float gravity = 9.81f;
         
@@ -84,18 +68,23 @@ namespace Scripts.Rigs
         private float _currentHeight;
         private void Start()
         {
-            // only for debugging
-            cameraAnchor.position = new Vector3(0,1.8f,0);
+    
             if (cameraAnchor.GetComponent<Camera>())
                 cameraAnchor.GetComponent<Camera>().enabled = false;
-            
+
+            if (Application.platform == RuntimePlatform.OSXPlayer)
+                cameraAnchor.position = new Vector3(0, 1.8f, 0);
+            Centrize();
+            hands.transform.localPosition = Vector3.zero;
             _previousCameraPosition = cameraAnchor.position;
             RememberHeight();
+            headInteraction.onHeadInteraction.AddListener((e)=>{if(e == HeadInteractionType.Shaking) RememberHeight();});
         }
 
         protected virtual void RememberHeight()
         {
             _personHeight = cameraAnchor.position.y;
+            Debug.Log("Current height - " + _personHeight);
         }
         
         protected void Update()
@@ -105,43 +94,21 @@ namespace Scripts.Rigs
             _currentHeight = cameraAnchorPosition.y;
             
             anchors.Head.rotation = cameraAnchor.rotation;
-            
-            if (IsInStandingPosition())
-            {
-                Debug.Log("Centering");
-                Centrize();
-            }
-            else
-            {
+            if (InMoveZone())
+            { 
                 Move();
             }
-            
-            SynchronizeBodyAnchors();
-            
-            _previousCameraPosition = cameraAnchorPosition;
-        }
-        private void SynchronizeBodyAnchors()
-        {
-            var c = anchors.Head.position;
-            if (lerpBody)
-            {
-                anchors.Body.position = Vector3.Lerp(anchors.Body.position,
-                    new Vector3(c.x, c.y - bodyHeightOffset, c.z),
-                    Time.deltaTime * bodyLerpSpeed);
-                anchors.Body.rotation = Quaternion.Lerp(anchors.Body.rotation,
-                    Quaternion.Euler(0, anchors.Head.eulerAngles.y, 0), Time.deltaTime * bodyLerpSpeed);
-            }
             else
             {
-                anchors.Body.position = new Vector3(c.x, c.y - bodyHeightOffset, c.z);
-                anchors.Body.rotation = Quaternion.Euler(0, anchors.Head.eulerAngles.y, 0);
+                Centrize();
             }
-        }
 
-        public bool IsInStandingPosition()
-        {
-            return Math.Abs(_currentHeight - _personHeight) / _personHeight < standingInaccuracy;
+            _previousCameraPosition = cameraAnchorPosition;
         }
+        
+
+        private bool InMoveZone() =>  (_currentHeight > (_personHeight * moveZone.x)) &&
+                                      (_currentHeight < (_personHeight * moveZone.y)) ;
         public override bool isMoved() => true;
 
 
@@ -153,23 +120,34 @@ namespace Scripts.Rigs
         protected virtual void Move()
         {
             anchors.Head.localPosition += _cameraDelta;
+            float forceK = 1;
+            if ((_currentHeight / _personHeight) > ((moveZone.x + moveZone.y) / 2))
+                forceK = Math.Clamp(
+                    (_personHeight * (moveZone.y) - _currentHeight) / _personHeight /
+                    smoothMoveToCentrizing, 0, 1);
+            else
+                forceK = Math.Clamp(
+                    ( _currentHeight - _personHeight * moveZone.x) / _personHeight /
+                    smoothMoveToCentrizing, 0, 1);
+            
+                    
             var rootPosition = anchors.Root.position;
             var headPosition = anchors.Head.position;
-            var velocity = (HeadManipulations.HeadVelocity( 
+            var velocity = (HeadManipulations.HeadVelocity(
                 rootPosition + new Vector3(0, _personHeight * 0.85f, 0),
                 headPosition,
                 moveBoards.x,
                 moveBoards.y,
-                moveForce,
-                jumpForce) + Vector3.down * gravity) / 10;
-
+                moveForce * forceK,
+                ySpeed: jumpForce * forceK) + gravity * 80 * Vector3.down / _personHeight / 1.8f);
             _characterController.Move(
                 new Vector3(
                     Mathf.Clamp(velocity.x, -maxVelocityXZ, maxVelocityXZ),
-                    Mathf.Clamp(velocity.y, -maxVelocityY, maxVelocityY),
+                    Mathf.Clamp(velocity.y, 0, maxVelocityY),
                     Mathf.Clamp(velocity.z, -maxVelocityXZ, maxVelocityXZ)
                     )
                 );
+           // hands.transform.position += (anchors.Root.position - rootPosition);
         }
         public override void StopMove()
         {
@@ -179,9 +157,16 @@ namespace Scripts.Rigs
    
         protected override void Centrize()
         {
-            anchors.Head.localPosition = new Vector3(0, cameraAnchor.localPosition.y, 0);
-            anchors.Root.position += new Vector3(_cameraDelta.x, 0, _cameraDelta.z);
-            hands.transform.position -= _cameraDelta;
+            var headPosition = anchors.Head.position;
+            var rootPosition = anchors.Root.position;
+            
+            var xz = new Vector3(headPosition.x + _cameraDelta.x, rootPosition.y,
+                headPosition.z + _cameraDelta.z);
+            anchors.Head.localPosition = new Vector3(0,cameraAnchor.position.y, 0);
+            var delta = rootPosition - xz;
+            anchors.Root.position = xz;
+
+            hands.transform.position += delta;
         }
     }
 }

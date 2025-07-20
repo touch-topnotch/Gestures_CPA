@@ -215,6 +215,7 @@ namespace Scripts.PlayerLogic
                     ref anchors); // нельзя прокинуть _anchors в риг напрямую, потому-что в риге находится камера.
             }
 
+            anchors.TransformBody();
             if (avatar)
                 BodyAnchors.EquateAnchors(anchors, ref avatar.Anchors);
         }
