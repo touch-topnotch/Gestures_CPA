@@ -100,7 +100,7 @@ Transform:
   - {fileID: 4870221978131125632}
   - {fileID: 1400705493940942941}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7086081713338552717
 MonoBehaviour:
@@ -1518,12 +1518,12 @@ PrefabInstance:
     - target: {fileID: 839493272832372637, guid: 4165f206a00aa4e7b84ca383c61af5ea,
         type: 3}
       propertyPath: jumpForce
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 839493272832372637, guid: 4165f206a00aa4e7b84ca383c61af5ea,
         type: 3}
       propertyPath: moveForce
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 839493272832372637, guid: 4165f206a00aa4e7b84ca383c61af5ea,
         type: 3}
@@ -1538,7 +1538,7 @@ PrefabInstance:
     - target: {fileID: 839493272832372637, guid: 4165f206a00aa4e7b84ca383c61af5ea,
         type: 3}
       propertyPath: moveZone.y
-      value: 0.88461536
+      value: 0.9246152
       objectReference: {fileID: 0}
     - target: {fileID: 839493272832372637, guid: 4165f206a00aa4e7b84ca383c61af5ea,
         type: 3}
@@ -1548,12 +1548,17 @@ PrefabInstance:
     - target: {fileID: 839493272832372637, guid: 4165f206a00aa4e7b84ca383c61af5ea,
         type: 3}
       propertyPath: moveBoards.x
-      value: 0.19587629
+      value: 0.05956569
+      objectReference: {fileID: 0}
+    - target: {fileID: 839493272832372637, guid: 4165f206a00aa4e7b84ca383c61af5ea,
+        type: 3}
+      propertyPath: moveBoards.y
+      value: 0.27173683
       objectReference: {fileID: 0}
     - target: {fileID: 839493272832372637, guid: 4165f206a00aa4e7b84ca383c61af5ea,
         type: 3}
       propertyPath: maxVelocityXZ
-      value: 0.08
+      value: 0.12
       objectReference: {fileID: 0}
     - target: {fileID: 839493272832372637, guid: 4165f206a00aa4e7b84ca383c61af5ea,
         type: 3}
@@ -1664,6 +1669,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3295106214422284180, guid: 4165f206a00aa4e7b84ca383c61af5ea,
+        type: 3}
+      propertyPath: far clip plane
+      value: 55
       objectReference: {fileID: 0}
     - target: {fileID: 3600332562988191043, guid: 4165f206a00aa4e7b84ca383c61af5ea,
         type: 3}
@@ -1803,7 +1813,12 @@ PrefabInstance:
     - target: {fileID: 6497229522217567178, guid: 4165f206a00aa4e7b84ca383c61af5ea,
         type: 3}
       propertyPath: m_Antialiasing
-      value: 1
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6497229522217567178, guid: 4165f206a00aa4e7b84ca383c61af5ea,
+        type: 3}
+      propertyPath: m_RenderShadows
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6497229522217567178, guid: 4165f206a00aa4e7b84ca383c61af5ea,
         type: 3}
