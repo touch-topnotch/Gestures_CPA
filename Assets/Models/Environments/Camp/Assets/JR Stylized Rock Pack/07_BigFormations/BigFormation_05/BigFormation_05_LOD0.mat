@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: BigFormation_05_LOD0
-  m_Shader: {fileID: -6465566751694194690, guid: 8be6a6f1052c31e4ca81e0ca5e0b6423,
+  m_Shader: {fileID: -6465566751694194690, guid: bf6c082afdc44634db9fa7973d2ed5a4,
     type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -31,7 +31,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 993c9b886d7291f4087ef4f3b099f32f, type: 3}
+        m_Texture: {fileID: 2800000, guid: 16e827e6816cba8408a7fe828bfccb12, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -68,6 +68,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 2800000, guid: 028d132f8de18d6478947217298c8c67, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Normal_Map_Triplanar:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Normal_Map_grass:
@@ -112,6 +116,7 @@ Material:
     - _AlphaToMask: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
+    - _Blend_Rock: 1
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
@@ -130,9 +135,9 @@ Material:
     - _Metallic: 0
     - _OcclusionStrength: 0
     - _Parallax: 0.005
-    - _Power_Roughness: 1.56
+    - _Power_Roughness: 3
     - _Power_blend: 1.53
-    - _Power_curvature: 2
+    - _Power_curvature: 3
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
@@ -142,6 +147,7 @@ Material:
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
     - _Surface: 0
+    - _Tile_Rock: 0.27
     - _Tiling_grass: 0.48
     - _WorkflowMode: 1
     - _Y_Posotoins_smoothness: 4.05
