@@ -242,7 +242,7 @@ namespace Scripts
         {
             Debug.Log(" public override void OnImpact(string aff)");
             var affected = new Affected(aff);
-            Debug.Log($"I should play {affected.surfaceType} sound");
+            Debug.Log($"I should play {affected.surfaceType} sound"); // plays from Electric orb -> Audio weapon observer
             StartCoroutine(Explosion());
         }
 

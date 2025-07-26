@@ -5,6 +5,7 @@ using Components;
 using DG.Tweening;
 using Scripts.Gestures;
 using UnityEngine;
+using UnityEngine.VFX;
 
 namespace Scripts
 {
@@ -12,6 +13,7 @@ namespace Scripts
     public class Water_WD : WeaponDesign
     {
         [SerializeField] private GameObject _waterHead;
+        [SerializeField] private Collider _waterHeadCollider;
         [SerializeField] private float _speed;
         [SerializeField] private float _waterSplineAppearSpeed;
 
@@ -23,6 +25,16 @@ namespace Scripts
         [SerializeField] private GameObject _waterSplash;
         [SerializeField] private List<ParticleSystem> _waterSplashParticleSystems;
         [SerializeField] private float _waterDisappearDelay = 1;
+        
+        [SerializeField] private VisualEffect _appearParticles;
+        private const string AttractPosition = "AttractPosition";
+        
+        [Header("SFX")]
+        [SerializeField] private AudioSource source;
+        [SerializeField] private SerializableDictionary<int, AudioClip> clipFrames;
+        [SerializeField] private AudioSource _puddleSource;
+        [SerializeField] private AudioClip _puddleClip;
+        private Coroutine _portalSoundCoroutine;
 
 
         private ControlState _controlState = ControlState.Deactivated;
@@ -67,13 +79,18 @@ namespace Scripts
         {
             _controlState = ControlState.Deactivated;
             _waterSpline.StopWaterBend();
-            _waterHead.SetActive(false);
+            _waterHeadCollider.enabled = false;
         }
 
         public override void OnFrameRecognized(string frameName)
         {
             var frameId = GestureMapper.IndexOfName(frameName);
             Debug.Log("Design FrameRecognized " + frameId);
+            
+            if (clipFrames.TryGetValue(frameId, out var clip))
+            {
+                source.PlayOneShot(clip);
+            }
 
             switch (frameId)
             {
@@ -83,16 +100,20 @@ namespace Scripts
                     _waterPuddle.SetActive(true);
                     _waterSpline.BindHeadTransform(_waterHead.transform);
                     _controlState = ControlState.Casting;
+                    
+                    _puddleSource.PlayOneShot(_puddleClip);
                     break;
                 case 2:
                     _waterSpline.gameObject.SetActive(true);
+                    _appearParticles.gameObject.SetActive(true);
                     _waterSpline.StartWaterBend(Vector3.up, SplineBendingControll.BendControlMode.Position, _speed, _waterSplineAppearSpeed, _speed);
                     break;
                 case 4:
-                    _waterHead.SetActive(true);
+                    _waterHeadCollider.enabled = true;
                     _controlState = ControlState.Bending;
                     _waterPuddle.transform.DOScale(Vector3.zero, _puddleDisappearDuration).SetEase(Ease.InSine)
                         .OnComplete(() => _waterPuddle.SetActive(false));
+                    _appearParticles.gameObject.SetActive(false);
                     break;
             }
         }
@@ -105,6 +126,7 @@ namespace Scripts
                     break;
                 case ControlState.Casting:
                     ControlDuringCast();
+                    _appearParticles.SetVector3(AttractPosition, (_waterSpline.SplineHeadPosition - _appearParticles.transform.position) / 1.5f);
                     break;
                 case ControlState.Bending:
                     WaterBend();
