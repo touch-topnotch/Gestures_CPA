@@ -1,6 +1,7 @@
 using Scripts.Components;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using UnityEngine.ProBuilder;
 
 namespace Scripts.PlayerLogic
 {
@@ -24,7 +25,7 @@ namespace Scripts.PlayerLogic
         [ShowIf("hasHands")]
         public Transform Hands;
         protected override bool shouldAddMissingComponents => !(Root && Body && Head);
-
+    
         public const float k_bodySpeed = 5f;
         public override void AddMissingComponents()
         {
@@ -65,12 +66,10 @@ namespace Scripts.PlayerLogic
 
         public void TransformBody()
         {
-            var h = Head.position;
-            var r = Root.position;
-            var A = new Vector3(h.x, -h.z, h.y);
-            var B = new Vector3(r.x, -r.z, r.y);
-            var xz = Quaternion.LookRotation(A - B).eulerAngles;
-            Body.rotation = Quaternion.Euler(xz.x, Head.eulerAngles.y, xz.z);
+            var dir = Head.position - Root.position;
+            var x = Mathf.Clamp(Vector3.Project(dir, Head.right).x, -1, 1f) * 45f;
+            var z = Mathf.Clamp(Vector3.Project(dir, Head.forward).z, -1, 1f) * 45f;
+            Body.rotation = Quaternion.Euler(z, Head.eulerAngles.y, -x);
         }
     }
 }
