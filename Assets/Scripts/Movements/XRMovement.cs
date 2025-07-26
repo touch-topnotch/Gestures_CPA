@@ -89,5 +89,6 @@ namespace Scripts.Movements
             xrCameraCenter ??= inherited.anchors.Root.Find("XR_Camera_Center");
             parentMoveController ??= inherited.GetComponentInChildren<CharacterController>();
         }
+        
     }
 }

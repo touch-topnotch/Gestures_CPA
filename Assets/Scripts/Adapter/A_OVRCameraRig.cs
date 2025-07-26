@@ -1,12 +1,13 @@
 using System;
 using UnityEngine;
+using UnityEngine.Experimental.XR.Interaction;
 
 namespace Scripts.Adapter
 {
     public class A_OVRCameraRig : OVRCameraRig
     {
         protected GameObject plug;
-
+        
         protected override void FixedUpdate()
         {
             if (useFixedUpdateForTracking)
