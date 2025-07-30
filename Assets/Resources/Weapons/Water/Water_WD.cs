@@ -34,6 +34,7 @@ namespace Scripts
         [SerializeField] private SerializableDictionary<int, AudioClip> clipFrames;
         [SerializeField] private AudioSource _puddleSource;
         [SerializeField] private AudioClip _puddleClip;
+        [SerializeField] private AudioSource _streamSource;
         private Coroutine _portalSoundCoroutine;
 
 
@@ -107,6 +108,7 @@ namespace Scripts
                     _waterSpline.gameObject.SetActive(true);
                     _appearParticles.gameObject.SetActive(true);
                     _waterSpline.StartWaterBend(Vector3.up, SplineBendingControll.BendControlMode.Position, _speed, _waterSplineAppearSpeed, _speed);
+                    _streamSource.Play();
                     break;
                 case 4:
                     _waterHeadCollider.enabled = true;
@@ -162,6 +164,7 @@ namespace Scripts
 
         private IEnumerator HandleWaterSplash()
         {
+            _streamSource.Stop();
             _waterSplash.transform.position = _waterHead.transform.position;
             _waterSplash.transform.rotation *= Quaternion.FromToRotation(-_waterSplash.transform.up, _waterSpline.SplineHeadDirection);
             _waterSplash.SetActive(true);
@@ -170,7 +173,7 @@ namespace Scripts
             {
                 particleSystem.Stop();
             }
-            yield return new WaitForSeconds(_waterDisappearDelay);
+            yield return new WaitForSeconds(2f);
             _waterSplash.SetActive(false);
         }
     }
