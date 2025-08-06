@@ -10,6 +10,7 @@ using Scripts.Systems.Grab;
 using Scripts.Weapons;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Scripts.Abilities.Weapons.Melee
 {
@@ -24,12 +25,16 @@ namespace Scripts.Abilities.Weapons.Melee
                //ActivatedEvent
                //StartHitEvent
           }
+          [SerializeField] protected float _bladeMinSpeed;
+          [SerializeField] protected Blade _blade;
+          [SerializeField] protected float _hitCooldown;
+          private bool _isHitting;
 
           [SerializeField]
           protected GrabSystem _grabSystem;
 
-          [SerializeField]
-          protected ClientTransform hammerObject;
+          [FormerlySerializedAs("hammerObject")] [SerializeField]
+          protected ClientTransform weaponObject;
           public GrabSystem GrabSystem
           {
                get => _grabSystem;
@@ -42,16 +47,42 @@ namespace Scripts.Abilities.Weapons.Melee
                SetGrabSystem();
                ActivatedEvent?.AddListener(()=>
                {
-                    StartCoroutine(dieDelay());
+                    //StartCoroutine(dieDelay());
                });
+               ActivatedEvent?.AddListener(ActivateWeapon);
+          }
+
+          private void ActivateWeapon()
+          {
+               if (IsServer)
+               {
+                    _blade.EnableComponents();
+                    _blade.TriggerEnterEvent.AddListener((affected) =>
+                    {
+                         if (state != WeaponState.Activated)
+                              return;
+                         if (_isHitting && _blade.onHitImpact())
+                         {
+                              ImpactEvent.Invoke(affected.toString);
+                         }
+                    });
+                    //ImpactEvent.AddListener(OnImpact);
+               }
           }
 
           protected void Update()
           {
-               if (IsOwner && hammerObject.enabled)
+               if (IsOwner && weaponObject.enabled)
                {
-                    hammerObject.transform.position = _grabSystem._grabObjectAnchor.position;
-                    hammerObject.transform.rotation = _grabSystem._grabObjectAnchor.rotation;
+                    weaponObject.transform.position = _grabSystem._grabObjectAnchor.position;
+                    weaponObject.transform.rotation = _grabSystem._grabObjectAnchor.rotation;
+
+                    
+                    if (state == WeaponState.Activated && !_isHitting && HitCallCondition())
+                    {
+                         StartHitEvent.Invoke();
+                         StartCoroutine(HitDelay());
+                    }
                }
           }
 
@@ -68,7 +99,6 @@ namespace Scripts.Abilities.Weapons.Melee
           {
                Debug.Log("OnGrabbed()");
                ActivatedEvent.Invoke();
-               
           }
 
           public IEnumerator dieDelay()
@@ -76,10 +106,19 @@ namespace Scripts.Abilities.Weapons.Melee
                yield return new WaitForSeconds(10f);
                AbilityReleasedEvent?.Invoke();
           }
+          
+          private IEnumerator HitDelay()
+          {
+               _isHitting = true;
+               yield return new WaitForSeconds(_hitCooldown);
+               _isHitting = false;
+               StopHitEvent?.Invoke();
+          }
 
           public void OnUnGrabbed()
           {
                DeactivatedEvent.Invoke();
           }
+          protected virtual bool HitCallCondition() => _blade.speed > _bladeMinSpeed;
      }
 }

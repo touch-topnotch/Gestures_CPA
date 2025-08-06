@@ -14,6 +14,7 @@ public class MoveToTrailUVEditor : Editor
     SerializedProperty m_shaderPropertyName_sp;
     SerializedProperty m_shaderPropertyID_sp;
     SerializedProperty m_materialData_sp;
+    SerializedProperty m_fadeOutTime_sp;
 
     private MoveToTrailUV m_mttuv;
 
@@ -24,6 +25,7 @@ public class MoveToTrailUVEditor : Editor
         m_shaderPropertyName_sp = serializedObject.FindProperty("m_shaderPropertyName");
         m_shaderPropertyID_sp = serializedObject.FindProperty("m_shaderPropertyID");
         m_materialData_sp = serializedObject.FindProperty("m_materialData");
+        m_fadeOutTime_sp = serializedObject.FindProperty("fadeOutDuration");
 
         m_mttuv = target as MoveToTrailUV;
         
@@ -76,6 +78,7 @@ public class MoveToTrailUVEditor : Editor
             EditorGUILayout.PropertyField(m_moveObject_sp);
             EditorGUILayout.PropertyField(m_shaderPropertyName_sp);
             EditorGUILayout.PropertyField(m_materialData_sp);
+            EditorGUILayout.PropertyField(m_fadeOutTime_sp);
         }
         if (EditorGUI.EndChangeCheck())
         {

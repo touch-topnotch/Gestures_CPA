@@ -18,5 +18,7 @@ using UnityEngine;
      {
          return Vector3.Dot(WeaponStabDirection, bladeSpeedVec);
      }
+     
+     protected override bool HitCallCondition() => GetBladeSpeedAlongStabDirection(_blade.speedVec) > _bladeMinSpeed;
 
 }

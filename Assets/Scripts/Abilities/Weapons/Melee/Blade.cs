@@ -47,7 +47,7 @@ namespace Scripts.Weapons
             _prevPosition = position;
         }
 
-        public bool onHitImpact(Affected affected)
+        public bool onHitImpact()
         {
             if (lastTrigger && isTrigging)
             {

@@ -28,7 +28,10 @@ namespace Scripts.Resources.Weapons.Hammer
         private VisualEffect _rockVFX;
         [SerializeField] 
         private VisualEffect _materializationController;
+        [SerializeField] 
+        private MoveToTrailUV _swingTrail;
 
+        [Header("Roots")] 
         [SerializeField] private Transform hammerMovablePart;
         [SerializeField] private Transform hammerMesh;
         [SerializeField] private Transform vfxRoot;
@@ -142,11 +145,14 @@ namespace Scripts.Resources.Weapons.Hammer
 
         public override void OnHitStarted()
         {
-        //    throw new System.NotImplementedException();
+            _swingTrail.PlayTrails();
+            Debug.Log("SwingStarted!!!!!!!!!!!!!!!!!!!! Weapon Design");
         }
 
         public override void OnHitStopped()
         {
+            _swingTrail.StopTrails();
+            Debug.Log("SwingEnded!!!!!!!!!!!!!!!!!!!! Weapon Design");
         }
 
         public override void OnDeactivated()
@@ -163,6 +169,7 @@ namespace Scripts.Resources.Weapons.Hammer
 
         public override void OnImpact(string affected)
         {
+            Debug.Log("Impact!");
         }
     }
 }

@@ -282,6 +282,8 @@ namespace Scripts.Weapons
                 {
                    
                     _Activated.AddListener(observer.OnActivated);
+                    _StartHit.AddListener(observer.OnHitStarted);
+                    _StopHit.AddListener(observer.OnHitStopped);
                     _Deactivated.AddListener(observer.OnDeactivated);
                     _Impact.AddListener((e)=>
                     {
