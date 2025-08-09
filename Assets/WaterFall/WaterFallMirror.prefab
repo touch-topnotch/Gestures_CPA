@@ -9,6 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3578759727958954197}
+  - component: {fileID: 2625861846880156307}
+  - component: {fileID: 7838772750529635910}
   m_Layer: 0
   m_Name: WaterFallMirror
   m_TagString: Untagged
@@ -31,8 +33,44 @@ Transform:
   - {fileID: 5322024576738469287}
   - {fileID: 3696230161724926382}
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2625861846880156307
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4227607725796034193}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b8fab3b8f0828f4ea73b8f38cdcce95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _waterFallObject: {fileID: 9202959100219749204}
+  _changeDuration: 0.5
+  _maxRefraction: 1
+--- !u!65 &7838772750529635910
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4227607725796034193}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 4.71434, y: 4.413356, z: 7.94097}
+  m_Center: {x: -1.9904867, y: 1.7066779, z: 0.06024146}
 --- !u!1 &8911014469794305544
 GameObject:
   m_ObjectHideFlags: 0
@@ -174,7 +212,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20b9488e8346e6445b175d59f4d2cd5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Offset: -2.92
+  m_Offset: -3.85
   m_LayerMask: -1
   m_Scope: 0
   m_Renderers: []
@@ -207,7 +245,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9202959100219749204}
   m_LocalRotation: {x: -0.5, y: -0.5, z: -0.5, w: 0.5}
-  m_LocalPosition: {x: -2.92, y: 2.82, z: -2.937}
+  m_LocalPosition: {x: -3.85, y: 3.11, z: 0}
   m_LocalScale: {x: 0.7151276, y: 1.0177, z: 0.6396162}
   m_ConstrainProportionsScale: 0
   m_Children: []
