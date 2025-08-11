@@ -13,7 +13,7 @@ namespace Scripts
     public class WaterFall : MonoBehaviour
     {
         private CharacterChanger _characterChanger;
-        private CharacterReflection _characterReflection;
+        private List<CharacterReflection> _characterReflections = new List<CharacterReflection>();
         private PlayerData _playerData;
 
         private bool _canInteract;
@@ -32,9 +32,10 @@ namespace Scripts
         
         private void Start()
         {
-            _characterChanger = new CharacterChanger(0);
             _playerData = PlayerData.local;
 
+            SpawnReflections();
+            
             _waterFallMaterial = _waterFallObject.GetComponent<MeshRenderer>().material;
             _waterReflectionDistortionID = Shader.PropertyToID(WaterReflectionDistortion);
             _waterStartReflectionDistortion = _waterFallMaterial.GetFloat(_waterReflectionDistortionID);
@@ -46,28 +47,32 @@ namespace Scripts
             ///////////////////////////////////////////
             if (Input.GetKeyDown(KeyCode.Z))
             {
-                StartCoroutine(UpdateCharacterReflection(_characterChanger.GetPreviousCharacter()));
+                StartCoroutine(UpdateCharacterReflection(_characterChanger.SelectPreviousCharacter()));
 
             }
             if (Input.GetKeyDown(KeyCode.X))
             {
-                StartCoroutine(UpdateCharacterReflection(_characterChanger.GetNextCharacter()));
+                StartCoroutine(UpdateCharacterReflection(_characterChanger.SelectNextCharacter()));
             }
             ///////////////////////////////////////////
 
         }
 
         private void StartInteraction()
-        { 
+        {
+           
+
+            _characterChanger ??= new CharacterChanger(_playerData.characterController.currentCharacter.name);
+            
             _playerData.rig.headInteraction.onHeadInteraction.AddListener(SwitchCharacterInput());
 
-            StartCoroutine(UpdateCharacterReflection(_characterChanger.GetCurrentCharacter()));
+            StartCoroutine(UpdateCharacterReflection(_characterChanger.SelectCurrentCharacter()));
 
         }
         private void EndInteraction()
         {
             PlayerData.local.rig.headInteraction.onHeadInteraction.RemoveListener(SwitchCharacterInput());
-            Destroy(_characterReflection.gameObject);
+            DisableReflection();
         }
 
         private UnityAction<HeadInteractionType> SwitchCharacterInput()
@@ -91,9 +96,9 @@ namespace Scripts
         private void CharacterSwitch(bool isRight)
         {
             if (isRight)
-                StartCoroutine(UpdateCharacterReflection(_characterChanger.GetNextCharacter()));
+                StartCoroutine(UpdateCharacterReflection(_characterChanger.SelectNextCharacter()));
             else
-                StartCoroutine(UpdateCharacterReflection(_characterChanger.GetPreviousCharacter()));
+                StartCoroutine(UpdateCharacterReflection(_characterChanger.SelectPreviousCharacter()));
         }
 
         private IEnumerator UpdateCharacterReflection(GameObject character)
@@ -103,11 +108,8 @@ namespace Scripts
             _canInteract = false;
             
             yield return new WaitForSeconds(_changeDuration);
-            if (_characterReflection)
-            {
-                Destroy(_characterReflection.gameObject);
-            }
-            _characterReflection = Instantiate(character).AddComponent<CharacterReflection>();
+            UpdateReflection();
+            _characterChanger.SetCharacter();
             
             DOVirtual.Float(_waterFallMaterial.GetFloat(_waterReflectionDistortionID), _waterStartReflectionDistortion, _changeDuration,
                 v => _waterFallMaterial.SetFloat(_waterReflectionDistortionID, v)).SetEase(Ease.OutCubic);
@@ -129,6 +131,32 @@ namespace Scripts
             if (other.transform.CompareTag("Player"))
             {
                 EndInteraction();
+            }
+        }
+
+        private void SpawnReflections()
+        {
+            foreach (var characterData in _playerData.characterController.characterConfigs)
+            {
+                var characterReflection = Instantiate(characterData.avatars[AvatarType.Enemy], transform).AddComponent<CharacterReflection>();
+                _characterReflections.Add(characterReflection);
+                characterReflection.gameObject.SetActive(false);
+            }
+        }
+
+        private void UpdateReflection()
+        {
+            for (var i = 0; i < _characterReflections.Count; i++)
+            {
+                _characterReflections[i].gameObject.SetActive(i == _characterChanger.CurrentCharacterIndex);
+            }
+        }
+
+        private void DisableReflection()
+        {
+            foreach (var reflection in _characterReflections)
+            {
+                reflection.gameObject.SetActive(false);
             }
         }
     }

@@ -60,6 +60,8 @@ namespace Scripts.PlayerLogic
                     PlayerData.local = _player.data;
                 });
                 
+                _player.data.characterController.characterChangedEvent.AddListener(UpdateCharacterServerRpc);
+                
                 Recognizer.onSharedFrameBetweenDevices.AddListener((frame) =>
                 {
                     OnLocalClientFrameRecognizedServerRpc(frame, OwnerClientId);

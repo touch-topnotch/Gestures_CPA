@@ -8,7 +8,6 @@ namespace Scripts
 {
     public class CharacterReflection : MonoBehaviour
     {
-        private PlayerData _playerData;
         private BodyAnchors _bodyAnchors;
         private const string LayerName = "NotVIsible";
         private readonly float _scaleMultiplier = 1.3f;
@@ -20,7 +19,6 @@ namespace Scripts
 
         private void Initialize()
         {
-            _playerData = PlayerData.local;
             _bodyAnchors = GetComponent<BodyAnchors>();
             
             int notVisibleLayer = LayerMask.NameToLayer(LayerName);
@@ -36,14 +34,14 @@ namespace Scripts
         
         private void LateUpdate()
         {
-            
-            _bodyAnchors.Root.transform.SetPositionAndRotation(_playerData.anchors.Root.transform.position, _playerData.anchors.Root.transform.rotation);
-            _bodyAnchors.Body.transform.SetPositionAndRotation(_playerData.anchors.Body.transform.position, _playerData.anchors.Body.transform.rotation);
+            var playerData = PlayerData.local;
+            _bodyAnchors.Root.transform.SetPositionAndRotation(playerData.anchors.Root.transform.position, playerData.anchors.Root.transform.rotation);
+            _bodyAnchors.Body.transform.SetPositionAndRotation(playerData.anchors.Body.transform.position, playerData.anchors.Body.transform.rotation);
 
-            var headTransformPosition = new Vector3(_playerData.anchors.Head.transform.position.x,
-                _playerData.anchors.Head.transform.position.y * _scaleMultiplier,
-                _playerData.anchors.Head.transform.position.z);
-            _bodyAnchors.Head.transform.SetPositionAndRotation(headTransformPosition, _playerData.anchors.Head.transform.rotation);
+            var headTransformPosition = new Vector3(playerData.anchors.Head.transform.position.x,
+                playerData.anchors.Head.transform.position.y * _scaleMultiplier,
+                playerData.anchors.Head.transform.position.z);
+            _bodyAnchors.Head.transform.SetPositionAndRotation(headTransformPosition, playerData.anchors.Head.transform.rotation);
         }
     }
 }
