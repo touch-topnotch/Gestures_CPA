@@ -17,6 +17,7 @@ namespace Scripts
         private PlayerData _playerData;
 
         private bool _canInteract;
+        private bool _isCharacterInInteractArea;
 
         [SerializeField] private GameObject _waterFallObject; 
         private Material _waterFallMaterial;
@@ -47,12 +48,11 @@ namespace Scripts
             ///////////////////////////////////////////
             if (Input.GetKeyDown(KeyCode.Z))
             {
-                StartCoroutine(UpdateCharacterReflection(_characterChanger.SelectPreviousCharacter()));
-
+                CharacterSwitch(false);
             }
             if (Input.GetKeyDown(KeyCode.X))
             {
-                StartCoroutine(UpdateCharacterReflection(_characterChanger.SelectNextCharacter()));
+                CharacterSwitch(true);
             }
             ///////////////////////////////////////////
 
@@ -66,13 +66,15 @@ namespace Scripts
             
             _playerData.rig.headInteraction.onHeadInteraction.AddListener(SwitchCharacterInput());
 
-            StartCoroutine(UpdateCharacterReflection(_characterChanger.SelectCurrentCharacter()));
+            _characterChanger.SelectCurrentCharacter();
+            StartCoroutine(UpdateCharacterReflection());
 
         }
         private void EndInteraction()
         {
             PlayerData.local.rig.headInteraction.onHeadInteraction.RemoveListener(SwitchCharacterInput());
-            DisableReflection();
+            StopAllCoroutines();
+            StartCoroutine(UpdateCharacterReflection());
         }
 
         private UnityAction<HeadInteractionType> SwitchCharacterInput()
@@ -96,12 +98,18 @@ namespace Scripts
         private void CharacterSwitch(bool isRight)
         {
             if (isRight)
-                StartCoroutine(UpdateCharacterReflection(_characterChanger.SelectNextCharacter()));
+            {
+                _characterChanger.SelectNextCharacter();
+                StartCoroutine(UpdateCharacterReflection());
+            }
             else
-                StartCoroutine(UpdateCharacterReflection(_characterChanger.SelectPreviousCharacter()));
+            {
+                _characterChanger.SelectPreviousCharacter();
+                StartCoroutine(UpdateCharacterReflection());
+            }
         }
 
-        private IEnumerator UpdateCharacterReflection(GameObject character)
+        private IEnumerator UpdateCharacterReflection()
         {
             DOVirtual.Float(_waterFallMaterial.GetFloat(_waterReflectionDistortionID), _maxRefraction, _changeDuration,
                 v => _waterFallMaterial.SetFloat(_waterReflectionDistortionID, v)).SetEase(Ease.InCubic);
@@ -123,6 +131,7 @@ namespace Scripts
             if (other.transform.CompareTag("Player"))
             {
                 StartInteraction();
+                _isCharacterInInteractArea = true;
             }
         }
         
@@ -131,6 +140,7 @@ namespace Scripts
             if (other.transform.CompareTag("Player"))
             {
                 EndInteraction();
+                _isCharacterInInteractArea = false;
             }
         }
 
@@ -146,6 +156,11 @@ namespace Scripts
 
         private void UpdateReflection()
         {
+            if (!_isCharacterInInteractArea)
+            {
+                DisableReflection();
+                return;
+            }
             for (var i = 0; i < _characterReflections.Count; i++)
             {
                 _characterReflections[i].gameObject.SetActive(i == _characterChanger.CurrentCharacterIndex);

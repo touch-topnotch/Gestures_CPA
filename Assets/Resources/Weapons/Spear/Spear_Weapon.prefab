@@ -2097,21 +2097,68 @@ MonoBehaviour:
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
-    SerializationNodes: []
+    SerializationNodes:
+    - Name: _continuousSoundGroups
+      Entry: 7
+      Data: 0|System.Collections.Generic.Dictionary`2[[System.String, mscorlib],[System.Single,
+        mscorlib]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 1|System.Collections.Generic.GenericEqualityComparer`1[[System.String,
+        mscorlib]], mscorlib
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 3
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Anvil_Aura
+    - Name: $v
+      Entry: 4
+      Data: 15
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Crowd_Aura
+    - Name: $v
+      Entry: 4
+      Data: 3.5
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 1
+      Data: Horse_Aura
+    - Name: $v
+      Entry: 4
+      Data: 20
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
   _audioProcessor: {fileID: 5146045309000706831}
   _startSounds:
   - Start_Aura
   _startSoundsRandom:
   - Crowd_Aura
-  _continuousSoundGroups:
-    keys:
-    - Anvil_Aura
-    - Crowd_Aura
-    - Horse_Aura
-    values:
-    - 15
-    - 3.5
-    - 20
   _endSounds:
   - End_Aura
   _endSoundsRandom: []
@@ -2272,7 +2319,13 @@ MonoBehaviour:
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
-    ReferencedUnityObjects: []
+    ReferencedUnityObjects:
+    - {fileID: 8300000, guid: 4ab18fce5640b2c44944c9ee876a9abe, type: 3}
+    - {fileID: 8300000, guid: 506960c6c5cfdc74dab5b0193564936d, type: 3}
+    - {fileID: 8300000, guid: d01add9a221e4eb48805f517601ba8de, type: 3}
+    - {fileID: 8300000, guid: 558c587f89554844fa864ed0b7d6df39, type: 3}
+    - {fileID: 8300000, guid: 626af1c43c4063c40a209507524084e6, type: 3}
+    - {fileID: 8300000, guid: ef068dc5cf7ffce4c9d82b5f3f294885, type: 3}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -2287,6 +2340,98 @@ MonoBehaviour:
     - Name: paramActions
       Entry: 6
       Data: 
+    - Name: clipFrames
+      Entry: 7
+      Data: 0|System.Collections.Generic.Dictionary`2[[System.Int32, mscorlib],[UnityEngine.AudioClip,
+        UnityEngine.AudioModule]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 1|System.Collections.Generic.GenericEqualityComparer`1[[System.Int32,
+        mscorlib]], mscorlib
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 6
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 0
+    - Name: $v
+      Entry: 10
+      Data: 0
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 4
+    - Name: $v
+      Entry: 10
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 5
+    - Name: $v
+      Entry: 10
+      Data: 2
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 6
+    - Name: $v
+      Entry: 10
+      Data: 3
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 7
+    - Name: $v
+      Entry: 10
+      Data: 4
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 8
+    - Name: $v
+      Entry: 10
+      Data: 5
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
   _floorMask:
     serializedVersion: 2
     m_Bits: 512
@@ -2299,15 +2444,6 @@ MonoBehaviour:
   _portalVFX: {fileID: 6864945273772439407}
   _portalOffsetY: 0.5
   source: {fileID: 3393876225162420465}
-  clipFrames:
-    keys: 000000000400000005000000060000000700000008000000
-    values:
-    - {fileID: 8300000, guid: 4ab18fce5640b2c44944c9ee876a9abe, type: 3}
-    - {fileID: 8300000, guid: 506960c6c5cfdc74dab5b0193564936d, type: 3}
-    - {fileID: 8300000, guid: d01add9a221e4eb48805f517601ba8de, type: 3}
-    - {fileID: 8300000, guid: 558c587f89554844fa864ed0b7d6df39, type: 3}
-    - {fileID: 8300000, guid: 626af1c43c4063c40a209507524084e6, type: 3}
-    - {fileID: 8300000, guid: ef068dc5cf7ffce4c9d82b5f3f294885, type: 3}
   _portalClip: {fileID: 8300000, guid: 172de35d1ea836741bbad27c89b673c4, type: 3}
 --- !u!82 &3393876225162420465
 AudioSource:

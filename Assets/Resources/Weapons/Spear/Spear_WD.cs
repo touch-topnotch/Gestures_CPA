@@ -1,8 +1,10 @@
 using System.Collections;
+using System.Collections.Generic;
 using Components;
 using DG.Tweening;
 using Scripts.Gestures;
 using Scripts.PlayerLogic;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.VFX;
@@ -39,7 +41,8 @@ public class Spear_WD : WeaponDesign
      
      [Header("SFX")]
      [SerializeField] private AudioSource source;
-     [SerializeField] private SerializableDictionary<int, AudioClip> clipFrames;
+     [BoxGroup("Clips")] [SerializeField]
+     private Dictionary<int, AudioClip> clipFrames;
      [SerializeField] private AudioClip _portalClip;
      private Coroutine _portalSoundCoroutine;
      

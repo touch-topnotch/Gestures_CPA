@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Components;
 using DG.Tweening;
 using Scripts.Gestures;
+using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.VFX;
 
@@ -31,7 +32,8 @@ namespace Scripts
         
         [Header("SFX")]
         [SerializeField] private AudioSource source;
-        [SerializeField] private SerializableDictionary<int, AudioClip> clipFrames;
+        [BoxGroup("Clips")] [SerializeField]
+        private Dictionary<int, AudioClip> clipFrames;
         [SerializeField] private AudioSource _puddleSource;
         [SerializeField] private AudioClip _puddleClip;
         [SerializeField] private AudioSource _streamSource;
