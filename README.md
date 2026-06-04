@@ -12,3 +12,4 @@
 ### Component system
 - [Smart Component](pages/SmartComponent.md)
 - [Inherited Component](pages/InheritedComponent.md)
+You are welcome!
